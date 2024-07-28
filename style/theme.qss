@@ -1,0 +1,12 @@
+Dialog#registerinterface,#LoginInterface{
+background-color:rgb(0,0,255)
+}
+
+#passwderror_label,#passwordmatch_label,#emailerror_label[state='correct']{
+    color: green;
+}
+
+#passwderror_label,#passwordmatch_label,#emailerror_label[state='incorrect']{
+    color: red;
+}
+
