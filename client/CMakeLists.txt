@@ -21,12 +21,12 @@ if(NOT MSVC)
 endif()
 
 project(FullStackChatDemo VERSION 0.1 LANGUAGES CXX)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
 file(GLOB source_file CONFIGURE_DEPENDS *.cpp *.h *.hpp)
 file(GLOB ui_file CONFIGURE_DEPENDS *.ui)
-file(GLOB resource_file CONFIGURE_DEPENDS resources/*.qrc)
+file(GLOB resource_file CONFIGURE_DEPENDS style/*.qrc)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(FullStackChatDemo
@@ -51,7 +51,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(FullStackChatDemo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(FullStackChatDemo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

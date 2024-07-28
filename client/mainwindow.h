@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <memory>
 //#include <stack>
 #include <QMainWindow>
 #include "registerinterface.h"
