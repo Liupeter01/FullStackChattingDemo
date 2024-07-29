@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.15)
 
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
@@ -24,8 +24,8 @@ endif()
 
 project (ChattingServer VERSION 0.1 LANGUAGES CXX)
 
-file(GLOB source_file CONFIGURE_DEPENDS src/*.cpp src/*.cc src/*.c)
-file(GLOB header_file CONFIGURE_DEPENDS include/*.hpp  include/*.h)
+file(GLOB_RECURSE source_file CONFIGURE_DEPENDS src/*.cpp src/*.cc src/*.c)
+file(GLOB_RECURSE header_file CONFIGURE_DEPENDS include/*.hpp  include/*.h)
 
 add_executable(ChattingServer  ${source_file} ${header_file})
 target_include_directories(ChattingServer PUBLIC include jsoncpp/include)
