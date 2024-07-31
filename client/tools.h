@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <QString>
 #include <QWidget>
+#include <QUrl>
 
 template<typename Widget, class = void>
 struct has_settext_function
@@ -27,6 +28,12 @@ struct Tools
         widget->setProperty("state", (status ? "correct" : "incorrect"));
         refreshQssStyle(widget);
     }
+
+    /*handling url info*/
+    static void readConfigrationFile(QString file_name = "config.ini");
+    static QUrl getTargetUrl(QString param = "");   //for public access
+    static QString url_info;                //store url info
+    static bool url_init_flag;              //url is init or not?
 };
 
 #endif // TOOLS_H
