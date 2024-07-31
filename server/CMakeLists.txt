@@ -28,7 +28,7 @@ file(GLOB_RECURSE source_file CONFIGURE_DEPENDS src/*.cpp src/*.cc src/*.c)
 file(GLOB_RECURSE header_file CONFIGURE_DEPENDS include/*.hpp  include/*.h)
 
 add_executable(ChattingServer  ${source_file} ${header_file})
-target_include_directories(ChattingServer PUBLIC include jsoncpp/include)
+target_include_directories(ChattingServer PUBLIC include jsoncpp/include ada/include)
 
 if(WIN32)
           include(FetchContent)
@@ -48,3 +48,6 @@ endif()
 
 add_subdirectory(jsoncpp)
 target_link_libraries(ChattingServer PUBLIC jsoncpp_object)
+
+add_subdirectory(ada)
+target_link_libraries(ChattingServer PUBLIC ada-singleheader-lib)
