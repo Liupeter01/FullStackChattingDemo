@@ -80,7 +80,7 @@ void registerinterface::on_verification_button_clicked()
         QJsonObject json;
         json["email"] = email_text;
         HttpNetworkConnection::get_instance()->postHttpRequest(
-            QUrl("http://localhost:8080//get_verification"),
+            Tools::getTargetUrl("/get_verification"),
             json,
             ServiceType::SERVICE_VERIFICATION
         );
