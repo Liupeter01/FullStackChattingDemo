@@ -40,13 +40,13 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 else()
     if(ANDROID)
         add_library(FullStackChatDemo SHARED
-            ${PROJECT_SOURCES}
+            ${source_file} ${ui_file} ${resource_file}
         )
 # Define properties for Android with Qt 5 after find_package() calls as:
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         add_executable(FullStackChatDemo
-            ${PROJECT_SOURCES}
+            ${source_file} ${ui_file} ${resource_file}
         )
     endif()
 endif()
