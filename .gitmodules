@@ -1,3 +1,7 @@
 [submodule "server/jsoncpp"]
 	path = server/jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp.git
+
+[submodule "server/ada"]
+	path = server/ada
+	url = https://github.com/ada-url/ada.git
