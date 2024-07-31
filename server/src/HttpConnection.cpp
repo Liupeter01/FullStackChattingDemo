@@ -55,17 +55,17 @@ void HTTPConnection::process_request()
           {
           case  boost::beast::http::verb::get:
                     handle_get_request(extended_lifetime);
-                    write_response();
                     break;
 
           case boost::beast::http::verb::post:
+                    handle_post_request(extended_lifetime);
                     break;
 
           default:
                     return_not_found();
-                    write_response();
                     break;
           }
+          write_response();
 }
 
 void HTTPConnection::write_response()
@@ -107,6 +107,18 @@ void HTTPConnection::handle_get_request(std::shared_ptr<HTTPConnection> extended
 
           /*fix bug: because url_path is a std::string_view so when using .data method it will return all the data inside http_url_info*/
           if (!HandleMethod::get_instance()->handleGetMethod(std::string(url_path), extended_lifetime)){
+                    return_not_found();
+          }
+          else
+          {
+                    http_response.result(boost::beast::http::status::ok);
+                    http_response.set(boost::beast::http::field::server, "Beast GateServer");
+          }
+}
+
+void HTTPConnection::handle_post_request(std::shared_ptr<HTTPConnection> extended_lifetime)
+{
+          if (!HandleMethod::get_instance()->handlePostMethod(http_request.target(), extended_lifetime)) {
                     return_not_found();
           }
           else

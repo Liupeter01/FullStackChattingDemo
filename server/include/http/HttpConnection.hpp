@@ -29,6 +29,7 @@ private:
           void process_request();
           void write_response();
           void handle_get_request(std::shared_ptr<HTTPConnection> extended_lifetime);
+          void handle_post_request(std::shared_ptr<HTTPConnection> extended_lifetime);
 
 private:
           boost::asio::ip::tcp::socket& http_socket;
