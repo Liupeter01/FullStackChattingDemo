@@ -32,21 +32,26 @@ void HttpNetworkConnection::postHttpRequest(QUrl url, QJsonObject json, ServiceT
      * while we are going to handle callback functions
     */
     std::shared_ptr<HttpNetworkConnection> self = shared_from_this();
-    connect(result, &QNetworkReply::finished, [this, result, self, srv_type](){
-        bool network_status = result->error() != QNetworkReply::NoError;
-        if(network_status){
+    connect(result, &QNetworkReply::finished, [this, result, self, srv_type]()
+    {
+        if(result->error() != QNetworkReply::NoError){
+                    /*error occured*/
             qDebug() << "result error: " << result->errorString();
+            emit this->signal_http_finished(
+                srv_type,
+                "",
+                ServiceStatus::NETWORK_ERROR
+            );
         }
-
-        /*emit request success signal*/
-        emit this->signal_http_finished(
-            srv_type,
-            (!network_status ? QString(result->readAll()) : QString("")),
-            (!network_status ? ServiceStatus::SERVICE_SUCCESS : ServiceStatus::NETWORK_ERROR)
-        );
-
+        else{
+            /*emit request success signal*/
+            emit this->signal_http_finished(
+                srv_type,
+                result->readAll(),
+                ServiceStatus::SERVICE_SUCCESS
+            );
+        }
         result->deleteLater();
-        return;
     });
 }
 
