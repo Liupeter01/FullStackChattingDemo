@@ -4,6 +4,8 @@
 #include "httpnetworkconnection.h"
 #include <QRegularExpression>
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QUrl>
 #include <QDebug>
 
 registerinterface::registerinterface(QWidget *parent)
@@ -59,7 +61,7 @@ void registerinterface::regisrerCallBackFunctions()
 
             Tools::setWidgetAttribute(
                 this->ui->emailerror_label,
-                QString("verification code has already been sent to your email"), true
+                QString("code has already been sent to email"), true
             );
 
             qDebug() << "E-mail = " << email << '\n';
@@ -75,7 +77,13 @@ void registerinterface::on_verification_button_clicked()
         Tools::setWidgetAttribute(this->ui->emailerror_label, QString("Valid E-mail address"), true);
 
         /*Sending e-mail verification code*/
-
+        QJsonObject json;
+        json["email"] = email_text;
+        HttpNetworkConnection::get_instance()->postHttpRequest(
+            QUrl("http://localhost:8080//get_verification"),
+            json,
+            ServiceType::SERVICE_VERIFICATION
+        );
     }
     else{
         Tools::setWidgetAttribute(this->ui->emailerror_label, QString("Invalid E-mail address"), false);
