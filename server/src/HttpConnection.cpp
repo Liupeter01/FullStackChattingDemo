@@ -1,3 +1,4 @@
+#include<ada.h>
 #include<http/HttpConnection.hpp>
 #include<handler/HandleMethod.hpp>
 
@@ -50,20 +51,20 @@ void HTTPConnection::process_request()
           std::shared_ptr<HTTPConnection> extended_lifetime = shared_from_this();
 
           /*HTTP GET method*/
-          if (http_request.method() == boost::beast::http::verb::get) {
-                    bool successful = HandleMethod::get_instance()->handleGetMethod(http_request.target(), extended_lifetime);
-                    if (!successful) 
-                    {
-                              http_response.result( boost::beast::http::status::not_found);         //Set Response Status
-                              http_response.set(boost::beast::http::field::content_type, "text/plain");
-                              boost::beast::ostream(http_response.body()) << "404 Not Found!";
-                    }
-                    else 
-                    {
-                              http_response.result(boost::beast::http::status::ok);
-                              http_response.set(boost::beast::http::field::server, "Beast GateServer");
-                    }
+          switch (http_request.method())
+          {
+          case  boost::beast::http::verb::get:
+                    handle_get_request(extended_lifetime);
                     write_response();
+                    break;
+
+          case boost::beast::http::verb::post:
+                    break;
+
+          default:
+                    return_not_found();
+                    write_response();
+                    break;
           }
 }
 
@@ -83,4 +84,40 @@ void HTTPConnection::write_response()
                               extended_lifetime->http_timer.cancel();
                     }
           );
+}
+
+void HTTPConnection::handle_get_request(std::shared_ptr<HTTPConnection> extended_lifetime)
+{
+          /*store url info /path?username=me&password=passwd*/
+          this->http_url_info = http_request.target();
+
+          std::size_t pos = this->http_url_info.find_first_of('?');
+          std::string_view url_path = this->http_url_info.substr(0, pos);
+          std::string_view url_param = this->http_url_info.substr(pos + 1);
+
+#ifdef _DEBUG
+          std::cerr << "url_path = " << url_path << '\n'
+                        << "url_param = " << url_param << '\n';
+#endif // _DEBUG
+
+          ada::url_search_params parameters(url_param);
+          for (const auto& param : parameters) {
+                    this->http_params.emplace(param.first, param.second);
+          }
+
+          if (!HandleMethod::get_instance()->handleGetMethod(url_path.data(), extended_lifetime)){
+                    return_not_found();
+          }
+          else
+          {
+                    http_response.result(boost::beast::http::status::ok);
+                    http_response.set(boost::beast::http::field::server, "Beast GateServer");
+          }
+}
+
+void HTTPConnection::return_not_found()
+{
+          http_response.result(boost::beast::http::status::not_found);         //Set Response Status
+          http_response.set(boost::beast::http::field::content_type, "text/plain");
+          boost::beast::ostream(http_response.body()) << "404 Not Found!";
 }
