@@ -105,7 +105,8 @@ void HTTPConnection::handle_get_request(std::shared_ptr<HTTPConnection> extended
                     this->http_params.emplace(param.first, param.second);
           }
 
-          if (!HandleMethod::get_instance()->handleGetMethod(url_path.data(), extended_lifetime)){
+          /*fix bug: because url_path is a std::string_view so when using .data method it will return all the data inside http_url_info*/
+          if (!HandleMethod::get_instance()->handleGetMethod(std::string(url_path), extended_lifetime)){
                     return_not_found();
           }
           else
