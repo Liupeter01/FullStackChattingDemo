@@ -30,21 +30,27 @@ file(GLOB_RECURSE header_file CONFIGURE_DEPENDS include/*.hpp  include/*.h)
 add_executable(ChattingServer  ${source_file} ${header_file})
 target_include_directories(ChattingServer PUBLIC include jsoncpp/include ada/include)
 
-if(WIN32)
-          include(FetchContent)
-          FetchContent_Declare(
-            Boost
-            URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
-            URL_MD5 893b5203b862eb9bbd08553e24ff146a
-            DOWNLOAD_EXTRACT_TIMESTAMP ON
-          )
-          #set(BOOST_INCLUDE_LIBRARIES timer filesystem regex)
-          FetchContent_MakeAvailable(Boost)
-else()
-          set(Boost_DIR "/usr/local/lib/cmake/Boost-1.84.0")
-          find_package(Boost COMPONENTS system thread REQUIRED)
-          target_link_libraries(ChattingServer  PRIVATE Boost::system Boost::thread)
-endif()
+include(FetchContent)
+FetchContent_Declare(
+          Boost
+          URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
+          URL_MD5 893b5203b862eb9bbd08553e24ff146a
+          DOWNLOAD_EXTRACT_TIMESTAMP ON
+)
+#set(BOOST_INCLUDE_LIBRARIES timer filesystem regex)
+FetchContent_MakeAvailable(Boost)
+
+target_link_libraries(ChattingServer  PRIVATE 
+            Boost::system 
+            Boost::thread   
+            Boost::asio
+            Boost::beast
+            Boost::uuid
+            Boost::filesystem
+            Boost::program_options
+)
+
+include_directories(${Boost_INCLUDE_DIRS})
 
 add_subdirectory(jsoncpp)
 target_link_libraries(ChattingServer PUBLIC jsoncpp_object)
