@@ -1,10 +1,5 @@
 cmake_minimum_required (VERSION 3.15)
 
-if (POLICY CMP0141)
-  cmake_policy(SET CMP0141 NEW)
-  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
-endif()
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -22,6 +17,11 @@ if(NOT MSVC)
     endif()
 endif()
 
+if(MSVC)
+    enable_language(ASM_NASM)
+    enable_language(ASM_MASM)
+endif (MSVC)
+
 project (ChattingServer VERSION 0.1 LANGUAGES CXX)
 
 file(GLOB_RECURSE source_file CONFIGURE_DEPENDS src/*.cpp src/*.cc src/*.c)
@@ -30,30 +30,50 @@ file(GLOB_RECURSE header_file CONFIGURE_DEPENDS include/*.hpp  include/*.h)
 add_executable(ChattingServer  ${source_file} ${header_file})
 target_include_directories(ChattingServer PUBLIC include jsoncpp/include ada/include)
 
+#target_compile_definitions(ChattingServer PRIVATE BOOST_ASIO_STANDALONE)
+
+#import grpc 1.65.2 library
+set(FETCHCONTENT_QUIET OFF)
+set(ABSL_ENABLE_INSTALL ON)   #Very important!!!!
+set(BOOST_NO_ASSEMBLY ON CACHE BOOL "Disable Boost Assembly")
 include(FetchContent)
 FetchContent_Declare(
-          Boost
-          URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
-          URL_MD5 893b5203b862eb9bbd08553e24ff146a
-          DOWNLOAD_EXTRACT_TIMESTAMP ON
+  boost
+  GIT_REPOSITORY https://github.com/boostorg/boost.git
+  GIT_TAG boost-1.84.0 
 )
-#set(BOOST_INCLUDE_LIBRARIES timer filesystem regex)
-FetchContent_MakeAvailable(Boost)
+FetchContent_MakeAvailable(boost)
 
-target_link_libraries(ChattingServer  PRIVATE 
-            Boost::system 
-            Boost::thread   
-            Boost::asio
-            Boost::beast
-            Boost::uuid
-            Boost::filesystem
-            Boost::program_options
+FetchContent_Declare(
+    gRPC
+    GIT_REPOSITORY https://github.com/grpc/grpc
+    GIT_TAG  v1.65.2
 )
 
-include_directories(${Boost_INCLUDE_DIRS})
+FetchContent_MakeAvailable(
+	boost
+	gRPC
+)
 
-add_subdirectory(jsoncpp)
-target_link_libraries(ChattingServer PUBLIC jsoncpp_object)
+#set(_PROTOBUF_LIBPROTOBUF libprotobuf)
+#set(_REFLECTION grpc++_reflection)
+#set(_PROTOBUF_PROTOC $<TARGET_FILE:protoc>)
+#set(_GRPC_GRPCPP grpc++)
+#if(CMAKE_CROSSCOMPILING)
+#   find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+#else()
+#   set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc_cpp_plugin>)
+#endif()
 
 add_subdirectory(ada)
-target_link_libraries(ChattingServer PUBLIC ada-singleheader-lib)
+add_subdirectory(jsoncpp)
+
+target_link_libraries(ChattingServer PUBLIC 
+        Boost::asio
+        Boost::beast
+        Boost::uuid
+        ada-singleheader-lib
+        jsoncpp_object
+        #grpc 
+        #grpc++
+)
