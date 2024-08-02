@@ -2,7 +2,6 @@
 #define SINGLETON_HPP
 #include <mutex>
 #include <memory>
-#include<boost/noncopyable.hpp>
 
 template<typename _Ty>
 struct SingletonDeletor {
@@ -12,9 +11,11 @@ struct SingletonDeletor {
 };
 
 template <typename _Ty> 
-class Singleton:public boost::noncopyable_::noncopyable {
+class Singleton {
           static std::shared_ptr<_Ty> m_instance;
 
+          /*Once we delete move ctor then all copy ctor functions are deleted!*/
+          Singleton(Singleton&&) = delete;
 protected:
           Singleton() = default;
 
