@@ -32,25 +32,7 @@ cmake --build build --parallel x
 ```
 
 ### Error Handling
-1. fatal error "unicode/ucnv" file not found(MacOS)
-
-   ```bash
-   wget https://github.com/unicode-org/icu/releases/download/release-75-1/icu4c-75_1-src.tgz
-   tar -zxvf icu4c-75_1-src.tgz
-   cd icu4c-75_1-src\icu\source
-   ./configure
-   make -j[x]
-   sudo make install
-   ```
-
-   ```cmake
-   cmake -Bbuild -DCMAKE_INCLUDE_PATH=/usr/local/include
-   cmake --build build --parallel x
-   ```
-
-   
-
-2. undefined symbol upb_alloc_global
+1. undefined symbol upb_alloc_global
 
    ```cmake
    set(protobuf_BUILD_LIBUPB OFF)
@@ -61,7 +43,7 @@ cmake --build build --parallel x
 
    
 
-3. fatal error: 'unicode/locid.h' 'unicode/ucnv.h' file not found (usually happened on MacOS)
+2. fatal error: 'unicode/locid.h' 'unicode/ucnv.h' file not found (usually happened on MacOS)
    Download icu 74.1
    ```bash
    wget https://github.com/unicode-org/icu/releases/download/release-74-1/icu4c-74_1-src.tgz
@@ -76,12 +58,19 @@ cmake --build build --parallel x
    make check
    ```
 
+   set cmake variable
+
+   ```cmake
+   cmake -Bbuild -DCMAKE_INCLUDE_PATH=/usr/local/include
+   cmake --build build --parallel x
+   ```
+
    Referring Url
    https://unicode-org.github.io/icu/userguide/icu4c/build.html
 
    
 
-4. boringssl undefined win32
+3. boringssl undefined win32
    ```cmake
    set(OPENSSL_NO_ASM ON)
    ```
@@ -91,7 +80,7 @@ cmake --build build --parallel x
 
    
 
-5. Handling gRPC issue
+4. Handling gRPC issue
    Issue description
    ```bash
    CMake Error: install(EXPORT "protobuf-targets" ...) includes target "libprotobuf-lite" which requires target "absl_node_hash_map" that is not in any export set.
