@@ -19,20 +19,39 @@ The project is self-contained and it has no dependency on both Windows and Linux
 
 ## Developer Quick Start
 ### Platform Support
-~~Windows~~, Linux, ~~MacOS~~
-Currently, MacOS with APPLE SILLICON is not supported yet
+Windows, Linux, MacOS(Intel & Apple Silicon M)
+
 
 ### Building  FullStackChattingDemo
 ```bash
 git clone https://github.com/Liupeter01/FullStackChattingDemo
 cd FullStackChattingDemo/server
 git submodule update --init
-cmake -B build
+cmake -Bbuild
 cmake --build build --parallel x
 ```
 
 ### Error Handling
-1. undefined symbol
+1. fatal error "unicode/ucnv" file not found(MacOS)
+
+   ```bash
+   wget https://github.com/unicode-org/icu/releases/download/release-75-1/icu4c-75_1-src.tgz
+   tar -zxvf icu4c-75_1-src.tgz
+   cd icu4c-75_1-src\icu\source
+   ./configure
+   make -j[x]
+   sudo make install
+   ```
+
+   ```cmake
+   cmake -Bbuild -DCMAKE_INCLUDE_PATH=/usr/local/include
+   cmake --build build --parallel x
+   ```
+
+   
+
+2. undefined symbol upb_alloc_global
+
    ```cmake
    set(protobuf_BUILD_LIBUPB OFF)
    ```
@@ -41,8 +60,8 @@ cmake --build build --parallel x
    https://github.com/grpc/grpc/issues/35794
 
    
-   
-2. fatal error: 'unicode/locid.h' 'unicode/ucnv.h' file not found (usually happened on MacOS)
+
+3. fatal error: 'unicode/locid.h' 'unicode/ucnv.h' file not found (usually happened on MacOS)
    Download icu 74.1
    ```bash
    wget https://github.com/unicode-org/icu/releases/download/release-74-1/icu4c-74_1-src.tgz
@@ -61,24 +80,7 @@ cmake --build build --parallel x
    https://unicode-org.github.io/icu/userguide/icu4c/build.html
 
    
-   
-3. Handling missing CMAKE_ASM_MASM_COMPILE_OBJECT issue on windows
-   ```bash
-   add that folder to the PATH and set another env variable ASM_NASM with the name of nasm.exe.
-   ```
-   ```cmake
-   if(MSVC)
-       enable_language(ASM_NASM)
-       enable_language(ASM_MASM)
-   endif (MSVC)
-   project (ChattingServer VERSION 0.1 LANGUAGES CXX ASM_NASM ASM_MASM)
-   ```
 
-   Referring Url
-   https://stackoverflow.com/questions/73214824/missing-cmake-asm-nasm-compiler-when-compiling-grpc-with-ms-visual-studio
-
-   
-   
 4. boringssl undefined win32
    ```cmake
    set(OPENSSL_NO_ASM ON)
@@ -88,7 +90,7 @@ cmake --build build --parallel x
    https://github.com/grpc/grpc/issues/16376
 
    
-   
+
 5. Handling gRPC issue
    Issue description
    ```bash
