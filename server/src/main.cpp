@@ -1,4 +1,5 @@
 #include<iostream>
+#include<config/ServerConfig.hpp>
 #include<server/GateServer.hpp>
 
 int main() 
@@ -6,7 +7,9 @@ int main()
 		  try
 		  {
 					boost::asio::io_context ioc;
-					std::shared_ptr<GateServer> server = std::make_shared<GateServer>(ioc, 8080);
+					std::shared_ptr<GateServer> server = std::make_shared<GateServer>(
+							  ioc, ServerConfig::get_instance()->GateServerPort
+					);
 					server->serverStart();
 
 					/*setting up signal*/
