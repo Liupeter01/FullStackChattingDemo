@@ -77,3 +77,7 @@ install(TARGETS FullStackChatDemo
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(FullStackChatDemo)
 endif()
+
+target_compile_definitions(FullStackChatDemo PUBLIC
+    -DQT_DEMO_HOME=\"${CMAKE_CURRENT_SOURCE_DIR}/\"
+)
