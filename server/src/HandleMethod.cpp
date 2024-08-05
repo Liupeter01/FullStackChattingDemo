@@ -4,6 +4,7 @@
 #include<json/reader.h>
 #include<handler/HandleMethod.hpp>
 #include<http/HttpConnection.hpp>
+#include<grpc/GrpcVerificationService.hpp>
 
 HandleMethod::~HandleMethod()
 {
@@ -54,7 +55,11 @@ void HandleMethod::registerPostCallBacks()
                               return false;
                     }
 
-                    send_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
+                    /*Get email string and send to grpc service*/
+                    auto email = src_root["email"].asString();
+                    auto& response = gRPCVerificationService::get_instance()->getVerificationCode(email);
+
+                    send_root["error"] = response.error();
                     send_root["email"] = src_root["email"].asString();
                     boost::beast::ostream(conn->http_response.body()) << send_root.toStyledString();
                     return true;

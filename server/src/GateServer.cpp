@@ -5,9 +5,7 @@ GateServer::GateServer(boost::asio::io_context& _ioc, unsigned short port)
           :m_ioc(_ioc)
           , m_acceptor(_ioc, boost::asio::ip::tcp::endpoint(boost::asio::ip::address_v4::any(), port))
 {
-#ifdef _DEBUG
           printf("[NOTICE]: server activated, listen on port %u\n", port);
-#endif
 
           this->serverStart();
 }

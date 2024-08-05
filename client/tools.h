@@ -4,6 +4,7 @@
 #include <QString>
 #include <QWidget>
 #include <QUrl>
+#include <QDebug>
 
 template<typename Widget, class = void>
 struct has_settext_function
@@ -30,7 +31,7 @@ struct Tools
     }
 
     /*handling url info*/
-    static void readConfigrationFile(QString file_name = "config.ini");
+    static void readConfigrationFile(QString file_name = QT_DEMO_HOME"config.ini");
     static QUrl getTargetUrl(QString param = "");   //for public access
     static QString url_info;                //store url info
     static bool url_init_flag;              //url is init or not?

@@ -5,3 +5,7 @@
 [submodule "server/ada"]
 	path = server/ada
 	url = https://github.com/ada-url/ada.git
+
+[submodule "server/inifile"]
+	path = server/inifile
+	url = https://github.com/Rookfighter/inifile-cpp.git
