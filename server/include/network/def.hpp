@@ -10,7 +10,8 @@ enum class ServiceType : uint8_t {
 enum class ServiceStatus : uint8_t {
           SERVICE_SUCCESS,        //SUCCESS
           JSONPARSE_ERROR,        //json parsing error
-          NETWORK_ERROR           //network failed
+          NETWORK_ERROR,           //network failed
+          GRPC_ERROR                      //grpc error
 };
 
 #define _DEF_HPP_
