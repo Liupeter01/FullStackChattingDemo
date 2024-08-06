@@ -95,10 +95,9 @@ void HTTPConnection::handle_get_request(std::shared_ptr<HTTPConnection> extended
           std::string_view url_path = this->http_url_info.substr(0, pos);
           std::string_view url_param = this->http_url_info.substr(pos + 1);
 
-#ifdef _DEBUG
           std::cerr << "url_path = " << url_path << '\n'
                         << "url_param = " << url_param << '\n';
-#endif // _DEBUG
+
 
           ada::url_search_params parameters(url_param);
           for (const auto& param : parameters) {

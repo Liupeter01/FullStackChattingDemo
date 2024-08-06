@@ -10,13 +10,16 @@ struct ServerConfig : public Singleton< ServerConfig>
 public:
           ~ServerConfig() = default;
           unsigned short GateServerPort;
-          unsigned short VerificationServerPort;
+          std::string VerificationServerAddress;
 
 private:
           ServerConfig() {
                     m_ini.load(CONFIG_HOME"config.ini");
                     GateServerPort = m_ini["GateServer"]["port"].as<unsigned short>();
-                    VerificationServerPort = m_ini["VerificationServer"]["port"].as<unsigned short>();
+
+                    VerificationServerAddress =
+                              m_ini["VerificationServer"]["host"].as<std::string>() + ':'
+                              + std::to_string(m_ini["VerificationServer"]["port"].as<unsigned short>());
           }
 
 private:
