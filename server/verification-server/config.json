@@ -1,0 +1,17 @@
+{
+    "email":{
+        "host": "please set to your email host name",
+        "port": "please set to your email port",
+        "username": "please set to your email address",
+        "password": "please use your own authorized code"
+    },
+	"mysql": {
+		"host": "your ip",
+		"port": "your port"
+	},
+	"redis": {
+		"host": "your ip",
+		"port": "your port",
+		"password": "your password"
+	}
+}
