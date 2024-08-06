@@ -3,7 +3,9 @@
 ### Client
 1. Libraries: using QT6(Q::Widgets Qt::Network)
    ![](./client_main.png)
+
    ![](./register_page.png)
+
 
 ### Server
 1. Libraries:
@@ -20,7 +22,8 @@
 3. Verification Server
    Sending verification code to server
    ![](./verification.png)
-   ![](./result.png)
+
+    ![](./result.png)
 
 ## Requirements
 The project is self-contained and it has no dependency on both Windows and Linux/Unix-like systems.
@@ -51,12 +54,14 @@ but on verification-server(server/verification-server) you have to set your own 
 Windows, Linux, MacOS(Intel & Apple Silicon M)
 
 ### Building FullStackChattingDemo
+
 Download FullStackChattingDemo Project
 ```bash
 git clone https://github.com/Liupeter01/FullStackChattingDemo
 ```
 
 1.client
+
 For MacOS
 ```bash
 cd FullStackChattingDemo/client
@@ -70,9 +75,14 @@ For Windows
 ```
 
 2.server
+
 We are going to simplified this in the future^_^!!!
+
 Compile Main Server Code(c++)
+
 It might take a long time to download dependency libraies!!!!
+
+
 ```bash
 cd FullStackChattingDemo/server
 git submodule update --init
