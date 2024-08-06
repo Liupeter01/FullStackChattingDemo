@@ -17,22 +17,73 @@
 ## Requirements
 The project is self-contained and it has no dependency on both Windows and Linux/Unix-like systems.
 
+but on verification-server(server/verification-server) you have to set your own email and authorized code
+
+```json
+{
+    "email":{
+        "host": "please set to your email host name",
+        "port": "please set to your email port",
+        "username": "please set to your email address",
+        "password": "please use your own authorized code"
+    },
+	"mysql": {
+		"host": "your ip",
+		"port": "your port"
+	},
+	"redis": {
+		"host": "your ip",
+		"port": "your port",
+		"password": "your password"
+	}
+}
+```
+
 ## Developer Quick Start
+
 ### Platform Support
 Windows, Linux, MacOS(Intel & Apple Silicon M)
 
-
 ### Building  FullStackChattingDemo
+
+1.client
+
+```bash
+currently, no
+```
+
+2.server
+
 ```bash
 git clone https://github.com/Liupeter01/FullStackChattingDemo
+#compile server main code
 cd FullStackChattingDemo/server
 git submodule update --init
 cmake -Bbuild
 cmake --build build --parallel x
+
+#verification-server
+cd FullStackChattingDemo/server/verification-server
+
 ```
 
 ### Error Handling
-1. undefined symbol upb_alloc_global
+1. SyntaxError: Unexpected token  in JSON at position 0
+
+   ```bash
+   SyntaxError: Unexpected token  in JSON at position 0
+       at JSON.parse (<anonymous>)
+   ```
+
+   Solving: please change your encoding method to UTF-8, especially for VSCode user
+
+   Referring Url
+
+   https://stackoverflow.com/questions/55960919/nodejs-syntaxerror-unexpected-token-in-json-at-position-0
+
+   
+
+2. undefined symbol upb_alloc_global
 
    ```cmake
    set(protobuf_BUILD_LIBUPB OFF)
@@ -43,7 +94,7 @@ cmake --build build --parallel x
 
    
 
-2. fatal error: 'unicode/locid.h' 'unicode/ucnv.h' file not found (usually happened on MacOS)
+3. fatal error: 'unicode/locid.h' 'unicode/ucnv.h' file not found (usually happened on MacOS)
    Download icu 74.1
    ```bash
    wget https://github.com/unicode-org/icu/releases/download/release-74-1/icu4c-74_1-src.tgz
@@ -70,7 +121,7 @@ cmake --build build --parallel x
 
    
 
-3. boringssl undefined win32
+4. boringssl undefined win32
    ```cmake
    set(OPENSSL_NO_ASM ON)
    ```
@@ -80,8 +131,9 @@ cmake --build build --parallel x
 
    
 
-4. Handling gRPC issue
+5. Handling gRPC issue
    Issue description
+
    ```bash
    CMake Error: install(EXPORT "protobuf-targets" ...) includes target "libprotobuf-lite" which requires target "absl_node_hash_map" that is not in any export set.
    ```
@@ -94,3 +146,4 @@ cmake --build build --parallel x
    Referring Url
     https://github.com/protocolbuffers/protobuf/issues/12185 
     https://github.com/protocolbuffers/protobuf/issues/12185#issuecomment-1594685860
+
