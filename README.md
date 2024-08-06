@@ -3,6 +3,10 @@
 ### Client
 1. Libraries: using QT6(Q::Widgets Qt::Network)
 
+   ![](./client_main.png)
+
+   ![](./register_page.png)
+
 ### Server
 1. Libraries: 
    boost-1.84 -> FetchContent (contains beast asio uuid)
@@ -13,6 +17,20 @@
 2. Functions: accept both GET and POST methods
    Handling GET: /get_test
    Handling POST:/get_verification, client sends a json form to the server and server will parse the form and return a json form back to the client
+
+   ![](./server.png)
+
+   
+
+3. Verification Server
+
+   Sending verification code to server
+
+   ![](./verification.png)
+
+   ![](./result.png)
+
+   
 
 ## Requirements
 The project is self-contained and it has no dependency on both Windows and Linux/Unix-like systems.
