@@ -3,8 +3,11 @@
 #include<grpc/GrpcVerificationService.hpp>
 
 gRPCVerificationService::gRPCVerificationService()
-          :gRPCVerificationService(grpc::string("0.0.0.0") + std::to_string(ServerConfig::get_instance()->VerificationServerPort))
-{}
+          :gRPCVerificationService(ServerConfig::get_instance()->VerificationServerAddress)
+{
+          printf("connected to verification server addr = %s",
+                    ServerConfig::get_instance()->VerificationServerAddress.c_str());
+}
 
 gRPCVerificationService::gRPCVerificationService(grpc::string ip_port, std::shared_ptr<grpc::ChannelCredentials> cred) 
           : m_stub(std::move(message::VerificationService::NewStub(grpc::CreateChannel(ip_port, cred))))
