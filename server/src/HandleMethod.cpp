@@ -37,9 +37,8 @@ void HandleMethod::registerPostCallBacks()
                     conn->http_response.set(boost::beast::http::field::content_type, "text/json");
                     auto body = boost::beast::buffers_to_string(conn->http_request.body().data());
 
-#ifdef _DEBUG
                     printf("[NOTICE]: server receive post data: %s\n", body.c_str());
-#endif
+
                     Json::Value send_root;        /*write into body*/
                     Json::Value src_root;         /*store json from client*/
                     Json::Reader reader;
@@ -57,6 +56,9 @@ void HandleMethod::registerPostCallBacks()
 
                     /*Get email string and send to grpc service*/
                     auto email = src_root["email"].asString();
+
+                    printf("[NOTICE]: server receive request email addr: %s\n", email.c_str());
+
                     auto& response = gRPCVerificationService::get_instance()->getVerificationCode(email);
 
                     send_root["error"] = response.error();
