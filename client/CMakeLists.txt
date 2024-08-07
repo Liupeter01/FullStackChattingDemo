@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 
+include(FetchContent)
+set(FETCHCONTENT_QUIET OFF)
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -11,6 +14,13 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+#MSVC Special!!
+if(MSVC)
+          set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+          add_compile_options("/permissive-")
+          add_compile_options("/Zc:__cplusplus")
+endif()
+
 if(NOT MSVC)
     find_program(CCACHE_PROGRAM ccache)
     if(CCACHE_PROGRAM)
@@ -20,46 +30,79 @@ if(NOT MSVC)
     endif()
 endif()
 
-project(FullStackChatDemo VERSION 0.1 LANGUAGES CXX)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
+project(ChattingClient VERSION 0.1 LANGUAGES CXX)
 
 file(GLOB source_file CONFIGURE_DEPENDS *.cpp *.h *.hpp)
 file(GLOB ui_file CONFIGURE_DEPENDS *.ui)
 file(GLOB resource_file CONFIGURE_DEPENDS style/*.qrc)
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(FullStackChatDemo
-        MANUAL_FINALIZATION
-        ${source_file} ${ui_file} ${resource_file}
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET FullStackChatDemo APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Network)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+if(Qt6_FOUND)
+        if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+
+                find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
+
+                qt_add_executable(ChattingClient
+                        MANUAL_FINALIZATION
+                        ${source_file} ${ui_file} ${resource_file}
+                )
+        endif()
+
 else()
-    if(ANDROID)
-        add_library(FullStackChatDemo SHARED
-            ${source_file} ${ui_file} ${resource_file}
+
+        #we found nothing here, then we download Qt6
+        FetchContent_Declare(
+          qt6
+          GIT_REPOSITORY https://code.qt.io/qt/qt5.git
+          GIT_TAG        6.7.2
         )
+        FetchContent_MakeAvailable(Qt6)
+
+        if(ANDROID)
+                add_library(ChattingClient SHARED
+                        ${source_file}
+                        ${ui_file}
+                        ${resource_file}
+                )
+        else()
 # Define properties for Android with Qt 5 after find_package() calls as:
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(FullStackChatDemo
-            ${source_file} ${ui_file} ${resource_file}
-        )
-    endif()
+
+                add_executable(ChattingClient
+                        ${source_file} ${ui_file} ${resource_file}
+                )
+        endif()
+
 endif()
 
-target_link_libraries(FullStackChatDemo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
+if(Qt6_FOUND OR Qt5_FOUND)
+
+        target_link_libraries(ChattingClient PRIVATE
+                Qt6::Widgets
+                Qt6::Network
+        )
+
+else()
+
+        target_link_libraries(ChattingClient PRIVATE
+                Qt${QT_VERSION_MAJOR}::Widgets
+                Qt${QT_VERSION_MAJOR}::Network
+        )
+endif()
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
 if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.FullStackChatDemo)
+  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.ChattingClient)
 endif()
-set_target_properties(FullStackChatDemo PROPERTIES
+
+set_target_properties(ChattingClient PROPERTIES
     ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -67,17 +110,10 @@ set_target_properties(FullStackChatDemo PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-include(GNUInstallDirs)
-install(TARGETS FullStackChatDemo
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(FullStackChatDemo)
+    qt_finalize_executable(ChattingClient)
 endif()
 
-target_compile_definitions(FullStackChatDemo PUBLIC
+target_compile_definitions(ChattingClient PUBLIC
     -DQT_DEMO_HOME=\"${CMAKE_CURRENT_SOURCE_DIR}/\"
 )
