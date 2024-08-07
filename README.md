@@ -1,10 +1,14 @@
 # FullStackChattingDemo
 ## Description
+
+C++17 is a must
+
 ### Client
 1. Libraries: using QT6(Q::Widgets Qt::Network)
-   ![](./client_main.png)
-
-   ![](./register_page.png)
+   
+   ![](./assets/client_main.png)
+   
+   ![](./assets/register_page.png)
 
 
 ### Server
@@ -17,13 +21,13 @@
 2. Functions: accept both GET and POST methods
    Handling GET: /get_test
    Handling POST:/get_verification, client sends a json form to the server and server will parse the form and return a json form back to the client
-   ![](./server.png)
+   ![](./assets/server.png)
 
 3. Verification Server
    Sending verification code to server
-   ![](./verification.png)
+   ![](./assets/verification.png)
 
-    ![](./result.png)
+    ![](./assets/result.png)
 
 ## Requirements
 The project is self-contained and it has no dependency on both Windows and Linux/Unix-like systems.
@@ -62,7 +66,7 @@ git clone https://github.com/Liupeter01/FullStackChattingDemo
 
 1.client
 
-For MacOS
+For MacOS/Linux
 ```bash
 cd FullStackChattingDemo/client
 cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
@@ -73,6 +77,8 @@ For Windows
 ```bash
 #please import client dir to qt creator
 ```
+
+
 
 2.server
 
