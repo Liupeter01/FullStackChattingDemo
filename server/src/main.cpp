@@ -1,18 +1,20 @@
 #include<iostream>
 #include<config/ServerConfig.hpp>
 #include<server/GateServer.hpp>
+#include<service/IOServicePool.hpp>
 
 int main() 
 {
 		  try
 		  {
-					boost::asio::io_context ioc;
 					std::shared_ptr<GateServer> server = std::make_shared<GateServer>(
-							  ioc, ServerConfig::get_instance()->GateServerPort
+							  IOServicePool::get_instance()->getIOServiceContext(),   //get ioc
+							  ServerConfig::get_instance()->GateServerPort				  //get port configuration
 					);
 					server->serverStart();
 
 					/*setting up signal*/
+					boost::asio::io_context ioc;
 					boost::asio::signal_set signal{ ioc, SIGINT, SIGTERM };
 					signal.async_wait([&ioc](boost::system::error_code ec, int sig_number) {
 							  if (ec) {
