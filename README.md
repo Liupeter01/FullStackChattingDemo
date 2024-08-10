@@ -47,7 +47,8 @@ but on verification-server(server/verification-server) you have to set your own 
     },
 	"mysql": {
 		"host": "your ip",
-		"port": "your port"
+		  "port": "your port",
+		  "password":  "your password"
 	},
 	"redis": {
 		"host": "your ip",
