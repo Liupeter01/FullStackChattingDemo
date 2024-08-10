@@ -59,7 +59,7 @@ void HandleMethod::registerPostCallBacks()
 
                     printf("[NOTICE]: server receive request email addr: %s\n", email.c_str());
 
-                    auto& response = gRPCVerificationService::get_instance()->getVerificationCode(email);
+                    auto& response = gRPCVerificationService::getVerificationCode(email);
 
                     send_root["error"] = response.error();
                     send_root["email"] = src_root["email"].asString();
