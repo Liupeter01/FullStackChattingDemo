@@ -12,11 +12,15 @@ C++17 is a must
 
 
 ### Server
-1. Libraries:
+1. Libraries
    boost-1.84 -> FetchContent (contains beast asio uuid)
    grpc-1.50.2 -> FetchContent
    jsoncpp
    ada(url parsing)
+
+   hiredis
+
+   
 
 2. Functions: accept both GET and POST methods
    Handling GET: /get_test
