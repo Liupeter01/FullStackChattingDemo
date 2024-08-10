@@ -27,15 +27,26 @@ C++17 is a must
    Handling POST:/get_verification, client sends a json form to the server and server will parse the form and return a json form back to the client
    ![](./assets/server.png)
 
+   
+
 3. Verification Server
+
+   import ioredis, grpc-js proto-loader, nodemailer, uuidv4 libraries to the project
+
+   
+
    Sending verification code to server
    ![](./assets/verification.png)
 
     ![](./assets/result.png)
 
+
+
 ## Requirements
-The project is self-contained and it has no dependency on both Windows and Linux/Unix-like systems.
-but on verification-server(server/verification-server) you have to set your own email and authorized code
+
+The project is self-contained almost all dependencies on both Windows and Linux/Unix-like systems.
+
+1. verification-server configuration file(config.json): you have to set those parameters
 
 ```json
 {
@@ -58,7 +69,24 @@ but on verification-server(server/verification-server) you have to set your own 
 }
 ```
 
+2. setup Redis server
+
+   2.1 For Windows: i recommend redis-5.0.14.1
+
+   ​	https://github.com/tporadowski/redis/releases/tag/v5.0.14.1
+
+   
+
+   2.2 For Linux
+
+   ​       Pull the official docker image from Docker hub
+
+   ```bash
+   
+   ```
+
 ## Developer Quick Start
+
 ### Platform Support
 Windows, Linux, MacOS(Intel & Apple Silicon M)
 
@@ -179,3 +207,7 @@ node index.js
    Referring Url
     https://github.com/protocolbuffers/protobuf/issues/12185
     https://github.com/protocolbuffers/protobuf/issues/12185#issuecomment-1594685860
+
+6. E No address added out of total 1 resolved
+
+   you have to start the main server first and then open nodejs service
