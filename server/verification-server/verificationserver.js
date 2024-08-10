@@ -10,6 +10,10 @@ async function generateEmail(email, callback){
 
     /*generate verification code*/
     let id = uuidv4.uuid()
+
+    if(id.length > 4){
+        id = id.substring(0, 4);
+    }
     console.log('uuid generator: ', id);
 
     let email_text = {
