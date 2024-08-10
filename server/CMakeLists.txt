@@ -103,6 +103,7 @@ FetchContent_MakeAvailable(boost gRPC)
 add_subdirectory(ada)
 add_subdirectory(jsoncpp)
 add_subdirectory(inifile)
+add_subdirectory(hiredis)
 
 target_link_libraries(ChattingServer PUBLIC 
         Boost::asio
@@ -113,6 +114,7 @@ target_link_libraries(ChattingServer PUBLIC
         grpc++
         libprotobuf
         inicpp::inicpp
+        hiredis::hiredis
 )
 
 target_compile_definitions(ChattingServer PUBLIC 
