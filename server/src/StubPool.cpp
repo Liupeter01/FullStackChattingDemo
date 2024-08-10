@@ -7,7 +7,7 @@ stubpool::details::StubPool::StubPool()
 		  , m_addr(ServerConfig::get_instance()->VerificationServerAddress)
 		  , m_cred(grpc::InsecureChannelCredentials())
 {
-		  printf("connected to verification server addr = %s", m_addr.c_str());
+		  printf("connected to verification server addr = %s\n", m_addr.c_str());
 
 		  /*creating multiple stub*/
 		  for (std::size_t i = 0; i < m_queue_size; ++i) {
@@ -26,6 +26,7 @@ void stubpool::details::StubPool::shutdown()
 		  m_stop = true;
 		  m_cv.notify_all();
 
+		  std::lock_guard<std::mutex> _lckg(m_mtx);
 		  while (!m_stub_queue.empty()) {
 					m_stub_queue.pop();
 		  }
@@ -73,12 +74,16 @@ stubpool::StubRAII::~StubRAII()
 {
 		  if (status) {
 					stubpool::details::StubPool::get_instance()->release(std::move(m_stub));
+
+					/*StubRAII failed!!*/
+					status = false;
 		  }
 }
 
-grpc::Status stubpool::StubRAII::GetVerificationCode(::grpc::ClientContext* context,
-		  const ::message::GetVerificationRequest& request,
-		  ::message::GetVerificationResponse* response)
+std::optional<stubpool::StubRAII::wrapper> stubpool::StubRAII::operator->()
 {
-		  return  (!status ? grpc::Status::CANCELLED : m_stub ->GetVerificationCode(context, request, response));
+		  if (status) {
+					return wrapper(m_stub.get());
+		  }
+		  return std::nullopt;
 }
