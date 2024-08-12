@@ -25,6 +25,9 @@ C++17 is a must
 2. Functions: accept both GET and POST methods
    Handling GET: /get_test
    Handling POST:/get_verification, client sends a json form to the server and server will parse the form and return a json form back to the client
+
+   Handling POST:/post_registration, client sends a registration form to the server and server will parse the form and return result
+
    ![](./assets/server.png)
 
    
@@ -48,26 +51,26 @@ The project is self-contained almost all dependencies on both Windows and Linux/
 
 1. verification-server configuration file(config.json): you have to set those parameters
 
-```json
-{
-    "email":{
-        "host": "please set to your email host name",
-        "port": "please set to your email port",
-        "username": "please set to your email address",
-        "password": "please use your own authorized code"
-    },
-	"mysql": {
-		"host": "your ip",
-		  "port": "your port",
-		  "password":  "your password"
-	},
-	"redis": {
-		"host": "your ip",
-		"port": "your port",
-		"password": "your password"
-	}
-}
-```
+   ```bash
+   {
+       "email":{
+           "host": "please set to your email host name",
+           "port": "please set to your email port",
+           "username": "please set to your email address",
+           "password": "please use your own authorized code"
+       },
+   	"mysql": {
+   		"host": "your ip",
+   		  "port": "your port",
+   		  "password":  "your password"
+   	},
+   	"redis": {
+   		"host": "your ip",
+   		"port": "your port",
+   		"password": "your password"
+   	}
+   }
+   ```
 
 2. setup Redis server
 
@@ -81,9 +84,7 @@ The project is self-contained almost all dependencies on both Windows and Linux/
 
    ​       Pull the official docker image from Docker hub
 
-   ```bash
    
-   ```
 
 ## Developer Quick Start
 
@@ -99,7 +100,8 @@ git clone https://github.com/Liupeter01/FullStackChattingDemo
 
 1.client
 
-For MacOS/Linux
+​	For MacOS/Linux
+
 ```bash
 cd FullStackChattingDemo/client
 cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
@@ -153,6 +155,8 @@ node index.js
    Referring Url
    https://stackoverflow.com/questions/55960919/nodejs-syntaxerror-unexpected-token-in-json-at-position-0
 
+   
+   
 2. undefined symbol upb_alloc_global
    ```cmake
    set(protobuf_BUILD_LIBUPB OFF)
@@ -161,6 +165,8 @@ node index.js
    Referring Url
    https://github.com/grpc/grpc/issues/35794
 
+   
+   
 3. fatal error: 'unicode/locid.h' 'unicode/ucnv.h' file not found (usually happened on MacOS)
    Download icu 74.1
    ```bash
@@ -185,6 +191,8 @@ node index.js
    Referring Url
    https://unicode-org.github.io/icu/userguide/icu4c/build.html
 
+   
+   
 4. boringssl undefined win32
    ```cmake
    set(OPENSSL_NO_ASM ON)
@@ -193,6 +201,8 @@ node index.js
    Referring Url
    https://github.com/grpc/grpc/issues/16376
 
+   
+   
 5. Handling gRPC issue
    Issue description
    ```bash
@@ -208,6 +218,8 @@ node index.js
     https://github.com/protocolbuffers/protobuf/issues/12185
     https://github.com/protocolbuffers/protobuf/issues/12185#issuecomment-1594685860
 
+   
+   
 6. E No address added out of total 1 resolved
 
    you have to start the main server first and then open nodejs service
