@@ -22,9 +22,9 @@ struct Tools
     static void refreshQssStyle(QWidget *widget);
 
     template<typename Widget,
-             typename std::enable_if<has_settext_function<std::remove_pointer_t<Widget>>::value, int>::type = 0
+        typename std::enable_if<has_settext_function<std::remove_pointer_t<Widget>>::value, int>::type = 0
     >
-    static void setWidgetAttribute(Widget widget, const QString message, bool status){
+    static void setWidgetAttribute(Widget widget, const QString &message, bool status){
         widget->setText(message);
         widget->setProperty("state", (status ? "correct" : "incorrect"));
         refreshQssStyle(widget);

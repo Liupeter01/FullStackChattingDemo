@@ -6,6 +6,7 @@
 #include<optional>
 #include<condition_variable>
 
+#include<tools/tools.hpp>
 #include<grpcpp/grpcpp.h>
 #include<message/message.grpc.pb.h>
 #include<singleton/singleton.hpp>
@@ -53,16 +54,12 @@ namespace stubpool
 		  * get stub automatically!
 		  */
 		  class StubRAII {
+					using wrapper = tools::ResourcesWrapper< details::StubPool::stub>;
+
 		  public:
 					StubRAII();
 					~StubRAII();
-
-		  public:
-					grpc::Status GetVerificationCode(
-							  ::grpc::ClientContext* context,
-							  const ::message::GetVerificationRequest& request,
-							  ::message::GetVerificationResponse* response
-					);
+					std::optional<wrapper> operator->();
 
 		  private:
 					bool status;		  //load stub success flag

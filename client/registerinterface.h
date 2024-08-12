@@ -38,6 +38,8 @@ private slots:
         ServiceStatus srv_status
     );
 
+    void on_confirm_button_clicked();
+
 private:
     void setRegisterAttribute();
     void registerNetworkEvent();

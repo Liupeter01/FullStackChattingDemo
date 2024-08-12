@@ -8,10 +8,12 @@ enum class ServiceType : uint8_t {
 };
 
 enum class ServiceStatus : uint8_t {
-          SERVICE_SUCCESS,        //SUCCESS
-          JSONPARSE_ERROR,        //json parsing error
-          NETWORK_ERROR,           //network failed
-          GRPC_ERROR                      //grpc error
+          SERVICE_SUCCESS,                              //SUCCESS
+          JSONPARSE_ERROR,                             //json parsing error
+          NETWORK_ERROR,                               //network failed
+          GRPC_ERROR,                                        //grpc error
+          REDIS_UNKOWN_ERROR,                   //redis server error code
+          REDIS_CPATCHA_NOT_FOUND         //redis no cpatcha
 };
 
 #define _DEF_HPP_

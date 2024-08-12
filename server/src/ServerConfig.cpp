@@ -23,14 +23,14 @@ void ServerConfig::loadVerificationServerInfo()
 
 void ServerConfig::loadMySQLInfo()
 {
-          // m_ini["MySQL"]["host"].as<std::string>();
-          // m_ini["MySQL"]["port"].as<unsigned short>();
-          MySQLPasswd = m_ini["MySQL"]["password"].as<std::string>();
+          MySQL_port = m_ini["MySQL"]["port"].as<unsigned short>();
+          MySQL_ip_addr = m_ini["MySQL"]["host"].as<std::string>();
+          MySQL_passwd = m_ini["MySQL"]["password"].as<std::string>();
 }
 
 void ServerConfig::loadRedisInfo()
 {
-          // m_ini["Redis"]["host"].as<std::string>();
-          // m_ini["Redis"]["port"].as<unsigned short>();
-          RedisPasswd = m_ini["Redis"]["password"].as<std::string>();
+          Redis_port = m_ini["Redis"]["port"].as<unsigned short>();
+          Redis_ip_addr = m_ini["Redis"]["host"].as<std::string>();
+          Redis_passwd = m_ini["Redis"]["password"].as<std::string>();
 }

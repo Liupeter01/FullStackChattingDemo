@@ -5,6 +5,7 @@
 #include<handler/HandleMethod.hpp>
 #include<http/HttpConnection.hpp>
 #include<grpc/GrpcVerificationService.hpp>
+#include<redis/RedisManager.hpp>
 
 HandleMethod::~HandleMethod()
 {
@@ -32,8 +33,7 @@ void HandleMethod::registerGetCallBacks()
 
 void HandleMethod::registerPostCallBacks()
 {
-          this->post_method_callback.emplace("/get_verification", [this](std::shared_ptr<HTTPConnection> conn)->bool 
-          {
+          this->post_method_callback.emplace("/get_verification", [this](std::shared_ptr<HTTPConnection> conn)->bool {
                     conn->http_response.set(boost::beast::http::field::content_type, "text/json");
                     auto body = boost::beast::buffers_to_string(conn->http_request.body().data());
 
@@ -57,12 +57,77 @@ void HandleMethod::registerPostCallBacks()
                     /*Get email string and send to grpc service*/
                     auto email = src_root["email"].asString();
 
-                    printf("[NOTICE]: server receive request email addr: %s\n", email.c_str());
+                    printf("[NOTICE]: Server receive verification request, email addr: %s\n", email.c_str());
 
-                    auto& response = gRPCVerificationService::get_instance()->getVerificationCode(email);
+                    auto& response = gRPCVerificationService::getVerificationCode(email);
 
                     send_root["error"] = response.error();
                     send_root["email"] = src_root["email"].asString();
+                    boost::beast::ostream(conn->http_response.body()) << send_root.toStyledString();
+                    return true;
+          });
+
+          this->post_method_callback.emplace("/post_registration", [this](std::shared_ptr<HTTPConnection> conn)->bool{
+                    conn->http_response.set(boost::beast::http::field::content_type, "text/json");
+                    auto body = boost::beast::buffers_to_string(conn->http_request.body().data());
+
+                    printf("[NOTICE]: Server receive registration request, post data: %s\n", body.c_str());
+
+                    Json::Value send_root;        /*write into body*/
+                    Json::Value src_root;         /*store json from client*/
+                    Json::Reader reader;
+
+                    /*parsing failed*/
+                    if (!reader.parse(body, src_root)) {
+                              jsonParsingError(conn);
+                              return false;
+                    }
+
+                    /*parsing failed*/
+                    if (!(src_root.isMember("username") 
+                              && src_root.isMember("password") 
+                              && src_root.isMember("email")
+                              && src_root.isMember("cpatcha"))) 
+                    {
+                              jsonParsingError(conn);
+                              return false;
+                    }
+
+                    /*Get email string and send to grpc service*/
+                    Json::String username = src_root["username"].asString();
+                    Json::String password = src_root["password"].asString();
+                    Json::String email = src_root["email"].asString();
+                    Json::String cpatcha = src_root["cpatcha"].asString();
+
+                    /*find verification code by checking email in redis*/
+                    redis::RedisRAII raii;
+                    std::optional<std::string> verification_code = raii->get()->checkValue(email);
+
+                    /* 
+                     * Redis
+                     * no verification code found!!
+                     */
+                    if (!verification_code.has_value()) {
+                              redisError(conn);
+                              return false;
+                    }
+
+                    if (verification_code.value() != cpatcha) {
+                              captchaError(conn);
+                              return false;
+                    }
+
+                    /*
+                     * MYSQL
+                     * start to create a new user
+                     */
+
+                    send_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
+                    send_root["username"] = username;
+                    send_root["password"] = password;
+                    send_root["email"] = email;
+                    send_root["cpatcha"] = cpatcha;
+
                     boost::beast::ostream(conn->http_response.body()) << send_root.toStyledString();
                     return true;
           });
@@ -71,12 +136,27 @@ void HandleMethod::registerPostCallBacks()
 void HandleMethod::jsonParsingError(std::shared_ptr<HTTPConnection> conn)
 {
           Json::Value root;
-
-#ifdef _DEBUG
-          printf("[ERROR]: failed to parse json data!\n");
-#endif
+          printf("[ERROR]: Failed to parse json data!\n");
 
           root["error"] = static_cast<uint8_t>(ServiceStatus::JSONPARSE_ERROR);
+          boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
+}
+
+void HandleMethod::redisError(std::shared_ptr<HTTPConnection> conn)
+{
+          Json::Value root;
+          printf("[ERROR]: Internel redis server error!\n");
+
+          root["error"] = static_cast<uint8_t>(ServiceStatus::REDIS_UNKOWN_ERROR);
+          boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
+}
+
+void HandleMethod::captchaError(std::shared_ptr<HTTPConnection> conn)
+{
+          Json::Value root;
+          printf("[ERROR]: CPATCHA is different from Redis DB!\n");
+
+          root["error"] = static_cast<uint8_t>(ServiceStatus::REDIS_CPATCHA_NOT_FOUND);
           boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
 }
 

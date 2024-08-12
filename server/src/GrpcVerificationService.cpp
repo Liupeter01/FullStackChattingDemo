@@ -2,14 +2,15 @@
 #include<config/ServerConfig.hpp>
 #include<grpc/GrpcVerificationService.hpp>
 
-message::GetVerificationResponse  gRPCVerificationService::getVerificationCode(std::string email) {
+message::GetVerificationResponse  gRPCVerificationService::getVerificationCode(std::string email) 
+{
           grpc::ClientContext context;
           message::GetVerificationRequest request;
           message::GetVerificationResponse response;
           request.set_email(email);
 
-          std::shared_ptr<stubpool::StubRAII> stub(std::make_shared<stubpool::StubRAII>());
-          grpc::Status status = stub->GetVerificationCode(&context, request, &response);
+          stubpool::StubRAII raii;
+          grpc::Status status = raii->get()->GetVerificationCode(&context, request, &response);
 
           /*error occured*/
           if (!status.ok()) {
