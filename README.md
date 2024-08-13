@@ -1,47 +1,42 @@
 # FullStackChattingDemo
 ## Description
 
-C++17 is a must
+FullStackChattingDemo using C++17 standard
 
-### Client
-1. Libraries: using QT6(Q::Widgets Qt::Network)
-   
-   ![](./assets/client_main.png)
-   
-   ![](./assets/register_page.png)
+## Client
 
+### Libraries
 
-### Server
-1. Libraries
-   boost-1.84 -> FetchContent (contains beast asio uuid)
-   grpc-1.50.2 -> FetchContent
-   jsoncpp
-   ada(url parsing)
+using QT6(Q::Widgets Qt::Network)
 
-   hiredis
+![](./assets/client_main.png)
 
-   
+![](./assets/register_page.png)
 
-2. Functions: accept both GET and POST methods
-   Handling GET: /get_test
-   Handling POST:/get_verification, client sends a json form to the server and server will parse the form and return a json form back to the client
+## Server
 
-   Handling POST:/post_registration, client sends a registration form to the server and server will parse the form and return result
+### Libraries
 
-   ![](./assets/server.png)
+boost-1.84  (beast asio uuid), grpc-1.50.2, hiredis, jsoncpp, ada(url parsing)
 
-   
+### Functions
 
-3. Verification Server
+/get_test(GET method): system function test.
 
-   import ioredis, grpc-js proto-loader, nodemailer, uuidv4 libraries to the project
+/get_verification(POST method): User sends get CPATCHA request to server. server using GRPC protocol to communicate with NodeJS server and generate and store uuid in Redis DB.
 
-   
+/post_registration(POST method): User post registration request to server. server store info into DB.
 
-   Sending verification code to server
-   ![](./assets/verification.png)
+![](./assets/server.png)
 
-    ![](./assets/result.png)
+### Submodule -- Verification Server(NodeJS)
+
+import ioredis, grpc-js proto-loader, nodemailer, uuidv4 libraries to the project
+
+Sending verification code to server
+![](./assets/verification.png)
+
+ ![](./assets/result.png)
 
 
 
@@ -49,80 +44,87 @@ C++17 is a must
 
 The project is self-contained almost all dependencies on both Windows and Linux/Unix-like systems.
 
-1. verification-server configuration file(config.json): you have to set those parameters
+### Verification Server(Nodejs)
+
+verification server using config.json to store parameters
+
+```json
+{
+    "email":{
+        "host": "please set to your email host name",
+        "port": "please set to your email port",
+        "username": "please set to your email address",
+        "password": "please use your own authorized code"
+    },
+	"mysql": {
+		"host": "your ip",
+		  "port": "your port",
+		  "password":  "your password"
+	},
+	"redis": {
+		"host": "your ip",
+		"port": "your port",
+		"password": "your password"
+	}
+}
+```
+
+### Redis Server
+
+1. For Windows -- redis-5.0.14.1
+
+   URL: https://github.com/tporadowski/redis/releases/tag/v5.0.14.1
+
+2. For Linux/MacOS
 
    ```bash
-   {
-       "email":{
-           "host": "please set to your email host name",
-           "port": "please set to your email port",
-           "username": "please set to your email address",
-           "password": "please use your own authorized code"
-       },
-   	"mysql": {
-   		"host": "your ip",
-   		  "port": "your port",
-   		  "password":  "your password"
-   	},
-   	"redis": {
-   		"host": "your ip",
-   		"port": "your port",
-   		"password": "your password"
-   	}
-   }
+   #Pull the official docker image from Docker hub
    ```
 
-2. setup Redis server
+### MySQL Server
 
-   2.1 For Windows: i recommend redis-5.0.14.1
+1. For Windows -- redis-5.0.14.1
 
-   ​	https://github.com/tporadowski/redis/releases/tag/v5.0.14.1
+   URL: https://dev.mysql.com/get/Downloads/MySQL-9.0/mysql-9.0.1-winx64.msi
 
-   
+2. For Linux/MacOS
 
-   2.2 For Linux
-
-   ​       Pull the official docker image from Docker hub
-
-   
+   ```bash
+   #Pull the official docker image from Docker hub
+   	docker pull mysql:8.0
+   #create container(mapping inner port 3306 to host 3306)
+   	docker run --name MySQL -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql
+   ```
 
 ## Developer Quick Start
 
 ### Platform Support
 Windows, Linux, MacOS(Intel & Apple Silicon M)
 
-### Building FullStackChattingDemo
+### Download FullStackChattingDemo
 
-Download FullStackChattingDemo Project
 ```bash
 git clone https://github.com/Liupeter01/FullStackChattingDemo
 ```
 
-1.client
+### Compile Client
 
-​	For MacOS/Linux
+1. For Windows
 
-```bash
-cd FullStackChattingDemo/client
-cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
-cmake --build build --parallel [x]
-```
+   ```bash
+   #please import client dir to qt creator
+   ```
 
-For Windows
-```bash
-#please import client dir to qt creator
-```
+2. For MacOS/Linux
 
+   ```bash
+   #It might take a long time to download dependency libraies!!!!
+   cd FullStackChattingDemo/client
+   cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+   cmake --build build --parallel [x]
+   ```
 
-
-2.server
-
-We are going to simplified this in the future^_^!!!
-
-Compile Main Server Code(c++)
-
-It might take a long time to download dependency libraies!!!!
-
+### Compile Server
 
 ```bash
 cd FullStackChattingDemo/server
@@ -131,16 +133,28 @@ cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel [x]
 ```
 
-Execute Main Server Program
-```bash
-./build/ChattingServer
-```
+### How to Execute
 
-Execute Verification Code(Nodejs)
-```bash
-cd verification-server
-node index.js
-```
+1. Execute Main Server Program
+
+   ```bash
+   ./server/build/ChattingServer
+   ```
+
+2. Activate Redis and MySQL service
+
+3. Execute Verification Server(Nodejs)
+
+   ```bash
+   cd server/verification-server
+   node index.js
+   ```
+
+4. Execute Client
+
+   ```bash
+   ./client/build/ChattingServer
+   ```
 
 ### Error Handling
 1. SyntaxError: Unexpected token  in JSON at position 0
