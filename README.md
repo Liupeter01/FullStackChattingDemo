@@ -44,9 +44,29 @@ Sending verification code to server
 
 The project is self-contained almost all dependencies on both Windows and Linux/Unix-like systems.
 
+### Main Server(C++)
+
+main server using config.ini to store parameters
+
+```ini
+[GateServer]
+port =
+[VerificationServer]
+host=
+port=
+[MySQL]
+host=
+port=
+password=
+[Redis]
+host=
+port=
+password=
+```
+
 ### Verification Server(Nodejs)
 
-verification server using config.json to store parameters
+verification server using verification-server/config.json to store parameters
 
 ```json
 {
@@ -93,8 +113,10 @@ verification server using config.json to store parameters
    #Pull the official docker image from Docker hub
    	docker pull mysql:8.0
    #create container(mapping inner port 3306 to host 3306)
-   	docker run --name MySQL -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql
+   	docker run --name MySQL -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql:8.0
    ```
+
+
 
 ## Developer Quick Start
 
@@ -219,19 +241,20 @@ cmake --build build --parallel [x]
    
 5. Handling gRPC issue
    Issue description
+   
    ```bash
    CMake Error: install(EXPORT "protobuf-targets" ...) includes target "libprotobuf-lite" which requires target "absl_node_hash_map" that is not in any export set.
    ```
-
+   
    Problem Solving
    ```cmake
    set(ABSL_ENABLE_INSTALL ON)
    ```
-
+   
    Referring Url
     https://github.com/protocolbuffers/protobuf/issues/12185
     https://github.com/protocolbuffers/protobuf/issues/12185#issuecomment-1594685860
-
+   
    
    
 6. E No address added out of total 1 resolved
