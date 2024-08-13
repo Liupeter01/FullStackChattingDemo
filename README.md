@@ -113,7 +113,6 @@ verification server using verification-server/config.json to store parameters
    #Pull the official docker image from Docker hub
    	docker pull mysql:8.0
    #create container(mapping inner port 3306 to host 3306)
-   	docker run --name MySQL -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql:8.0
    ```
 
 
