@@ -104,6 +104,7 @@ add_subdirectory(ada)
 add_subdirectory(jsoncpp)
 add_subdirectory(inifile)
 add_subdirectory(hiredis)
+add_subdirectory(spdlog)
 
 target_link_libraries(ChattingServer PUBLIC 
         Boost::asio
@@ -115,6 +116,7 @@ target_link_libraries(ChattingServer PUBLIC
         libprotobuf
         inicpp::inicpp
         hiredis::hiredis
+        spdlog::spdlog
 )
 
 target_compile_definitions(ChattingServer PUBLIC 
