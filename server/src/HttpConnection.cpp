@@ -1,4 +1,5 @@
 #include<ada.h>
+#include<spdlog/spdlog.h>
 #include<http/HttpConnection.hpp>
 #include<handler/HandleMethod.hpp>
 
@@ -95,9 +96,7 @@ void HTTPConnection::handle_get_request(std::shared_ptr<HTTPConnection> extended
           std::string_view url_path = this->http_url_info.substr(0, pos);
           std::string_view url_param = this->http_url_info.substr(pos + 1);
 
-          std::cerr << "url_path = " << url_path << '\n'
-                        << "url_param = " << url_param << '\n';
-
+          spdlog::info("url_path = {0}, url_param = {1}", url_path, url_param);
 
           ada::url_search_params parameters(url_param);
           for (const auto& param : parameters) {

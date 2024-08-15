@@ -1,3 +1,4 @@
+#include<spdlog/spdlog.h>
 #include<redis/RedisContextRAII.hpp>
 #include<redis/RedisReplyRAII.hpp>
 
@@ -18,7 +19,7 @@ redis::RedisContext::RedisContext(const std::string& ip,
 					m_redisContext.reset();
 		  }
 		  else {
-					printf("Connection to Redis server success! \n");
+					spdlog::info("Connection to Redis server success!");
 					checkAuth(password);
 		  }
 }
@@ -37,7 +38,7 @@ bool redis::RedisContext::setValue(const std::string& key, const std::string& va
 							  (m_replyDelegate->getMessage().value() == "ok"
 										|| m_replyDelegate->getMessage().value() == "OK")) 
 					{
-							  printf("[REDIS]: excute command [ SET key = %s, value = %s] successfully!\n", key.c_str(), value.c_str());
+							  spdlog::info("Excute command [ SET key = {0}, value = {1}] successfully!", key.c_str(), value.c_str());
 							  return true;
 					}
 		  }
@@ -54,7 +55,7 @@ bool redis::RedisContext::leftPush(const std::string& key, const std::string& va
 							  && m_replyDelegate->getInterger().has_value()
 							  && m_replyDelegate->getInterger().value() > 0)
 					{
-							  printf("[REDIS]: excute command [ LPUSH key = %s, value = %s] successfully!\n", key.c_str(), value.c_str());
+							  spdlog::info("Excute command  [ LPUSH key = {0}, value = {1}]  successfully!", key.c_str(), value.c_str());
 							  return true;
 					}
 		  }
@@ -71,7 +72,7 @@ bool redis::RedisContext::rightPush(const std::string& key, const std::string& v
 							  && m_replyDelegate->getInterger().has_value()
 							  && m_replyDelegate->getInterger().value() > 0)
 					{
-							  printf("[REDIS]: excute command [ RPUSH key = %s, value = %s] successfully!\n", key.c_str(), value.c_str());
+							  spdlog::info("Excute command  [ RPUSH key = {0}, value = {1}]  successfully!", key.c_str(), value.c_str());
 							  return true;
 					}
 		  }
@@ -86,7 +87,7 @@ bool redis::RedisContext::delPair(const std::string& key)
 					if (m_replyDelegate->getType().has_value()
 							  && m_replyDelegate->getType().value() == REDIS_REPLY_INTEGER)
 					{
-							  printf("[REDIS]: excute command [ DEL key = %s ] successfully!\n", key.c_str());
+							  spdlog::info("Excute command [ DEL key = {} ]successfully!", key.c_str());
 							  return true;
 					}
 		  }
@@ -103,7 +104,7 @@ bool  redis::RedisContext::existKey(const std::string& key)
 							  && m_replyDelegate->getInterger().has_value()
 							  && !m_replyDelegate->getInterger().value())
 					{
-							  printf("[REDIS]: excute command [ exists key = %s ] successfully!\n", key.c_str());
+							  spdlog::info("Excute command [ exists key = {}] successfully!", key.c_str());
 							  return true;
 					}
 		  }
@@ -119,7 +120,7 @@ std::optional<std::string> redis::RedisContext::checkValue(const std::string &ke
 		  if (m_replyDelegate->getType().has_value() && m_replyDelegate->getType().value() != REDIS_REPLY_STRING) {
 					return std::nullopt;
 		  }
-		  printf("[REDIS]: excute command [ GET key = %s ] successfully!\n", key.c_str());
+		  spdlog::info("Excute command [ GET key = %s ] successfully!", key.c_str());
 		  return m_replyDelegate->getMessage();
 }
 
@@ -137,7 +138,7 @@ std::optional<std::string> redis::RedisContext::leftPop(const std::string& key)
 		  {
 					return std::nullopt;
 		  }
-		  printf("[REDIS]: excute command [ LPOP key = %s ] successfully!\n", key.c_str());
+		  spdlog::info("Excute command [ LPOP key = {} ] successfully!", key.c_str());
 		  return m_replyDelegate->getMessage();
 }
 
@@ -152,20 +153,20 @@ std::optional<std::string> redis::RedisContext::rightPop(const std::string& key)
 		  {
 					return std::nullopt;
 		  }
-		  printf("[REDIS]: excute command [ RPOP key = %s ] successfully!\n", key.c_str());
+		  spdlog::info("Excute command  [ RPOP key = {}] successfully!", key.c_str());
 		  return m_replyDelegate->getMessage();
 }
 
 bool redis::RedisContext::checkError()
 {
 		  if (m_redisContext.get() == nullptr) {
-					printf("Connection to Redis server failed! No instance!\n");
+					spdlog::error("Connection to Redis server failed! No instance!");
 					return m_valid;		//false;
 		  }
 
 		  /*error occured*/
 		  if (m_redisContext->err) {
-					printf("Connection to Redis server failed! error code: %s\n", m_redisContext->errstr);
+					spdlog::error("Connection to Redis server failed! error code {}", m_redisContext->errstr);
 					return m_valid;
 		  }
 
@@ -178,7 +179,7 @@ bool redis::RedisContext::checkAuth(std::string_view sv)
 		  std::unique_ptr<RedisReply> m_replyDelegate = std::make_unique<RedisReply>();
 		  auto status = m_replyDelegate->redisCommand(*this, std::string("AUTH %s"), sv.data());
 		  if (status) {
-					printf("[REDIS]: excute command [ AUTH ] successfully!\n");
+					spdlog::info("Excute command  [ AUTH ] successfully!");
 		  }
 		  return status;
 }

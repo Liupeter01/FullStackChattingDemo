@@ -1,11 +1,12 @@
-#include <grpc/GrpcVerificationService.hpp>
-#include <handler/HandleMethod.hpp>
-#include <http/HttpConnection.hpp>
 #include <json/json.h>
 #include <json/reader.h>
 #include <json/value.h>
-#include <network/def.hpp> //network errorcode defs
+#include<spdlog/spdlog.h>
+#include <network/def.hpp>     //network errorcode defs
 #include <redis/RedisManager.hpp>
+#include <http/HttpConnection.hpp>
+#include <handler/HandleMethod.hpp>
+#include <grpc/GrpcVerificationService.hpp>
 
 HandleMethod::~HandleMethod() {}
 
@@ -36,7 +37,7 @@ void HandleMethod::registerPostCallBacks() {
         auto body =
             boost::beast::buffers_to_string(conn->http_request.body().data());
 
-        printf("[NOTICE]: server receive post data: %s\n", body.c_str());
+        spdlog::info("Server receive post data: {}", body.c_str());
 
         Json::Value send_root; /*write into body*/
         Json::Value src_root;  /*store json from client*/
@@ -56,9 +57,7 @@ void HandleMethod::registerPostCallBacks() {
         /*Get email string and send to grpc service*/
         auto email = src_root["email"].asString();
 
-        printf(
-            "[NOTICE]: Server receive verification request, email addr: %s\n",
-            email.c_str());
+        spdlog::info("Server receive verification request, email addr: {}", email.c_str());
 
         auto response = gRPCVerificationService::getVerificationCode(email);
 
@@ -77,8 +76,7 @@ void HandleMethod::registerPostCallBacks() {
         auto body =
             boost::beast::buffers_to_string(conn->http_request.body().data());
 
-        printf("[NOTICE]: Server receive registration request, post data: %s\n",
-               body.c_str());
+        spdlog::info("Server receive registration request, post data: {}", body.c_str());
 
         Json::Value send_root; /*write into body*/
         Json::Value src_root;  /*store json from client*/
@@ -142,7 +140,7 @@ void HandleMethod::registerPostCallBacks() {
 
 void HandleMethod::jsonParsingError(std::shared_ptr<HTTPConnection> conn) {
   Json::Value root;
-  printf("[ERROR]: Failed to parse json data!\n");
+  spdlog::error("Failed to parse json data");
 
   root["error"] = static_cast<uint8_t>(ServiceStatus::JSONPARSE_ERROR);
   boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
@@ -150,7 +148,8 @@ void HandleMethod::jsonParsingError(std::shared_ptr<HTTPConnection> conn) {
 
 void HandleMethod::redisError(std::shared_ptr<HTTPConnection> conn) {
   Json::Value root;
-  printf("[ERROR]: Internel redis server error!\n");
+
+  spdlog::error("Internel redis server error!");
 
   root["error"] = static_cast<uint8_t>(ServiceStatus::REDIS_UNKOWN_ERROR);
   boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
@@ -158,7 +157,8 @@ void HandleMethod::redisError(std::shared_ptr<HTTPConnection> conn) {
 
 void HandleMethod::captchaError(std::shared_ptr<HTTPConnection> conn) {
   Json::Value root;
-  printf("[ERROR]: CPATCHA is different from Redis DB!\n");
+
+  spdlog::error("CPATCHA is different from Redis DB!");
 
   root["error"] = static_cast<uint8_t>(ServiceStatus::REDIS_CPATCHA_NOT_FOUND);
   boost::beast::ostream(conn->http_response.body()) << root.toStyledString();

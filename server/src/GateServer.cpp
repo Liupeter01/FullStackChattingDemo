@@ -1,3 +1,4 @@
+#include<spdlog/spdlog.h>
 #include<server/GateServer.hpp>
 #include<http/HttpConnection.hpp>
 #include<service/IOServicePool.hpp>
@@ -6,8 +7,7 @@ GateServer::GateServer(boost::asio::io_context& _ioc, unsigned short port)
           :m_ioc(_ioc)
           , m_acceptor(_ioc, boost::asio::ip::tcp::endpoint(boost::asio::ip::address_v4::any(), port))
 {
-          printf("[NOTICE]: server activated, listen on port %u\n", port);
-
+          spdlog::info("Server activated, listen on port {}", port);
           this->serverStart();
 }
 
