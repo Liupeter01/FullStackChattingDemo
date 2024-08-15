@@ -12,3 +12,6 @@
 [submodule "server/hiredis"]
 	path = server/hiredis
 	url = https://github.com/redis/hiredis.git
+[submodule "server/spdlog"]
+	path = server/spdlog
+	url = https://github.com/gabime/spdlog.git
