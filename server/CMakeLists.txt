@@ -14,8 +14,8 @@ set(BOOST_NO_ASSEMBLY ON CACHE BOOL "Disable Boost Assembly")
 #we have to disable this to prevent upb_alloc_global
 set(protobuf_BUILD_LIBUPB OFF)
 
-#build gRPC++ with OpenSSL instead of BoringSSL
-set(gRPC_SSL_PROVIDER module)
+#enable OpenSSL
+set(gRPC_SSL_PROVIDER package)
 set(ABSL_ENABLE_INSTALL ON)   #Very important!!!!
 
 #generate include/message/*.pb.h 
@@ -85,11 +85,27 @@ file(GLOB_RECURSE proto_file CONFIGURE_DEPENDS proto/*.proto)
 add_executable(ChattingServer  ${source_file} ${header_file} ${GENERATED_PROTOBUF_FILES})
 target_include_directories(ChattingServer PUBLIC include jsoncpp/include ada/include inifile/include/)
 
+#OpenSSL
+FetchContent_Declare(
+           ssl_content
+           URL      https://github.com/janbar/openssl-cmake/archive/refs/tags/1.1.1k-20210430.tar.gz
+           DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+
+FetchContent_Declare(
+        libdatachannel
+        URL xxx
+        PATCH_COMMAND ${SED_EXECUTABLE} -i.bak "s/find_package(OpenSSL REQUIRED)//g" CMakeLists.txt
+        && ${SED_EXECUTABLE} -i.bak "s/find_package(OpenSSL REQUIRED)//g" deps/libsrtp/CMakeLists.txt
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+
 #import boost 1.84.0 library
 FetchContent_Declare(
             boost
             GIT_REPOSITORY https://github.com/boostorg/boost.git
             GIT_TAG boost-1.84.0 
+            DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 #import grpc1.50.2 library
 #strong not recommend to use grpc 1.60.x+ versions
@@ -97,8 +113,22 @@ FetchContent_Declare(
             gRPC
             GIT_REPOSITORY https://github.com/grpc/grpc
             GIT_TAG        v1.50.2
+            DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
-FetchContent_MakeAvailable(boost gRPC)
+
+#FetchContent_Declare(
+#            MySQL
+#            GIT_REPOSITORY https://github.com/mysql/mysql-connector-cpp
+#            GIT_TAG        9.0.0
+#            DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+#)
+
+FetchContent_MakeAvailable(
+          ssl_content
+          boost 
+          gRPC
+          #MySQL
+)
 
 add_subdirectory(ada)
 add_subdirectory(jsoncpp)
@@ -106,10 +136,17 @@ add_subdirectory(inifile)
 add_subdirectory(hiredis)
 add_subdirectory(spdlog)
 
+add_library(OpenSSL::SSL ALIAS ssl)
+add_library(OpenSSL::Crypto ALIAS crypto)
+
 target_link_libraries(ChattingServer PUBLIC 
+        OpenSSL::SSL
+        OpenSSL::Crypto
         Boost::asio
         Boost::beast
         Boost::uuid
+        zlibstatic
+        #mysql::concpp
         ada-singleheader-lib
         jsoncpp_object
         grpc++
