@@ -50,16 +50,18 @@ main server using config.ini to store parameters
 
 ```ini
 [GateServer]
-port =
+port = 8080
 [VerificationServer]
-host=
-port=
+host=127.0.0.1
+port = 65500
 [MySQL]
-host=
-port=
+username=
 password=
+database=
+host=localhost
+port=
 [Redis]
-host=
+host=127.0.0.1
 port=
 password=
 ```
