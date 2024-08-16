@@ -17,7 +17,7 @@ using QT6(Q::Widgets Qt::Network)
 
 ### Libraries
 
-boost-1.84  (beast asio uuid), grpc-1.50.2, hiredis, jsoncpp, ada(url parsing), spdlog
+boost-1.84  (beast asio uuid mysql), grpc-1.50.2, hiredis, jsoncpp, ada(url parsing), spdlog
 
 ### Functions
 
