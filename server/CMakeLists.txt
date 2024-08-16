@@ -91,7 +91,6 @@ FetchContent_Declare(
             boost
             GIT_REPOSITORY https://github.com/boostorg/boost.git
             GIT_TAG boost-1.84.0 
-            DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 
 #import grpc1.50.2 library
@@ -100,7 +99,6 @@ FetchContent_Declare(
             gRPC
             GIT_REPOSITORY https://github.com/grpc/grpc
             GIT_TAG        v1.50.2
-            DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 
 FetchContent_MakeAvailable(
