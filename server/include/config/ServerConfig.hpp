@@ -14,9 +14,11 @@ public:
 
           std::string VerificationServerAddress;
 
-          std::string MySQL_ip_addr;
-          unsigned short MySQL_port;
+          std::string MySQL_host;
+          std::string MySQL_port;
+          std::string MySQL_username;
           std::string MySQL_passwd;
+          std::string MySQL_database;
 
           std::string Redis_ip_addr;
           unsigned short Redis_port;
