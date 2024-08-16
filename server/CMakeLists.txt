@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.15)
+
 include(FetchContent)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -14,8 +16,7 @@ set(BOOST_NO_ASSEMBLY ON CACHE BOOL "Disable Boost Assembly")
 #we have to disable this to prevent upb_alloc_global
 set(protobuf_BUILD_LIBUPB OFF)
 
-#build gRPC++ with OpenSSL instead of BoringSSL
-set(gRPC_SSL_PROVIDER module)
+set(gRPC_SSL_PROVIDER package)
 set(ABSL_ENABLE_INSTALL ON)   #Very important!!!!
 
 #generate include/message/*.pb.h 
@@ -91,6 +92,7 @@ FetchContent_Declare(
             GIT_REPOSITORY https://github.com/boostorg/boost.git
             GIT_TAG boost-1.84.0 
 )
+
 #import grpc1.50.2 library
 #strong not recommend to use grpc 1.60.x+ versions
 FetchContent_Declare(
@@ -98,7 +100,11 @@ FetchContent_Declare(
             GIT_REPOSITORY https://github.com/grpc/grpc
             GIT_TAG        v1.50.2
 )
-FetchContent_MakeAvailable(boost gRPC)
+
+FetchContent_MakeAvailable(
+          boost 
+          gRPC
+)
 
 add_subdirectory(ada)
 add_subdirectory(jsoncpp)
@@ -110,6 +116,7 @@ target_link_libraries(ChattingServer PUBLIC
         Boost::asio
         Boost::beast
         Boost::uuid
+        Boost::mysql
         ada-singleheader-lib
         jsoncpp_object
         grpc++
