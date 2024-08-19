@@ -1,18 +1,17 @@
 {
 		  "email": {
-					"host": "smtp.163.com",
-					"port": 465,
-					"username": "15601266480@163.com",
-					"password": "GZSSVXHXLXIJORIR"
+					"host": "please set to your email host name",
+					"port": "please set to your email port",
+					"username": "please set to your email address",
+					"password": "please use your own authorized code"
 		  },
 		  "mysql": {
-					"host": "127.0.0.1",
-					"port": 500,
-					"password": "hello world"
+					"host": "your ip",
+					"port": 3307
 		  },
 		  "redis": {
-					"host": "127.0.0.1",
-					"port": 6380,
-					"password": 123456
+					"host": "your ip",
+					"port": 6379,
+					"password": "your password"
 		  }
 }
