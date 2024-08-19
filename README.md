@@ -857,96 +857,7 @@ verification server using verification-server/config.json to store parameters
    # By default the priority is 100.
    replica-priority 100
    
-   # The propagation error behavior controls how Redis will behave when it is
-   # unable to handle a command being processed in the replication stream from a master
-   # or processed while reading from an AOF file. Errors that occur during propagation
-   # are unexpected, and can cause data inconsistency. However, there are edge cases
-   # in earlier versions of Redis where it was possible for the server to replicate or persist
-   # commands that would fail on future versions. For this reason the default behavior
-   # is to ignore such errors and continue processing commands.
-   #
-   # If an application wants to ensure there is no data divergence, this configuration
-   # should be set to 'panic' instead. The value can also be set to 'panic-on-replicas'
-   # to only panic when a replica encounters an error on the replication stream. One of
-   # these two panic values will become the default value in the future once there are
-   # sufficient safety mechanisms in place to prevent false positive crashes.
-   #
-   # propagation-error-behavior ignore
-   
-   # Replica ignore disk write errors controls the behavior of a replica when it is
-   # unable to persist a write command received from its master to disk. By default,
-   # this configuration is set to 'no' and will crash the replica in this condition.
-   # It is not recommended to change this default, however in order to be compatible
-   # with older versions of Redis this config can be toggled to 'yes' which will just
-   # log a warning and execute the write command it got from the master.
-   #
-   # replica-ignore-disk-write-errors no
-   
-   # -----------------------------------------------------------------------------
-   # By default, Redis Sentinel includes all replicas in its reports. A replica
-   # can be excluded from Redis Sentinel's announcements. An unannounced replica
-   # will be ignored by the 'sentinel replicas <master>' command and won't be
-   # exposed to Redis Sentinel's clients.
-   #
-   # This option does not change the behavior of replica-priority. Even with
-   # replica-announced set to 'no', the replica can be promoted to master. To
-   # prevent this behavior, set replica-priority to 0.
-   #
-   # replica-announced yes
-   
-   # It is possible for a master to stop accepting writes if there are less than
-   # N replicas connected, having a lag less or equal than M seconds.
-   #
-   # The N replicas need to be in "online" state.
-   #
-   # The lag in seconds, that must be <= the specified value, is calculated from
-   # the last ping received from the replica, that is usually sent every second.
-   #
-   # This option does not GUARANTEE that N replicas will accept the write, but
-   # will limit the window of exposure for lost writes in case not enough replicas
-   # are available, to the specified number of seconds.
-   #
-   # For example to require at least 3 replicas with a lag <= 10 seconds use:
-   #
-   # min-replicas-to-write 3
-   # min-replicas-max-lag 10
-   #
-   # Setting one or the other to 0 disables the feature.
-   #
-   # By default min-replicas-to-write is set to 0 (feature disabled) and
-   # min-replicas-max-lag is set to 10.
-   
-   # A Redis master is able to list the address and port of the attached
-   # replicas in different ways. For example the "INFO replication" section
-   # offers this information, which is used, among other tools, by
-   # Redis Sentinel in order to discover replica instances.
-   # Another place where this info is available is in the output of the
-   # "ROLE" command of a master.
-   #
-   # The listed IP address and port normally reported by a replica is
-   # obtained in the following way:
-   #
-   #   IP: The address is auto detected by checking the peer address
-   #   of the socket used by the replica to connect with the master.
-   #
-   #   Port: The port is communicated by the replica during the replication
-   #   handshake, and is normally the port that the replica is using to
-   #   listen for connections.
-   #
-   # However when port forwarding or Network Address Translation (NAT) is
-   # used, the replica may actually be reachable via different IP and port
-   # pairs. The following two options can be used by a replica in order to
-   # report to its master a specific set of IP and port, so that both INFO
-   # and ROLE will report those values.
-   #
-   # There is no need to use both the options if you need to override just
-   # the port or the IP address.
-   #
-   # replica-announce-ip 5.5.5.5
-   # replica-announce-port 1234
-   
    ############################### KEYS TRACKING #################################
-   
    # Redis implements server assisted support for client side caching of values.
    # This is implemented using an invalidation table that remembers, using
    # a radix key indexed by key name, what clients have which keys. In turn
@@ -1141,200 +1052,7 @@ verification server using verification-server/config.json to store parameters
    # ACL LOG RESET. Define the maximum entry length of the ACL Log below.
    acllog-max-len 128
    
-   # Using an external ACL file
-   #
-   # Instead of configuring users here in this file, it is possible to use
-   # a stand-alone file just listing users. The two methods cannot be mixed:
-   # if you configure users here and at the same time you activate the external
-   # ACL file, the server will refuse to start.
-   #
-   # The format of the external ACL user file is exactly the same as the
-   # format that is used inside redis.conf to describe users.
-   #
-   # aclfile /etc/redis/users.acl
-   
-   # IMPORTANT NOTE: starting with Redis 6 "requirepass" is just a compatibility
-   # layer on top of the new ACL system. The option effect will be just setting
-   # the password for the default user. Clients will still authenticate using
-   # AUTH <password> as usually, or more explicitly with AUTH default <password>
-   # if they follow the new protocol: both will work.
-   #
-   # The requirepass is not compatible with aclfile option and the ACL LOAD
-   # command, these will cause requirepass to be ignored.
-   #
-   # requirepass foobared
-   
-   # New users are initialized with restrictive permissions by default, via the
-   # equivalent of this ACL rule 'off resetkeys -@all'. Starting with Redis 6.2, it
-   # is possible to manage access to Pub/Sub channels with ACL rules as well. The
-   # default Pub/Sub channels permission if new users is controlled by the
-   # acl-pubsub-default configuration directive, which accepts one of these values:
-   #
-   # allchannels: grants access to all Pub/Sub channels
-   # resetchannels: revokes access to all Pub/Sub channels
-   #
-   # From Redis 7.0, acl-pubsub-default defaults to 'resetchannels' permission.
-   #
-   # acl-pubsub-default resetchannels
-   
-   # Command renaming (DEPRECATED).
-   #
-   # ------------------------------------------------------------------------
-   # WARNING: avoid using this option if possible. Instead use ACLs to remove
-   # commands from the default user, and put them only in some admin user you
-   # create for administrative purposes.
-   # ------------------------------------------------------------------------
-   #
-   # It is possible to change the name of dangerous commands in a shared
-   # environment. For instance the CONFIG command may be renamed into something
-   # hard to guess so that it will still be available for internal-use tools
-   # but not available for general clients.
-   #
-   # Example:
-   #
-   # rename-command CONFIG b840fc02d524045429941cc15f59e41cb7be6c52
-   #
-   # It is also possible to completely kill a command by renaming it into
-   # an empty string:
-   #
-   # rename-command CONFIG ""
-   #
-   # Please note that changing the name of commands that are logged into the
-   # AOF file or transmitted to replicas may cause problems.
-   
-   ################################### CLIENTS ####################################
-   
-   # Set the max number of connected clients at the same time. By default
-   # this limit is set to 10000 clients, however if the Redis server is not
-   # able to configure the process file limit to allow for the specified limit
-   # the max number of allowed clients is set to the current file limit
-   # minus 32 (as Redis reserves a few file descriptors for internal uses).
-   #
-   # Once the limit is reached Redis will close all the new connections sending
-   # an error 'max number of clients reached'.
-   #
-   # IMPORTANT: When Redis Cluster is used, the max number of connections is also
-   # shared with the cluster bus: every node in the cluster will use two
-   # connections, one incoming and another outgoing. It is important to size the
-   # limit accordingly in case of very large clusters.
-   #
-   # maxclients 10000
-   
-   ############################## MEMORY MANAGEMENT ################################
-   
-   # Set a memory usage limit to the specified amount of bytes.
-   # When the memory limit is reached Redis will try to remove keys
-   # according to the eviction policy selected (see maxmemory-policy).
-   #
-   # If Redis can't remove keys according to the policy, or if the policy is
-   # set to 'noeviction', Redis will start to reply with errors to commands
-   # that would use more memory, like SET, LPUSH, and so on, and will continue
-   # to reply to read-only commands like GET.
-   #
-   # This option is usually useful when using Redis as an LRU or LFU cache, or to
-   # set a hard memory limit for an instance (using the 'noeviction' policy).
-   #
-   # WARNING: If you have replicas attached to an instance with maxmemory on,
-   # the size of the output buffers needed to feed the replicas are subtracted
-   # from the used memory count, so that network problems / resyncs will
-   # not trigger a loop where keys are evicted, and in turn the output
-   # buffer of replicas is full with DELs of keys evicted triggering the deletion
-   # of more keys, and so forth until the database is completely emptied.
-   #
-   # In short... if you have replicas attached it is suggested that you set a lower
-   # limit for maxmemory so that there is some free RAM on the system for replica
-   # output buffers (but this is not needed if the policy is 'noeviction').
-   #
-   # maxmemory <bytes>
-   
-   # MAXMEMORY POLICY: how Redis will select what to remove when maxmemory
-   # is reached. You can select one from the following behaviors:
-   #
-   # volatile-lru -> Evict using approximated LRU, only keys with an expire set.
-   # allkeys-lru -> Evict any key using approximated LRU.
-   # volatile-lfu -> Evict using approximated LFU, only keys with an expire set.
-   # allkeys-lfu -> Evict any key using approximated LFU.
-   # volatile-random -> Remove a random key having an expire set.
-   # allkeys-random -> Remove a random key, any key.
-   # volatile-ttl -> Remove the key with the nearest expire time (minor TTL)
-   # noeviction -> Don't evict anything, just return an error on write operations.
-   #
-   # LRU means Least Recently Used
-   # LFU means Least Frequently Used
-   #
-   # Both LRU, LFU and volatile-ttl are implemented using approximated
-   # randomized algorithms.
-   #
-   # Note: with any of the above policies, when there are no suitable keys for
-   # eviction, Redis will return an error on write operations that require
-   # more memory. These are usually commands that create new keys, add data or
-   # modify existing keys. A few examples are: SET, INCR, HSET, LPUSH, SUNIONSTORE,
-   # SORT (due to the STORE argument), and EXEC (if the transaction includes any
-   # command that requires memory).
-   #
-   # The default is:
-   #
-   # maxmemory-policy noeviction
-   
-   # LRU, LFU and minimal TTL algorithms are not precise algorithms but approximated
-   # algorithms (in order to save memory), so you can tune it for speed or
-   # accuracy. By default Redis will check five keys and pick the one that was
-   # used least recently, you can change the sample size using the following
-   # configuration directive.
-   #
-   # The default of 5 produces good enough results. 10 Approximates very closely
-   # true LRU but costs more CPU. 3 is faster but not very accurate. The maximum
-   # value that can be set is 64.
-   #
-   # maxmemory-samples 5
-   
-   # Eviction processing is designed to function well with the default setting.
-   # If there is an unusually large amount of write traffic, this value may need to
-   # be increased.  Decreasing this value may reduce latency at the risk of
-   # eviction processing effectiveness
-   #   0 = minimum latency, 10 = default, 100 = process without regard to latency
-   #
-   # maxmemory-eviction-tenacity 10
-   
-   # Starting from Redis 5, by default a replica will ignore its maxmemory setting
-   # (unless it is promoted to master after a failover or manually). It means
-   # that the eviction of keys will be just handled by the master, sending the
-   # DEL commands to the replica as keys evict in the master side.
-   #
-   # This behavior ensures that masters and replicas stay consistent, and is usually
-   # what you want, however if your replica is writable, or you want the replica
-   # to have a different memory setting, and you are sure all the writes performed
-   # to the replica are idempotent, then you may change this default (but be sure
-   # to understand what you are doing).
-   #
-   # Note that since the replica by default does not evict, it may end using more
-   # memory than the one set via maxmemory (there are certain buffers that may
-   # be larger on the replica, or data structures may sometimes take more memory
-   # and so forth). So make sure you monitor your replicas and make sure they
-   # have enough memory to never hit a real out-of-memory condition before the
-   # master hits the configured maxmemory setting.
-   #
-   # replica-ignore-maxmemory yes
-   
-   # Redis reclaims expired keys in two ways: upon access when those keys are
-   # found to be expired, and also in background, in what is called the
-   # "active expire key". The key space is slowly and interactively scanned
-   # looking for expired keys to reclaim, so that it is possible to free memory
-   # of keys that are expired and will never be accessed again in a short time.
-   #
-   # The default effort of the expire cycle will try to avoid having more than
-   # ten percent of expired keys still in memory, and will try to avoid consuming
-   # more than 25% of total memory and to add latency to the system. However
-   # it is possible to increase the expire "effort" that is normally set to
-   # "1", to a greater value, up to the value "10". At its maximum value the
-   # system will use more CPU, longer cycles (and technically may introduce
-   # more latency), and will tolerate less already expired keys still present
-   # in the system. It's a tradeoff between memory, CPU and latency.
-   #
-   # active-expire-effort 1
-   
    ############################# LAZY FREEING ####################################
-   
    # Redis has two primitives to delete keys. One is called DEL and is a blocking
    # deletion of the object. It means that the server stops processing new commands
    # in order to reclaim all the memory associated with an object in a synchronous
@@ -1376,7 +1094,6 @@ verification server using verification-server/config.json to store parameters
    # like if DEL was called. However you can configure each case specifically
    # in order to instead release memory in a non-blocking way like if UNLINK
    # was called, using the following configuration directives.
-   
    lazyfree-lazy-eviction no
    lazyfree-lazy-expire no
    lazyfree-lazy-server-del no
@@ -1386,61 +1103,14 @@ verification server using verification-server/config.json to store parameters
    # with UNLINK calls is not easy, to modify the default behavior of the DEL
    # command to act exactly like UNLINK, using the following configuration
    # directive:
-   
    lazyfree-lazy-user-del no
    
    # FLUSHDB, FLUSHALL, SCRIPT FLUSH and FUNCTION FLUSH support both asynchronous and synchronous
    # deletion, which can be controlled by passing the [SYNC|ASYNC] flags into the
    # commands. When neither flag is passed, this directive will be used to determine
    # if the data should be deleted asynchronously.
-   
    lazyfree-lazy-user-flush no
    
-   ################################ THREADED I/O #################################
-   
-   # Redis is mostly single threaded, however there are certain threaded
-   # operations such as UNLINK, slow I/O accesses and other things that are
-   # performed on side threads.
-   #
-   # Now it is also possible to handle Redis clients socket reads and writes
-   # in different I/O threads. Since especially writing is so slow, normally
-   # Redis users use pipelining in order to speed up the Redis performances per
-   # core, and spawn multiple instances in order to scale more. Using I/O
-   # threads it is possible to easily speedup two times Redis without resorting
-   # to pipelining nor sharding of the instance.
-   #
-   # By default threading is disabled, we suggest enabling it only in machines
-   # that have at least 4 or more cores, leaving at least one spare core.
-   # Using more than 8 threads is unlikely to help much. We also recommend using
-   # threaded I/O only if you actually have performance problems, with Redis
-   # instances being able to use a quite big percentage of CPU time, otherwise
-   # there is no point in using this feature.
-   #
-   # So for instance if you have a four cores boxes, try to use 2 or 3 I/O
-   # threads, if you have a 8 cores, try to use 6 threads. In order to
-   # enable I/O threads use the following configuration directive:
-   #
-   # io-threads 4
-   #
-   # Setting io-threads to 1 will just use the main thread as usual.
-   # When I/O threads are enabled, we only use threads for writes, that is
-   # to thread the write(2) syscall and transfer the client buffers to the
-   # socket. However it is also possible to enable threading of reads and
-   # protocol parsing using the following configuration directive, by setting
-   # it to yes:
-   #
-   # io-threads-do-reads no
-   #
-   # Usually threading reads doesn't help much.
-   #
-   # NOTE 1: This configuration directive cannot be changed at runtime via
-   # CONFIG SET. Also, this feature currently does not work when SSL is
-   # enabled.
-   #
-   # NOTE 2: If you want to test the Redis speedup using redis-benchmark, make
-   # sure you also run the benchmark itself in threaded mode, using the
-   # --threads option to match the number of Redis threads, otherwise you'll not
-   # be able to notice the improvements.
    
    ############################ KERNEL OOM CONTROL ##############################
    
@@ -1609,7 +1279,6 @@ verification server using verification-server/config.json to store parameters
    #
    # Specify a percentage of zero in order to disable the automatic AOF
    # rewrite feature.
-   
    auto-aof-rewrite-percentage 100
    auto-aof-rewrite-min-size 64mb
    
@@ -1646,292 +1315,6 @@ verification server using verification-server/config.json to store parameters
    # the data from a specific point-in-time. However, using this capability changes
    # the AOF format in a way that may not be compatible with existing AOF parsers.
    aof-timestamp-enabled no
-   
-   ################################ SHUTDOWN #####################################
-   
-   # Maximum time to wait for replicas when shutting down, in seconds.
-   #
-   # During shut down, a grace period allows any lagging replicas to catch up with
-   # the latest replication offset before the master exists. This period can
-   # prevent data loss, especially for deployments without configured disk backups.
-   #
-   # The 'shutdown-timeout' value is the grace period's duration in seconds. It is
-   # only applicable when the instance has replicas. To disable the feature, set
-   # the value to 0.
-   #
-   # shutdown-timeout 10
-   
-   # When Redis receives a SIGINT or SIGTERM, shutdown is initiated and by default
-   # an RDB snapshot is written to disk in a blocking operation if save points are configured.
-   # The options used on signaled shutdown can include the following values:
-   # default:  Saves RDB snapshot only if save points are configured.
-   #           Waits for lagging replicas to catch up.
-   # save:     Forces a DB saving operation even if no save points are configured.
-   # nosave:   Prevents DB saving operation even if one or more save points are configured.
-   # now:      Skips waiting for lagging replicas.
-   # force:    Ignores any errors that would normally prevent the server from exiting.
-   #
-   # Any combination of values is allowed as long as "save" and "nosave" are not set simultaneously.
-   # Example: "nosave force now"
-   #
-   # shutdown-on-sigint default
-   # shutdown-on-sigterm default
-   
-   ################ NON-DETERMINISTIC LONG BLOCKING COMMANDS #####################
-   
-   # Maximum time in milliseconds for EVAL scripts, functions and in some cases
-   # modules' commands before Redis can start processing or rejecting other clients.
-   #
-   # If the maximum execution time is reached Redis will start to reply to most
-   # commands with a BUSY error.
-   #
-   # In this state Redis will only allow a handful of commands to be executed.
-   # For instance, SCRIPT KILL, FUNCTION KILL, SHUTDOWN NOSAVE and possibly some
-   # module specific 'allow-busy' commands.
-   #
-   # SCRIPT KILL and FUNCTION KILL will only be able to stop a script that did not
-   # yet call any write commands, so SHUTDOWN NOSAVE may be the only way to stop
-   # the server in the case a write command was already issued by the script when
-   # the user doesn't want to wait for the natural termination of the script.
-   #
-   # The default is 5 seconds. It is possible to set it to 0 or a negative value
-   # to disable this mechanism (uninterrupted execution). Note that in the past
-   # this config had a different name, which is now an alias, so both of these do
-   # the same:
-   # lua-time-limit 5000
-   # busy-reply-threshold 5000
-   
-   ################################ REDIS CLUSTER  ###############################
-   
-   # Normal Redis instances can't be part of a Redis Cluster; only nodes that are
-   # started as cluster nodes can. In order to start a Redis instance as a
-   # cluster node enable the cluster support uncommenting the following:
-   #
-   # cluster-enabled yes
-   
-   # Every cluster node has a cluster configuration file. This file is not
-   # intended to be edited by hand. It is created and updated by Redis nodes.
-   # Every Redis Cluster node requires a different cluster configuration file.
-   # Make sure that instances running in the same system do not have
-   # overlapping cluster configuration file names.
-   #
-   # cluster-config-file nodes-6379.conf
-   
-   # Cluster node timeout is the amount of milliseconds a node must be unreachable
-   # for it to be considered in failure state.
-   # Most other internal time limits are a multiple of the node timeout.
-   #
-   # cluster-node-timeout 15000
-   
-   # The cluster port is the port that the cluster bus will listen for inbound connections on. When set 
-   # to the default value, 0, it will be bound to the command port + 10000. Setting this value requires 
-   # you to specify the cluster bus port when executing cluster meet.
-   # cluster-port 0
-   
-   # A replica of a failing master will avoid to start a failover if its data
-   # looks too old.
-   #
-   # There is no simple way for a replica to actually have an exact measure of
-   # its "data age", so the following two checks are performed:
-   #
-   # 1) If there are multiple replicas able to failover, they exchange messages
-   #    in order to try to give an advantage to the replica with the best
-   #    replication offset (more data from the master processed).
-   #    Replicas will try to get their rank by offset, and apply to the start
-   #    of the failover a delay proportional to their rank.
-   #
-   # 2) Every single replica computes the time of the last interaction with
-   #    its master. This can be the last ping or command received (if the master
-   #    is still in the "connected" state), or the time that elapsed since the
-   #    disconnection with the master (if the replication link is currently down).
-   #    If the last interaction is too old, the replica will not try to failover
-   #    at all.
-   #
-   # The point "2" can be tuned by user. Specifically a replica will not perform
-   # the failover if, since the last interaction with the master, the time
-   # elapsed is greater than:
-   #
-   #   (node-timeout * cluster-replica-validity-factor) + repl-ping-replica-period
-   #
-   # So for example if node-timeout is 30 seconds, and the cluster-replica-validity-factor
-   # is 10, and assuming a default repl-ping-replica-period of 10 seconds, the
-   # replica will not try to failover if it was not able to talk with the master
-   # for longer than 310 seconds.
-   #
-   # A large cluster-replica-validity-factor may allow replicas with too old data to failover
-   # a master, while a too small value may prevent the cluster from being able to
-   # elect a replica at all.
-   #
-   # For maximum availability, it is possible to set the cluster-replica-validity-factor
-   # to a value of 0, which means, that replicas will always try to failover the
-   # master regardless of the last time they interacted with the master.
-   # (However they'll always try to apply a delay proportional to their
-   # offset rank).
-   #
-   # Zero is the only value able to guarantee that when all the partitions heal
-   # the cluster will always be able to continue.
-   #
-   # cluster-replica-validity-factor 10
-   
-   # Cluster replicas are able to migrate to orphaned masters, that are masters
-   # that are left without working replicas. This improves the cluster ability
-   # to resist to failures as otherwise an orphaned master can't be failed over
-   # in case of failure if it has no working replicas.
-   #
-   # Replicas migrate to orphaned masters only if there are still at least a
-   # given number of other working replicas for their old master. This number
-   # is the "migration barrier". A migration barrier of 1 means that a replica
-   # will migrate only if there is at least 1 other working replica for its master
-   # and so forth. It usually reflects the number of replicas you want for every
-   # master in your cluster.
-   #
-   # Default is 1 (replicas migrate only if their masters remain with at least
-   # one replica). To disable migration just set it to a very large value or
-   # set cluster-allow-replica-migration to 'no'.
-   # A value of 0 can be set but is useful only for debugging and dangerous
-   # in production.
-   #
-   # cluster-migration-barrier 1
-   
-   # Turning off this option allows to use less automatic cluster configuration.
-   # It both disables migration to orphaned masters and migration from masters
-   # that became empty.
-   #
-   # Default is 'yes' (allow automatic migrations).
-   #
-   # cluster-allow-replica-migration yes
-   
-   # By default Redis Cluster nodes stop accepting queries if they detect there
-   # is at least a hash slot uncovered (no available node is serving it).
-   # This way if the cluster is partially down (for example a range of hash slots
-   # are no longer covered) all the cluster becomes, eventually, unavailable.
-   # It automatically returns available as soon as all the slots are covered again.
-   #
-   # However sometimes you want the subset of the cluster which is working,
-   # to continue to accept queries for the part of the key space that is still
-   # covered. In order to do so, just set the cluster-require-full-coverage
-   # option to no.
-   #
-   # cluster-require-full-coverage yes
-   
-   # This option, when set to yes, prevents replicas from trying to failover its
-   # master during master failures. However the replica can still perform a
-   # manual failover, if forced to do so.
-   #
-   # This is useful in different scenarios, especially in the case of multiple
-   # data center operations, where we want one side to never be promoted if not
-   # in the case of a total DC failure.
-   #
-   # cluster-replica-no-failover no
-   
-   # This option, when set to yes, allows nodes to serve read traffic while the
-   # cluster is in a down state, as long as it believes it owns the slots.
-   #
-   # This is useful for two cases.  The first case is for when an application
-   # doesn't require consistency of data during node failures or network partitions.
-   # One example of this is a cache, where as long as the node has the data it
-   # should be able to serve it.
-   #
-   # The second use case is for configurations that don't meet the recommended
-   # three shards but want to enable cluster mode and scale later. A
-   # master outage in a 1 or 2 shard configuration causes a read/write outage to the
-   # entire cluster without this option set, with it set there is only a write outage.
-   # Without a quorum of masters, slot ownership will not change automatically.
-   #
-   # cluster-allow-reads-when-down no
-   
-   # This option, when set to yes, allows nodes to serve pubsub shard traffic while
-   # the cluster is in a down state, as long as it believes it owns the slots.
-   #
-   # This is useful if the application would like to use the pubsub feature even when
-   # the cluster global stable state is not OK. If the application wants to make sure only
-   # one shard is serving a given channel, this feature should be kept as yes.
-   #
-   # cluster-allow-pubsubshard-when-down yes
-   
-   # Cluster link send buffer limit is the limit on the memory usage of an individual
-   # cluster bus link's send buffer in bytes. Cluster links would be freed if they exceed
-   # this limit. This is to primarily prevent send buffers from growing unbounded on links
-   # toward slow peers (E.g. PubSub messages being piled up).
-   # This limit is disabled by default. Enable this limit when 'mem_cluster_links' INFO field
-   # and/or 'send-buffer-allocated' entries in the 'CLUSTER LINKS` command output continuously increase.
-   # Minimum limit of 1gb is recommended so that cluster link buffer can fit in at least a single
-   # PubSub message by default. (client-query-buffer-limit default value is 1gb)
-   #
-   # cluster-link-sendbuf-limit 0
-    
-   # Clusters can configure their announced hostname using this config. This is a common use case for 
-   # applications that need to use TLS Server Name Indication (SNI) or dealing with DNS based
-   # routing. By default this value is only shown as additional metadata in the CLUSTER SLOTS
-   # command, but can be changed using 'cluster-preferred-endpoint-type' config. This value is 
-   # communicated along the clusterbus to all nodes, setting it to an empty string will remove 
-   # the hostname and also propagate the removal.
-   #
-   # cluster-announce-hostname ""
-   
-   # Clusters can configure an optional nodename to be used in addition to the node ID for
-   # debugging and admin information. This name is broadcasted between nodes, so will be used
-   # in addition to the node ID when reporting cross node events such as node failures.
-   # cluster-announce-human-nodename ""
-   
-   # Clusters can advertise how clients should connect to them using either their IP address,
-   # a user defined hostname, or by declaring they have no endpoint. Which endpoint is
-   # shown as the preferred endpoint is set by using the cluster-preferred-endpoint-type
-   # config with values 'ip', 'hostname', or 'unknown-endpoint'. This value controls how
-   # the endpoint returned for MOVED/ASKING requests as well as the first field of CLUSTER SLOTS. 
-   # If the preferred endpoint type is set to hostname, but no announced hostname is set, a '?' 
-   # will be returned instead.
-   #
-   # When a cluster advertises itself as having an unknown endpoint, it's indicating that
-   # the server doesn't know how clients can reach the cluster. This can happen in certain 
-   # networking situations where there are multiple possible routes to the node, and the 
-   # server doesn't know which one the client took. In this case, the server is expecting
-   # the client to reach out on the same endpoint it used for making the last request, but use
-   # the port provided in the response.
-   #
-   # cluster-preferred-endpoint-type ip
-   
-   # In order to setup your cluster make sure to read the documentation
-   # available at https://redis.io web site.
-   
-   ########################## CLUSTER DOCKER/NAT support  ########################
-   
-   # In certain deployments, Redis Cluster nodes address discovery fails, because
-   # addresses are NAT-ted or because ports are forwarded (the typical case is
-   # Docker and other containers).
-   #
-   # In order to make Redis Cluster working in such environments, a static
-   # configuration where each node knows its public address is needed. The
-   # following four options are used for this scope, and are:
-   #
-   # * cluster-announce-ip
-   # * cluster-announce-port
-   # * cluster-announce-tls-port
-   # * cluster-announce-bus-port
-   #
-   # Each instructs the node about its address, client ports (for connections
-   # without and with TLS) and cluster message bus port. The information is then
-   # published in the header of the bus packets so that other nodes will be able to
-   # correctly map the address of the node publishing the information.
-   #
-   # If tls-cluster is set to yes and cluster-announce-tls-port is omitted or set
-   # to zero, then cluster-announce-port refers to the TLS port. Note also that
-   # cluster-announce-tls-port has no effect if tls-cluster is set to no.
-   #
-   # If the above options are not used, the normal Redis Cluster auto-detection
-   # will be used instead.
-   #
-   # Note that when remapped, the bus port may not be at the fixed offset of
-   # clients port + 10000, so you can specify any port and bus-port depending
-   # on how they get remapped. If the bus-port is not set, a fixed offset of
-   # 10000 will be used as usual.
-   #
-   # Example:
-   #
-   # cluster-announce-ip 10.1.1.5
-   # cluster-announce-tls-port 6379
-   # cluster-announce-port 0
-   # cluster-announce-bus-port 6380
    
    ################################## SLOW LOG ###################################
    
@@ -1978,22 +1361,7 @@ verification server using verification-server/config.json to store parameters
    # "CONFIG SET latency-monitor-threshold <milliseconds>" if needed.
    latency-monitor-threshold 0
    
-   ################################ LATENCY TRACKING ##############################
-   
-   # The Redis extended latency monitoring tracks the per command latencies and enables
-   # exporting the percentile distribution via the INFO latencystats command,
-   # and cumulative latency distributions (histograms) via the LATENCY command.
-   #
-   # By default, the extended latency monitoring is enabled since the overhead
-   # of keeping track of the command latency is very small.
-   # latency-tracking yes
-   
-   # By default the exported latency percentiles via the INFO latencystats command
-   # are the p50, p99, and p999.
-   # latency-tracking-info-percentiles 50 99 99.9
-   
    ############################# EVENT NOTIFICATION ##############################
-   
    # Redis can notify Pub/Sub clients about events happening in the key space.
    # This feature is documented at https://redis.io/topics/notifications
    #
@@ -2045,7 +1413,6 @@ verification server using verification-server/config.json to store parameters
    notify-keyspace-events ""
    
    ############################### ADVANCED CONFIG ###############################
-   
    # Hashes are encoded using a memory efficient data structure when they have a
    # small number of entries, and the biggest entry does not exceed a given
    # threshold. These thresholds can be configured using the following directives.
@@ -2192,39 +1559,6 @@ verification server using verification-server/config.json to store parameters
    client-output-buffer-limit replica 256mb 64mb 60
    client-output-buffer-limit pubsub 32mb 8mb 60
    
-   # Client query buffers accumulate new commands. They are limited to a fixed
-   # amount by default in order to avoid that a protocol desynchronization (for
-   # instance due to a bug in the client) will lead to unbound memory usage in
-   # the query buffer. However you can configure it here if you have very special
-   # needs, such as a command with huge argument, or huge multi/exec requests or alike.
-   #
-   # client-query-buffer-limit 1gb
-   
-   # In some scenarios client connections can hog up memory leading to OOM
-   # errors or data eviction. To avoid this we can cap the accumulated memory
-   # used by all client connections (all pubsub and normal clients). Once we
-   # reach that limit connections will be dropped by the server freeing up
-   # memory. The server will attempt to drop the connections using the most 
-   # memory first. We call this mechanism "client eviction".
-   #
-   # Client eviction is configured using the maxmemory-clients setting as follows:
-   # 0 - client eviction is disabled (default)
-   #
-   # A memory value can be used for the client eviction threshold,
-   # for example:
-   # maxmemory-clients 1g
-   #
-   # A percentage value (between 1% and 100%) means the client eviction threshold
-   # is based on a percentage of the maxmemory setting. For example to set client
-   # eviction at 5% of maxmemory:
-   # maxmemory-clients 5%
-   
-   # In the Redis protocol, bulk requests, that are, elements representing single
-   # strings, are normally limited to 512 mb. However you can change this limit
-   # here, but must be 1mb or greater
-   #
-   # proto-max-bulk-len 512mb
-   
    # Redis calls an internal function to perform many background tasks, like
    # closing connections of clients in timeout, purging expired keys that are
    # never requested, and so forth.
@@ -2270,176 +1604,9 @@ verification server using verification-server/config.json to store parameters
    # big latency spikes.
    rdb-save-incremental-fsync yes
    
-   # Redis LFU eviction (see maxmemory setting) can be tuned. However it is a good
-   # idea to start with the default settings and only change them after investigating
-   # how to improve the performances and how the keys LFU change over time, which
-   # is possible to inspect via the OBJECT FREQ command.
-   #
-   # There are two tunable parameters in the Redis LFU implementation: the
-   # counter logarithm factor and the counter decay time. It is important to
-   # understand what the two parameters mean before changing them.
-   #
-   # The LFU counter is just 8 bits per key, it's maximum value is 255, so Redis
-   # uses a probabilistic increment with logarithmic behavior. Given the value
-   # of the old counter, when a key is accessed, the counter is incremented in
-   # this way:
-   #
-   # 1. A random number R between 0 and 1 is extracted.
-   # 2. A probability P is calculated as 1/(old_value*lfu_log_factor+1).
-   # 3. The counter is incremented only if R < P.
-   #
-   # The default lfu-log-factor is 10. This is a table of how the frequency
-   # counter changes with a different number of accesses with different
-   # logarithmic factors:
-   #
-   # +--------+------------+------------+------------+------------+------------+
-   # | factor | 100 hits   | 1000 hits  | 100K hits  | 1M hits    | 10M hits   |
-   # +--------+------------+------------+------------+------------+------------+
-   # | 0      | 104        | 255        | 255        | 255        | 255        |
-   # +--------+------------+------------+------------+------------+------------+
-   # | 1      | 18         | 49         | 255        | 255        | 255        |
-   # +--------+------------+------------+------------+------------+------------+
-   # | 10     | 10         | 18         | 142        | 255        | 255        |
-   # +--------+------------+------------+------------+------------+------------+
-   # | 100    | 8          | 11         | 49         | 143        | 255        |
-   # +--------+------------+------------+------------+------------+------------+
-   #
-   # NOTE: The above table was obtained by running the following commands:
-   #
-   #   redis-benchmark -n 1000000 incr foo
-   #   redis-cli object freq foo
-   #
-   # NOTE 2: The counter initial value is 5 in order to give new objects a chance
-   # to accumulate hits.
-   #
-   # The counter decay time is the time, in minutes, that must elapse in order
-   # for the key counter to be decremented.
-   #
-   # The default value for the lfu-decay-time is 1. A special value of 0 means we
-   # will never decay the counter.
-   #
-   # lfu-log-factor 10
-   # lfu-decay-time 1
-   
-   
-   # The maximum number of new client connections accepted per event-loop cycle. This configuration
-   # is set independently for TLS connections.
-   #
-   # By default, up to 10 new connection will be accepted per event-loop cycle for normal connections
-   # and up to 1 new connection per event-loop cycle for TLS connections.
-   #
-   # Adjusting this to a larger number can slightly improve efficiency for new connections
-   # at the risk of causing timeouts for regular commands on established connections.  It is
-   # not advised to change this without ensuring that all clients have limited connection
-   # pools and exponential backoff in the case of command/connection timeouts. 
-   #
-   # If your application is establishing a large number of new connections per second you should
-   # also consider tuning the value of tcp-backlog, which allows the kernel to buffer more
-   # pending connections before dropping or rejecting connections. 
-   #
-   # max-new-connections-per-cycle 10
-   # max-new-tls-connections-per-cycle 1
-   
-   
-   ########################### ACTIVE DEFRAGMENTATION #######################
-   #
-   # What is active defragmentation?
-   # -------------------------------
-   #
-   # Active (online) defragmentation allows a Redis server to compact the
-   # spaces left between small allocations and deallocations of data in memory,
-   # thus allowing to reclaim back memory.
-   #
-   # Fragmentation is a natural process that happens with every allocator (but
-   # less so with Jemalloc, fortunately) and certain workloads. Normally a server
-   # restart is needed in order to lower the fragmentation, or at least to flush
-   # away all the data and create it again. However thanks to this feature
-   # implemented by Oran Agra for Redis 4.0 this process can happen at runtime
-   # in a "hot" way, while the server is running.
-   #
-   # Basically when the fragmentation is over a certain level (see the
-   # configuration options below) Redis will start to create new copies of the
-   # values in contiguous memory regions by exploiting certain specific Jemalloc
-   # features (in order to understand if an allocation is causing fragmentation
-   # and to allocate it in a better place), and at the same time, will release the
-   # old copies of the data. This process, repeated incrementally for all the keys
-   # will cause the fragmentation to drop back to normal values.
-   #
-   # Important things to understand:
-   #
-   # 1. This feature is disabled by default, and only works if you compiled Redis
-   #    to use the copy of Jemalloc we ship with the source code of Redis.
-   #    This is the default with Linux builds.
-   #
-   # 2. You never need to enable this feature if you don't have fragmentation
-   #    issues.
-   #
-   # 3. Once you experience fragmentation, you can enable this feature when
-   #    needed with the command "CONFIG SET activedefrag yes".
-   #
-   # The configuration parameters are able to fine tune the behavior of the
-   # defragmentation process. If you are not sure about what they mean it is
-   # a good idea to leave the defaults untouched.
-   
-   # Active defragmentation is disabled by default
-   # activedefrag no
-   
-   # Minimum amount of fragmentation waste to start active defrag
-   # active-defrag-ignore-bytes 100mb
-   
-   # Minimum percentage of fragmentation to start active defrag
-   # active-defrag-threshold-lower 10
-   
-   # Maximum percentage of fragmentation at which we use maximum effort
-   # active-defrag-threshold-upper 100
-   
-   # Minimal effort for defrag in CPU percentage, to be used when the lower
-   # threshold is reached
-   # active-defrag-cycle-min 1
-   
-   # Maximal effort for defrag in CPU percentage, to be used when the upper
-   # threshold is reached
-   # active-defrag-cycle-max 25
-   
-   # Maximum number of set/hash/zset/list fields that will be processed from
-   # the main dictionary scan
-   # active-defrag-max-scan-fields 1000
-   
    # Jemalloc background thread for purging will be enabled by default
    jemalloc-bg-thread yes
    
-   # It is possible to pin different threads and processes of Redis to specific
-   # CPUs in your system, in order to maximize the performances of the server.
-   # This is useful both in order to pin different Redis threads in different
-   # CPUs, but also in order to make sure that multiple Redis instances running
-   # in the same host will be pinned to different CPUs.
-   #
-   # Normally you can do this using the "taskset" command, however it is also
-   # possible to this via Redis configuration directly, both in Linux and FreeBSD.
-   #
-   # You can pin the server/IO threads, bio threads, aof rewrite child process, and
-   # the bgsave child process. The syntax to specify the cpu list is the same as
-   # the taskset command:
-   #
-   # Set redis server/io threads to cpu affinity 0,2,4,6:
-   # server-cpulist 0-7:2
-   #
-   # Set bio threads to cpu affinity 1,3:
-   # bio-cpulist 1,3
-   #
-   # Set aof rewrite child process to cpu affinity 8,9,10,11:
-   # aof-rewrite-cpulist 8-11
-   #
-   # Set bgsave child process to cpu affinity 1,10,11
-   # bgsave-cpulist 1,10-11
-   
-   # In some cases redis will emit warnings and even refuse to start if it detects
-   # that the system is in bad state, it is possible to suppress these warnings
-   # by setting the following config which takes a space delimited list of warnings
-   # to suppress
-   #
-   # ignore-warnings ARM64-COW-BUG
-
 4. Create Redis container
 
    ```bash
@@ -2455,7 +1622,6 @@ verification server using verification-server/config.json to store parameters
    -v /path/to/redis/data:/data:rw \
    -d redis:7.2.4 redis-server /etc/redis/redis.conf \
    --appendonly yes
-   --requirepass "??????"
    ```
 
 5. Entering Redis container
@@ -2468,7 +1634,6 @@ verification server using verification-server/config.json to store parameters
    	redis-cli
    ```
 
-   
 
 ### MySQL Server
 
@@ -2558,7 +1723,15 @@ verification server using verification-server/config.json to store parameters
    	mysql -uroot -p"your_password" 
    ```
 
-   
+
+6. **DataBase Has to be created, before starting the main server!!!**
+
+   ```sql
+   #database's name should match config.ini database name!
+   CREATE DATABASE chatting
+   ```
+
+
 
 ## Developer Quick Start
 
