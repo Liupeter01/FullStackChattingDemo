@@ -49,8 +49,8 @@ void IOServicePool::shutdown()
 
 boost::asio::io_context& IOServicePool::getIOServiceContext()
 {
-          boost::asio::io_context& result = m_ioc_pool.at(m_curr.fetch_add(1));
-          if (m_curr.load() == this->m_thread_pool.size()) {
+          boost::asio::io_context& result =m_ioc_pool.at(m_curr.fetch_add(1));
+          if (m_curr.load() == this->m_ioc_pool.size()) {
                     m_curr.store(0);
           }
           return result;
