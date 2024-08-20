@@ -14,7 +14,7 @@ enum class ServiceStatus : uint8_t {
           GRPC_ERROR,                                        //grpc error
           REDIS_UNKOWN_ERROR,                   //redis server error code
           REDIS_CPATCHA_NOT_FOUND,         //redis no cpatcha
-          MYSQL_USERNAME_WAS_TAKEN    //mysql username have already been taken
+          MYSQL_INTERNAL_ERROR                 //mysql error
 };
 
 #define _DEF_HPP_
