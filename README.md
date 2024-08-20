@@ -106,7 +106,7 @@ verification server using verification-server/config.json to store parameters
    ```bash
    #download redis.conf
    cd /path/to/redis/conf
-   wget http://download.redis.io/redis-stable/redis.conf
+   vim /path/to/redis/conf/redis.conf	#write config file(you could use other editing tools!)
    ```
 
 3. Configuration file setting
@@ -1204,10 +1204,10 @@ verification server using verification-server/config.json to store parameters
    	
    #Start a mysql server instance
    	 docker run --restart=on-failure:3 -d \
-   	-v /path/to/mysql/conf:/etc/mysql \
+   	-v /path/to/mysql/conf:/etc/mysql/conf.d \
        -v /path/to/mysql/data:/var/lib/mysql \
    	-e MYSQL_ROOT_PASSWORD="your_password" \
-   	-p 3307:3306 --name "your_container_name"
+   	-p 3307:3306 --name "your_container_name" \
        mysql:8.0
    ```
 
@@ -1226,6 +1226,8 @@ verification server using verification-server/config.json to store parameters
 
 6. **DataBase Has to be created, before starting the main server!!!**
 
+   You could choose DataBase tools to create database and table
+   
    ```sql
    #database's name should match config.ini database name!
    CREATE DATABASE chatting;
