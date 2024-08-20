@@ -1274,12 +1274,23 @@ git clone https://github.com/Liupeter01/FullStackChattingDemo
 
 ### Compile Server
 
-```bash
-cd FullStackChattingDemo/server
-git submodule update --init
-cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
-cmake --build build --parallel [x]
-```
+1. For Linux/Windows
+
+   ```bash
+   cd FullStackChattingDemo/server
+   git submodule update --init
+   cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+   cmake --build build --parallel [x]
+   ```
+
+2. For MacOS
+
+   ```bash
+   cd FullStackChattingDemo/server
+   git submodule update --init
+   cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=/usr/local/include
+   cmake --build build --parallel [x]
+   ```
 
 ### How to Execute
 
