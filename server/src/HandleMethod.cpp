@@ -6,6 +6,7 @@
 #include <redis/RedisManager.hpp>
 #include <http/HttpConnection.hpp>
 #include <handler/HandleMethod.hpp>
+#include <sql/MySQLManagement.hpp>
 #include <grpc/GrpcVerificationService.hpp>
 
 HandleMethod::~HandleMethod() {}
@@ -120,10 +121,17 @@ void HandleMethod::registerPostCallBacks() {
           return false;
         }
 
-        /*
-         * MYSQL
-         * start to create a new user
-         */
+        MySQLRequestStruct request;
+        request.m_username = username;
+        request.m_password = password;
+        request.m_email = email;
+
+        /*MYSQL(start to create a new user)*/
+        mysql::MySQLRAII mysql;
+        if (!mysql->get()->registerNewUser(std::move(request))) {
+                  registerError(conn);
+                  return false;
+        }
 
         send_root["error"] =
             static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
@@ -162,6 +170,16 @@ void HandleMethod::captchaError(std::shared_ptr<HTTPConnection> conn) {
 
   root["error"] = static_cast<uint8_t>(ServiceStatus::REDIS_CPATCHA_NOT_FOUND);
   boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
+}
+
+void HandleMethod::registerError(std::shared_ptr<HTTPConnection> conn)
+{
+          Json::Value root;
+
+          spdlog::error("MySQL internel error!");
+
+          root["error"] = static_cast<uint8_t>(ServiceStatus::MYSQL_INTERNAL_ERROR);
+          boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
 }
 
 void HandleMethod::registerCallBacks() {
