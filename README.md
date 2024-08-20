@@ -1728,10 +1728,21 @@ verification server using verification-server/config.json to store parameters
 
    ```sql
    #database's name should match config.ini database name!
-   CREATE DATABASE chatting
+   CREATE DATABASE chatting;
+   
+   CREATE TABLE chatting.user_info(
+   	username varchar(255) not null,
+   	password varchar(255) not null,
+       uid integer not null,
+       email varchar(255) not null
+   );
+   
+   CREATE TABLE chatting.uid_gen(
+       uid integer not null
+   );
+   
+   INSERT INTO chatting.uid_gen(uid) VALUE(0);
    ```
-
-
 
 ## Developer Quick Start
 
