@@ -73,22 +73,22 @@ verification server using verification-server/config.json to store parameters
 
 ```json
 {
-    "email":{
-        "host": "please set to your email host name",
-        "port": "please set to your email port",
-        "username": "please set to your email address",
-        "password": "please use your own authorized code"
-    },
-	"mysql": {
-		"host": "your ip",
-		  "port": "your port",
-		  "password":  "your password"
-	},
-	"redis": {
-		"host": "your ip",
-		"port": "your port",
-		"password": "your password"
-	}
+      "email": {
+                "host": "please set to your email host name",
+                "port": "please set to your email port",
+                "username": "please set to your email address",
+                "password": "please use your own authorized code"
+      },
+      "mysql": {
+                "host": "127.0.0.1",
+                "port": 3307,
+                "password": 123456
+      },
+      "redis": {
+                "host": "127.0.0.1",
+                "port": 16379,
+                "password": 123456
+      }
 }
 ```
 
@@ -118,54 +118,6 @@ verification server using verification-server/config.json to store parameters
    # started with the file path as first argument:
    #
    # ./redis-server /path/to/redis.conf
-   
-   # Note on units: when memory size is needed, it is possible to specify
-   # it in the usual form of 1k 5GB 4M and so forth:
-   #
-   # 1k => 1000 bytes
-   # 1kb => 1024 bytes
-   # 1m => 1000000 bytes
-   # 1mb => 1024*1024 bytes
-   # 1g => 1000000000 bytes
-   # 1gb => 1024*1024*1024 bytes
-   #
-   # units are case insensitive so 1GB 1Gb 1gB are all the same.
-   
-   ################################## INCLUDES ###################################
-   
-   # Include one or more other config files here.  This is useful if you
-   # have a standard template that goes to all Redis servers but also need
-   # to customize a few per-server settings.  Include files can include
-   # other files, so use this wisely.
-   #
-   # Note that option "include" won't be rewritten by command "CONFIG REWRITE"
-   # from admin or Redis Sentinel. Since Redis always uses the last processed
-   # line as value of a configuration directive, you'd better put includes
-   # at the beginning of this file to avoid overwriting config change at runtime.
-   #
-   # If instead you are interested in using includes to override configuration
-   # options, it is better to use include as the last line.
-   #
-   # Included paths may contain wildcards. All files matching the wildcards will
-   # be included in alphabetical order.
-   # Note that if an include path contains a wildcards but no files match it when
-   # the server is started, the include statement will be ignored and no error will
-   # be emitted.  It is safe, therefore, to include wildcard files from empty
-   # directories.
-   #
-   # include /path/to/local.conf
-   # include /path/to/other.conf
-   # include /path/to/fragments/*.conf
-   #
-   
-   ################################## MODULES #####################################
-   
-   # Load modules at startup. If the server is not able to load modules
-   # it will abort. It is possible to use multiple loadmodule directives.
-   #
-   # loadmodule /path/to/my_module.so
-   # loadmodule /path/to/other_module.so
-   # loadmodule /path/to/args_module.so [arg [arg ...]]
    
    ################################## NETWORK #####################################
    
@@ -225,29 +177,6 @@ verification server using verification-server/config.json to store parameters
    # even if no authentication is configured.
    protected-mode no
    
-   # Redis uses default hardened security configuration directives to reduce the
-   # attack surface on innocent users. Therefore, several sensitive configuration
-   # directives are immutable, and some potentially-dangerous commands are blocked.
-   #
-   # Configuration directives that control files that Redis writes to (e.g., 'dir'
-   # and 'dbfilename') and that aren't usually modified during runtime
-   # are protected by making them immutable.
-   #
-   # Commands that can increase the attack surface of Redis and that aren't usually
-   # called by users are blocked by default.
-   #
-   # These can be exposed to either all connections or just local ones by setting
-   # each of the configs listed below to either of these values:
-   #
-   # no    - Block for any connection (remain immutable)
-   # yes   - Allow for any connection (no protection)
-   # local - Allow only for local connections. Ones originating from the
-   #         IPv4 address (127.0.0.1), IPv6 address (::1) or Unix domain sockets.
-   #
-   # enable-protected-configs no
-   # enable-debug-command no
-   # enable-module-command no
-   
    # Accept connections on the specified port, default is 6379 (IANA #815344).
    # If port 0 is specified Redis will not listen on a TCP socket.
    port 6379
@@ -290,156 +219,11 @@ verification server using verification-server/config.json to store parameters
    # Redis default starting with Redis 3.2.1.
    tcp-keepalive 300
    
-   # Apply OS-specific mechanism to mark the listening socket with the specified
-   # ID, to support advanced routing and filtering capabilities.
-   #
-   # On Linux, the ID represents a connection mark.
-   # On FreeBSD, the ID represents a socket cookie ID.
-   # On OpenBSD, the ID represents a route table ID.
-   #
-   # The default value is 0, which implies no marking is required.
-   # socket-mark-id 0
-   
-   ################################# TLS/SSL #####################################
-   
-   # By default, TLS/SSL is disabled. To enable it, the "tls-port" configuration
-   # directive can be used to define TLS-listening ports. To enable TLS on the
-   # default port, use:
-   #
-   # port 0
-   # tls-port 6379
-   
-   # Configure a X.509 certificate and private key to use for authenticating the
-   # server to connected clients, masters or cluster peers.  These files should be
-   # PEM formatted.
-   #
-   # tls-cert-file redis.crt
-   # tls-key-file redis.key
-   #
-   # If the key file is encrypted using a passphrase, it can be included here
-   # as well.
-   #
-   # tls-key-file-pass secret
-   
-   # Normally Redis uses the same certificate for both server functions (accepting
-   # connections) and client functions (replicating from a master, establishing
-   # cluster bus connections, etc.).
-   #
-   # Sometimes certificates are issued with attributes that designate them as
-   # client-only or server-only certificates. In that case it may be desired to use
-   # different certificates for incoming (server) and outgoing (client)
-   # connections. To do that, use the following directives:
-   #
-   # tls-client-cert-file client.crt
-   # tls-client-key-file client.key
-   #
-   # If the key file is encrypted using a passphrase, it can be included here
-   # as well.
-   #
-   # tls-client-key-file-pass secret
-   
-   # Configure a DH parameters file to enable Diffie-Hellman (DH) key exchange,
-   # required by older versions of OpenSSL (<3.0). Newer versions do not require
-   # this configuration and recommend against it.
-   #
-   # tls-dh-params-file redis.dh
-   
-   # Configure a CA certificate(s) bundle or directory to authenticate TLS/SSL
-   # clients and peers.  Redis requires an explicit configuration of at least one
-   # of these, and will not implicitly use the system wide configuration.
-   #
-   # tls-ca-cert-file ca.crt
-   # tls-ca-cert-dir /etc/ssl/certs
-   
-   # By default, clients (including replica servers) on a TLS port are required
-   # to authenticate using valid client side certificates.
-   #
-   # If "no" is specified, client certificates are not required and not accepted.
-   # If "optional" is specified, client certificates are accepted and must be
-   # valid if provided, but are not required.
-   #
-   # tls-auth-clients no
-   # tls-auth-clients optional
-   
-   # By default, a Redis replica does not attempt to establish a TLS connection
-   # with its master.
-   #
-   # Use the following directive to enable TLS on replication links.
-   #
-   # tls-replication yes
-   
-   # By default, the Redis Cluster bus uses a plain TCP connection. To enable
-   # TLS for the bus protocol, use the following directive:
-   #
-   # tls-cluster yes
-   
-   # By default, only TLSv1.2 and TLSv1.3 are enabled and it is highly recommended
-   # that older formally deprecated versions are kept disabled to reduce the attack surface.
-   # You can explicitly specify TLS versions to support.
-   # Allowed values are case insensitive and include "TLSv1", "TLSv1.1", "TLSv1.2",
-   # "TLSv1.3" (OpenSSL >= 1.1.1) or any combination.
-   # To enable only TLSv1.2 and TLSv1.3, use:
-   #
-   # tls-protocols "TLSv1.2 TLSv1.3"
-   
-   # Configure allowed ciphers.  See the ciphers(1ssl) manpage for more information
-   # about the syntax of this string.
-   #
-   # Note: this configuration applies only to <= TLSv1.2.
-   #
-   # tls-ciphers DEFAULT:!MEDIUM
-   
-   # Configure allowed TLSv1.3 ciphersuites.  See the ciphers(1ssl) manpage for more
-   # information about the syntax of this string, and specifically for TLSv1.3
-   # ciphersuites.
-   #
-   # tls-ciphersuites TLS_CHACHA20_POLY1305_SHA256
-   
-   # When choosing a cipher, use the server's preference instead of the client
-   # preference. By default, the server follows the client's preference.
-   #
-   # tls-prefer-server-ciphers yes
-   
-   # By default, TLS session caching is enabled to allow faster and less expensive
-   # reconnections by clients that support it. Use the following directive to disable
-   # caching.
-   #
-   # tls-session-caching no
-   
-   # Change the default number of TLS sessions cached. A zero value sets the cache
-   # to unlimited size. The default size is 20480.
-   #
-   # tls-session-cache-size 5000
-   
-   # Change the default timeout of cached TLS sessions. The default timeout is 300
-   # seconds.
-   #
-   # tls-session-cache-timeout 60
-   
    ################################# GENERAL #####################################
-   
    # By default Redis does not run as a daemon. Use 'yes' if you need it.
    # Note that Redis will write a pid file in /var/run/redis.pid when daemonized.
    # When Redis is supervised by upstart or systemd, this parameter has no impact.
    daemonize no
-   
-   # If you run Redis from upstart or systemd, Redis can interact with your
-   # supervision tree. Options:
-   #   supervised no      - no supervision interaction
-   #   supervised upstart - signal upstart by putting Redis into SIGSTOP mode
-   #                        requires "expect stop" in your upstart job config
-   #   supervised systemd - signal systemd by writing READY=1 to $NOTIFY_SOCKET
-   #                        on startup, and updating Redis status on a regular
-   #                        basis.
-   #   supervised auto    - detect upstart or systemd method based on
-   #                        UPSTART_JOB or NOTIFY_SOCKET environment variables
-   # Note: these supervision methods only signal "process is ready."
-   #       They do not enable continuous pings back to your supervisor.
-   #
-   # The default is "no". To run under upstart/systemd, you can simply uncomment
-   # the line below:
-   #
-   # supervised auto
    
    # If a pid file is specified, Redis writes it where specified at startup
    # and removes it at exit.
@@ -469,26 +253,6 @@ verification server using verification-server/config.json to store parameters
    # output for logging but daemonize, logs will be sent to /dev/null
    logfile ""
    
-   # To enable logging to the system logger, just set 'syslog-enabled' to yes,
-   # and optionally update the other syslog parameters to suit your needs.
-   # syslog-enabled no
-   
-   # Specify the syslog identity.
-   # syslog-ident redis
-   
-   # Specify the syslog facility. Must be USER or between LOCAL0-LOCAL7.
-   # syslog-facility local0
-   
-   # To disable the built in crash log, which will possibly produce cleaner core
-   # dumps when they are needed, uncomment the following:
-   #
-   # crash-log-enabled no
-   
-   # To disable the fast memory check that's run as part of the crash log, which
-   # will possibly let redis terminate sooner, uncomment the following:
-   #
-   # crash-memcheck-enabled no
-   
    # Set the number of databases. The default database is DB 0, you can select
    # a different one on a per-connection basis using SELECT <dbid> where
    # dbid is a number between 0 and 'databases'-1
@@ -502,11 +266,6 @@ verification server using verification-server/config.json to store parameters
    # However it is possible to force the pre-4.0 behavior and always show a
    # ASCII art logo in startup logs by setting the following option to yes.
    always-show-logo no
-   
-   # To avoid logging personal identifiable information (PII) into server log file,
-   # uncomment the following:
-   #
-   # hide-user-data-from-log yes
    
    # By default, Redis modifies the process title (as seen in 'top' and 'ps') to
    # provide some runtime information. It is possible to disable this and leave
@@ -630,28 +389,6 @@ verification server using verification-server/config.json to store parameters
    dir ./
    
    ################################# REPLICATION #################################
-   
-   # Master-Replica replication. Use replicaof to make a Redis instance a copy of
-   # another Redis server. A few things to understand ASAP about Redis replication.
-   #
-   #   +------------------+      +---------------+
-   #   |      Master      | ---> |    Replica    |
-   #   | (receive writes) |      |  (exact copy) |
-   #   +------------------+      +---------------+
-   #
-   # 1) Redis replication is asynchronous, but you can configure a master to
-   #    stop accepting writes if it appears to be not connected with at least
-   #    a given number of replicas.
-   # 2) Redis replicas are able to perform a partial resynchronization with the
-   #    master if the replication link is lost for a relatively small amount of
-   #    time. You may want to configure the replication backlog size (see the next
-   #    sections of this file) with a sensible value depending on your needs.
-   # 3) Replication is automatic and does not need user intervention. After a
-   #    network partition replicas automatically try to reconnect to masters
-   #    and resynchronize with them.
-   #
-   # replicaof <masterip> <masterport>
-   
    # If the master is password protected (using the "requirepass" configuration
    # directive below) it is possible to tell the replica to authenticate before
    # starting the replication synchronization process, otherwise the master will
@@ -782,25 +519,6 @@ verification server using verification-server/config.json to store parameters
    #                 during replication.
    repl-diskless-load disabled
    
-   # Master send PINGs to its replicas in a predefined interval. It's possible to
-   # change this interval with the repl_ping_replica_period option. The default
-   # value is 10 seconds.
-   #
-   # repl-ping-replica-period 10
-   
-   # The following option sets the replication timeout for:
-   #
-   # 1) Bulk transfer I/O during SYNC, from the point of view of replica.
-   # 2) Master timeout from the point of view of replicas (data, pings).
-   # 3) Replica timeout from the point of view of masters (REPLCONF ACK pings).
-   #
-   # It is important to make sure that this value is greater than the value
-   # specified for repl-ping-replica-period otherwise a timeout will be detected
-   # every time there is low traffic between the master and the replica. The default
-   # value is 60 seconds.
-   #
-   # repl-timeout 60
-   
    # Disable TCP_NODELAY on the replica socket after SYNC?
    #
    # If you select "yes" Redis will use a smaller number of TCP packets and
@@ -816,32 +534,6 @@ verification server using verification-server/config.json to store parameters
    # be a good idea.
    repl-disable-tcp-nodelay no
    
-   # Set the replication backlog size. The backlog is a buffer that accumulates
-   # replica data when replicas are disconnected for some time, so that when a
-   # replica wants to reconnect again, often a full resync is not needed, but a
-   # partial resync is enough, just passing the portion of data the replica
-   # missed while disconnected.
-   #
-   # The bigger the replication backlog, the longer the replica can endure the
-   # disconnect and later be able to perform a partial resynchronization.
-   #
-   # The backlog is only allocated if there is at least one replica connected.
-   #
-   # repl-backlog-size 1mb
-   
-   # After a master has no connected replicas for some time, the backlog will be
-   # freed. The following option configures the amount of seconds that need to
-   # elapse, starting from the time the last replica disconnected, for the backlog
-   # buffer to be freed.
-   #
-   # Note that replicas never free the backlog for timeout, since they may be
-   # promoted to masters later, and should be able to correctly "partially
-   # resynchronize" with other replicas: hence they should always accumulate backlog.
-   #
-   # A value of 0 means to never release the backlog.
-   #
-   # repl-backlog-ttl 3600
-   
    # The replica priority is an integer number published by Redis in the INFO
    # output. It is used by Redis Sentinel in order to select a replica to promote
    # into a master if the master is no longer working correctly.
@@ -856,193 +548,6 @@ verification server using verification-server/config.json to store parameters
    #
    # By default the priority is 100.
    replica-priority 100
-   
-   ############################### KEYS TRACKING #################################
-   # Redis implements server assisted support for client side caching of values.
-   # This is implemented using an invalidation table that remembers, using
-   # a radix key indexed by key name, what clients have which keys. In turn
-   # this is used in order to send invalidation messages to clients. Please
-   # check this page to understand more about the feature:
-   #
-   #   https://redis.io/topics/client-side-caching
-   #
-   # When tracking is enabled for a client, all the read only queries are assumed
-   # to be cached: this will force Redis to store information in the invalidation
-   # table. When keys are modified, such information is flushed away, and
-   # invalidation messages are sent to the clients. However if the workload is
-   # heavily dominated by reads, Redis could use more and more memory in order
-   # to track the keys fetched by many clients.
-   #
-   # For this reason it is possible to configure a maximum fill value for the
-   # invalidation table. By default it is set to 1M of keys, and once this limit
-   # is reached, Redis will start to evict keys in the invalidation table
-   # even if they were not modified, just to reclaim memory: this will in turn
-   # force the clients to invalidate the cached values. Basically the table
-   # maximum size is a trade off between the memory you want to spend server
-   # side to track information about who cached what, and the ability of clients
-   # to retain cached objects in memory.
-   #
-   # If you set the value to 0, it means there are no limits, and Redis will
-   # retain as many keys as needed in the invalidation table.
-   # In the "stats" INFO section, you can find information about the number of
-   # keys in the invalidation table at every given moment.
-   #
-   # Note: when key tracking is used in broadcasting mode, no memory is used
-   # in the server side so this setting is useless.
-   #
-   # tracking-table-max-keys 1000000
-   
-   ################################## SECURITY ###################################
-   
-   # Warning: since Redis is pretty fast, an outside user can try up to
-   # 1 million passwords per second against a modern box. This means that you
-   # should use very strong passwords, otherwise they will be very easy to break.
-   # Note that because the password is really a shared secret between the client
-   # and the server, and should not be memorized by any human, the password
-   # can be easily a long string from /dev/urandom or whatever, so by using a
-   # long and unguessable password no brute force attack will be possible.
-   
-   # Redis ACL users are defined in the following format:
-   #
-   #   user <username> ... acl rules ...
-   #
-   # For example:
-   #
-   #   user worker +@list +@connection ~jobs:* on >ffa9203c493aa99
-   #
-   # The special username "default" is used for new connections. If this user
-   # has the "nopass" rule, then new connections will be immediately authenticated
-   # as the "default" user without the need of any password provided via the
-   # AUTH command. Otherwise if the "default" user is not flagged with "nopass"
-   # the connections will start in not authenticated state, and will require
-   # AUTH (or the HELLO command AUTH option) in order to be authenticated and
-   # start to work.
-   #
-   # The ACL rules that describe what a user can do are the following:
-   #
-   #  on           Enable the user: it is possible to authenticate as this user.
-   #  off          Disable the user: it's no longer possible to authenticate
-   #               with this user, however the already authenticated connections
-   #               will still work.
-   #  skip-sanitize-payload    RESTORE dump-payload sanitization is skipped.
-   #  sanitize-payload         RESTORE dump-payload is sanitized (default).
-   #  +<command>   Allow the execution of that command.
-   #               May be used with `|` for allowing subcommands (e.g "+config|get")
-   #  -<command>   Disallow the execution of that command.
-   #               May be used with `|` for blocking subcommands (e.g "-config|set")
-   #  +@<category> Allow the execution of all the commands in such category
-   #               with valid categories are like @admin, @set, @sortedset, ...
-   #               and so forth, see the full list in the server.c file where
-   #               the Redis command table is described and defined.
-   #               The special category @all means all the commands, but currently
-   #               present in the server, and that will be loaded in the future
-   #               via modules.
-   #  +<command>|first-arg  Allow a specific first argument of an otherwise
-   #                        disabled command. It is only supported on commands with
-   #                        no sub-commands, and is not allowed as negative form
-   #                        like -SELECT|1, only additive starting with "+". This
-   #                        feature is deprecated and may be removed in the future.
-   #  allcommands  Alias for +@all. Note that it implies the ability to execute
-   #               all the future commands loaded via the modules system.
-   #  nocommands   Alias for -@all.
-   #  ~<pattern>   Add a pattern of keys that can be mentioned as part of
-   #               commands. For instance ~* allows all the keys. The pattern
-   #               is a glob-style pattern like the one of KEYS.
-   #               It is possible to specify multiple patterns.
-   # %R~<pattern>  Add key read pattern that specifies which keys can be read 
-   #               from.
-   # %W~<pattern>  Add key write pattern that specifies which keys can be
-   #               written to. 
-   #  allkeys      Alias for ~*
-   #  resetkeys    Flush the list of allowed keys patterns.
-   #  &<pattern>   Add a glob-style pattern of Pub/Sub channels that can be
-   #               accessed by the user. It is possible to specify multiple channel
-   #               patterns.
-   #  allchannels  Alias for &*
-   #  resetchannels            Flush the list of allowed channel patterns.
-   #  ><password>  Add this password to the list of valid password for the user.
-   #               For example >mypass will add "mypass" to the list.
-   #               This directive clears the "nopass" flag (see later).
-   #  <<password>  Remove this password from the list of valid passwords.
-   #  nopass       All the set passwords of the user are removed, and the user
-   #               is flagged as requiring no password: it means that every
-   #               password will work against this user. If this directive is
-   #               used for the default user, every new connection will be
-   #               immediately authenticated with the default user without
-   #               any explicit AUTH command required. Note that the "resetpass"
-   #               directive will clear this condition.
-   #  resetpass    Flush the list of allowed passwords. Moreover removes the
-   #               "nopass" status. After "resetpass" the user has no associated
-   #               passwords and there is no way to authenticate without adding
-   #               some password (or setting it as "nopass" later).
-   #  reset        Performs the following actions: resetpass, resetkeys, resetchannels,
-   #               allchannels (if acl-pubsub-default is set), off, clearselectors, -@all.
-   #               The user returns to the same state it has immediately after its creation.
-   # (<options>)   Create a new selector with the options specified within the
-   #               parentheses and attach it to the user. Each option should be 
-   #               space separated. The first character must be ( and the last 
-   #               character must be ).
-   # clearselectors            Remove all of the currently attached selectors. 
-   #                           Note this does not change the "root" user permissions,
-   #                           which are the permissions directly applied onto the
-   #                           user (outside the parentheses).
-   #
-   # ACL rules can be specified in any order: for instance you can start with
-   # passwords, then flags, or key patterns. However note that the additive
-   # and subtractive rules will CHANGE MEANING depending on the ordering.
-   # For instance see the following example:
-   #
-   #   user alice on +@all -DEBUG ~* >somepassword
-   #
-   # This will allow "alice" to use all the commands with the exception of the
-   # DEBUG command, since +@all added all the commands to the set of the commands
-   # alice can use, and later DEBUG was removed. However if we invert the order
-   # of two ACL rules the result will be different:
-   #
-   #   user alice on -DEBUG +@all ~* >somepassword
-   #
-   # Now DEBUG was removed when alice had yet no commands in the set of allowed
-   # commands, later all the commands are added, so the user will be able to
-   # execute everything.
-   #
-   # Basically ACL rules are processed left-to-right.
-   #
-   # The following is a list of command categories and their meanings:
-   # * keyspace - Writing or reading from keys, databases, or their metadata 
-   #     in a type agnostic way. Includes DEL, RESTORE, DUMP, RENAME, EXISTS, DBSIZE,
-   #     KEYS, EXPIRE, TTL, FLUSHALL, etc. Commands that may modify the keyspace,
-   #     key or metadata will also have `write` category. Commands that only read
-   #     the keyspace, key or metadata will have the `read` category.
-   # * read - Reading from keys (values or metadata). Note that commands that don't
-   #     interact with keys, will not have either `read` or `write`.
-   # * write - Writing to keys (values or metadata)
-   # * admin - Administrative commands. Normal applications will never need to use
-   #     these. Includes REPLICAOF, CONFIG, DEBUG, SAVE, MONITOR, ACL, SHUTDOWN, etc.
-   # * dangerous - Potentially dangerous (each should be considered with care for
-   #     various reasons). This includes FLUSHALL, MIGRATE, RESTORE, SORT, KEYS,
-   #     CLIENT, DEBUG, INFO, CONFIG, SAVE, REPLICAOF, etc.
-   # * connection - Commands affecting the connection or other connections.
-   #     This includes AUTH, SELECT, COMMAND, CLIENT, ECHO, PING, etc.
-   # * blocking - Potentially blocking the connection until released by another
-   #     command.
-   # * fast - Fast O(1) commands. May loop on the number of arguments, but not the
-   #     number of elements in the key.
-   # * slow - All commands that are not Fast.
-   # * pubsub - PUBLISH / SUBSCRIBE related
-   # * transaction - WATCH / MULTI / EXEC related commands.
-   # * scripting - Scripting related.
-   # * set - Data type: sets related.
-   # * sortedset - Data type: zsets related.
-   # * list - Data type: lists related.
-   # * hash - Data type: hashes related.
-   # * string - Data type: strings related.
-   # * bitmap - Data type: bitmaps related.
-   # * hyperloglog - Data type: hyperloglog related.
-   # * geo - Data type: geo related.
-   # * stream - Data type: streams related.
-   #
-   # For more information about ACL configuration please refer to
-   # the Redis web site at https://redis.io/topics/acl
    
    # ACL LOG
    #
@@ -1113,7 +618,6 @@ verification server using verification-server/config.json to store parameters
    
    
    ############################ KERNEL OOM CONTROL ##############################
-   
    # On Linux, it is possible to hint the kernel OOM killer on what processes
    # should be killed first when out of memory.
    #
@@ -1143,9 +647,7 @@ verification server using verification-server/config.json to store parameters
    # oom-score-adj-values to positive values will always succeed.
    oom-score-adj-values 0 200 800
    
-   
    #################### KERNEL transparent hugepage CONTROL ######################
-   
    # Usually the kernel Transparent Huge Pages control is set to "madvise" or
    # or "never" by default (/sys/kernel/mm/transparent_hugepage/enabled), in which
    # case this config has no effect. On systems in which it is set to "always",
@@ -1153,11 +655,9 @@ verification server using verification-server/config.json to store parameters
    # to avoid latency problems specifically with fork(2) and CoW.
    # If for some reason you prefer to keep it enabled, you can set this config to
    # "no" and the kernel global to "always".
-   
    disable-thp yes
    
    ############################## APPEND ONLY MODE ###############################
-   
    # By default Redis asynchronously dumps the dataset on disk. This mode is
    # good enough in many applications, but an issue with the Redis process or
    # a power outage may result into a few minutes of writes lost (depending on
