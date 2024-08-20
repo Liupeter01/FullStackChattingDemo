@@ -17,10 +17,10 @@ enum class ServiceStatus : uint8_t {
     SERVICE_SUCCESS,                              //SUCCESS
     JSONPARSE_ERROR,                             //json parsing error
     NETWORK_ERROR,                               //network failed
-    GRPC_ERROR,                                  //grpc error
-    REDIS_UNKOWN_ERROR,                          //redis server error code
-    REDIS_CPATCHA_NOT_FOUND,                     //redis no cpatcha
-    MYSQL_USERNAME_WAS_TAKEN                     //mysql username have already been taken
+    GRPC_ERROR,                                        //grpc error
+    REDIS_UNKOWN_ERROR,                   //redis server error code
+    REDIS_CPATCHA_NOT_FOUND,         //redis no cpatcha
+    MYSQL_INTERNAL_ERROR                 //mysql error
 };
 
 class HttpNetworkConnection
