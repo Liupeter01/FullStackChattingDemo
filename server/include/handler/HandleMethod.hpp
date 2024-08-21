@@ -28,6 +28,9 @@ private:
           /*captcha not found*/
           void captchaError(std::shared_ptr<HTTPConnection> conn);
 
+          /*register failed*/
+          void registerError(std::shared_ptr<HTTPConnection> conn);
+
 public:
           ~HandleMethod();
           void registerCallBacks();

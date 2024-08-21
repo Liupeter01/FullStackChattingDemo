@@ -23,9 +23,12 @@ void ServerConfig::loadVerificationServerInfo()
 
 void ServerConfig::loadMySQLInfo()
 {
-          MySQL_port = m_ini["MySQL"]["port"].as<unsigned short>();
-          MySQL_ip_addr = m_ini["MySQL"]["host"].as<std::string>();
+          MySQL_username = m_ini["MySQL"]["username"].as<std::string>();
           MySQL_passwd = m_ini["MySQL"]["password"].as<std::string>();
+          MySQL_database = m_ini["MySQL"]["database"].as<std::string>();
+          MySQL_host = m_ini["MySQL"]["host"].as<std::string>();
+          MySQL_port = m_ini["MySQL"]["port"].as<std::string>();
+          MySQL_timeout = m_ini["MySQL"]["timeout"].as<unsigned long>();
 }
 
 void ServerConfig::loadRedisInfo()
