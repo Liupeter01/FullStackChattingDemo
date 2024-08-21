@@ -49,6 +49,19 @@
           </spacer>
          </item>
          <item>
+          <spacer name="verticalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
             <widget class="QLabel" name="newuser_label">
@@ -127,28 +140,6 @@
           </layout>
          </item>
          <item>
-          <widget class="QLabel" name="passwderror_label">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>500</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
             <widget class="QLabel" name="confirmpasswd_label">
@@ -186,28 +177,6 @@
             </widget>
            </item>
           </layout>
-         </item>
-         <item>
-          <widget class="QLabel" name="passwdmatch_label">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
-           </property>
-          </widget>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -249,28 +218,6 @@
           </layout>
          </item>
          <item>
-          <widget class="QLabel" name="emailerror_label">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777214</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
            <item>
             <widget class="QLabel" name="verification_label">
@@ -308,7 +255,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="verification_button">
+            <widget class="CountDownButton" name="verification_button">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -327,6 +274,28 @@
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="status_label">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777214</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
          </item>
          <item>
           <spacer name="verticalSpacer_3">
@@ -424,6 +393,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CountDownButton</class>
+   <extends>QPushButton</extends>
+   <header>countdownbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
