@@ -112,15 +112,9 @@ verification server using verification-server/config.json to store parameters
 3. Configuration file setting
 
    ```ini
-   # Redis configuration file example.
-   #
-   # Note that in order to read the configuration file, Redis must be
-   # started with the file path as first argument:
-   #
    # ./redis-server /path/to/redis.conf
    
    ################################## NETWORK #####################################
-   
    # By default, if no "bind" configuration directive is specified, Redis listens
    # for connections from all available network interfaces on the host machine.
    # It is possible to listen to just one or multiple selected interfaces using
@@ -130,9 +124,6 @@ verification server using verification-server/config.json to store parameters
    # addresses that does not correspond to any network interface. Addresses that
    # are already in use will always fail, and unsupported protocols will always BE
    # silently skipped.
-   #
-   # Examples:
-   #
    # bind 192.168.1.100 10.0.0.1     # listens on two specific IPv4 addresses
    # bind 127.0.0.1 ::1              # listens on loopback IPv4 and IPv6
    # bind * -::*                     # like the default, all available interfaces
@@ -157,12 +148,8 @@ verification server using verification-server/config.json to store parameters
    # instances, cluster bus, etc.) are not bound to a specific local address. In
    # most cases, this means the operating system will handle that based on routing
    # and the interface through which the connection goes out.
-   #
    # Using bind-source-addr it is possible to configure a specific address to bind
    # to, which may also affect how the connection gets routed.
-   #
-   # Example:
-   #
    # bind-source-addr 10.0.0.1
    
    # Protected mode is a layer of security protection, in order to avoid that
@@ -182,7 +169,6 @@ verification server using verification-server/config.json to store parameters
    port 6379
    
    # TCP listen() backlog.
-   #
    # In high requests-per-second environments you need a high backlog in order
    # to avoid slow clients connection issues. Note that the Linux kernel
    # will silently truncate it to the value of /proc/sys/net/core/somaxconn so
@@ -190,31 +176,18 @@ verification server using verification-server/config.json to store parameters
    # in order to get the desired effect.
    tcp-backlog 511
    
-   # Unix socket.
-   #
-   # Specify the path for the Unix socket that will be used to listen for
-   # incoming connections. There is no default, so Redis will not listen
-   # on a unix socket when not specified.
-   #
-   # unixsocket /run/redis.sock
-   # unixsocketperm 700
-   
    # Close the connection after a client is idle for N seconds (0 to disable)
    timeout 0
    
    # TCP keepalive.
-   #
    # If non-zero, use SO_KEEPALIVE to send TCP ACKs to clients in absence
    # of communication. This is useful for two reasons:
-   #
    # 1) Detect dead peers.
    # 2) Force network equipment in the middle to consider the connection to be
    #    alive.
-   #
    # On Linux, the specified value (in seconds) is the period used to send ACKs.
    # Note that to close the connection the double of the time is needed.
    # On other kernels the period depends on the kernel configuration.
-   #
    # A reasonable value for this option is 300 seconds, which is the new
    # Redis default starting with Redis 3.2.1.
    tcp-keepalive 300
@@ -227,14 +200,11 @@ verification server using verification-server/config.json to store parameters
    
    # If a pid file is specified, Redis writes it where specified at startup
    # and removes it at exit.
-   #
    # When the server runs non daemonized, no pid file is created if none is
    # specified in the configuration. When the server is daemonized, the pid file
    # is used even if not specified, defaulting to "/var/run/redis.pid".
-   #
    # Creating a pid file is best effort: if Redis is not able to create it
    # nothing bad happens, the server will start and run normally.
-   #
    # Note that on modern Linux systems "/run/redis.pid" is more conforming
    # and should be used instead.
    pidfile /var/run/redis_6379.pid
@@ -262,7 +232,6 @@ verification server using verification-server/config.json to store parameters
    # standard output and if the standard output is a TTY and syslog logging is
    # disabled. Basically this means that normally a logo is displayed only in
    # interactive sessions.
-   #
    # However it is possible to force the pre-4.0 behavior and always show a
    # ASCII art logo in startup logs by setting the following option to yes.
    always-show-logo no
@@ -274,10 +243,8 @@ verification server using verification-server/config.json to store parameters
    
    # When changing the process title, Redis uses the following template to construct
    # the modified title.
-   #
    # Template variables are specified in curly brackets. The following variables are
    # supported:
-   #
    # {title}           Name of process as executed if parent, or type of child process.
    # {listen-addr}     Bind address or '*' followed by TCP or TLS port listening on, or
    #                   Unix socket if only that's available.
@@ -286,7 +253,6 @@ verification server using verification-server/config.json to store parameters
    # {tls-port}        TLS port listening on, or 0.
    # {unixsocket}      Unix domain socket listening on, or "".
    # {config-file}     Name of configuration file used.
-   #
    proc-title-template "{title} {listen-addr} {server-mode}"
    
    # Set the local environment which is used for string comparison operations, and 
@@ -295,37 +261,13 @@ verification server using verification-server/config.json to store parameters
    locale-collate ""
    
    ################################ SNAPSHOTTING  ################################
-   
-   # Save the DB to disk.
-   #
-   # save <seconds> <changes> [<seconds> <changes> ...]
-   #
-   # Redis will save the DB if the given number of seconds elapsed and it
-   # surpassed the given number of write operations against the DB.
-   #
-   # Snapshotting can be completely disabled with a single empty string argument
-   # as in following example:
-   #
-   # save ""
-   #
-   # Unless specified otherwise, by default Redis will save the DB:
-   #   * After 3600 seconds (an hour) if at least 1 change was performed
-   #   * After 300 seconds (5 minutes) if at least 100 changes were performed
-   #   * After 60 seconds if at least 10000 changes were performed
-   #
-   # You can set these explicitly by uncommenting the following line.
-   #
-   # save 3600 1 300 100 60 10000
-   
    # By default Redis will stop accepting writes if RDB snapshots are enabled
    # (at least one save point) and the latest background save failed.
    # This will make the user aware (in a hard way) that data is not persisting
    # on disk properly, otherwise chances are that no one will notice and some
    # disaster will happen.
-   #
    # If the background saving process will start working again Redis will
    # automatically allow writes again.
-   #
    # However if you have setup your proper monitoring of the Redis server
    # and persistence, you may want to disable this feature so that Redis will
    # continue to work as usual even if there are problems with disk,
@@ -346,21 +288,6 @@ verification server using verification-server/config.json to store parameters
    # RDB files created with checksum disabled have a checksum of zero that will
    # tell the loading code to skip the check.
    rdbchecksum yes
-   
-   # Enables or disables full sanitization checks for ziplist and listpack etc when
-   # loading an RDB or RESTORE payload. This reduces the chances of a assertion or
-   # crash later on while processing commands.
-   # Options:
-   #   no         - Never perform full sanitization
-   #   yes        - Always perform full sanitization
-   #   clients    - Perform full sanitization only for user connections.
-   #                Excludes: RDB files, RESTORE commands received from the master
-   #                connection, and client connections which have the
-   #                skip-sanitize-payload ACL flag.
-   # The default should be 'clients' but since it currently affects cluster
-   # resharding via MIGRATE, it is temporarily set to 'no' by default.
-   #
-   # sanitize-dump-payload no
    
    # The filename where to dump the DB
    dbfilename dump.rdb
@@ -616,7 +543,6 @@ verification server using verification-server/config.json to store parameters
    # if the data should be deleted asynchronously.
    lazyfree-lazy-user-flush no
    
-   
    ############################ KERNEL OOM CONTROL ##############################
    # On Linux, it is possible to hint the kernel OOM killer on what processes
    # should be killed first when out of memory.
@@ -706,13 +632,11 @@ verification server using verification-server/config.json to store parameters
    # - appendonly.aof.1.base.rdb as a base file.
    # - appendonly.aof.1.incr.aof, appendonly.aof.2.incr.aof as incremental files.
    # - appendonly.aof.manifest as a manifest file.
-   
    appendfilename "appendonly.aof"
    
    # For convenience, Redis stores all persistent append-only files in a dedicated
    # directory. The name of the directory is determined by the appenddirname
    # configuration parameter.
-   
    appenddirname "appendonlydir"
    
    # The fsync() call tells the Operating System to actually write data on disk
@@ -737,7 +661,6 @@ verification server using verification-server/config.json to store parameters
    # http://antirez.com/post/redis-persistence-demystified.html
    #
    # If unsure, use "everysec".
-   
    # appendfsync always
    appendfsync everysec
    # appendfsync no
@@ -760,7 +683,6 @@ verification server using verification-server/config.json to store parameters
    #
    # If you have latency problems turn this to "yes". Otherwise leave it as
    # "no" that is the safest pick from the point of view of durability.
-   
    no-appendfsync-on-rewrite no
    
    # Automatic rewrite of the append only file.
@@ -817,7 +739,6 @@ verification server using verification-server/config.json to store parameters
    aof-timestamp-enabled no
    
    ################################## SLOW LOG ###################################
-   
    # The Redis Slow Log is a system to log queries that exceeded a specified
    # execution time. The execution time does not include the I/O operations
    # like talking with the client, sending the reply and so forth,
@@ -841,7 +762,6 @@ verification server using verification-server/config.json to store parameters
    slowlog-max-len 128
    
    ################################ LATENCY MONITOR ##############################
-   
    # The Redis latency monitoring subsystem samples different operations
    # at runtime in order to collect data related to possible sources of
    # latency of a Redis instance.
