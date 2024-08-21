@@ -35,13 +35,16 @@ mysql::details::MySQLManagement::MySQLManagement(std::size_t poolSize,
           , m_host(host)
           , m_port(port)
 {
+          registerSQLStatement();
+
           for (std::size_t i = 0; i < poolSize; ++i) {
                     m_queue.push(std::move(std::make_unique<mysql::MySQLConnection>(
                               username,
                               password,
                               database,
                               host,
-                              port
+                              port,
+                              this
                     )));
           }
 
@@ -102,6 +105,25 @@ void mysql::details::MySQLManagement::release(mysql::details::MySQLManagement::c
           m_ctx.notify_one();
 }
 
+void mysql::details::MySQLManagement::registerSQLStatement()
+{
+          m_sql.insert(std::pair(MySQLSelection::HEART_BEAT, fmt::format("SELECT 1")));
+          m_sql.insert(std::pair(MySQLSelection::FIND_EXISTING_USER, fmt::format("SELECT * FROM user_info WHERE {} = ? AND {} = ?",
+                    std::string("username"),
+                    std::string("email")
+          )));
+
+          m_sql.insert(std::pair(MySQLSelection::CREATE_NEW_USER, fmt::format("INSERT INTO user_info ({},{},{},{}) VALUES (? ,? ,? ,?)",
+                    std::string("username"),
+                    std::string("password"),
+                    std::string("uid"),
+                    std::string("email")
+          )));
+
+          m_sql.insert(std::pair(MySQLSelection::ACQUIRE_NEW_UID, fmt::format("SELECT uid FROM chatting.uid_gen")));
+          m_sql.insert(std::pair(MySQLSelection::UPDATE_UID_COUNTER, fmt::format("UPDATE uid_gen SET uid = uid + 1")));
+}
+
 void mysql::details::MySQLManagement::roundRobinChecking(std::size_t timeout)
 {
           std::unique_lock<std::mutex> _lckg(m_mtx);
@@ -124,7 +146,8 @@ void mysql::details::MySQLManagement::roundRobinChecking(std::size_t timeout)
                                         m_password,
                                         m_database,
                                         m_host,
-                                        m_port
+                                        m_port,
+                                        this
                               )));
 
                               m_ctx.notify_one();

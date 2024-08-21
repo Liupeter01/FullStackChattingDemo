@@ -19,6 +19,7 @@ namespace mysql
                     class MySQLManagement
                               :public Singleton<MySQLManagement>
                     {
+                              friend class MySQLConnection;
                               friend class Singleton<MySQLManagement>;
 
                     public:
@@ -42,6 +43,7 @@ namespace mysql
                                                                   const std::string& host = "localhost",
                                                                   const std::string& port = boost::mysql::default_port_string) noexcept;
 
+                              void registerSQLStatement();
                               void roundRobinChecking(std::size_t timeout);
 
                     private:
@@ -50,6 +52,9 @@ namespace mysql
                               std::string m_database;
                               std::string m_host;
                               std::string m_port;
+
+                              /*sql operation command*/
+                              std::map<MySQLSelection, std::string> m_sql;
 
                               /*stop flag*/
                               std::atomic<bool> m_stop;
