@@ -87,3 +87,13 @@ bool Tools::checkSimilarity(QLineEdit *edit_pass, QLineEdit *edit_confirm, QLabe
     Tools::setWidgetAttribute(label, QString("Password matched!"), true);
     return true;
 }
+
+
+bool Tools::checkCaptcha(QLineEdit *edit, QLabel *label)
+{
+    if(edit->text().isEmpty()){
+        Tools::setWidgetAttribute(label, QString("CAPTCHA can not be empty!"), false);
+        return false;
+    }
+    return true;
+}

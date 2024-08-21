@@ -43,6 +43,7 @@ struct Tools
     static bool checkEmail(QLineEdit *edit, QLabel *label);
     static bool checkPassword(QLineEdit *edit, QLabel *label);
     static bool checkSimilarity(QLineEdit *edit_pass, QLineEdit *edit_confirm, QLabel *label);
+    static bool checkCaptcha(QLineEdit *edit, QLabel *label);
 };
 
 #endif // TOOLS_H

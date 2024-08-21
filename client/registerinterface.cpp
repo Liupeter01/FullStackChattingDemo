@@ -73,6 +73,9 @@ void registerinterface::registerEditFinishedEvent()
         [[maybe_unused]] auto ret = Tools::checkSimilarity(ui->newpassed_edit, ui->confirmpasswd_edit, ui->status_label);
     });
 
+    connect(ui->verification_edit, &QLineEdit::editingFinished, this, [this](){
+        [[maybe_unused]] auto ret = Tools::checkCaptcha(ui->verification_edit, ui->status_label);
+    });
 }
 
 void registerinterface::regisrerCallBackFunctions()
@@ -147,6 +150,10 @@ void registerinterface::on_confirm_button_clicked()
     }
 
     if(!Tools::checkSimilarity(ui->newpassed_edit, ui->confirmpasswd_edit, ui->status_label)){
+        return;
+    }
+
+    if(!Tools::checkCaptcha(ui->verification_edit, ui->status_label)){
         return;
     }
 
