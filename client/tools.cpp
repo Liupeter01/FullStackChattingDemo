@@ -51,6 +51,7 @@ bool Tools::checkEmail(QLineEdit *edit, QLabel *label)
         Tools::setWidgetAttribute(label, QString("Invalid E-mail address"), false);
         return false;
     }
+     Tools::setWidgetAttribute(label, QString("E-mail Check Passed!"), true);
     return true;
 }
 
@@ -68,15 +69,21 @@ bool Tools::checkPassword(QLineEdit *edit, QLabel *label)
         Tools::setWidgetAttribute(label, QString("Invalid Password!"), false);
         return false;
     }
+    Tools::setWidgetAttribute(label, QString("Password Check Passed!"), true);
     return true;
 }
 
 bool Tools::checkSimilarity(QLineEdit *edit_pass, QLineEdit *edit_confirm, QLabel *label)
 {
     /*does not match origin password*/
-    if(edit_pass->text() != edit_confirm->text()){
-        Tools::setWidgetAttribute(label, QString("Password does not match!"), false);
+    if(!checkPassword(edit_pass, label)){
         return false;
     }
+
+    if(edit_pass->text() != edit_confirm->text()){
+        Tools::setWidgetAttribute(label, QString("Password does not matched!"), false);
+        return false;
+    }
+    Tools::setWidgetAttribute(label, QString("Password matched!"), true);
     return true;
 }
