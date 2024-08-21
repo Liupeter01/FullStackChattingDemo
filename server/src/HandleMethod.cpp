@@ -126,9 +126,12 @@ void HandleMethod::registerPostCallBacks() {
         request.m_password = password;
         request.m_email = email;
 
+        /*get required uuid, and return it back to user!*/
+        std::size_t uuid;
+
         /*MYSQL(start to create a new user)*/
         mysql::MySQLRAII mysql;
-        if (!mysql->get()->registerNewUser(std::move(request))) {
+        if (!mysql->get()->registerNewUser(std::move(request), uuid)) {
                   registerError(conn);
                   return false;
         }
@@ -138,7 +141,7 @@ void HandleMethod::registerPostCallBacks() {
         send_root["username"] = username;
         send_root["password"] = password;
         send_root["email"] = email;
-        send_root["cpatcha"] = cpatcha;
+        send_root["uuid"] = uuid;
 
         boost::beast::ostream(conn->http_response.body())
             << send_root.toStyledString();
