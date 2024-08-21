@@ -1,14 +1,16 @@
 #ifndef TOOLS_H
 #define TOOLS_H
-#include <type_traits>
+
+#include <QUrl>
+#include <QLabel>
+#include <QDebug>
 #include <QString>
 #include <QWidget>
-#include <QUrl>
-#include <QDebug>
+#include <QLineEdit>
+#include <type_traits>
 
 template<typename Widget, class = void>
-struct has_settext_function
-    : std::false_type
+struct has_settext_function: std::false_type
 {};
 
 template<typename Widget>
@@ -35,6 +37,12 @@ struct Tools
     static QUrl getTargetUrl(QString param = "");   //for public access
     static QString url_info;                //store url info
     static bool url_init_flag;              //url is init or not?
+
+    /*check validation*/
+    static bool checkUsername(QLineEdit *edit, QLabel *label);
+    static bool checkEmail(QLineEdit *edit, QLabel *label);
+    static bool checkPassword(QLineEdit *edit, QLabel *label);
+    static bool checkSimilarity(QLineEdit *edit_pass, QLineEdit *edit_confirm, QLabel *label);
 };
 
 #endif // TOOLS_H
