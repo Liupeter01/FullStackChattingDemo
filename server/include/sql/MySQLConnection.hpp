@@ -18,7 +18,10 @@ struct MySQLRequestStruct
 
 namespace mysql
 {
-		  class MySQLManagement;
+		  namespace details 
+		  {
+					class MySQLManagement;
+		  }
 
 		  enum class MySQLSelection :uint8_t 
 		  {
@@ -31,7 +34,7 @@ namespace mysql
 
 		  class MySQLConnection
 		  {
-					friend class MySQLManagement;
+					friend class details::MySQLManagement;
 					MySQLConnection(const MySQLConnection&) = delete;
 					MySQLConnection& operator=(const MySQLConnection&) = delete;
 
@@ -40,38 +43,18 @@ namespace mysql
 												     std::string_view password,
 												     std::string_view database,
 												     std::string_view host,
-												     std::string_view port) noexcept;
+												     std::string_view port,
+							                         mysql::details::MySQLManagement* shared) noexcept;
 
 					~MySQLConnection();
 
 		  public:
-					bool registerNewUser(MySQLRequestStruct&& request);
+					bool registerNewUser(MySQLRequestStruct&& request, std::size_t& uuid);
 					bool checkTimeout(const std::chrono::steady_clock::time_point& curr, std::size_t timeout);
 
 		  private:		
-					void registerSQLStatement();
-
 					template<typename ...Args>
-					std::optional<boost::mysql::results> executeCommand(MySQLSelection select, Args&&... args) {
-							  try {
-										boost::mysql::results result;
-										std::string key = m_sql[select];
-										spdlog::info("Executing MySQL Query: {}", key);
-										boost::mysql::statement stmt = conn.prepare_statement(key);
-										conn.execute(stmt.bind(std::forward<Args>(args)...), result);
-										return result;
-							  }
-							  catch (const boost::mysql::error_with_diagnostics& err)
-							  {
-										spdlog::error("{0}:{1} Operation failed with error code: {2} Server diagnostics: {3}",
-												  __FILE__,
-												  __LINE__,
-												  std::to_string(err.code().value()),
-												  err.get_diagnostics().server_message().data()
-										);
-										return std::nullopt;
-							  }
-					}
+					std::optional<boost::mysql::results> executeCommand(MySQLSelection select, Args&&... args);
 
 					void updateTimer();
 
@@ -85,10 +68,10 @@ namespace mysql
 					std::optional<std::size_t> allocateNewUid();
 
 					/*insert new user, call MySQLSelection::CREATE_NEW_USER*/
-					bool insertNewUser(MySQLRequestStruct&& request);
+					bool insertNewUser(MySQLRequestStruct&& request, std::size_t& uuid);
 
 		  private:
-					std::map<MySQLSelection, std::string> m_sql;
+					std::shared_ptr<mysql::details::MySQLManagement> m_delegator;
 
 					// The execution context, required to run I/O operations.
 					boost::asio::io_context &ctx;

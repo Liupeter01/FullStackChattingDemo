@@ -6,23 +6,24 @@
 #include <boost/mysql/row_view.hpp>
 #include <service/IOServicePool.hpp>
 #include <sql/MySQLConnection.hpp>
+#include <sql/MySQLManagement.hpp>
 #include <boost/mysql/handshake_params.hpp>
 
 mysql::MySQLConnection::MySQLConnection( std::string_view username,
                                                                                 std::string_view password,
                                                                                 std::string_view database,
                                                                                 std::string_view host,
-                                                                                std::string_view port) noexcept
+                                                                                std::string_view port,
+                                                                               mysql::details::MySQLManagement* shared) noexcept
 
           : ctx(IOServicePool::get_instance()->getIOServiceContext())
           , ssl_ctx(boost::asio::ssl::context::tls_client)
           , conn(ctx.get_executor(), ssl_ctx)
           , last_operation_time(std::chrono::steady_clock::now())     /*get operation time*/
+          , m_delegator(std::shared_ptr<mysql::details::MySQLManagement>(shared, [](mysql::details::MySQLManagement*) {}))
 {
           try
           {
-                    registerSQLStatement();
-
                     // Resolve the hostname to get a collection of endpoints
                     boost::asio::ip::tcp::resolver resolver(ctx.get_executor());
                     auto endpoints = resolver.resolve(host, port);
@@ -53,23 +54,26 @@ mysql::MySQLConnection::~MySQLConnection()
           conn.close();
 }
 
-void mysql::MySQLConnection::registerSQLStatement()
-{
-          m_sql.insert(std::pair(MySQLSelection::HEART_BEAT, fmt::format("SELECT 1")));
-          m_sql.insert(std::pair(MySQLSelection::FIND_EXISTING_USER, fmt::format("SELECT * FROM user_info WHERE {} = ? AND {} = ?",
-                    std::string("username"),
-                    std::string("email")
-          )));
-
-          m_sql.insert(std::pair(MySQLSelection::CREATE_NEW_USER, fmt::format("INSERT INTO user_info ({},{},{},{}) VALUES (? ,? ,? ,?)",
-                    std::string("username"),
-                    std::string("password"),
-                    std::string("uid"),
-                    std::string("email")
-          )));
-
-          m_sql.insert(std::pair(MySQLSelection::ACQUIRE_NEW_UID, fmt::format("SELECT uid FROM chatting.uid_gen")));
-          m_sql.insert(std::pair(MySQLSelection::UPDATE_UID_COUNTER, fmt::format("UPDATE uid_gen SET uid = uid + 1")));
+template<typename ...Args>
+std::optional<boost::mysql::results> mysql::MySQLConnection::executeCommand(MySQLSelection select, Args&&... args) {
+          try {
+                    boost::mysql::results result;
+                    std::string key = m_delegator.get()->m_sql[select];
+                    spdlog::info("Executing MySQL Query: {}", key);
+                    boost::mysql::statement stmt = conn.prepare_statement(key);
+                    conn.execute(stmt.bind(std::forward<Args>(args)...), result);
+                    return result;
+          }
+          catch (const boost::mysql::error_with_diagnostics& err)
+          {
+                    spdlog::error("{0}:{1} Operation failed with error code: {2} Server diagnostics: {3}",
+                              __FILE__,
+                              __LINE__,
+                              std::to_string(err.code().value()),
+                              err.get_diagnostics().server_message().data()
+                    );
+                    return std::nullopt;
+          }
 }
 
 std::optional<std::size_t> mysql::MySQLConnection::allocateNewUid()
@@ -94,15 +98,21 @@ bool mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
           if (!res.has_value()) {
                     return false;
           }
-          return !res.value().size();
+
+          boost::mysql::results result = res.value();
+          return result.rows().size();
 }
 
-bool mysql::MySQLConnection::insertNewUser(MySQLRequestStruct&& request)
+bool mysql::MySQLConnection::insertNewUser(MySQLRequestStruct&& request, std::size_t &uuid)
 {
           std::optional<std::size_t> uid = allocateNewUid();
           if (!uid.has_value()) {
                     return false;
           }
+
+          /*return back to the client!*/
+          uuid = uid.value();
+
           [[maybe_unused]] auto res = executeCommand(MySQLSelection::CREATE_NEW_USER,
                     request.m_username,
                     request.m_password,
@@ -112,11 +122,11 @@ bool mysql::MySQLConnection::insertNewUser(MySQLRequestStruct&& request)
           return true;
 }
 
-bool mysql::MySQLConnection::registerNewUser(MySQLRequestStruct&& request)
+bool mysql::MySQLConnection::registerNewUser(MySQLRequestStruct&& request, std::size_t& uuid)
 {
           /*check is there anyone who use this username before*/
           if (!checkAccountAvailability(request.m_username, request.m_email)) {
-                    return insertNewUser(std::forward<MySQLRequestStruct>(request));
+                    return insertNewUser(std::forward<MySQLRequestStruct>(request), uuid);
           }
           return false;
 }
