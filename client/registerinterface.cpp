@@ -17,6 +17,9 @@ registerinterface::registerinterface(QWidget *parent)
     /*set multiple attributes*/
     setRegisterAttribute();
 
+    /*register edit finished event on QLineEdit*/
+    registerEditFinishedEvent();
+
     /*register network event from registeration acts*/
     registerNetworkEvent();
 
@@ -47,10 +50,29 @@ void registerinterface::setRegisterAttribute()
     /*set password editing attribute*/
     this->ui->newpassed_edit->setEchoMode(QLineEdit::Password);
     this->ui->confirmpasswd_edit->setEchoMode(QLineEdit::Password);
+}
 
-    /*set password error notification*/
-    Tools::setWidgetAttribute(this->ui->passwderror_label, QString("No Input"), false);
-    Tools::setWidgetAttribute(this->ui->emailerror_label, QString("No Input"), false);
+void registerinterface::registerEditFinishedEvent()
+{
+    /* when user finished editing username info */
+    connect(ui->newuser_edit, &QLineEdit::editingFinished, this, [this](){
+        [[maybe_unused]] auto ret = Tools::checkUsername(ui->newuser_edit, ui->status_label);
+    });
+
+    /* when user finished editing password info */
+    connect(ui->newpassed_edit, &QLineEdit::editingFinished, this, [this](){
+        [[maybe_unused]] auto ret = Tools::checkPassword(ui->newpassed_edit, ui->status_label);
+    });
+
+    /* when user finished editing email info */
+    connect(ui->email_edit, &QLineEdit::editingFinished, this, [this](){
+        [[maybe_unused]] auto ret = Tools::checkEmail(ui->email_edit, ui->status_label);
+    });
+
+    connect(ui->confirmpasswd_edit, &QLineEdit::editingFinished, this, [this](){
+        [[maybe_unused]] auto ret = Tools::checkSimilarity(ui->newpassed_edit, ui->confirmpasswd_edit, ui->status_label);
+    });
+
 }
 
 void registerinterface::regisrerCallBackFunctions()
@@ -61,7 +83,7 @@ void registerinterface::regisrerCallBackFunctions()
 
             if(error != static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS)){
                 Tools::setWidgetAttribute(
-                        this->ui->emailerror_label,
+                        this->ui->status_label,
                         QString("Service Error!"),
                     false
                 );
@@ -72,7 +94,7 @@ void registerinterface::regisrerCallBackFunctions()
             qDebug() << "E-mail = " << email << '\n';
 
             Tools::setWidgetAttribute(
-                this->ui->emailerror_label,
+                this->ui->status_label,
                 QString("code has already been sent to email"),
                 true
             );
@@ -85,7 +107,7 @@ void registerinterface::regisrerCallBackFunctions()
 
             if(error != static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS)){
                 Tools::setWidgetAttribute(
-                    this->ui->register_label,
+                    this->ui->status_label,
                     QString("Register Failed! Internel Error"),
                     false
                 );
@@ -93,10 +115,13 @@ void registerinterface::regisrerCallBackFunctions()
             }
 
             Tools::setWidgetAttribute(
-                this->ui->register_label,
+                this->ui->status_label,
                 QString("Register Successful"),
                 true
             );
+
+            qDebug() << "email = "<<json["email"].toString();
+            qDebug() << "uuid = " << json["uuid"].toString();
         })
     );
 }
@@ -109,36 +134,22 @@ void registerinterface::on_confirm_button_clicked()
     [[maybe_unused]] QString email_text = this->ui->email_edit->text();
     [[maybe_unused]] QString cpatcha = this->ui->verification_edit->text();
 
-    QRegularExpression reg_email(tr("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"));
-    if(!reg_email.match(email_text).hasMatch()){
-        Tools::setWidgetAttribute(this->ui->emailerror_label, QString("Invalid E-mail address"), false);
+    if(!Tools::checkUsername(ui->newuser_edit, ui->status_label)){
         return;
     }
 
-    /* at least one capital letter(A-Z)
-     * at least one lower case letter(a-z)
-     * at least one number(0-z)
-     * at least 8 character
-     */
-    QRegularExpression reg_password(tr("(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}"));
-
-    /*does not match the regular expression critiera!*/
-    if(!reg_password.match(passwd).hasMatch()){
-        Tools::setWidgetAttribute(this->ui->passwderror_label, QString("Invalid Password!"), false);
+    if(!Tools::checkEmail(ui->email_edit, ui->status_label)){
         return;
     }
 
-    Tools::setWidgetAttribute(this->ui->passwderror_label, QString("Valid Password"), true);
-
-    /*does not match origin password*/
-    if(passwd != confirm_passwd){
-        Tools::setWidgetAttribute(this->ui->passwdmatch_label, QString("Password does not match!"), false);
+    if(!Tools::checkPassword(ui->newpassed_edit, ui->status_label)){
         return;
     }
 
-    Tools::setWidgetAttribute(this->ui->passwdmatch_label, QString("Password match"), true);
+    if(!Tools::checkSimilarity(ui->newpassed_edit, ui->confirmpasswd_edit, ui->status_label)){
+        return;
+    }
 
-    /*Sending e-mail verification code*/
     QJsonObject json;
     json["username"] = username;
     json["password"] = confirm_passwd;
@@ -158,7 +169,7 @@ void registerinterface::on_verification_button_clicked()
     QRegularExpression reg(tr("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"));
     if(!reg.match(email_text).hasMatch()){
         Tools::setWidgetAttribute(
-            this->ui->emailerror_label,
+            this->ui->status_label,
             QString("Invalid E-mail address"),
             false
         );
@@ -166,7 +177,7 @@ void registerinterface::on_verification_button_clicked()
     }
 
     Tools::setWidgetAttribute(
-        this->ui->emailerror_label,
+        this->ui->status_label,
         QString("Valid E-mail address"),
         true
     );
@@ -188,20 +199,20 @@ void registerinterface::signal_registeration_finished(
 {
     /*handle network error*/
     if(!json_data.length() && srv_status == ServiceStatus::NETWORK_ERROR){
-        Tools::setWidgetAttribute(this->ui->emailerror_label, QString("Network Error!"), false);
+        Tools::setWidgetAttribute(this->ui->status_label, QString("Network Error!"), false);
         return;
     }
 
     QJsonDocument json_obj = QJsonDocument::fromJson(json_data.toUtf8());
     if(json_obj.isNull()){  //converting failed
-        Tools::setWidgetAttribute(this->ui->emailerror_label, QString("Retrieve Data Error!"), false);
+        Tools::setWidgetAttribute(this->ui->status_label, QString("Retrieve Data Error!"), false);
         //journal log system
         qDebug() << "[FATAL ERROR]: json object is null!\n";
         return;
     }
 
     if(!json_obj.isObject()){
-        Tools::setWidgetAttribute(this->ui->emailerror_label, QString("Retrieve Data Error!"), false);
+        Tools::setWidgetAttribute(this->ui->status_label, QString("Retrieve Data Error!"), false);
         //journal log system
         qDebug() << "[FATAL ERROR]: json can not be converted to an object!\n";
         return;
@@ -217,21 +228,21 @@ void registerinterface::signal_verification_finished(
 {
     /*handle network error*/
     if(!json_data.length() && srv_status == ServiceStatus::NETWORK_ERROR){
-        Tools::setWidgetAttribute(this->ui->emailerror_label, QString("Network Error!"), false);
+        Tools::setWidgetAttribute(this->ui->status_label, QString("Network Error!"), false);
         return;
     }
 
     //json_data
     QJsonDocument json_obj = QJsonDocument::fromJson(json_data.toUtf8());
     if(json_obj.isNull()){  //converting failed
-        Tools::setWidgetAttribute(this->ui->emailerror_label, QString("Retrieve Data Error!"), false);
+        Tools::setWidgetAttribute(this->ui->status_label, QString("Retrieve Data Error!"), false);
         //journal log system
         qDebug() << "[FATAL ERROR]: json object is null!\n";
         return;
     }
 
     if(!json_obj.isObject()){
-        Tools::setWidgetAttribute(this->ui->emailerror_label, QString("Retrieve Data Error!"), false);
+        Tools::setWidgetAttribute(this->ui->status_label, QString("Retrieve Data Error!"), false);
         //journal log system
         qDebug() << "[FATAL ERROR]: json can not be converted to an object!\n";
         return;

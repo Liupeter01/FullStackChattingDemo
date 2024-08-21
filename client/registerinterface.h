@@ -42,6 +42,7 @@ private slots:
 
 private:
     void setRegisterAttribute();
+    void registerEditFinishedEvent();
     void registerNetworkEvent();
     void regisrerCallBackFunctions();
 
