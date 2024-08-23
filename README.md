@@ -11,7 +11,7 @@ using QT6(Q::Widgets Qt::Network)
 
 ![](./assets/client_main.png)
 
-![](./assets/register_page.png)
+![](./assets/register_empty.png)
 
 ![](./assets/register_with_text.png)
 
