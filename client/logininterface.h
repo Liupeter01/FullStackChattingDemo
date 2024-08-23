@@ -17,9 +17,15 @@ public:
 
 private:
     void registerSignal();
+    void setLoginAttribute();
+    void slot_forgot_passwd();
 
 signals:
+    /*switch to register interface*/
     void switchWindow();
+
+    /*switch to reset interface*/
+    void switchReset();
 
 private:
     Ui::LoginInterface *ui;
