@@ -1,11 +1,12 @@
 #ifndef REGISTERINTERFACE_H
 #define REGISTERINTERFACE_H
 
-#include <QJsonObject>
-#include <map>
-#include <functional>
-#include <QDialog>
 #include <QLabel>
+#include <QImage>
+#include "tools.h"
+#include <QDialog>
+#include <functional>
+#include <QJsonObject>
 
 namespace Ui {
 class registerinterface;

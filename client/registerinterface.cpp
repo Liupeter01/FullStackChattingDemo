@@ -1,12 +1,14 @@
+#include <QUrl>
+#include <QFile>
+#include <QDebug>
+#include <QJsonObject>
+#include <QJsonDocument>
+
 #include "tools.h"
 #include "registerinterface.h"
 #include "ui_registerinterface.h"
 #include "httpnetworkconnection.h"
-#include <QRegularExpression>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QUrl>
-#include <QDebug>
+
 
 registerinterface::registerinterface(QWidget *parent)
     : QDialog(parent)
@@ -25,6 +27,22 @@ registerinterface::registerinterface(QWidget *parent)
 
     /*register callback functions to update interface accroding to network responses*/
     regisrerCallBackFunctions();
+
+    /*load registeration interface's image*/
+    Tools::loadImgResources(
+        {
+            "show_password.png",
+            "show_passwd_selected.png",
+            "invisiable_password.png",
+            "invisiable_passwd_selected.png"
+        },
+        (ui->display_passwd->width() + ui->display_confirm->width()) / 2,
+        (ui->display_passwd->height() + ui->display_confirm->height()) / 2
+    );
+
+    /*set default image for registeration page*/
+    Tools::setQLableImage(ui->display_passwd, "invisiable_password.png");
+    Tools::setQLableImage(ui->display_confirm, "invisiable_password.png");
 }
 
 registerinterface::~registerinterface()
@@ -50,6 +68,9 @@ void registerinterface::setRegisterAttribute()
     /*set password editing attribute*/
     this->ui->newpassed_edit->setEchoMode(QLineEdit::Password);
     this->ui->confirmpasswd_edit->setEchoMode(QLineEdit::Password);
+
+    this->ui->display_passwd->setCursor(Qt::PointingHandCursor);
+    this->ui->display_confirm->setCursor(Qt::PointingHandCursor);
 }
 
 void registerinterface::registerEditFinishedEvent()
@@ -75,6 +96,30 @@ void registerinterface::registerEditFinishedEvent()
 
     connect(ui->verification_edit, &QLineEdit::editingFinished, this, [this](){
         [[maybe_unused]] auto ret = Tools::checkCaptcha(ui->verification_edit, ui->status_label);
+    });
+
+    connect(ui->display_passwd, &PasswordDisplaySwitching::clicked, this, [this](){
+        auto state = ui->display_passwd->getState();
+        if(state.visiable == LabelState::VisiableStatus::ENABLED){
+            this->ui->newpassed_edit->setEchoMode(QLineEdit::Normal);
+            Tools::setQLableImage(ui->display_passwd, "show_password.png");
+        }
+        else{
+            this->ui->newpassed_edit->setEchoMode(QLineEdit::Password);
+            Tools::setQLableImage(ui->display_passwd, "invisiable_password.png");
+        }
+    });
+
+    connect(ui->display_confirm, &PasswordDisplaySwitching::clicked, this, [this](){
+        auto state = ui->display_confirm->getState();
+        if(state.visiable == LabelState::VisiableStatus::ENABLED){
+            this->ui->confirmpasswd_edit->setEchoMode(QLineEdit::Normal);
+            Tools::setQLableImage(ui->display_confirm, "show_password.png");
+        }
+        else{
+            this->ui->confirmpasswd_edit->setEchoMode(QLineEdit::Password);
+            Tools::setQLableImage(ui->display_confirm, "invisiable_password.png");
+        }
     });
 }
 
