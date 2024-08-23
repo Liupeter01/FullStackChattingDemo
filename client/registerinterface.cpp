@@ -347,3 +347,10 @@ void registerinterface::signal_verification_finished(
 
     m_callbacks[srv_type](std::move(json_obj.object()));
 }
+
+void registerinterface::on_cancel_button_clicked()
+{
+    emit switchToLogin();
+    return;
+}
+

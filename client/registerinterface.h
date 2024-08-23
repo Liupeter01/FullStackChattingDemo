@@ -44,6 +44,8 @@ private slots:
 
     void on_confirm_button_clicked();
 
+    void on_cancel_button_clicked();
+
 private:
     void registerSignal();
 
