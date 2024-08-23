@@ -26,6 +26,9 @@ public:
     explicit registerinterface(QWidget *parent = nullptr);
     ~registerinterface();
 
+signals:
+    void switchToLogin();
+
 private slots:
     void on_verification_button_clicked();
     void signal_registeration_finished(
@@ -42,14 +45,34 @@ private slots:
     void on_confirm_button_clicked();
 
 private:
+    void registerSignal();
+
+    /*
+     * control back to login timeout setting
+     * returning back to login page within 5s
+     */
+    void registerTimeoutSetting();
+
     void setRegisterAttribute();
     void registerEditFinishedEvent();
     void registerNetworkEvent();
     void regisrerCallBackFunctions();
 
+    /*
+     * switch to registeration successful page
+     * by using stackedWidget switch to
+    */
+    void switchRegInfoPage();
+    void switchRegSucessfulPage();
+
 private:
     std::map<ServiceType, CallBackFunc> m_callbacks;
     Ui::registerinterface *ui;
+
+    /*when registeration successful, user might have 5 seconds to close the registeration page*/
+    QTimer* m_timer;
+    const std::size_t m_countdown;
+    std::size_t m_counter;
 };
 
 #endif // REGISTERINTERFACE_H

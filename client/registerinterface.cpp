@@ -11,10 +11,21 @@
 
 
 registerinterface::registerinterface(QWidget *parent)
-    : QDialog(parent)
+    : m_countdown(5/*seconds*/)
+    , m_timer(new QTimer(this))
+    , QDialog(parent)
     , ui(new Ui::registerinterface)
 {
     ui->setupUi(this);
+
+    /*register return to login interface*/
+    registerSignal();
+
+    /*
+     * control back to login timeout setting
+     * returning back to login page within 5s
+     */
+    registerTimeoutSetting();
 
     /*set multiple attributes*/
     setRegisterAttribute();
@@ -27,6 +38,9 @@ registerinterface::registerinterface(QWidget *parent)
 
     /*register callback functions to update interface accroding to network responses*/
     regisrerCallBackFunctions();
+
+    /*switch reg info page*/
+    switchRegInfoPage();
 
     /*load registeration interface's image*/
     Tools::loadImgResources(
@@ -170,8 +184,26 @@ void registerinterface::regisrerCallBackFunctions()
 
             qDebug() << "email = "<<json["email"].toString();
             qDebug() << "uuid = " << json["uuid"].toString();
+
+            /*switch to successful page!*/
+            switchRegSucessfulPage();
         })
     );
+}
+
+/*
+ * switch to registeration successful page
+ * by using stackedWidget switch to successful_page
+ */
+void registerinterface::switchRegInfoPage()
+{
+    ui->stackedWidget->setCurrentWidget(ui->reg_info);
+}
+
+void registerinterface::switchRegSucessfulPage()
+{
+    ui->stackedWidget->setCurrentWidget(ui->successful_page);
+    m_timer->start(1000/*default time interval = 1000ms(1s)*/);
 }
 
 void registerinterface::on_confirm_button_clicked()
@@ -215,28 +247,41 @@ void registerinterface::on_confirm_button_clicked()
     );
 }
 
+void registerinterface::registerSignal()
+{
+    connect(ui->return_to_login, &QPushButton::clicked, this, &registerinterface::switchToLogin);
+}
+
+/*
+ * control back to login timeout setting
+ * returning back to login page within 5s
+ */
+void registerinterface::registerTimeoutSetting()
+{
+    m_counter = m_countdown;
+
+    connect(m_timer, &QTimer::timeout, [this](){
+        ui->timeout_label->setText(QString("returning back to login page within ") + QString::number(m_counter) + 's');
+        --m_counter;
+
+        /*reset data display*/
+        if(m_counter <= 0){
+            m_timer->stop();
+            emit switchToLogin();
+            return;
+        }
+    });
+}
+
 void registerinterface::on_verification_button_clicked()
 {
-    QString email_text = this->ui->email_edit->text();
-    QRegularExpression reg(tr("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"));
-    if(!reg.match(email_text).hasMatch()){
-        Tools::setWidgetAttribute(
-            this->ui->status_label,
-            QString("Invalid E-mail address"),
-            false
-        );
+    if(!Tools::checkEmail(ui->email_edit, ui->status_label)){
         return;
     }
 
-    Tools::setWidgetAttribute(
-        this->ui->status_label,
-        QString("Valid E-mail address"),
-        true
-    );
-
     /*Sending e-mail verification code*/
     QJsonObject json;
-    json["email"] = email_text;
+    json["email"] = ui->email_edit->text();
     HttpNetworkConnection::get_instance()->postHttpRequest(
         Tools::getTargetUrl("/get_verification"),
         json,
