@@ -25,6 +25,7 @@ private:
     void displayDefaultWindow(QWidget *window);
     void switchingToRegInterface();
     void switchingToLoginDialog();
+    void switchingToResetDialog();
 
 private:
     Ui::MainWindow *ui;

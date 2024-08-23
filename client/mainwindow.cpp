@@ -44,7 +44,18 @@ void MainWindow::switchingToLoginDialog()
     m_login = new LoginInterface(this);
 
     connect(this->m_login, &LoginInterface::switchWindow, this, &MainWindow::switchingToRegInterface);
+    connect(this->m_login, &LoginInterface::switchReset ,this,&MainWindow::switchingToResetDialog);
 
     setFramelessWindow(m_login);
     displayDefaultWindow(m_login);
+}
+
+void MainWindow::switchingToResetDialog()
+{
+    //m_login = new LoginInterface(this);
+
+    //connect(this->m_login, &LoginInterface::switchWindow, this, &MainWindow::switchingToRegInterface);
+
+    //setFramelessWindow(m_login);
+    //displayDefaultWindow(m_login);
 }
