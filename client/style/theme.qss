@@ -1,5 +1,5 @@
 Dialog#registerinterface,#LoginInterface{
-background-color:rgb(0,0,255)
+background-color:rgb(0,0,0)
 }
 
 #status_label[state='correct']{
@@ -10,3 +10,10 @@ background-color:rgb(0,0,255)
     color: red;
 }
 
+#forgot_passwd_label[state='correct']{
+    color: blue;
+}
+
+#forgot_passwd_label[state='incorrect']{
+    color: white;
+}
