@@ -137,6 +137,25 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="PasswordDisplaySwitching" name="display_passwd">
+             <property name="minimumSize">
+              <size>
+               <width>25</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>25</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
@@ -173,6 +192,25 @@
                <width>16777215</width>
                <height>25</height>
               </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="PasswordDisplaySwitching" name="display_confirm">
+             <property name="minimumSize">
+              <size>
+               <width>25</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>25</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
              </property>
             </widget>
            </item>
@@ -398,6 +436,11 @@
    <class>CountDownButton</class>
    <extends>QPushButton</extends>
    <header>countdownbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PasswordDisplaySwitching</class>
+   <extends>QLabel</extends>
+   <header>passworddisplayswitching.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
