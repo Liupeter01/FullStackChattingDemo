@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
     , m_login(nullptr)
     , m_register(nullptr)   /*we don't need to allocate memory at the beginning*/
+    , m_reset(nullptr)      /*we don't need to allocate memory at the beginning*/
 {
     ui->setupUi(this);
 
@@ -52,10 +53,10 @@ void MainWindow::switchingToLoginDialog()
 
 void MainWindow::switchingToResetDialog()
 {
-    //m_login = new LoginInterface(this);
+    m_reset = new ResetPasswdInterface(this);
 
-    //connect(this->m_login, &LoginInterface::switchWindow, this, &MainWindow::switchingToRegInterface);
+    connect(this->m_reset, &ResetPasswdInterface::switchToLogin, this, &MainWindow::switchingToLoginDialog);
 
-    //setFramelessWindow(m_login);
-    //displayDefaultWindow(m_login);
+    setFramelessWindow(m_reset);
+    displayDefaultWindow(m_reset);
 }

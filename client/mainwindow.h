@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include "registerinterface.h"
 #include "logininterface.h"
+#include "resetpasswdinterface.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -31,5 +32,6 @@ private:
     Ui::MainWindow *ui;
     registerinterface* m_register;
     LoginInterface* m_login;
+    ResetPasswdInterface* m_reset;
 };
 #endif // MAINWINDOW_H
