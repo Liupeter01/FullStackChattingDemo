@@ -13,7 +13,9 @@ using QT6(Q::Widgets Qt::Network)
 
 ![](./assets/register_page.png)
 
+![](./assets/register_with_text.png)
 
+![](./assets/after_reg.png)
 
 ## Server
 
