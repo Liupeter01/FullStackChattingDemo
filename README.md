@@ -13,6 +13,8 @@ using QT6(Q::Widgets Qt::Network)
 
 ![](./assets/register_page.png)
 
+
+
 ## Server
 
 ### Libraries
