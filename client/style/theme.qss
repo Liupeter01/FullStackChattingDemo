@@ -10,6 +10,22 @@ background-color:rgb(0,0,0)
     color: red;
 }
 
+#status_label_1[state='correct']{
+    color: green;
+}
+
+#status_label_1[state='incorrect']{
+    color: red;
+}
+
+#status_label_2[state='correct']{
+    color: green;
+}
+
+#status_label_2[state='incorrect']{
+    color: red;
+}
+
 #forgot_passwd_label[state='correct']{
     color: blue;
 }
