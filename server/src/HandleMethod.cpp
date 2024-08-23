@@ -1,13 +1,13 @@
+#include <grpc/GrpcVerificationService.hpp>
+#include <handler/HandleMethod.hpp>
+#include <http/HttpConnection.hpp>
 #include <json/json.h>
 #include <json/reader.h>
 #include <json/value.h>
-#include<spdlog/spdlog.h>
-#include <network/def.hpp>     //network errorcode defs
+#include <network/def.hpp> //network errorcode defs
 #include <redis/RedisManager.hpp>
-#include <http/HttpConnection.hpp>
-#include <handler/HandleMethod.hpp>
+#include <spdlog/spdlog.h>
 #include <sql/MySQLManagement.hpp>
-#include <grpc/GrpcVerificationService.hpp>
 
 HandleMethod::~HandleMethod() {}
 
@@ -58,7 +58,8 @@ void HandleMethod::registerPostCallBacks() {
         /*Get email string and send to grpc service*/
         auto email = src_root["email"].asString();
 
-        spdlog::info("Server receive verification request, email addr: {}", email.c_str());
+        spdlog::info("Server receive verification request, email addr: {}",
+                     email.c_str());
 
         auto response = gRPCVerificationService::getVerificationCode(email);
 
@@ -77,7 +78,8 @@ void HandleMethod::registerPostCallBacks() {
         auto body =
             boost::beast::buffers_to_string(conn->http_request.body().data());
 
-        spdlog::info("Server receive registration request, post data: {}", body.c_str());
+        spdlog::info("Server receive registration request, post data: {}",
+                     body.c_str());
 
         Json::Value send_root; /*write into body*/
         Json::Value src_root;  /*store json from client*/
@@ -132,8 +134,8 @@ void HandleMethod::registerPostCallBacks() {
         /*MYSQL(start to create a new user)*/
         mysql::MySQLRAII mysql;
         if (!mysql->get()->registerNewUser(std::move(request), uuid)) {
-                  registerError(conn);
-                  return false;
+          registerError(conn);
+          return false;
         }
 
         send_root["error"] =
@@ -141,7 +143,7 @@ void HandleMethod::registerPostCallBacks() {
         send_root["username"] = username;
         send_root["password"] = password;
         send_root["email"] = email;
-        send_root["uuid"] = uuid;
+        send_root["uuid"] = std::to_string(uuid);
 
         boost::beast::ostream(conn->http_response.body())
             << send_root.toStyledString();
@@ -175,14 +177,13 @@ void HandleMethod::captchaError(std::shared_ptr<HTTPConnection> conn) {
   boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
 }
 
-void HandleMethod::registerError(std::shared_ptr<HTTPConnection> conn)
-{
-          Json::Value root;
+void HandleMethod::registerError(std::shared_ptr<HTTPConnection> conn) {
+  Json::Value root;
 
-          spdlog::error("MySQL internel error!");
+  spdlog::error("MySQL internel error!");
 
-          root["error"] = static_cast<uint8_t>(ServiceStatus::MYSQL_INTERNAL_ERROR);
-          boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
+  root["error"] = static_cast<uint8_t>(ServiceStatus::MYSQL_INTERNAL_ERROR);
+  boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
 }
 
 void HandleMethod::registerCallBacks() {
