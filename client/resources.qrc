@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>style/theme.qss</file>
+        <file>res/invisiable_passwd_selected.png</file>
+        <file>res/invisiable_password.png</file>
+        <file>res/show_passwd_selected.png</file>
+        <file>res/show_password.png</file>
     </qresource>
 </RCC>
