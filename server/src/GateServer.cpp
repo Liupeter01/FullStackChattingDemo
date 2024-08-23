@@ -1,18 +1,20 @@
+#include<spdlog/spdlog.h>
 #include<server/GateServer.hpp>
 #include<http/HttpConnection.hpp>
+#include<service/IOServicePool.hpp>
 
 GateServer::GateServer(boost::asio::io_context& _ioc, unsigned short port)
           :m_ioc(_ioc)
           , m_acceptor(_ioc, boost::asio::ip::tcp::endpoint(boost::asio::ip::address_v4::any(), port))
 {
-          printf("[NOTICE]: server activated, listen on port %u\n", port);
-
+          spdlog::info("Server activated, listen on port {}", port);
           this->serverStart();
 }
 
 void GateServer::serverStart()
 {
-          std::shared_ptr<Session> session = std::make_shared<Session>(m_ioc,  this);
+          boost::asio::io_context &ioc = IOServicePool::get_instance()->getIOServiceContext();   //get ioc
+          std::shared_ptr<Session> session = std::make_shared<Session>(ioc,  this);
 
           this->m_acceptor.async_accept(
                     session->s_socket,

@@ -7,20 +7,31 @@
 struct ServerConfig : public Singleton< ServerConfig>
 {
           friend class Singleton< ServerConfig>;
+
 public:
           ~ServerConfig() = default;
           unsigned short GateServerPort;
+
           std::string VerificationServerAddress;
 
-private:
-          ServerConfig() {
-                    m_ini.load(CONFIG_HOME"config.ini");
-                    GateServerPort = m_ini["GateServer"]["port"].as<unsigned short>();
+          std::string MySQL_host;
+          std::string MySQL_port;
+          std::string MySQL_username;
+          std::string MySQL_passwd;
+          std::string MySQL_database;
+          std::size_t MySQL_timeout;
 
-                    VerificationServerAddress =
-                              m_ini["VerificationServer"]["host"].as<std::string>() + ':'
-                              + std::to_string(m_ini["VerificationServer"]["port"].as<unsigned short>());
-          }
+          std::string Redis_ip_addr;
+          unsigned short Redis_port;
+          std::string Redis_passwd;
+
+private:
+          ServerConfig();
+
+          void loadGateServerInfo();
+          void loadVerificationServerInfo();
+          void loadMySQLInfo();
+          void loadRedisInfo();
 
 private:
           ini::IniFile m_ini;

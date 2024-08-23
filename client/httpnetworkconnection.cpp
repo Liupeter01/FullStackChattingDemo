@@ -60,4 +60,7 @@ void HttpNetworkConnection::slot_http_finished(ServiceType srv_type, QString jso
     if(srv_type == ServiceType::SERVICE_VERIFICATION){
         emit this->signal_verification_finished(srv_type, json_data, srv_status);
     }
+    else if(srv_type == ServiceType::SERVICE_REGISTERATION){
+        emit this->signal_registeration_finished(srv_type, json_data, srv_status);
+    }
 }

@@ -23,12 +23,11 @@ public:
 private:
     void setFramelessWindow(QDialog *dialog);
     void displayDefaultWindow(QWidget *window);
-    void registerSignalSlots();
-    void interfaceSwitchingHandler();
+    void switchingToRegInterface();
+    void switchingToLoginDialog();
 
 private:
     Ui::MainWindow *ui;
-    //std::stack<QDialog *> m_dialogSwitch;
     registerinterface* m_register;
     LoginInterface* m_login;
 };

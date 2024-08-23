@@ -22,6 +22,15 @@ private:
           void registerPostCallBacks();
           void jsonParsingError(std::shared_ptr<HTTPConnection> conn);
 
+          /*redis internel server error*/
+          void redisError(std::shared_ptr<HTTPConnection> conn);
+
+          /*captcha not found*/
+          void captchaError(std::shared_ptr<HTTPConnection> conn);
+
+          /*register failed*/
+          void registerError(std::shared_ptr<HTTPConnection> conn);
+
 public:
           ~HandleMethod();
           void registerCallBacks();

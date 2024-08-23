@@ -9,3 +9,9 @@
 [submodule "server/inifile"]
 	path = server/inifile
 	url = https://github.com/Rookfighter/inifile-cpp.git
+[submodule "server/hiredis"]
+	path = server/hiredis
+	url = https://github.com/redis/hiredis.git
+[submodule "server/spdlog"]
+	path = server/spdlog
+	url = https://github.com/gabime/spdlog.git

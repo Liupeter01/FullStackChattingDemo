@@ -4,20 +4,12 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , m_login(new LoginInterface(this))
-    , m_register(new registerinterface(this))
+    , m_login(nullptr)
+    , m_register(nullptr)   /*we don't need to allocate memory at the beginning*/
 {
     ui->setupUi(this);
 
-    /*deploy windows flags setting*/
-    setFramelessWindow(m_login);
-    setFramelessWindow(m_register);
-
-    /*register signal slots*/
-    registerSignalSlots();
-
-    /*display login window as default*/
-    displayDefaultWindow(m_login);
+    switchingToLoginDialog();
 }
 
 MainWindow::~MainWindow()
@@ -36,12 +28,23 @@ void MainWindow::setFramelessWindow(QDialog *dialog)
     dialog->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 }
 
-void MainWindow::registerSignalSlots()
+void MainWindow::switchingToRegInterface()
 {
-    connect(this->m_login, &LoginInterface::switchWindow, this, &MainWindow::interfaceSwitchingHandler);
+    m_register = new registerinterface(this);
+
+    /*m_register has to be created to prevent from UB*/
+    connect(m_register, &registerinterface::switchToLogin, this, &MainWindow::switchingToLoginDialog);
+
+    setFramelessWindow(m_register);
+    displayDefaultWindow(m_register);
 }
 
-void MainWindow::interfaceSwitchingHandler()
+void MainWindow::switchingToLoginDialog()
 {
-    displayDefaultWindow(m_register);
+    m_login = new LoginInterface(this);
+
+    connect(this->m_login, &LoginInterface::switchWindow, this, &MainWindow::switchingToRegInterface);
+
+    setFramelessWindow(m_login);
+    displayDefaultWindow(m_login);
 }
