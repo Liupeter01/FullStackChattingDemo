@@ -1,5 +1,4 @@
 #include <QDebug>
-#include <chrono>
 #include "countdownbutton.h"
 
 CountDownButton::CountDownButton(QWidget *parent, std::size_t seconds)
@@ -43,9 +42,7 @@ void CountDownButton::mouseReleaseEvent(QMouseEvent *e)
         this->setText(QString::number(m_countdown));
         this->setEnabled(false);
 
-        //auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(m_countdown));
-
-        m_timer->start(m_countdown * 100);  //seconds->microsecond
+        m_timer->start(1000/*default time interval = 1000ms(1s)*/);
         emit clicked();
     }
 

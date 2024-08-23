@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QPushButton>
 
+/*default time interval = 1000ms(1s)*/
 class CountDownButton
     :public QPushButton
 {
