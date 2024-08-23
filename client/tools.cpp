@@ -10,6 +10,8 @@
 QString Tools::url_info{};
 bool Tools::url_init_flag{false};
 
+std::map<QString, QImage> Tools::s_images{};
+
 void Tools::refreshQssStyle(QWidget *widget){
     widget->style()->unpolish(widget);
     widget->style()->polish(widget);
@@ -96,4 +98,53 @@ bool Tools::checkCaptcha(QLineEdit *edit, QLabel *label)
         return false;
     }
     return true;
+}
+
+std::optional<QImage> Tools::loadImages(const QString &path, int width, int height)
+{
+    QFile load_file(path);
+    if(!load_file.exists()){
+        qDebug() << "Open image path: " << path <<" failed!";
+        return std::nullopt;
+    }
+
+    QImage load_img(path);
+    load_img = load_img.scaled(width, height);
+    return load_img;
+}
+
+void Tools::loadImgResources(std::initializer_list<QString> file_list, int width, int height)
+{
+    for(const auto &path : file_list){
+
+        auto image = Tools::loadImages(
+            QT_DEMO_HOME"/res/" + path,
+            width,
+            height
+            );
+
+        if(!image.has_value()){
+            qDebug() << "image: " << path << " load error!";
+            continue;
+        }
+        qDebug() << "resource image file: " << path << " load successfully!";
+        Tools::s_images.insert(std::pair<QString, QImage>(path, image.value()));
+    }
+}
+
+void Tools::setQLableImage(QLabel *label, const QString &target)
+{
+    auto it = Tools::s_images.find(target);
+    if(it == Tools::s_images.end()){
+        qDebug() << "image: " << target << " not found!";
+        return;
+    }
+    label->setPixmap(QPixmap::fromImage(it->second));
+    label->update();
+}
+
+LabelState::LabelState()
+    :visiable(VisiableStatus::DISABLED)
+    ,hover(HoverStatus::DISABLED)
+{
 }

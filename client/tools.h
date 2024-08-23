@@ -1,13 +1,36 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+#include <map>
 #include <QUrl>
 #include <QLabel>
 #include <QDebug>
+#include <QImage>
 #include <QString>
 #include <QWidget>
+#include <optional>
 #include <QLineEdit>
 #include <type_traits>
+#include <initializer_list>
+
+struct LabelState{
+    LabelState();
+
+    /*
+     * Default status = DISABLE
+     * VisiableStatus will be changed after every clicked!
+    */
+    enum VisiableStatus{
+        DISABLED,
+        ENABLED
+    }visiable;
+
+    enum class HoverStatus: uint8_t{
+        DISABLED,
+        ENABLED
+    }hover;
+};
+
 
 template<typename Widget, class = void>
 struct has_settext_function: std::false_type
@@ -44,6 +67,14 @@ struct Tools
     static bool checkPassword(QLineEdit *edit, QLabel *label);
     static bool checkSimilarity(QLineEdit *edit_pass, QLineEdit *edit_confirm, QLabel *label);
     static bool checkCaptcha(QLineEdit *edit, QLabel *label);
+
+    /*load image*/
+    static std::map<QString, QImage> s_images;
+
+    /*all images files should be inside "/res" dir*/
+    static void loadImgResources(std::initializer_list<QString> file_list, int width, int height);
+    static void setQLableImage(QLabel *label, const QString &target);
+    static std::optional<QImage> loadImages(const QString &path, int width, int height);
 };
 
 #endif // TOOLS_H
