@@ -27,9 +27,10 @@ namespace mysql
 		  {
 					HEART_BEAT,
 					FIND_EXISTING_USER,
-					CREATE_NEW_USER,
-					ACQUIRE_NEW_UID,
-					UPDATE_UID_COUNTER
+					CREATE_NEW_USER,			 //register new user
+					ACQUIRE_NEW_UID,			 //get uid for user
+					UPDATE_UID_COUNTER,	//add up to uid accounter
+					UPDATE_USER_PASSWD	//update user password
 		  };
 
 		  class MySQLConnection
@@ -50,6 +51,11 @@ namespace mysql
 
 		  public:
 					bool registerNewUser(MySQLRequestStruct&& request, std::size_t& uuid);
+					bool alterUserPassword(MySQLRequestStruct&& request);					
+					
+					/*is username and email were occupied!*/
+					bool checkAccountAvailability(std::string_view username, std::string_view email);
+					
 					bool checkTimeout(const std::chrono::steady_clock::time_point& curr, std::size_t timeout);
 
 		  private:		
@@ -60,9 +66,6 @@ namespace mysql
 
 					/*send heart packet to mysql to prevent from disconnecting*/
 					bool sendHeartBeat();
-
-					/*is username and email were occupied!*/
-					bool checkAccountAvailability(std::string_view username, std::string_view email);
 
 					/*get new uid for user registeration*/
 					std::optional<std::size_t> allocateNewUid();

@@ -122,6 +122,11 @@ void mysql::details::MySQLManagement::registerSQLStatement()
 
           m_sql.insert(std::pair(MySQLSelection::ACQUIRE_NEW_UID, fmt::format("SELECT uid FROM chatting.uid_gen")));
           m_sql.insert(std::pair(MySQLSelection::UPDATE_UID_COUNTER, fmt::format("UPDATE uid_gen SET uid = uid + 1")));
+          m_sql.insert(std::pair(MySQLSelection::UPDATE_USER_PASSWD, fmt::format("UPDATE user_info SET {} = ? WHERE {} = ? AND {} = ?",
+                    std::string("password"),
+                    std::string("username"),
+                    std::string("email")
+          )));
 }
 
 void mysql::details::MySQLManagement::roundRobinChecking(std::size_t timeout)

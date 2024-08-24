@@ -5,6 +5,7 @@
 #include<memory>
 #include<functional>
 #include<string_view>
+#include <network/def.hpp> //network errorcode defs
 #include<singleton/singleton.hpp>
 
 class HTTPConnection;
@@ -20,16 +21,10 @@ private:
           HandleMethod();
           void registerGetCallBacks();
           void registerPostCallBacks();
-          void jsonParsingError(std::shared_ptr<HTTPConnection> conn);
 
-          /*redis internel server error*/
-          void redisError(std::shared_ptr<HTTPConnection> conn);
-
-          /*captcha not found*/
-          void captchaError(std::shared_ptr<HTTPConnection> conn);
-
-          /*register failed*/
-          void registerError(std::shared_ptr<HTTPConnection> conn);
+          void generateErrorMessage(std::string_view message, 
+                                                        ServiceStatus status, 
+                                                         std::shared_ptr<HTTPConnection> conn);
 
 public:
           ~HandleMethod();
