@@ -1101,6 +1101,7 @@ verification server using verification-server/config.json to store parameters
    # this will increase compatibility with older clients. For background, see:
    # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin
    # default-authentication-plugin=mysql_native_password
+   default-authentication-plugin=mysql_native_password
    skip-host-cache
    skip-name-resolve
    datadir=/var/lib/mysql
