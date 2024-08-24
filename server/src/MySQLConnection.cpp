@@ -131,6 +131,11 @@ bool mysql::MySQLConnection::registerNewUser(MySQLRequestStruct&& request, std::
           return false;
 }
 
+bool mysql::MySQLConnection::alterUserPassword(MySQLRequestStruct&& request)
+{
+          return false;
+}
+
 bool mysql::MySQLConnection::checkTimeout(const std::chrono::steady_clock::time_point& curr, std::size_t timeout)
 {
           if (std::chrono::duration_cast<std::chrono::seconds>(curr - last_operation_time).count() > timeout) {
