@@ -21,6 +21,7 @@ private:
     void setResetAttribute();
     void registerTimeoutSetting();
     void registerEditFinishedEvent();
+    void registerNetworkEvent();
 
     /*
      * switch to registeration successful page

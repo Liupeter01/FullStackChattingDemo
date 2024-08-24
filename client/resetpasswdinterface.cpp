@@ -1,5 +1,6 @@
 #include "resetpasswdinterface.h"
 #include "ui_resetpasswdinterface.h"
+#include "httpnetworkconnection.h"
 
 ResetPasswdInterface::ResetPasswdInterface(QWidget *parent)
     : m_countdown(5/*seconds*/)
@@ -28,6 +29,21 @@ ResetPasswdInterface::ResetPasswdInterface(QWidget *parent)
 ResetPasswdInterface::~ResetPasswdInterface()
 {
     delete ui;
+}
+
+void ResetPasswdInterface::registerNetworkEvent()
+{
+    /*
+    connect(HttpNetworkConnection::get_instance().get(),
+            &HttpNetworkConnection::signal_registeration_finished,
+            this, &registerinterface::signal_registeration_finished
+            );
+
+    connect(HttpNetworkConnection::get_instance().get(),
+            &HttpNetworkConnection::signal_verification_finished,
+            this, &registerinterface::signal_verification_finished
+            );
+    */
 }
 
 void ResetPasswdInterface::setResetAttribute()
