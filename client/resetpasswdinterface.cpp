@@ -35,6 +35,17 @@ ResetPasswdInterface::ResetPasswdInterface(QWidget *parent)
   registerNetworkEvent();
 
   regisrerCallBackFunctions();
+
+  /*load registeration interface's image*/
+  Tools::loadImgResources(
+      {"show_password.png", "show_passwd_selected.png",
+       "invisiable_password.png", "invisiable_passwd_selected.png"},
+      (ui->newpasswd_show->width() + ui->newconfirm_show->width()) / 2,
+      (ui->newpasswd_show->height() + ui->newconfirm_show->height()) / 2);
+
+  /*set default image for registeration page*/
+  Tools::setQLableImage(ui->newpasswd_show, "invisiable_password.png");
+  Tools::setQLableImage(ui->newconfirm_show, "invisiable_password.png");
 }
 
 ResetPasswdInterface::~ResetPasswdInterface() { delete ui; }
@@ -146,6 +157,29 @@ void ResetPasswdInterface::registerEditFinishedEvent() {
     [[maybe_unused]] auto ret = Tools::checkSimilarity(
         ui->newpasswd_edit, ui->newconfirm_edit, ui->status_label_2);
   });
+  connect(
+      ui->newpasswd_show, &PasswordDisplaySwitching::clicked, this, [this]() {
+          auto state = ui->newpasswd_show->getState();
+          if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+              this->ui->newpasswd_edit->setEchoMode(QLineEdit::Normal);
+              Tools::setQLableImage(ui->newpasswd_show, "show_password.png");
+          } else {
+              this->ui->newpasswd_edit->setEchoMode(QLineEdit::Password);
+              Tools::setQLableImage(ui->newpasswd_show, "invisiable_password.png");
+          }
+      });
+
+  connect(
+      ui->newconfirm_show, &PasswordDisplaySwitching::clicked, this, [this]() {
+          auto state = ui->newconfirm_show->getState();
+          if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+              this->ui->newconfirm_edit->setEchoMode(QLineEdit::Normal);
+              Tools::setQLableImage(ui->newconfirm_show, "show_password.png");
+          } else {
+              this->ui->newconfirm_edit->setEchoMode(QLineEdit::Password);
+              Tools::setQLableImage(ui->newconfirm_show, "invisiable_password.png");
+          }
+      });
 }
 
 /*
