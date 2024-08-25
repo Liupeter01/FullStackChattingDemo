@@ -285,7 +285,12 @@ void registerinterface::signal_registeration_finished(
     return;
   }
 
-  m_callbacks[srv_type](std::move(json_obj.object()));
+  /*to prevent app crash due to callback is not exists*/
+  try {
+    m_callbacks[srv_type](std::move(json_obj.object()));
+  } catch (const std::exception &e) {
+    qDebug() << e.what();
+  }
 }
 
 void registerinterface::signal_verification_finished(ServiceType srv_type,
@@ -316,7 +321,12 @@ void registerinterface::signal_verification_finished(ServiceType srv_type,
     return;
   }
 
-  m_callbacks[srv_type](std::move(json_obj.object()));
+  /*to prevent app crash due to callback is not exists*/
+  try {
+    m_callbacks[srv_type](std::move(json_obj.object()));
+  } catch (const std::exception &e) {
+    qDebug() << e.what();
+  }
 }
 
 void registerinterface::on_cancel_button_clicked() {

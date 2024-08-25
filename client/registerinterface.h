@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QLabel>
 #include <functional>
+#include <map>
 
 namespace Ui {
 class registerinterface;
