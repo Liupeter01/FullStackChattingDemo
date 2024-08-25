@@ -1,9 +1,9 @@
 #include <config/ServerConfig.hpp>
-#include <grpc/StubPool.hpp>
+#include <grpc/VerificationServicePool.hpp>
 #include <spdlog/spdlog.h>
 #include <thread>
 
-stubpool::details::StubPool::StubPool()
+stubpool::details::VerificationServicePool::VerificationServicePool()
     : m_stop(false), m_queue_size(std::thread::hardware_concurrency()),
       m_addr(ServerConfig::get_instance()->VerificationServerAddress),
       m_cred(grpc::InsecureChannelCredentials()) {
@@ -16,9 +16,9 @@ stubpool::details::StubPool::StubPool()
   }
 }
 
-stubpool::details::StubPool::~StubPool() { shutdown(); }
+stubpool::details::VerificationServicePool::~VerificationServicePool() { shutdown(); }
 
-void stubpool::details::StubPool::shutdown() {
+void stubpool::details::VerificationServicePool::shutdown() {
   /*set stop flag to true*/
   m_stop = true;
   m_cv.notify_all();
@@ -29,8 +29,8 @@ void stubpool::details::StubPool::shutdown() {
   }
 }
 
-std::optional<stubpool::details::StubPool::stub_ptr>
-stubpool::details::StubPool::acquire() {
+std::optional<stubpool::details::VerificationServicePool::stub_ptr>
+stubpool::details::VerificationServicePool::acquire() {
   std::unique_lock<std::mutex> _lckg(m_mtx);
   m_cv.wait(_lckg, [this]() { return !m_stub_queue.empty() || m_stop; });
 
@@ -43,7 +43,7 @@ stubpool::details::StubPool::acquire() {
   return temp;
 }
 
-void stubpool::details::StubPool::release(StubPool::stub_ptr stub) {
+void stubpool::details::VerificationServicePool::release(VerificationServicePool::stub_ptr stub) {
   if (m_stop) {
     return;
   }
@@ -52,8 +52,8 @@ void stubpool::details::StubPool::release(StubPool::stub_ptr stub) {
   m_cv.notify_one();
 }
 
-stubpool::StubRAII::StubRAII() : status(true) {
-  auto optional = stubpool::details::StubPool::get_instance()->acquire();
+stubpool::VerificationServiceRAII::VerificationServiceRAII() : status(true) {
+  auto optional = stubpool::details::VerificationServicePool::get_instance()->acquire();
   if (!optional.has_value()) {
     status = false;
   } else {
@@ -61,16 +61,16 @@ stubpool::StubRAII::StubRAII() : status(true) {
   }
 }
 
-stubpool::StubRAII::~StubRAII() {
+stubpool::VerificationServiceRAII::~VerificationServiceRAII() {
   if (status) {
-    stubpool::details::StubPool::get_instance()->release(std::move(m_stub));
+    stubpool::details::VerificationServicePool::get_instance()->release(std::move(m_stub));
 
     /*StubRAII failed!!*/
     status = false;
   }
 }
 
-std::optional<stubpool::StubRAII::wrapper> stubpool::StubRAII::operator->() {
+std::optional<stubpool::VerificationServiceRAII::wrapper> stubpool::VerificationServiceRAII ::operator->() {
   if (status) {
     return wrapper(m_stub.get());
   }

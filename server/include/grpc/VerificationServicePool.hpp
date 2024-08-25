@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _STUBPOOL_HPP_
-#define _STUBPOOL_HPP_
+#ifndef _VERIFICATIONSERVICEPOOL_HPP_
+#define _VERIFICATIONSERVICEPOOL_HPP_
 #include <condition_variable>
 #include <mutex>
 #include <optional>
@@ -13,15 +13,15 @@
 
 namespace stubpool {
 namespace details {
-class StubPool : public Singleton<StubPool> {
-  friend class Singleton<StubPool>;
-  StubPool();
+class VerificationServicePool : public Singleton<VerificationServicePool > {
+  friend class Singleton<VerificationServicePool >;
+  VerificationServicePool();
 
 public:
   using stub = message::VerificationService::Stub;
   using stub_ptr = std::unique_ptr<stub>;
 
-  ~StubPool();
+  ~VerificationServicePool();
   void shutdown();
 
   std::optional<stub_ptr> acquire();
@@ -50,17 +50,17 @@ private:
 /*
  * get stub automatically!
  */
-class StubRAII {
-  using wrapper = tools::ResourcesWrapper<details::StubPool::stub>;
+class VerificationServiceRAII {
+  using wrapper = tools::ResourcesWrapper<details::VerificationServicePool::stub>;
 
 public:
-  StubRAII();
-  ~StubRAII();
+          VerificationServiceRAII();
+  ~VerificationServiceRAII();
   std::optional<wrapper> operator->();
 
 private:
   bool status; // load stub success flag
-  details::StubPool::stub_ptr m_stub;
+  details::VerificationServicePool::stub_ptr m_stub;
 };
 } // namespace stubpool
 
