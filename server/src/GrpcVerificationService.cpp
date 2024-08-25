@@ -9,7 +9,10 @@ gRPCVerificationService::getVerificationCode(std::string email) {
   message::GetVerificationResponse response;
   request.set_email(email);
 
-  stubpool::VerificationServiceRAII  raii;
+  connection::ConnectionRAII<
+            stubpool::VerificationServicePool, 
+            message::VerificationService::Stub> raii;
+
   grpc::Status status =
       raii->get()->GetVerificationCode(&context, request, &response);
 
