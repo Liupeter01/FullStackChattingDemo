@@ -54,7 +54,7 @@ import ioredis, grpc-js proto-loader, nodemailer, uuidv4 libraries to the projec
 Sending verification code to server
 ![](./assets/verification.png)
 
- ![](./assets/result.png)
+![](./assets/result.png)
 
 
 
@@ -122,8 +122,6 @@ verification server using verification-server/config.json to store parameters
 2. Download Redis configuration file
 
    ```bash
-   #download redis.conf
-   cd /path/to/redis/conf
    vim /path/to/redis/conf/redis.conf	#write config file(you could use other editing tools!)
    ```
 
@@ -324,12 +322,9 @@ verification server using verification-server/config.json to store parameters
    rdb-del-sync-files no
    
    # The working directory.
-   #
    # The DB will be written inside this directory, with the filename specified
    # above using the 'dbfilename' configuration directive.
-   #
    # The Append Only File will also be created inside this directory.
-   #
    # Note that you must specify a directory here, not a file name.
    dir ./
    
@@ -494,8 +489,6 @@ verification server using verification-server/config.json to store parameters
    # By default the priority is 100.
    replica-priority 100
    
-   # ACL LOG
-   #
    # The ACL Log tracks failed commands and authentication events associated
    # with ACLs. The ACL Log is useful to troubleshoot failed commands blocked
    # by ACLs. The ACL Log is stored in memory. You can reclaim memory with
@@ -621,9 +614,6 @@ verification server using verification-server/config.json to store parameters
    # Note that changing this value in a config file of an existing database and
    # restarting the server can lead to data loss. A conversion needs to be done
    # by setting it via CONFIG command on a live server first.
-   #
-   # Please check https://redis.io/topics/persistence for more information.
-   
    appendonly no
    
    # The base name of the append only file.
@@ -997,13 +987,6 @@ verification server using verification-server/config.json to store parameters
    client-output-buffer-limit replica 256mb 64mb 60
    client-output-buffer-limit pubsub 32mb 8mb 60
    
-   # Redis calls an internal function to perform many background tasks, like
-   # closing connections of clients in timeout, purging expired keys that are
-   # never requested, and so forth.
-   #
-   # Not all tasks are performed with the same frequency, but Redis checks for
-   # tasks to perform according to the specified "hz" value.
-   #
    # By default "hz" is set to 10. Raising the value will use more CPU when
    # Redis is idle, but at the same time will make Redis more responsive when
    # there are many keys expiring at the same time, and timeouts may be
@@ -1014,15 +997,6 @@ verification server using verification-server/config.json to store parameters
    # 100 only in environments where very low latency is required.
    hz 10
    
-   # Normally it is useful to have an HZ value which is proportional to the
-   # number of clients connected. This is useful in order, for instance, to
-   # avoid too many clients are processed for each background task invocation
-   # in order to avoid latency spikes.
-   #
-   # Since the default HZ value by default is conservatively set to 10, Redis
-   # offers, and enables by default, the ability to use an adaptive HZ value
-   # which will temporarily raise when there are many connected clients.
-   #
    # When dynamic HZ is enabled, the actual configured HZ will be used
    # as a baseline, but multiples of the configured HZ value will be actually
    # used as needed once more clients are connected. In this way an idle
@@ -1092,29 +1066,7 @@ verification server using verification-server/config.json to store parameters
 3. Configuration file setting
 
    ```ini
-   # For advice on how to change settings please see
-   # http://dev.mysql.com/doc/refman/8.0/en/server-configuration-defaults.html
    [mysqld]
-   #
-   # Remove leading # and set to the amount of RAM for the most important data
-   # cache in MySQL. Start at 70% of total RAM for dedicated server, else 10%.
-   # innodb_buffer_pool_size = 128M
-   #
-   # Remove leading # to turn on a very important data integrity option: logging
-   # changes to the binary log between backups.
-   # log_bin
-   #
-   # Remove leading # to set options mainly useful for reporting servers.
-   # The server defaults are faster for transactions and fast SELECTs.
-   # Adjust sizes as needed, experiment to find the optimal values.
-   # join_buffer_size = 128M
-   # sort_buffer_size = 2M
-   # read_rnd_buffer_size = 2M
-   
-   # Remove leading # to revert to previous value for default_authentication_plugin,
-   # this will increase compatibility with older clients. For background, see:
-   # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin
-   # default-authentication-plugin=mysql_native_password
    default-authentication-plugin=mysql_native_password
    skip-host-cache
    skip-name-resolve
@@ -1156,9 +1108,7 @@ verification server using verification-server/config.json to store parameters
    #entering mysql
    	docker exec -it "your_container_name" bash
    	
-   # login mysql db
-   #-u: root by default
-   #-p password
+   # login mysql db ( -u: root by default, -p password)
    	mysql -uroot -p"your_password" 
    ```
 
@@ -1247,6 +1197,8 @@ git clone https://github.com/Liupeter01/FullStackChattingDemo
 
    ```bash
    cd server/verification-server
+   npm install
+   # alternative nodemon
    node index.js
    ```
 
