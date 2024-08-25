@@ -108,9 +108,9 @@ void HandleMethod::registerPostCallBacks() {
         Json::String cpatcha = src_root["cpatcha"].asString();
 
         /*find verification code by checking email in redis*/
-        connection::ConnectionRAII<
-                  redis::RedisConnectionPool, 
-                  redis::RedisContext> raii;
+        connection::ConnectionRAII<redis::RedisConnectionPool,
+                                   redis::RedisContext>
+            raii;
 
         std::optional<std::string> verification_code =
             raii->get()->checkValue(email);
@@ -140,9 +140,9 @@ void HandleMethod::registerPostCallBacks() {
         std::size_t uuid;
 
         /*MYSQL(start to create a new user)*/
-        connection::ConnectionRAII<
-                  mysql::MySQLConnectionPool, 
-                  mysql::MySQLConnection>mysql;
+        connection::ConnectionRAII<mysql::MySQLConnectionPool,
+                                   mysql::MySQLConnection>
+            mysql;
 
         if (!mysql->get()->registerNewUser(std::move(request), uuid)) {
           generateErrorMessage("MYSQL user register error",
@@ -196,9 +196,9 @@ void HandleMethod::registerPostCallBacks() {
         Json::String email = src_root["email"].asString();
 
         /*MYSQL(check exist)*/
-        connection::ConnectionRAII<
-                  mysql::MySQLConnectionPool,
-                  mysql::MySQLConnection> mysql;
+        connection::ConnectionRAII<mysql::MySQLConnectionPool,
+                                   mysql::MySQLConnection>
+            mysql;
 
         if (!mysql->get()->checkAccountAvailability(username, email)) {
           generateErrorMessage("MYSQL account not exists",
@@ -256,9 +256,9 @@ void HandleMethod::registerPostCallBacks() {
         request.m_email = email;
 
         /*MYSQL(update table)*/
-        connection::ConnectionRAII<
-                  mysql::MySQLConnectionPool,
-                  mysql::MySQLConnection> mysql;
+        connection::ConnectionRAII<mysql::MySQLConnectionPool,
+                                   mysql::MySQLConnection>
+            mysql;
 
         if (!mysql->get()->alterUserPassword(std::move(request))) {
           generateErrorMessage("Missing critical info",
@@ -275,61 +275,61 @@ void HandleMethod::registerPostCallBacks() {
       });
 
   this->post_method_callback.emplace(
-            "/trylogin_server", [this](std::shared_ptr<HTTPConnection> conn) -> bool {
-                      conn->http_response.set(boost::beast::http::field::content_type,
+      "/trylogin_server", [this](std::shared_ptr<HTTPConnection> conn) -> bool {
+        conn->http_response.set(boost::beast::http::field::content_type,
                                 "text/json");
-                      auto body =
-                                boost::beast::buffers_to_string(conn->http_request.body().data());
+        auto body =
+            boost::beast::buffers_to_string(conn->http_request.body().data());
 
-                      spdlog::info("Server receive registration request, post data: {}",
-                                body.c_str());
+        spdlog::info("Server receive registration request, post data: {}",
+                     body.c_str());
 
-                      Json::Value send_root; /*write into body*/
-                      Json::Value src_root;  /*store json from client*/
-                      Json::Reader reader;
+        Json::Value send_root; /*write into body*/
+        Json::Value src_root;  /*store json from client*/
+        Json::Reader reader;
 
-                      /*parsing failed*/
-                      if (!reader.parse(body, src_root)) {
-                                generateErrorMessage("Failed to parse json data",
-                                          ServiceStatus::JSONPARSE_ERROR, conn);
-                                return false;
-                      }
+        /*parsing failed*/
+        if (!reader.parse(body, src_root)) {
+          generateErrorMessage("Failed to parse json data",
+                               ServiceStatus::JSONPARSE_ERROR, conn);
+          return false;
+        }
 
-                      /*parsing failed*/
-                      if (!(src_root.isMember("username") && src_root.isMember("password"))) {
-                                generateErrorMessage("Failed to parse json data",
-                                          ServiceStatus::JSONPARSE_ERROR, conn);
-                                return false;
-                      }
+        /*parsing failed*/
+        if (!(src_root.isMember("username") && src_root.isMember("password"))) {
+          generateErrorMessage("Failed to parse json data",
+                               ServiceStatus::JSONPARSE_ERROR, conn);
+          return false;
+        }
 
-                      /*Get email string and send to grpc service*/
-                      Json::String username = src_root["username"].asString();
-                      Json::String password = src_root["password"].asString();
+        /*Get email string and send to grpc service*/
+        Json::String username = src_root["username"].asString();
+        Json::String password = src_root["password"].asString();
 
-                      /*MYSQL(select username & password and retrieve uuid)*/
-                      connection::ConnectionRAII<
-                                mysql::MySQLConnectionPool,
-                                mysql::MySQLConnection> mysql;
+        /*MYSQL(select username & password and retrieve uuid)*/
+        connection::ConnectionRAII<mysql::MySQLConnectionPool,
+                                   mysql::MySQLConnection>
+            mysql;
 
-                      auto res = mysql->get()->checkAccountLogin(username, password);
-                      if (!res.has_value()) {
-                                generateErrorMessage("Wrong username or password",
-                                          ServiceStatus::LOGIN_INFO_ERROR, conn);
-                                return false;
-                      }
+        auto res = mysql->get()->checkAccountLogin(username, password);
+        if (!res.has_value()) {
+          generateErrorMessage("Wrong username or password",
+                               ServiceStatus::LOGIN_INFO_ERROR, conn);
+          return false;
+        }
 
-                      send_root["uuid"] = res.value();
-                      send_root["error"] =
-                                static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
+        send_root["uuid"] = std::to_string(res.value());
+        send_root["error"] =
+            static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
 
-                      //send_root["host"];
-                      //send_root["port"];
-                      //send_root["token"];
+        // send_root["host"];
+        // send_root["port"];
+        // send_root["token"];
 
-                      boost::beast::ostream(conn->http_response.body())
-                                << send_root.toStyledString();
-                      return true;
-            });
+        boost::beast::ostream(conn->http_response.body())
+            << send_root.toStyledString();
+        return true;
+      });
 }
 
 void HandleMethod::generateErrorMessage(std::string_view message,
