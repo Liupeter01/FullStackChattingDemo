@@ -59,6 +59,11 @@ signals:
                                      ServiceStatus srv_status);
   void signal_verification_finished(ServiceType srv_type, QString json_data,
                                     ServiceStatus srv_status);
+  void signal_accountValidating_finished(ServiceType srv_type,
+                                         QString json_data,
+                                         ServiceStatus srv_status);
+  void signal_alterPassword_finished(ServiceType srv_type, QString json_data,
+                                     ServiceStatus srv_status);
 
 private:
   QNetworkAccessManager m_network;

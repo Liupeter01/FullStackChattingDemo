@@ -44,9 +44,22 @@ void HttpNetworkConnection::postHttpRequest(QUrl url, QJsonObject json,
 void HttpNetworkConnection::slot_http_finished(ServiceType srv_type,
                                                QString json_data,
                                                ServiceStatus srv_status) {
-  if (srv_type == ServiceType::SERVICE_VERIFICATION) {
+  switch (srv_type) {
+  case ServiceType::SERVICE_VERIFICATION:
     emit this->signal_verification_finished(srv_type, json_data, srv_status);
-  } else if (srv_type == ServiceType::SERVICE_REGISTERATION) {
+    break;
+
+  case ServiceType::SERVICE_REGISTERATION:
     emit this->signal_registeration_finished(srv_type, json_data, srv_status);
+    break;
+
+  case ServiceType::SERVICE_CHECKEEXISTS:
+    emit this->signal_accountValidating_finished(srv_type, json_data,
+                                                 srv_status);
+    break;
+
+  case ServiceType::SERVICE_RESETPASSWD:
+    emit this->signal_alterPassword_finished(srv_type, json_data, srv_status);
+    break;
   }
 }
