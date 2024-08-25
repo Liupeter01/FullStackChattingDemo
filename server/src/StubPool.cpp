@@ -1,7 +1,7 @@
-#include <thread>
-#include<spdlog/spdlog.h>
 #include <config/ServerConfig.hpp>
 #include <grpc/StubPool.hpp>
+#include <spdlog/spdlog.h>
+#include <thread>
 
 stubpool::details::StubPool::StubPool()
     : m_stop(false), m_queue_size(std::thread::hardware_concurrency()),

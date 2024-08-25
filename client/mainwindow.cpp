@@ -2,61 +2,56 @@
 #include "./ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-    , m_login(nullptr)
-    , m_register(nullptr)   /*we don't need to allocate memory at the beginning*/
-    , m_reset(nullptr)      /*we don't need to allocate memory at the beginning*/
+    : QMainWindow(parent), ui(new Ui::MainWindow), m_login(nullptr),
+      m_register(nullptr) /*we don't need to allocate memory at the beginning*/
+      ,
+      m_reset(nullptr) /*we don't need to allocate memory at the beginning*/
 {
-    ui->setupUi(this);
+  ui->setupUi(this);
 
-    switchingToLoginDialog();
+  switchingToLoginDialog();
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
+MainWindow::~MainWindow() { delete ui; }
+
+void MainWindow::displayDefaultWindow(QWidget *window) {
+  setCentralWidget(window);
+  window->show();
 }
 
-void MainWindow::displayDefaultWindow(QWidget *window)
-{
-    setCentralWidget(window);
-    window->show();
+void MainWindow::setFramelessWindow(QDialog *dialog) {
+  dialog->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 }
 
-void MainWindow::setFramelessWindow(QDialog *dialog)
-{
-    dialog->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+void MainWindow::switchingToRegInterface() {
+  m_register = new registerinterface(this);
+
+  /*m_register has to be created to prevent from UB*/
+  connect(m_register, &registerinterface::switchToLogin, this,
+          &MainWindow::switchingToLoginDialog);
+
+  setFramelessWindow(m_register);
+  displayDefaultWindow(m_register);
 }
 
-void MainWindow::switchingToRegInterface()
-{
-    m_register = new registerinterface(this);
+void MainWindow::switchingToLoginDialog() {
+  m_login = new LoginInterface(this);
 
-    /*m_register has to be created to prevent from UB*/
-    connect(m_register, &registerinterface::switchToLogin, this, &MainWindow::switchingToLoginDialog);
+  connect(this->m_login, &LoginInterface::switchWindow, this,
+          &MainWindow::switchingToRegInterface);
+  connect(this->m_login, &LoginInterface::switchReset, this,
+          &MainWindow::switchingToResetDialog);
 
-    setFramelessWindow(m_register);
-    displayDefaultWindow(m_register);
+  setFramelessWindow(m_login);
+  displayDefaultWindow(m_login);
 }
 
-void MainWindow::switchingToLoginDialog()
-{
-    m_login = new LoginInterface(this);
+void MainWindow::switchingToResetDialog() {
+  m_reset = new ResetPasswdInterface(this);
 
-    connect(this->m_login, &LoginInterface::switchWindow, this, &MainWindow::switchingToRegInterface);
-    connect(this->m_login, &LoginInterface::switchReset ,this,&MainWindow::switchingToResetDialog);
+  connect(this->m_reset, &ResetPasswdInterface::switchToLogin, this,
+          &MainWindow::switchingToLoginDialog);
 
-    setFramelessWindow(m_login);
-    displayDefaultWindow(m_login);
-}
-
-void MainWindow::switchingToResetDialog()
-{
-    m_reset = new ResetPasswdInterface(this);
-
-    connect(this->m_reset, &ResetPasswdInterface::switchToLogin, this, &MainWindow::switchingToLoginDialog);
-
-    setFramelessWindow(m_reset);
-    displayDefaultWindow(m_reset);
+  setFramelessWindow(m_reset);
+  displayDefaultWindow(m_reset);
 }

@@ -4,7 +4,6 @@
 #include <json/json.h>
 #include <json/reader.h>
 #include <json/value.h>
-#include <network/def.hpp> //network errorcode defs
 #include <redis/RedisManager.hpp>
 #include <spdlog/spdlog.h>
 #include <sql/MySQLManagement.hpp>
@@ -46,12 +45,14 @@ void HandleMethod::registerPostCallBacks() {
 
         /*parsing failed*/
         if (!reader.parse(body, src_root)) {
-          jsonParsingError(conn);
+          generateErrorMessage("Failed to parse json data",
+                               ServiceStatus::JSONPARSE_ERROR, conn);
           return false;
         }
 
         if (!src_root.isMember("email")) {
-          jsonParsingError(conn);
+          generateErrorMessage("Failed to parse json data",
+                               ServiceStatus::JSONPARSE_ERROR, conn);
           return false;
         }
 
@@ -87,14 +88,16 @@ void HandleMethod::registerPostCallBacks() {
 
         /*parsing failed*/
         if (!reader.parse(body, src_root)) {
-          jsonParsingError(conn);
+          generateErrorMessage("Failed to parse json data",
+                               ServiceStatus::JSONPARSE_ERROR, conn);
           return false;
         }
 
         /*parsing failed*/
         if (!(src_root.isMember("username") && src_root.isMember("password") &&
               src_root.isMember("email") && src_root.isMember("cpatcha"))) {
-          jsonParsingError(conn);
+          generateErrorMessage("Failed to parse json data",
+                               ServiceStatus::JSONPARSE_ERROR, conn);
           return false;
         }
 
@@ -114,12 +117,14 @@ void HandleMethod::registerPostCallBacks() {
          * no verification code found!!
          */
         if (!verification_code.has_value()) {
-          redisError(conn);
+          generateErrorMessage("Internel redis server error!",
+                               ServiceStatus::REDIS_UNKOWN_ERROR, conn);
           return false;
         }
 
         if (verification_code.value() != cpatcha) {
-          captchaError(conn);
+          generateErrorMessage("CPATCHA is different from Redis DB!",
+                               ServiceStatus::REDIS_CPATCHA_NOT_FOUND, conn);
           return false;
         }
 
@@ -134,7 +139,8 @@ void HandleMethod::registerPostCallBacks() {
         /*MYSQL(start to create a new user)*/
         mysql::MySQLRAII mysql;
         if (!mysql->get()->registerNewUser(std::move(request), uuid)) {
-          registerError(conn);
+          generateErrorMessage("MYSQL user register error",
+                               ServiceStatus::MYSQL_INTERNAL_ERROR, conn);
           return false;
         }
 
@@ -149,40 +155,120 @@ void HandleMethod::registerPostCallBacks() {
             << send_root.toStyledString();
         return true;
       });
+
+  this->post_method_callback.emplace(
+      "/check_accountexists",
+      [this](std::shared_ptr<HTTPConnection> conn) -> bool {
+        conn->http_response.set(boost::beast::http::field::content_type,
+                                "text/json");
+        auto body =
+            boost::beast::buffers_to_string(conn->http_request.body().data());
+
+        spdlog::info("Server receive registration request, post data: {}",
+                     body.c_str());
+
+        Json::Value send_root; /*write into body*/
+        Json::Value src_root;  /*store json from client*/
+        Json::Reader reader;
+
+        /*parsing failed*/
+        if (!reader.parse(body, src_root)) {
+          generateErrorMessage("Failed to parse json data",
+                               ServiceStatus::JSONPARSE_ERROR, conn);
+          return false;
+        }
+
+        /*parsing failed*/
+        if (!(src_root.isMember("username") && src_root.isMember("email"))) {
+          generateErrorMessage("Failed to parse json data",
+                               ServiceStatus::JSONPARSE_ERROR, conn);
+          return false;
+        }
+
+        /*Get email string and send to grpc service*/
+        Json::String username = src_root["username"].asString();
+        Json::String email = src_root["email"].asString();
+
+        /*MYSQL(start to create a new user)*/
+        mysql::MySQLRAII mysql;
+        if (!mysql->get()->checkAccountAvailability(username, email)) {
+          generateErrorMessage("MYSQL account not exists",
+                               ServiceStatus::MYSQL_ACCOUNT_NOT_EXISTS, conn);
+          return false;
+        }
+
+        send_root["error"] =
+            static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
+        send_root["username"] = username;
+        send_root["email"] = email;
+
+        boost::beast::ostream(conn->http_response.body())
+            << send_root.toStyledString();
+        return true;
+      });
+
+  this->post_method_callback.emplace(
+      "/reset_password", [this](std::shared_ptr<HTTPConnection> conn) -> bool {
+        conn->http_response.set(boost::beast::http::field::content_type,
+                                "text/json");
+        auto body =
+            boost::beast::buffers_to_string(conn->http_request.body().data());
+
+        spdlog::info("Server receive registration request, post data: {}",
+                     body.c_str());
+
+        Json::Value send_root; /*write into body*/
+        Json::Value src_root;  /*store json from client*/
+        Json::Reader reader;
+
+        /*parsing failed*/
+        if (!reader.parse(body, src_root)) {
+          generateErrorMessage("Failed to parse json data",
+                               ServiceStatus::JSONPARSE_ERROR, conn);
+          return false;
+        }
+
+        /*parsing failed*/
+        if (!(src_root.isMember("username") && src_root.isMember("password") &&
+              src_root.isMember("email"))) {
+          generateErrorMessage("Failed to parse json data",
+                               ServiceStatus::JSONPARSE_ERROR, conn);
+          return false;
+        }
+
+        /*Get email string and send to grpc service*/
+        Json::String username = src_root["username"].asString();
+        Json::String password = src_root["password"].asString();
+        Json::String email = src_root["email"].asString();
+
+        MySQLRequestStruct request;
+        request.m_username = username;
+        request.m_password = password;
+        request.m_email = email;
+
+        /*MYSQL(start to create a new user)*/
+        mysql::MySQLRAII mysql;
+        if (!mysql->get()->alterUserPassword(std::move(request))) {
+          generateErrorMessage("Missing critical info",
+                               ServiceStatus::MYSQL_MISSING_INFO, conn);
+          return false;
+        }
+
+        send_root["error"] =
+            static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
+
+        boost::beast::ostream(conn->http_response.body())
+            << send_root.toStyledString();
+        return true;
+      });
 }
 
-void HandleMethod::jsonParsingError(std::shared_ptr<HTTPConnection> conn) {
+void HandleMethod::generateErrorMessage(std::string_view message,
+                                        ServiceStatus status,
+                                        std::shared_ptr<HTTPConnection> conn) {
   Json::Value root;
-  spdlog::error("Failed to parse json data");
-
-  root["error"] = static_cast<uint8_t>(ServiceStatus::JSONPARSE_ERROR);
-  boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
-}
-
-void HandleMethod::redisError(std::shared_ptr<HTTPConnection> conn) {
-  Json::Value root;
-
-  spdlog::error("Internel redis server error!");
-
-  root["error"] = static_cast<uint8_t>(ServiceStatus::REDIS_UNKOWN_ERROR);
-  boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
-}
-
-void HandleMethod::captchaError(std::shared_ptr<HTTPConnection> conn) {
-  Json::Value root;
-
-  spdlog::error("CPATCHA is different from Redis DB!");
-
-  root["error"] = static_cast<uint8_t>(ServiceStatus::REDIS_CPATCHA_NOT_FOUND);
-  boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
-}
-
-void HandleMethod::registerError(std::shared_ptr<HTTPConnection> conn) {
-  Json::Value root;
-
-  spdlog::error("MySQL internel error!");
-
-  root["error"] = static_cast<uint8_t>(ServiceStatus::MYSQL_INTERNAL_ERROR);
+  spdlog::error(message);
+  root["error"] = static_cast<uint8_t>(status);
   boost::beast::ostream(conn->http_response.body()) << root.toStyledString();
 }
 
