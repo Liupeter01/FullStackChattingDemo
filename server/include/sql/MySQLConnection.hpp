@@ -16,9 +16,7 @@ struct MySQLRequestStruct {
 };
 
 namespace mysql {
-namespace details {
-class MySQLManagement;
-}
+class MySQLConnectionPool;
 
 enum class MySQLSelection : uint8_t {
   HEART_BEAT,
@@ -26,11 +24,12 @@ enum class MySQLSelection : uint8_t {
   CREATE_NEW_USER,    // register new user
   ACQUIRE_NEW_UID,    // get uid for user
   UPDATE_UID_COUNTER, // add up to uid accounter
-  UPDATE_USER_PASSWD  // update user password
+  UPDATE_USER_PASSWD,  // update user password
+  USER_LOGIN_CHECK     //check login username & password
 };
 
 class MySQLConnection {
-  friend class details::MySQLManagement;
+          friend class MySQLConnectionPool;
   MySQLConnection(const MySQLConnection &) = delete;
   MySQLConnection &operator=(const MySQLConnection &) = delete;
 
@@ -38,13 +37,17 @@ public:
   MySQLConnection(std::string_view username, std::string_view password,
                   std::string_view database, std::string_view host,
                   std::string_view port,
-                  mysql::details::MySQLManagement *shared) noexcept;
+                  mysql::MySQLConnectionPool*shared) noexcept;
 
   ~MySQLConnection();
 
 public:
   bool registerNewUser(MySQLRequestStruct &&request, std::size_t &uuid);
   bool alterUserPassword(MySQLRequestStruct &&request);
+
+  /*login username & password check*/
+  std::optional<std::size_t> checkAccountLogin(std::string_view username,
+            std::string_view password);
 
   /*is username and email were occupied!*/
   bool checkAccountAvailability(std::string_view username,
@@ -70,7 +73,7 @@ private:
   bool insertNewUser(MySQLRequestStruct &&request, std::size_t &uuid);
 
 private:
-  std::shared_ptr<mysql::details::MySQLManagement> m_delegator;
+  std::shared_ptr<MySQLConnectionPool> m_delegator;
 
   // The execution context, required to run I/O operations.
   boost::asio::io_context &ctx;

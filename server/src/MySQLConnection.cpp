@@ -6,13 +6,12 @@
 #include <service/IOServicePool.hpp>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
-#include <sql/MySQLConnection.hpp>
-#include <sql/MySQLManagement.hpp>
+#include <sql/MySQLConnectionPool.hpp>
 
 mysql::MySQLConnection::MySQLConnection(
     std::string_view username, std::string_view password,
     std::string_view database, std::string_view host, std::string_view port,
-    mysql::details::MySQLManagement *shared) noexcept
+          mysql::MySQLConnectionPool *shared) noexcept
 
     : ctx(IOServicePool::get_instance()->getIOServiceContext()),
       ssl_ctx(boost::asio::ssl::context::tls_client),
@@ -20,8 +19,8 @@ mysql::MySQLConnection::MySQLConnection(
       last_operation_time(
           std::chrono::steady_clock::now()) /*get operation time*/
       ,
-      m_delegator(std::shared_ptr<mysql::details::MySQLManagement>(
-          shared, [](mysql::details::MySQLManagement *) {})) {
+      m_delegator(std::shared_ptr<mysql::MySQLConnectionPool>(
+          shared, [](mysql::MySQLConnectionPool*) {})) {
   try {
     // Resolve the hostname to get a collection of endpoints
     boost::asio::ip::tcp::resolver resolver(ctx.get_executor());
@@ -77,6 +76,22 @@ std::optional<std::size_t> mysql::MySQLConnection::allocateNewUid() {
   boost::mysql::results result = uid.value();
   boost::mysql::row_view row = *result.rows().begin();
   return static_cast<std::size_t>(row.at(0).as_int64());
+}
+
+std::optional<std::size_t> mysql::MySQLConnection::checkAccountLogin(std::string_view username,
+          std::string_view password)
+{
+          auto res =
+                    executeCommand(MySQLSelection::USER_LOGIN_CHECK, username, password);
+          if (!res.has_value()) {
+                    return false;
+          }
+          boost::mysql::results result = res.value();
+          if (!result.size()) {
+                    return false;
+          }
+          boost::mysql::row_view row = *result.rows().begin();
+          return static_cast<std::size_t>(row.at(0).as_int64());
 }
 
 bool mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
