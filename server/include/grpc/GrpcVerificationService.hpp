@@ -1,7 +1,7 @@
 #pragma once
 #ifndef GRPCVERIFICATIONSERVICE_HPP_
 #define GRPCVERIFICATIONSERVICE_HPP_
-#include <grpc/StubPool.hpp>
+#include <grpc/VerificationServicePool.hpp>
 
 struct gRPCVerificationService {
   static message::GetVerificationResponse
