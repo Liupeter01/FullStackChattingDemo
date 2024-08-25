@@ -1,12 +1,15 @@
 #ifndef RESETPASSWDINTERFACE_H
 #define RESETPASSWDINTERFACE_H
 
-#include "httpnetworkconnection.h"
 #include "tools.h"
 #include <QDialog>
 #include <QTimer>
 #include <functional>
 #include <map>
+
+/*declaration of network events*/
+enum class ServiceType : uint8_t;
+enum class ServiceStatus : uint8_t;
 
 namespace Ui {
 class ResetPasswdInterface;
