@@ -24,12 +24,12 @@ enum class MySQLSelection : uint8_t {
   CREATE_NEW_USER,    // register new user
   ACQUIRE_NEW_UID,    // get uid for user
   UPDATE_UID_COUNTER, // add up to uid accounter
-  UPDATE_USER_PASSWD,  // update user password
-  USER_LOGIN_CHECK     //check login username & password
+  UPDATE_USER_PASSWD, // update user password
+  USER_LOGIN_CHECK    // check login username & password
 };
 
 class MySQLConnection {
-          friend class MySQLConnectionPool;
+  friend class MySQLConnectionPool;
   MySQLConnection(const MySQLConnection &) = delete;
   MySQLConnection &operator=(const MySQLConnection &) = delete;
 
@@ -37,7 +37,7 @@ public:
   MySQLConnection(std::string_view username, std::string_view password,
                   std::string_view database, std::string_view host,
                   std::string_view port,
-                  mysql::MySQLConnectionPool*shared) noexcept;
+                  mysql::MySQLConnectionPool *shared) noexcept;
 
   ~MySQLConnection();
 
@@ -47,7 +47,7 @@ public:
 
   /*login username & password check*/
   std::optional<std::size_t> checkAccountLogin(std::string_view username,
-            std::string_view password);
+                                               std::string_view password);
 
   /*is username and email were occupied!*/
   bool checkAccountAvailability(std::string_view username,

@@ -6,41 +6,41 @@
 
 namespace mysql {
 class MySQLConnectionPool
-          :public connection::ConnectionPool< MySQLConnectionPool, mysql::MySQLConnection>
-{
-          using context = mysql::MySQLConnection;
-          using context_ptr = std::unique_ptr<mysql::MySQLConnection>;
-          friend class Singleton< MySQLConnectionPool>;
-          friend class MySQLConnection;
+    : public connection::ConnectionPool<MySQLConnectionPool,
+                                        mysql::MySQLConnection> {
+  using context = mysql::MySQLConnection;
+  using context_ptr = std::unique_ptr<mysql::MySQLConnection>;
+  friend class Singleton<MySQLConnectionPool>;
+  friend class MySQLConnection;
 
 public:
-          virtual ~MySQLConnectionPool();
+  virtual ~MySQLConnectionPool();
 
 private:
-          MySQLConnectionPool() noexcept;
-          MySQLConnectionPool(
-                    std::size_t timeOut, const std::string& username,
-                    const std::string& password, const std::string& database,
-                    const std::string& host = "localhost",
-                    const std::string& port = boost::mysql::default_port_string) noexcept;
+  MySQLConnectionPool() noexcept;
+  MySQLConnectionPool(
+      std::size_t timeOut, const std::string &username,
+      const std::string &password, const std::string &database,
+      const std::string &host = "localhost",
+      const std::string &port = boost::mysql::default_port_string) noexcept;
 
-          void registerSQLStatement();
-          void roundRobinChecking(std::size_t timeout);
+  void registerSQLStatement();
+  void roundRobinChecking(std::size_t timeout);
 
 private:
-          std::string m_username;
-          std::string m_password;
-          std::string m_database;
-          std::string m_host;
-          std::string m_port;
+  std::string m_username;
+  std::string m_password;
+  std::string m_database;
+  std::string m_host;
+  std::string m_port;
 
-          /*round-robin timeout check(second)*/
-          std::size_t m_timeout;
+  /*round-robin timeout check(second)*/
+  std::size_t m_timeout;
 
-          std::thread m_RRThread;
+  std::thread m_RRThread;
 
-          /*sql operation command*/
-          std::map<MySQLSelection, std::string> m_sql;
+  /*sql operation command*/
+  std::map<MySQLSelection, std::string> m_sql;
 };
 } // namespace mysql
 
