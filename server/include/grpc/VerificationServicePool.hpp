@@ -1,67 +1,40 @@
 #pragma once
 #ifndef _VERIFICATIONSERVICEPOOL_HPP_
 #define _VERIFICATIONSERVICEPOOL_HPP_
-#include <condition_variable>
-#include <mutex>
-#include <optional>
-#include <queue>
 
+#include<spdlog/spdlog.h>
 #include <grpcpp/grpcpp.h>
+#include<config/ServerConfig.hpp>
+#include<service/ConnectionPool.hpp>
 #include <message/message.grpc.pb.h>
-#include <singleton/singleton.hpp>
-#include <tools/tools.hpp>
 
 namespace stubpool {
-namespace details {
-class VerificationServicePool : public Singleton<VerificationServicePool > {
-  friend class Singleton<VerificationServicePool >;
-  VerificationServicePool();
+          class VerificationServicePool
+                    :public connection::ConnectionPool<VerificationServicePool, typename message::VerificationService::Stub>
+          {
+                    using self = VerificationServicePool;
+                    using data_type = typename message::VerificationService::Stub;
+                    friend class Singleton<VerificationServicePool>;
 
-public:
-  using stub = message::VerificationService::Stub;
-  using stub_ptr = std::unique_ptr<stub>;
+                    grpc::string m_addr;
+                    std::shared_ptr<grpc::ChannelCredentials> m_cred;
 
-  ~VerificationServicePool();
-  void shutdown();
+                    VerificationServicePool()
+                              : connection::ConnectionPool<self, data_type>()
+                              , m_addr(ServerConfig::get_instance()->VerificationServerAddress)
+                              , m_cred(grpc::InsecureChannelCredentials()){
+                              spdlog::info("Connected to verification server addr {}", m_addr.c_str());
 
-  std::optional<stub_ptr> acquire();
-  void release(stub_ptr stub);
+                              /*creating multiple stub*/
+                              for (std::size_t i = 0; i < m_queue_size; ++i) {
+                                        m_stub_queue.push(std::move(message::VerificationService::NewStub(
+                                                  grpc::CreateChannel(m_addr, m_cred))));
+                              }
+                    }
 
-private:
-  /*Stubpool stop flag*/
-  std::atomic<bool> m_stop;
-
-  /*Stub Ammount*/
-  std::size_t m_queue_size;
-
-  /*record address info and credentials*/
-  grpc::string m_addr;
-  std::shared_ptr<grpc::ChannelCredentials> m_cred;
-
-  /*queue control*/
-  std::mutex m_mtx;
-  std::condition_variable m_cv;
-
-  /*stub queue*/
-  std::queue<stub_ptr> m_stub_queue;
-};
-} // namespace details
-
-/*
- * get stub automatically!
- */
-class VerificationServiceRAII {
-  using wrapper = tools::ResourcesWrapper<details::VerificationServicePool::stub>;
-
-public:
-          VerificationServiceRAII();
-  ~VerificationServiceRAII();
-  std::optional<wrapper> operator->();
-
-private:
-  bool status; // load stub success flag
-  details::VerificationServicePool::stub_ptr m_stub;
-};
-} // namespace stubpool
+          public:
+                    ~VerificationServicePool() = default;
+          };
+}
 
 #endif // !_STUBPOOL_HPP_
