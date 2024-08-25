@@ -9,13 +9,23 @@ FullStackChattingDemo using C++17 standard
 
 using QT6(Q::Widgets Qt::Network)
 
+
+
+### Main page
+
 ![](./assets/client_main.png)
+
+### Register page
 
 ![](./assets/register_empty.png)
 
 ![](./assets/register_with_text.png)
 
 ![](./assets/after_reg.png)
+
+### Forgot password page
+
+<img src="./assets/forgot_1.png" style="zoom:50%;" />
 
 ## Server
 
@@ -30,6 +40,10 @@ boost-1.84  (beast asio uuid mysql), grpc-1.50.2, hiredis, jsoncpp, ada(url pars
 /get_verification(POST method): User sends get CPATCHA request to server. server using GRPC protocol to communicate with NodeJS server and generate and store uuid in Redis DB.
 
 /post_registration(POST method): User post registration request to server. server store info into DB.
+
+/check_accountexists(POST method): user post there account name and email request to server, server has to return the existance of the account
+
+reset_password(POST method): after the procedure of check_accountexists, the user has to input new password and passing the password correctness checking. the request will be send to the server and store into DB.
 
 ![](./assets/server.png)
 
