@@ -1,5 +1,12 @@
-#include "resetpasswdinterface.h"
+#include "tools.h"
+#include <QDebug>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QUrl>
+
 #include "httpnetworkconnection.h"
+#include "resetpasswdinterface.h"
 #include "ui_resetpasswdinterface.h"
 
 ResetPasswdInterface::ResetPasswdInterface(QWidget *parent)
@@ -9,6 +16,8 @@ ResetPasswdInterface::ResetPasswdInterface(QWidget *parent)
 
   /*set password edit echo mode*/
   setResetAttribute();
+
+  registerSignal();
 
   /*
    * control back to login timeout setting
@@ -21,22 +30,55 @@ ResetPasswdInterface::ResetPasswdInterface(QWidget *parent)
 
   /*register lineedit event*/
   registerEditFinishedEvent();
+
+  /*register network response event*/
+  registerNetworkEvent();
+
+  regisrerCallBackFunctions();
 }
 
 ResetPasswdInterface::~ResetPasswdInterface() { delete ui; }
 
 void ResetPasswdInterface::registerNetworkEvent() {
-  /*
   connect(HttpNetworkConnection::get_instance().get(),
-          &HttpNetworkConnection::signal_registeration_finished,
-          this, &registerinterface::signal_registeration_finished
-          );
+          &HttpNetworkConnection::signal_accountValidating_finished, this,
+          &ResetPasswdInterface::signal_accountvalidating_finished);
 
   connect(HttpNetworkConnection::get_instance().get(),
-          &HttpNetworkConnection::signal_verification_finished,
-          this, &registerinterface::signal_verification_finished
-          );
-  */
+          &HttpNetworkConnection::signal_alterPassword_finished, this,
+          &ResetPasswdInterface::signal_alterpassword_finished);
+}
+
+void ResetPasswdInterface::regisrerCallBackFunctions() {
+  m_callbacks.insert(std::pair<ServiceType, CallBackFunc>(
+      ServiceType::SERVICE_CHECKEEXISTS, [this](QJsonObject &&json) {
+        auto error = json["error"].toInt();
+
+        if (error != static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS)) {
+          Tools::setWidgetAttribute(this->ui->status_label_1,
+                                    QString("Service Error!"), false);
+          return;
+        }
+        switchResetPasswordPage();
+      }));
+
+  m_callbacks.insert(std::pair<ServiceType, CallBackFunc>(
+      ServiceType::SERVICE_RESETPASSWD, [this](QJsonObject &&json) {
+        auto error = json["error"].toInt();
+
+        if (error != static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS)) {
+          Tools::setWidgetAttribute(
+              this->ui->status_label_2,
+              QString("Reset Password Failed! Internel Error"), false);
+          return;
+        }
+
+        Tools::setWidgetAttribute(this->ui->status_label_2,
+                                  QString("Reset Password Successful"), true);
+
+        /*switch to successful page!*/
+        switchResetSuccessfulPage();
+      }));
 }
 
 void ResetPasswdInterface::setResetAttribute() {
@@ -45,8 +87,13 @@ void ResetPasswdInterface::setResetAttribute() {
   this->ui->newconfirm_edit->setEchoMode(QLineEdit::Password);
 }
 
+void ResetPasswdInterface::registerSignal() {
+  connect(this, &ResetPasswdInterface::switchToResetFront, this,
+          &ResetPasswdInterface::switchResetInfoPage);
+}
+
 void ResetPasswdInterface::on_go_back_login_2_clicked() {
-  emit switchToLogin();
+  emit switchToResetFront();
   return;
 }
 
@@ -116,4 +163,115 @@ void ResetPasswdInterface::switchResetPasswordPage() {
 void ResetPasswdInterface::switchResetSuccessfulPage() {
   ui->stackedWidget->setCurrentWidget(ui->successful_page);
   m_timer->start(1000 /*default time interval = 1000ms(1s)*/);
+}
+
+void ResetPasswdInterface::signal_accountvalidating_finished(
+    ServiceType srv_type, QString json_data, ServiceStatus srv_status) {
+  /*handle network error*/
+  if (!json_data.length() && srv_status == ServiceStatus::NETWORK_ERROR) {
+    Tools::setWidgetAttribute(this->ui->status_label_1,
+                              QString("Network Error!"), false);
+    return;
+  }
+
+  QJsonDocument json_obj = QJsonDocument::fromJson(json_data.toUtf8());
+  if (json_obj.isNull()) { // converting failed
+    Tools::setWidgetAttribute(this->ui->status_label_1,
+                              QString("Retrieve Data Error!"), false);
+    // journal log system
+    qDebug() << "[FATAL ERROR]: json object is null!\n";
+    return;
+  }
+
+  if (!json_obj.isObject()) {
+    Tools::setWidgetAttribute(this->ui->status_label_1,
+                              QString("Retrieve Data Error!"), false);
+    // journal log system
+    qDebug() << "[FATAL ERROR]: json can not be converted to an object!\n";
+    return;
+  }
+
+  /*to prevent app crash due to callback is not exists*/
+  try {
+    m_callbacks[srv_type](std::move(json_obj.object()));
+  } catch (const std::exception &e) {
+    qDebug() << e.what();
+  }
+}
+
+void ResetPasswdInterface::signal_alterpassword_finished(
+    ServiceType srv_type, QString json_data, ServiceStatus srv_status) {
+  /*handle network error*/
+  if (!json_data.length() && srv_status == ServiceStatus::NETWORK_ERROR) {
+    Tools::setWidgetAttribute(this->ui->status_label_2,
+                              QString("Network Error!"), false);
+    return;
+  }
+
+  QJsonDocument json_obj = QJsonDocument::fromJson(json_data.toUtf8());
+  if (json_obj.isNull()) { // converting failed
+    Tools::setWidgetAttribute(this->ui->status_label_2,
+                              QString("Retrieve Data Error!"), false);
+    // journal log system
+    qDebug() << "[FATAL ERROR]: json object is null!\n";
+    return;
+  }
+
+  if (!json_obj.isObject()) {
+    Tools::setWidgetAttribute(this->ui->status_label_2,
+                              QString("Retrieve Data Error!"), false);
+    // journal log system
+    qDebug() << "[FATAL ERROR]: json can not be converted to an object!\n";
+    return;
+  }
+
+  /*to prevent app crash due to callback is not exists*/
+  try {
+    m_callbacks[srv_type](std::move(json_obj.object()));
+  } catch (const std::exception &e) {
+    qDebug() << e.what();
+  }
+}
+
+void ResetPasswdInterface::on_verify_account_clicked() {
+  if (!Tools::checkUsername(ui->username_edit, ui->status_label_1)) {
+    return;
+  }
+  if (!Tools::checkEmail(ui->email_edit, ui->status_label_1)) {
+    return;
+  }
+
+  /*Sending e-mail verification code*/
+  QJsonObject json;
+  json["username"] = ui->username_edit->text();
+  json["email"] = ui->email_edit->text();
+  HttpNetworkConnection::get_instance()->postHttpRequest(
+      Tools::getTargetUrl("/check_accountexists"), json,
+      ServiceType::SERVICE_CHECKEEXISTS);
+}
+
+void ResetPasswdInterface::on_submit_passwd_clicked() {
+  if (!Tools::checkUsername(ui->username_edit, ui->status_label_2)) {
+    return;
+  }
+  if (!Tools::checkEmail(ui->email_edit, ui->status_label_2)) {
+    return;
+  }
+  if (!Tools::checkPassword(ui->newpasswd_edit, ui->status_label_2)) {
+    return;
+  }
+  if (!Tools::checkSimilarity(ui->newpasswd_edit, ui->newconfirm_edit,
+                              ui->status_label_2)) {
+    return;
+  }
+
+  /*Sending e-mail verification code*/
+  QJsonObject json;
+  json["username"] = ui->username_edit->text();
+  json["email"] = ui->email_edit->text();
+  json["password"] = ui->newpasswd_edit->text();
+
+  HttpNetworkConnection::get_instance()->postHttpRequest(
+      Tools::getTargetUrl("/reset_password"), json,
+      ServiceType::SERVICE_RESETPASSWD);
 }
