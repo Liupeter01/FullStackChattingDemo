@@ -1,34 +1,34 @@
 #ifndef PASSWORDDISPLAYSWITCHING_H
 #define PASSWORDDISPLAYSWITCHING_H
-#include <Qt>
+#include "tools.h"
 #include <QLabel>
 #include <QWidget>
-#include "tools.h"
+#include <Qt>
 
-class PasswordDisplaySwitching : public QLabel
-{
-    Q_OBJECT
+class PasswordDisplaySwitching : public QLabel {
+  Q_OBJECT
 
 public:
-    PasswordDisplaySwitching(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-    ~PasswordDisplaySwitching();
+  PasswordDisplaySwitching(QWidget *parent = nullptr,
+                           Qt::WindowFlags f = Qt::WindowFlags());
+  ~PasswordDisplaySwitching();
 
-    const LabelState & getState() const;
+  const LabelState &getState() const;
 
 signals:
-    void clicked();
+  void clicked();
 
 protected:
-    virtual void mousePressEvent(QMouseEvent* event) override;
+  virtual void mousePressEvent(QMouseEvent *event) override;
 
-    /*mouse enter selected section*/
-    virtual void enterEvent(QEnterEvent *event) override;
+  /*mouse enter selected section*/
+  virtual void enterEvent(QEnterEvent *event) override;
 
-    /*mouse leave*/
-    virtual void leaveEvent(QEvent *event) override;
+  /*mouse leave*/
+  virtual void leaveEvent(QEvent *event) override;
 
 private:
-    LabelState m_state;
+  LabelState m_state;
 };
 
 #endif // PASSWORDDISPLAYSWITCHING_H

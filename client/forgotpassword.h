@@ -3,28 +3,28 @@
 
 #include <QLabel>
 
-class ForgotPassword : public QLabel
-{
-    Q_OBJECT;
+class ForgotPassword : public QLabel {
+  Q_OBJECT;
 
 public:
-    ForgotPassword();
+  ForgotPassword();
 
 public:
-    ForgotPassword(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-    ~ForgotPassword();
+  ForgotPassword(QWidget *parent = nullptr,
+                 Qt::WindowFlags f = Qt::WindowFlags());
+  ~ForgotPassword();
 
 signals:
-    void clicked();
+  void clicked();
 
 protected:
-    virtual void mousePressEvent(QMouseEvent* event) override;
+  virtual void mousePressEvent(QMouseEvent *event) override;
 
-    /*mouse enter selected section*/
-    virtual void enterEvent(QEnterEvent *event) override;
+  /*mouse enter selected section*/
+  virtual void enterEvent(QEnterEvent *event) override;
 
-    /*mouse leave*/
-    virtual void leaveEvent(QEvent *event) override;
+  /*mouse leave*/
+  virtual void leaveEvent(QEvent *event) override;
 };
 
 #endif // FORGOTPASSWORD_H
