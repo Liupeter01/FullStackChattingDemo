@@ -24,6 +24,9 @@ public:
   unsigned short Redis_port;
   std::string Redis_passwd;
 
+  std::string ChattingServiceAddress;
+  std::string ChattingServicePort;
+
 private:
   ServerConfig();
 
@@ -31,6 +34,7 @@ private:
   void loadVerificationServerInfo();
   void loadMySQLInfo();
   void loadRedisInfo();
+  void loadChattingServerInfo();
 
 private:
   ini::IniFile m_ini;

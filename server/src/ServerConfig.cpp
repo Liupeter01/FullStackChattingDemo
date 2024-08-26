@@ -6,6 +6,7 @@ ServerConfig::ServerConfig() {
   loadVerificationServerInfo();
   loadMySQLInfo();
   loadRedisInfo();
+  loadChattingServerInfo();
 }
 
 void ServerConfig::loadGateServerInfo() {
@@ -31,4 +32,9 @@ void ServerConfig::loadRedisInfo() {
   Redis_port = m_ini["Redis"]["port"].as<unsigned short>();
   Redis_ip_addr = m_ini["Redis"]["host"].as<std::string>();
   Redis_passwd = m_ini["Redis"]["password"].as<std::string>();
+}
+
+void ServerConfig::loadChattingServerInfo() {
+          ChattingServiceAddress = m_ini["ChattingService"]["host"].as<std::string>();
+          ChattingServicePort = std::to_string(m_ini["ChattingService"]["port"].as<unsigned short>());
 }
