@@ -6,7 +6,7 @@ ServerConfig::ServerConfig() {
   loadVerificationServerInfo();
   loadMySQLInfo();
   loadRedisInfo();
-  loadChattingServerInfo();
+  loadBalanceServiceInfo();
 }
 
 void ServerConfig::loadGateServerInfo() {
@@ -34,8 +34,8 @@ void ServerConfig::loadRedisInfo() {
   Redis_passwd = m_ini["Redis"]["password"].as<std::string>();
 }
 
-void ServerConfig::loadChattingServerInfo() {
-  ChattingServiceAddress = m_ini["ChattingService"]["host"].as<std::string>();
-  ChattingServicePort =
-      std::to_string(m_ini["ChattingService"]["port"].as<unsigned short>());
+void ServerConfig::loadBalanceServiceInfo() {
+          BalanceServiceAddress = m_ini["BalanceService"]["host"].as<std::string>();
+          BalanceServicePort =
+      std::to_string(m_ini["BalanceService"]["port"].as<unsigned short>());
 }
