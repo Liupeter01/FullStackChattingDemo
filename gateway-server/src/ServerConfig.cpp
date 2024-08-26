@@ -35,6 +35,7 @@ void ServerConfig::loadRedisInfo() {
 }
 
 void ServerConfig::loadChattingServerInfo() {
-          ChattingServiceAddress = m_ini["ChattingService"]["host"].as<std::string>();
-          ChattingServicePort = std::to_string(m_ini["ChattingService"]["port"].as<unsigned short>());
+  ChattingServiceAddress = m_ini["ChattingService"]["host"].as<std::string>();
+  ChattingServicePort =
+      std::to_string(m_ini["ChattingService"]["port"].as<unsigned short>());
 }

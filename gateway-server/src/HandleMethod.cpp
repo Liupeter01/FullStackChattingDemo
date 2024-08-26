@@ -1,5 +1,5 @@
-#include <grpc/GrpcVerificationService.hpp>
 #include <grpc/GrpcChattingService.hpp>
+#include <grpc/GrpcVerificationService.hpp>
 #include <handler/HandleMethod.hpp>
 #include <http/HttpConnection.hpp>
 #include <json/json.h>
@@ -312,18 +312,20 @@ void HandleMethod::registerPostCallBacks() {
                                    mysql::MySQLConnection>
             mysql;
 
-        std::optional<std::size_t> res = mysql->get()->checkAccountLogin(username, password);
+        std::optional<std::size_t> res =
+            mysql->get()->checkAccountLogin(username, password);
         if (!res.has_value()) {
           generateErrorMessage("Wrong username or password",
                                ServiceStatus::LOGIN_INFO_ERROR, conn);
           return false;
         }
 
-        std::size_t& uuid = res.value();
+        std::size_t &uuid = res.value();
 
         /*
-        *pass user's uuid parameter to the server, and returns available server address to user
-        */
+         *pass user's uuid parameter to the server, and returns available server
+         *address to user
+         */
         auto response = gRPCChattingService::addNewUserToServer(uuid);
 
         send_root["uuid"] = std::to_string(uuid);
