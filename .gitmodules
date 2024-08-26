@@ -1,11 +1,9 @@
 [submodule "gateway-server/jsoncpp"]
 	path = gateway-server/jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp.git
-
 [submodule "gateway-server/ada"]
 	path = gateway-server/ada
 	url = https://github.com/ada-url/ada.git
-
 [submodule "gateway-server/inifile"]
 	path = gateway-server/inifile
 	url = https://github.com/Rookfighter/inifile-cpp.git
@@ -15,3 +13,10 @@
 [submodule "gateway-server/spdlog"]
 	path = gateway-server/spdlog
 	url = https://github.com/gabime/spdlog.git
+	
+[submodule "balance-server/spdlog"]
+	path = balance-server/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "balance-server/inifile"]
+	path = balance-server/inifile
+	url = https://github.com/Rookfighter/inifile-cpp.git
