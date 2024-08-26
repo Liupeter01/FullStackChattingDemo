@@ -1,6 +1,7 @@
 #pragma once
 #ifndef GRPCCHATTINGSERVICE_HPP_
 #define GRPCCHATTINGSERVICE_HPP_
+#include <network/def.hpp>
 #include <balancer/ChattingServicePool.hpp>
 
 struct gRPCChattingService {
