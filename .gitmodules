@@ -1,17 +1,17 @@
-[submodule "server/jsoncpp"]
-	path = server/jsoncpp
+[submodule "gateway-server/jsoncpp"]
+	path = gateway-server/jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp.git
 
-[submodule "server/ada"]
-	path = server/ada
+[submodule "gateway-server/ada"]
+	path = gateway-server/ada
 	url = https://github.com/ada-url/ada.git
 
-[submodule "server/inifile"]
-	path = server/inifile
+[submodule "gateway-server/inifile"]
+	path = gateway-server/inifile
 	url = https://github.com/Rookfighter/inifile-cpp.git
-[submodule "server/hiredis"]
-	path = server/hiredis
+[submodule "gateway-server/hiredis"]
+	path = gateway-server/hiredis
 	url = https://github.com/redis/hiredis.git
-[submodule "server/spdlog"]
-	path = server/spdlog
+[submodule "gateway-server/spdlog"]
+	path = gateway-server/spdlog
 	url = https://github.com/gabime/spdlog.git

@@ -77,14 +77,14 @@ if(NOT MSVC)
     endif()
 endif()
 
-project (ChattingServer VERSION 1.0.1 LANGUAGES CXX )
+project (GatewayServer VERSION 1.0.2 LANGUAGES CXX )
 
 file(GLOB_RECURSE source_file CONFIGURE_DEPENDS src/*.cpp src/*.cc src/*.c)
 file(GLOB_RECURSE header_file CONFIGURE_DEPENDS include/*.hpp  include/*.h)
 file(GLOB_RECURSE proto_file CONFIGURE_DEPENDS proto/*.proto)
 
-add_executable(ChattingServer  ${source_file} ${header_file} ${GENERATED_PROTOBUF_FILES})
-target_include_directories(ChattingServer PUBLIC include jsoncpp/include ada/include inifile/include/)
+add_executable(GatewayServer  ${source_file} ${header_file} ${GENERATED_PROTOBUF_FILES})
+target_include_directories(GatewayServer PUBLIC include jsoncpp/include ada/include inifile/include/)
 
 #import boost 1.84.0 library
 FetchContent_Declare(
@@ -112,7 +112,7 @@ add_subdirectory(inifile)
 add_subdirectory(hiredis)
 add_subdirectory(spdlog)
 
-target_link_libraries(ChattingServer PUBLIC 
+target_link_libraries(GatewayServer PUBLIC 
         Boost::asio
         Boost::beast
         Boost::uuid
@@ -126,6 +126,6 @@ target_link_libraries(ChattingServer PUBLIC
         spdlog::spdlog
 )
 
-target_compile_definitions(ChattingServer PUBLIC 
+target_compile_definitions(GatewayServer PUBLIC 
           -DCONFIG_HOME=\"${CMAKE_CURRENT_SOURCE_DIR}/\"
 )
