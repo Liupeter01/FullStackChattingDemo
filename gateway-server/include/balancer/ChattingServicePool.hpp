@@ -24,8 +24,8 @@ class ChattingServicePool
 
   ChattingServicePool()
       : connection::ConnectionPool<self, data_type>(),
-        m_host(ServerConfig::get_instance()->ChattingServiceAddress),
-        m_port(ServerConfig::get_instance()->ChattingServicePort),
+        m_host(ServerConfig::get_instance()->BalanceServiceAddress),
+        m_port(ServerConfig::get_instance()->BalanceServicePort),
         m_cred(grpc::InsecureChannelCredentials()) {
 
     auto address = fmt::format("{}:{}", m_host, m_port);
