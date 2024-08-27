@@ -328,13 +328,15 @@ void HandleMethod::registerPostCallBacks() {
          */
         auto response = gRPCChattingService::addNewUserToServer(uuid);
 
-        send_root["uuid"] = std::to_string(uuid);
-        send_root["error"] =
-            static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
+        if (response.error() != static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
+                  spdlog::error("[client {}] try login server failed!", std::to_string(uuid));
+        }
 
-        // send_root["host"];
-        // send_root["port"];
-        // send_root["token"];
+        send_root["uuid"] = std::to_string(uuid);
+        send_root["error"] = response.error();
+        send_root["host"] = response.host();
+        send_root["port"] = response.port();
+        send_root["token"] = response.token();
 
         boost::beast::ostream(conn->http_response.body())
             << send_root.toStyledString();
