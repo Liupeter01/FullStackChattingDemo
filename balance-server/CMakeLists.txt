@@ -111,7 +111,7 @@ add_subdirectory(spdlog)
 
 target_link_libraries(LoadBalanceServer PUBLIC 
         Boost::asio
-        Boost::beast
+        Boost::uuid
         grpc++
         libprotobuf
         inicpp::inicpp
