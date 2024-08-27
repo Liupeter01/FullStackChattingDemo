@@ -1,8 +1,8 @@
 #pragma once
 #ifndef GRPCCHATTINGSERVICE_HPP_
 #define GRPCCHATTINGSERVICE_HPP_
-#include <network/def.hpp>
 #include <balancer/ChattingServicePool.hpp>
+#include <network/def.hpp>
 
 struct gRPCChattingService {
   // pass user's uuid parameter to the server, and returns available server

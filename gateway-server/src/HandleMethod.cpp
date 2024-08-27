@@ -328,8 +328,10 @@ void HandleMethod::registerPostCallBacks() {
          */
         auto response = gRPCChattingService::addNewUserToServer(uuid);
 
-        if (response.error() != static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
-                  spdlog::error("[client {}] try login server failed!", std::to_string(uuid));
+        if (response.error() !=
+            static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
+          spdlog::error("[client {}] try login server failed!",
+                        std::to_string(uuid));
         }
 
         send_root["uuid"] = std::to_string(uuid);

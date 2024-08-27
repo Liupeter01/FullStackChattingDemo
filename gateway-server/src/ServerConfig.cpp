@@ -35,7 +35,7 @@ void ServerConfig::loadRedisInfo() {
 }
 
 void ServerConfig::loadBalanceServiceInfo() {
-          BalanceServiceAddress = m_ini["BalanceService"]["host"].as<std::string>();
-          BalanceServicePort =
+  BalanceServiceAddress = m_ini["BalanceService"]["host"].as<std::string>();
+  BalanceServicePort =
       std::to_string(m_ini["BalanceService"]["port"].as<unsigned short>());
 }
