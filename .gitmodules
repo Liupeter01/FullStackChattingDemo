@@ -20,3 +20,10 @@
 [submodule "balance-server/inifile"]
 	path = balance-server/inifile
 	url = https://github.com/Rookfighter/inifile-cpp.git
+
+[submodule "chatting-server/spdlog"]
+	path = chatting-server/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "chatting-server/inifile"]
+	path = chatting-server/inifile
+	url = https://github.com/Rookfighter/inifile-cpp.git
