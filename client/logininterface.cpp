@@ -4,7 +4,6 @@
 #include <QJsonObject>
 #include <QUrl>
 
-#include "httpnetworkconnection.h"
 #include "logininterface.h"
 #include "ui_logininterface.h"
 #include "passworddisplayswitching.h"
@@ -74,12 +73,13 @@ void LoginInterface::regisrerCallBackFunctions() {
                 return;
             }
 
-            QString email = json["email"].toString();
-            qDebug() << "E-mail = " << email << '\n';
+            TCPNetworkConnection::ChattingServerInfo info;
+            info.uuid = json["uuid"].toInt();
+            info.host = json["host"].toString();
+            info.port = json["port"].toString();
+            info.token = json["token"].toString();
 
-            Tools::setWidgetAttribute(
-                this->ui->status_label_3,
-                QString("Login Successful"), true);
+            emit signal_establish_long_connnection(info);
         }));
 }
 

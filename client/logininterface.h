@@ -5,6 +5,8 @@
 #include <QDialog>
 #include <functional>
 #include <map>
+#include "httpnetworkconnection.h"
+#include "tcpnetworkconnection.h"
 
 /*declaration of network events*/
 enum class ServiceType : uint8_t;
@@ -39,6 +41,8 @@ signals:
 
   /*switch to reset interface*/
   void switchReset();
+
+  void signal_establish_long_connnection(TCPNetworkConnection::ChattingServerInfo info);
 
   private slots:
   void on_login_button_clicked();
