@@ -61,5 +61,9 @@ void HttpNetworkConnection::slot_http_finished(ServiceType srv_type,
   case ServiceType::SERVICE_RESETPASSWD:
     emit this->signal_alterPassword_finished(srv_type, json_data, srv_status);
     break;
-  }
+
+  case ServiceType::SERVICE_LOGINSERVER:
+    emit this->signal_login_finished(srv_type, json_data, srv_status);
+    break;
+  };
 }
