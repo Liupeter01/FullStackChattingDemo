@@ -6,6 +6,7 @@
 #include <QObject>               //connect
 #include <QString>
 #include <QUrl>
+#include "def.hpp"
 
 class TCPNetworkConnection
     : public QObject
@@ -18,9 +19,9 @@ class TCPNetworkConnection
 
 public:
     struct ChattingServerInfo{
-        std::size_t uuid;
+        QString uuid;
         QString host;
-        QString port;
+        std::size_t port;
         QString token;
     };
 
@@ -28,10 +29,16 @@ public:
 
 private:
     ~TCPNetworkConnection();
-    void registerSignal();
+    void registerSocketSignal();
+    void registerCallback();
+    void registerErrorHandling();
 
 private slots:
     void establish_long_connnection(TCPNetworkConnection::ChattingServerInfo info);
+
+signals:
+    /*return connection status to login class*/
+    void connection_status(bool status);
 
 private:
     QTcpSocket m_socket;
