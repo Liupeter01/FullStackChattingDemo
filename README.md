@@ -1242,10 +1242,9 @@ git clone https://github.com/Liupeter01/FullStackChattingDemo
    Compile and Install
    ```bash
    git clone https://github.com/unicode-org/icu.git
-   mkdir icu4c-build
-   cd icu4c-build
-   ./runConfigureICU Linux
-   make check
+   cd icu/source
+   ./configure && make -j[x]
+   sudo make install
    ```
 
    set cmake variable
