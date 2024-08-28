@@ -29,7 +29,7 @@ class ChattingServicePool
         m_cred(grpc::InsecureChannelCredentials()) {
 
     auto address = fmt::format("{}:{}", m_host, m_port);
-    spdlog::info("Connected to verification server {}", address);
+    spdlog::info("Connected to balance server {}", address);
 
     /*creating multiple stub*/
     for (std::size_t i = 0; i < m_queue_size; ++i) {
