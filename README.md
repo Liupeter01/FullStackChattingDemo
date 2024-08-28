@@ -519,8 +519,8 @@ git clone https://github.com/Liupeter01/FullStackChattingDemo
 2. Execute Servers' program
 
    ```bash
-   ./balance-server/build/ChattingServer
-   ./gateway-server/build/ChattingServer
+   ./balance-server/build/BalanceServer
+   ./gateway-server/build/GatewayServer
    ./chatting-server/build/ChattingServer
    ```
 
