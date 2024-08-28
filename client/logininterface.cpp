@@ -74,10 +74,13 @@ void LoginInterface::regisrerCallBackFunctions() {
           return;
         }
 
+        Tools::setWidgetAttribute(this->ui->status_label_3,
+                                  QString("Login Success!"), true);
+
         TCPNetworkConnection::ChattingServerInfo info;
-        info.uuid = json["uuid"].toInt();
+        info.uuid = json["uuid"].toString();
         info.host = json["host"].toString();
-        info.port = json["port"].toString();
+        info.port = json["port"].toInt();
         info.token = json["token"].toString();
 
         emit signal_establish_long_connnection(info);
