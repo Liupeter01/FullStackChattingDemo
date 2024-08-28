@@ -51,7 +51,7 @@ grpc::GrpcBalancerImpl::getUserToken(std::size_t uuid) {
   return target->second;
 }
 
-::grpc::Status grpc::GrpcBalancerImpl::addNewUserToServer(
+::grpc::Status grpc::GrpcBalancerImpl::AddNewUserToServer(
     ::grpc::ServerContext *context,
     const ::message::RegisterToBalancer *request,
     ::message::GetAllocatedChattingServer *response) {

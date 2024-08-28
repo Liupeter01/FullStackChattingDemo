@@ -24,7 +24,7 @@ public:
 
 public:
   ::grpc::Status
-  addNewUserToServer(::grpc::ServerContext *context,
+  AddNewUserToServer(::grpc::ServerContext *context,
                      const ::message::RegisterToBalancer *request,
                      ::message::GetAllocatedChattingServer *response);
 
