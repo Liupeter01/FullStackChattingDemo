@@ -61,6 +61,11 @@ void LoginInterface::registerNetworkEvent() {
   connect(HttpNetworkConnection::get_instance().get(),
           &HttpNetworkConnection::signal_login_finished, this,
           &LoginInterface::slot_login_finished);
+
+    connect(this, &LoginInterface::signal_establish_long_connnection,
+         TCPNetworkConnection::get_instance().get(),
+         &TCPNetworkConnection::signal_establish_long_connnection
+         );
 }
 
 void LoginInterface::regisrerCallBackFunctions() {
