@@ -1,5 +1,7 @@
 #include "tcpnetworkconnection.h"
 #include <QDataStream>
+#include <QDebug>
+#include <QJsonDocument>
 
 TCPNetworkConnection::TCPNetworkConnection()
     :m_buffer()
@@ -12,21 +14,30 @@ TCPNetworkConnection::TCPNetworkConnection()
 
   /*setup socket error handling slot*/
   registerErrorHandling();
+
+  /*register connection event*/
+  registerNetworkEvent();
 }
 
 TCPNetworkConnection::~TCPNetworkConnection() {}
+
+void TCPNetworkConnection::registerNetworkEvent()
+{
+    connect(this, &TCPNetworkConnection::signal_establish_long_connnection, this,
+            &TCPNetworkConnection::slot_establish_long_connnection);
+}
 
 void TCPNetworkConnection::registerSocketSignal() {
   /*connected to server successfully*/
   connect(&m_socket, &QTcpSocket::connected, [this]() {
     qDebug() << "connected to server successfully";
-    emit connection_status(true);
+    emit signal_connection_status(true);
   });
 
   /*server disconnected*/
   connect(&m_socket, &QTcpSocket::disconnected, [this]() {
     qDebug() << "server disconnected";
-    emit connection_status(false);
+    emit signal_connection_status(false);
   });
 
   /*receive data from server*/
@@ -38,10 +49,29 @@ void TCPNetworkConnection::registerSocketSignal() {
                << "msg_length = " << msg._msg_length
                << "msg_data = " << msg._msg_data;
 
+      QJsonDocument json_obj = QJsonDocument::fromJson(msg._msg_data);
+      if (json_obj.isNull()) { // converting failed
+          //Tools::setWidgetAttribute(this->ui->status_label,
+          //                          QString("Retrieve Data Error!"), false);
+          // journal log system
+          qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
+          emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
+          return;
+      }
+
+      if (!json_obj.isObject()) {
+          //Tools::setWidgetAttribute(this->ui->status_label,
+          //                          QString("Retrieve Data Error!"), false);
+          // journal log system
+          qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
+          emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
+          return;
+      }
+
       /*to prevent app crash due to callback is not exists*/
       try {
         m_callbacks[static_cast<ServiceType>(msg._msg_id)](
-            std::move(msg._msg_data));
+              std::move(json_obj.object()));
       } catch (const std::exception &e) {
         qDebug() << e.what();
       }
@@ -58,29 +88,52 @@ void TCPNetworkConnection::registerErrorHandling() {
       });
 }
 
+bool TCPNetworkConnection::checkJsonForm(const QJsonObject &json)
+{
+    if(!json.contains("error")){
+        qDebug() << "Json Parse Error!";
+        emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
+        return false;
+    }
+    if(json["error"].toInt() != static_cast<int>(ServiceStatus::SERVICE_SUCCESS)){
+        qDebug() << "Login Server Error!";
+        emit signal_login_failed(static_cast<ServiceStatus>(json["error"].toInt()));
+        return false;
+    }
+    return true;
+}
+
 void TCPNetworkConnection::registerCallback() {
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
-      ServiceType::SERVICE_RESERVE_1, [this](QByteArray &&container) {
-        // container.data();
+      ServiceType::SERVICE_LOGINRESPONSE, [this](QJsonObject &&json) {
+            /*error occured!*/
+            if(!checkJsonForm(json)){
+                return;
+            }
+
+
+
+
+            emit signal_switch_chatting_dialog();
       }));
 
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
-      ServiceType::SERVICE_RESERVE_2, [this](QByteArray &&container) {
+      ServiceType::SERVICE_RESERVE_2, [this](QJsonObject &&json) {
 
       }));
 
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
-      ServiceType::SERVICE_RESERVE_3, [this](QByteArray &&container) {
+      ServiceType::SERVICE_RESERVE_3, [this](QJsonObject &&json) {
 
       }));
 
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
-      ServiceType::SERVICE_RESERVE_4, [this](QByteArray &&container) {
+      ServiceType::SERVICE_RESERVE_4, [this](QJsonObject &&json) {
 
       }));
 }
 
-void TCPNetworkConnection::establish_long_connnection(
+void TCPNetworkConnection::slot_establish_long_connnection(
     TCPNetworkConnection::ChattingServerInfo info) {
   qDebug() << "Connecting to Server";
   m_server = std::move(info);
