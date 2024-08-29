@@ -7,7 +7,11 @@ enum class ServiceType : uint8_t {
   SERVICE_REGISTERATION, // user registeration
   SERVICE_CHECKEEXISTS,  // check account existance
   SERVICE_RESETPASSWD,   // password reset
-  SERVICE_LOGINSERVER    // try to login into server
+  SERVICE_LOGINSERVER,   // try to login into server
+  SERVICE_RESERVE_1,     //
+  SERVICE_RESERVE_2,     //
+  SERVICE_RESERVE_3,     //
+  SERVICE_RESERVE_4      //
 };
 
 enum class ServiceStatus : uint8_t {
