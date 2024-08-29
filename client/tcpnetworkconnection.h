@@ -2,7 +2,7 @@
 #define TCPNETWORKCONNECTION_H
 
 #include "def.hpp"
-#include <QByteArray>
+#include <QJsonObject>
 #include <QObject> //connect
 #include <QString>
 #include <QTcpSocket>
@@ -18,7 +18,7 @@ class TCPNetworkConnection
 
   Q_OBJECT
   friend class Singleton<TCPNetworkConnection>;
-  using Callbackfunction = std::function<void(QByteArray &&)>;
+  using Callbackfunction = std::function<void(QJsonObject &&)>;
 
 public:
   struct ChattingServerInfo {
@@ -28,21 +28,35 @@ public:
       QString token = "";
   };
 
-  TCPNetworkConnection();
+public:
+  ~TCPNetworkConnection();
 
 private:
-  ~TCPNetworkConnection();
+   TCPNetworkConnection();
+
+  void registerNetworkEvent();
   void registerSocketSignal();
   void registerCallback();
   void registerErrorHandling();
 
+private:
+  bool checkJsonForm(const QJsonObject &json);
+
 private slots:
   void
-  establish_long_connnection(TCPNetworkConnection::ChattingServerInfo info);
+  slot_establish_long_connnection(TCPNetworkConnection::ChattingServerInfo info);
 
 signals:
+  void signal_establish_long_connnection(TCPNetworkConnection::ChattingServerInfo info);
+
   /*return connection status to login class*/
-  void connection_status(bool status);
+  void signal_connection_status(bool status);
+
+  /*login to server failed*/
+  void signal_login_failed(ServiceStatus status);
+
+  /*if login success, then switch to chatting dialog*/
+  void signal_switch_chatting_dialog();
 
 private:
   /*establish tcp socket with server*/
