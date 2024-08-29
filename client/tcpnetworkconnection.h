@@ -1,48 +1,60 @@
 #ifndef TCPNETWORKCONNECTION_H
 #define TCPNETWORKCONNECTION_H
 
-#include "singleton.hpp"
-#include <QTcpSocket>
-#include <QObject>               //connect
-#include <QString>
-#include <QUrl>
 #include "def.hpp"
+#include <QByteArray>
+#include <QObject> //connect
+#include <QString>
+#include <QTcpSocket>
+#include <QUrl>
+#include <functional>
+#include <messagenode.hpp>
+#include <singleton.hpp>
 
 class TCPNetworkConnection
-    : public QObject
-    , public Singleton<TCPNetworkConnection>
-    , public std::enable_shared_from_this<TCPNetworkConnection>
-{
+    : public QObject,
+      public Singleton<TCPNetworkConnection>,
+      public std::enable_shared_from_this<TCPNetworkConnection> {
 
-    Q_OBJECT
-    friend class Singleton<TCPNetworkConnection>;
+  Q_OBJECT
+  friend class Singleton<TCPNetworkConnection>;
+  using Callbackfunction = std::function<void(QByteArray &&)>;
 
 public:
-    struct ChattingServerInfo{
-        QString uuid;
-        QString host;
-        std::size_t port;
-        QString token;
-    };
+  struct ChattingServerInfo {
+    QString uuid;
+    QString host;
+    std::size_t port;
+    QString token;
+  };
 
-    TCPNetworkConnection();
+  TCPNetworkConnection();
 
 private:
-    ~TCPNetworkConnection();
-    void registerSocketSignal();
-    void registerCallback();
-    void registerErrorHandling();
+  ~TCPNetworkConnection();
+  void registerSocketSignal();
+  void registerCallback();
+  void registerErrorHandling();
 
 private slots:
-    void establish_long_connnection(TCPNetworkConnection::ChattingServerInfo info);
+  void
+  establish_long_connnection(TCPNetworkConnection::ChattingServerInfo info);
 
 signals:
-    /*return connection status to login class*/
-    void connection_status(bool status);
+  /*return connection status to login class*/
+  void connection_status(bool status);
 
 private:
-    QTcpSocket m_socket;
-    ChattingServerInfo m_server;
+  /*establish tcp socket with server*/
+  QTcpSocket m_socket;
+
+  /*save server connection info*/
+  ChattingServerInfo m_server;
+
+  /*create a connection buffer to store the data transfer from server*/
+  RecvNode<QByteArray> m_buffer;
+
+  std::map<ServiceType, Callbackfunction> m_callbacks;
 };
 
 #endif // TCPNETWORKCONNECTION_H
