@@ -22,10 +22,10 @@ class TCPNetworkConnection
 
 public:
   struct ChattingServerInfo {
-    QString uuid;
-    QString host;
-    std::size_t port;
-    QString token;
+      QString uuid = "";
+      QString host = "";
+      std::size_t port = 0;
+      QString token = "";
   };
 
   TCPNetworkConnection();

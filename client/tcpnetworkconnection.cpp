@@ -1,7 +1,9 @@
 #include "tcpnetworkconnection.h"
 #include <QDataStream>
 
-TCPNetworkConnection::TCPNetworkConnection() {
+TCPNetworkConnection::TCPNetworkConnection()
+    :m_buffer()
+{
   /*callbacks should be registered at first(before signal)*/
   registerCallback();
 
