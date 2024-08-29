@@ -65,5 +65,10 @@ void HttpNetworkConnection::slot_http_finished(ServiceType srv_type,
   case ServiceType::SERVICE_LOGINSERVER:
     emit this->signal_login_finished(srv_type, json_data, srv_status);
     break;
+
+  default:
+    /*http connection should not handle those service type*/
+    qDebug() << static_cast<uint8_t>(srv_type);
+    break;
   };
 }
