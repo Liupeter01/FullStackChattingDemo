@@ -3,15 +3,21 @@
 #include <stdint.h>
 
 enum class ServiceType : uint8_t {
-  SERVICE_VERIFICATION,  // get verification code
-  SERVICE_REGISTERATION, // user registeration
-  SERVICE_CHECKEEXISTS,  // check account existance
-  SERVICE_RESETPASSWD,   // password reset
-  SERVICE_LOGINSERVER,   // try to login into server
-  SERVICE_LOGINRESPONSE, // login server response
-  SERVICE_RESERVE_2,     //
-  SERVICE_RESERVE_3,     //
-  SERVICE_RESERVE_4      //
+          SERVICE_VERIFICATION,  // get verification code
+          SERVICE_REGISTERATION, // user registeration
+          SERVICE_CHECKEEXISTS,  // check account existance
+          SERVICE_RESETPASSWD,   // password reset
+
+          /*
+           * before login, user has to get the address of
+           * chatting server which is dispatched by balance-server
+          */
+          SERVICE_LOGINDISPATCH,
+          SERVICE_LOGINSERVER,   // try to login into server
+          SERVICE_LOGINRESPONSE, // login server response
+          SERVICE_RESERVE_2,     //
+          SERVICE_RESERVE_3,     //
+          SERVICE_RESERVE_4      //
 };
 
 enum class ServiceStatus : uint8_t {

@@ -7,6 +7,12 @@ enum class ServiceType : uint8_t {
   SERVICE_REGISTERATION, // user registeration
   SERVICE_CHECKEEXISTS,  // check account existance
   SERVICE_RESETPASSWD,   // password reset
+
+    /*
+     * before login, user has to get the address of
+     * chatting server which is dispatched by balance-server
+    */
+    SERVICE_LOGINDISPATCH,
   SERVICE_LOGINSERVER,   // try to login into server
   SERVICE_LOGINRESPONSE, // login server response
   SERVICE_RESERVE_2,     //
