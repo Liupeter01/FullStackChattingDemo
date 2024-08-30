@@ -9,17 +9,18 @@ int main() {
     /*setting up signal*/
     boost::asio::io_context ioc;
     boost::asio::signal_set signal{ioc, SIGINT, SIGTERM};
-    signal.async_wait([&ioc, &service_pool](boost::system::error_code ec, int sig_number) {
-      if (ec) {
-        return;
-      }
-      service_pool->shutdown();
-      ioc.stop();
-    });
+    signal.async_wait(
+        [&ioc, &service_pool](boost::system::error_code ec, int sig_number) {
+          if (ec) {
+            return;
+          }
+          service_pool->shutdown();
+          ioc.stop();
+        });
 
     std::shared_ptr<GateServer> server = std::make_shared<GateServer>(
-              IOServicePool::get_instance()->getIOServiceContext(), // get ioc
-              ServerConfig::get_instance()->GateServerPort // get port configuration
+        IOServicePool::get_instance()->getIOServiceContext(), // get ioc
+        ServerConfig::get_instance()->GateServerPort // get port configuration
     );
     server->serverStart();
     ioc.run();

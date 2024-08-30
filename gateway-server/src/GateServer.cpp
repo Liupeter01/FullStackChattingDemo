@@ -14,7 +14,8 @@ GateServer::GateServer(boost::asio::io_context &_ioc, unsigned short port)
 void GateServer::serverStart() {
   boost::asio::io_context &ioc =
       IOServicePool::get_instance()->getIOServiceContext(); // get ioc
-  std::shared_ptr<Session<GateServer>> session = std::make_shared<Session<GateServer>>(ioc, this);
+  std::shared_ptr<Session<GateServer>> session =
+      std::make_shared<Session<GateServer>>(ioc, this);
 
   this->m_acceptor.async_accept(session->s_socket,
                                 std::bind(&GateServer::handleAccept, this,
