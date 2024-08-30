@@ -136,7 +136,8 @@ void TCPNetworkConnection::send_data(SendNode<QByteArray> &&data) {
   QDataStream ds(&send_buffer, QIODevice::WriteOnly);
   ds.setByteOrder(QDataStream::BigEndian);
 
-  ds << data.getMessageID() << data.getTotalLenth();
+  ds << static_cast<quint16>(data.getMessageID())
+     << static_cast<quint16>(data.getTotalLenth());
   send_buffer.append(data.getMessage());
   m_socket.write(send_buffer);
 }
