@@ -22,13 +22,8 @@ class TCPNetworkConnection
 
 public:
   struct ChattingServerInfo {
-      //init
-      ChattingServerInfo()
-          :uuid()
-          ,host()
-          ,token()
-          ,port(0)
-      {}
+    // init
+    ChattingServerInfo() : uuid(), host(), token(), port(0) {}
 
     QString uuid = "";
     QString host = "";
@@ -39,8 +34,8 @@ public:
 public:
   ~TCPNetworkConnection();
 
-    /*use signal to trigger data sending*/
-    void send_data(SendNode<QByteArray>&& data);
+  /*use signal to trigger data sending*/
+  void send_data(SendNode<QByteArray> &&data);
 
 private:
   TCPNetworkConnection();

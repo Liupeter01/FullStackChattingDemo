@@ -9,10 +9,7 @@
 #include "ui_logininterface.h"
 
 LoginInterface::LoginInterface(QWidget *parent)
-    : m_info()
-    , QDialog(parent)
-    , ui(new Ui::LoginInterface)
-{
+    : m_info(), QDialog(parent), ui(new Ui::LoginInterface) {
   ui->setupUi(this);
 
   /*register pushbutton signal for page swiping*/
@@ -173,8 +170,7 @@ void LoginInterface::slot_connection_status(bool status) {
 
     SendNode<QByteArray> send_buffer(
         json_doc.toJson(),
-        static_cast<uint16_t>(ServiceType::SERVICE_LOGINSERVER)
-    );
+        static_cast<uint16_t>(ServiceType::SERVICE_LOGINSERVER));
 
     /*after connection to server, send TCP request*/
     TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));

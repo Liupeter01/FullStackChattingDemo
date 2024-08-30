@@ -132,11 +132,11 @@ void TCPNetworkConnection::slot_establish_long_connnection(
 }
 
 void TCPNetworkConnection::send_data(SendNode<QByteArray> &&data) {
-    QByteArray send_buffer;
-    QDataStream ds(&send_buffer, QIODevice::WriteOnly);
-    ds.setByteOrder(QDataStream::BigEndian);
+  QByteArray send_buffer;
+  QDataStream ds(&send_buffer, QIODevice::WriteOnly);
+  ds.setByteOrder(QDataStream::BigEndian);
 
-    ds << data.getMessageID() << data.getTotalLenth();
-    send_buffer.append(data.getMessage());
-    m_socket.write(send_buffer);
+  ds << data.getMessageID() << data.getTotalLenth();
+  send_buffer.append(data.getMessage());
+  m_socket.write(send_buffer);
 }
