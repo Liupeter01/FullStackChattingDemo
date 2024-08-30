@@ -99,6 +99,9 @@ void LoginInterface::slot_login_finished(ServiceType srv_type,
   if (!json_data.length() && srv_status == ServiceStatus::NETWORK_ERROR) {
     Tools::setWidgetAttribute(this->ui->status_label_3,
                               QString("Network Error!"), false);
+
+    /*restore button input*/
+    ui->login_button->setEnabled(true);
     return;
   }
 
@@ -109,6 +112,9 @@ void LoginInterface::slot_login_finished(ServiceType srv_type,
                               QString("Retrieve Data Error!"), false);
     // journal log system
     qDebug() << "[FATAL ERROR]: json object is null!\n";
+
+    /*restore button input*/
+    ui->login_button->setEnabled(true);
     return;
   }
 
@@ -117,6 +123,9 @@ void LoginInterface::slot_login_finished(ServiceType srv_type,
                               QString("Retrieve Data Error!"), false);
     // journal log system
     qDebug() << "[FATAL ERROR]: json can not be converted to an object!\n";
+
+    /*restore button input*/
+    ui->login_button->setEnabled(true);
     return;
   }
 
@@ -144,4 +153,30 @@ void LoginInterface::on_login_button_clicked() {
   HttpNetworkConnection::get_instance()->postHttpRequest(
       Tools::getTargetUrl("/trylogin_server"), json,
       ServiceType::SERVICE_LOGINSERVER);
+
+  /*prevent user click the button so many times*/
+  ui->login_button->setEnabled(false);
+}
+
+void LoginInterface::slot_connection_status(bool status)
+{
+    if(status){
+        Tools::setWidgetAttribute(
+            ui->status_label_3,
+            QString("Connection Established, Connecting..."),
+            true
+        );
+
+    }
+    else
+    {
+        Tools::setWidgetAttribute(
+            ui->status_label_3,
+            QString("Network error!"),
+            false
+        );
+
+        /*restore button input*/
+        ui->login_button->setEnabled(true);
+    }
 }
