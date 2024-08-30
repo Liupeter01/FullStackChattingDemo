@@ -14,14 +14,14 @@ GateServer::GateServer(boost::asio::io_context &_ioc, unsigned short port)
 void GateServer::serverStart() {
   boost::asio::io_context &ioc =
       IOServicePool::get_instance()->getIOServiceContext(); // get ioc
-  std::shared_ptr<Session> session = std::make_shared<Session>(ioc, this);
+  std::shared_ptr<Session<GateServer>> session = std::make_shared<Session<GateServer>>(ioc, this);
 
   this->m_acceptor.async_accept(session->s_socket,
                                 std::bind(&GateServer::handleAccept, this,
                                           session, std::placeholders::_1));
 }
 
-void GateServer::handleAccept(std::shared_ptr<Session> session,
+void GateServer::handleAccept(std::shared_ptr<Session<GateServer>> session,
                               boost::system::error_code ec) {
   if (!ec) {
     /*add to session pool*/

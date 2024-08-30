@@ -13,7 +13,7 @@ public:
   void serverStart();
 
 private:
-  void handleAccept(std::shared_ptr<Session> session,
+  void handleAccept(std::shared_ptr<Session<GateServer>> session,
                     boost::system::error_code ec);
   void terminateSession(const std::string &uuid);
 
@@ -22,7 +22,7 @@ private:
   boost::asio::ip::tcp::acceptor m_acceptor;
   std::map<
       /*uuid            */ std::string,
-      /*connections*/ std::shared_ptr<Session>>
+      /*connections*/ std::shared_ptr<Session<GateServer>>>
       m_sessions;
 };
 
