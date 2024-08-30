@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <cstdint>
 #include <optional>
-#include <string>
 #include <type_traits> //SFINAE
 #include <utility>     // for std::declval
 
@@ -208,12 +207,11 @@ public:
 
     /*set msg_length feild, MUST INCLUDE HEADER_LENGTH!*/
     _node._msg_length = string.size() + this->HEADER_LENGTH;
-
-    _node._msg_data.append(std::to_string(_node._msg_id));
-    _node._msg_data.append(std::to_string(_node._msg_length));
     _node._msg_data.append(string);
   }
 
+  const auto getMessageID() const{return _node._msg_id;}
+  const auto getTotalLenth() const{return _node._msg_length + HEADER_LENGTH;}
   const Container &getMessage() const { return _node._msg_data; }
 
 private:
@@ -222,6 +220,8 @@ private:
    * size |    2B   |       2B      |  _total_length - 4B  |
    * ------------------------------------------------------*/
   MessageNode<Container> _node;
+    static constexpr std::size_t HEADER_LENGTH =
+      sizeof(uint16_t) + sizeof(uint16_t);
 };
 
 #endif
