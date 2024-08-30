@@ -25,6 +25,9 @@ void TCPNetworkConnection::registerNetworkEvent()
 {
     connect(this, &TCPNetworkConnection::signal_establish_long_connnection, this,
             &TCPNetworkConnection::slot_establish_long_connnection);
+
+    connect(this, &TCPNetworkConnection::signal_send_data,
+            this, &TCPNetworkConnection::slot_send_data);
 }
 
 void TCPNetworkConnection::registerSocketSignal() {
@@ -51,8 +54,6 @@ void TCPNetworkConnection::registerSocketSignal() {
 
       QJsonDocument json_obj = QJsonDocument::fromJson(msg._msg_data);
       if (json_obj.isNull()) { // converting failed
-          //Tools::setWidgetAttribute(this->ui->status_label,
-          //                          QString("Retrieve Data Error!"), false);
           // journal log system
           qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
           emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
@@ -60,8 +61,6 @@ void TCPNetworkConnection::registerSocketSignal() {
       }
 
       if (!json_obj.isObject()) {
-          //Tools::setWidgetAttribute(this->ui->status_label,
-          //                          QString("Retrieve Data Error!"), false);
           // journal log system
           qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
           emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
@@ -110,10 +109,6 @@ void TCPNetworkConnection::registerCallback() {
             if(!checkJsonForm(json)){
                 return;
             }
-
-
-
-
             emit signal_switch_chatting_dialog();
       }));
 
@@ -135,7 +130,20 @@ void TCPNetworkConnection::registerCallback() {
 
 void TCPNetworkConnection::slot_establish_long_connnection(
     TCPNetworkConnection::ChattingServerInfo info) {
-  qDebug() << "Connecting to Server";
+    qDebug() << "Connecting to Server"
+             << "host = \n" << info.host
+             << "ip = " << info.port;
+
   m_server = std::move(info);
   m_socket.connectToHost(m_server.host, m_server.port);
+}
+
+void TCPNetworkConnection::slot_send_data(SendNode<QByteArray> data)
+{
+    QByteArray array = std::move(data.getMessage());
+
+    /*setup network byte sequence*/
+    QDataStream ds(&array, QIODevice::WriteOnly);
+    ds.setByteOrder(QDataStream::BigEndian);
+    m_socket.write(array);
 }

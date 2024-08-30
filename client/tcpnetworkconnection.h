@@ -46,6 +46,9 @@ private slots:
   void
   slot_establish_long_connnection(TCPNetworkConnection::ChattingServerInfo info);
 
+  /*use it to send data to server*/
+  void slot_send_data(SendNode<QByteArray> data);
+
 signals:
   void signal_establish_long_connnection(TCPNetworkConnection::ChattingServerInfo info);
 
@@ -58,6 +61,9 @@ signals:
   /*if login success, then switch to chatting dialog*/
   void signal_switch_chatting_dialog();
 
+  /*use signal to trigger data sending*/
+  void signal_send_data(SendNode<QByteArray> data);
+
 private:
   /*establish tcp socket with server*/
   QTcpSocket m_socket;
@@ -68,6 +74,7 @@ private:
   /*create a connection buffer to store the data transfer from server*/
   RecvNode<QByteArray> m_buffer;
 
+/*according to service type to execute callback*/
   std::map<ServiceType, Callbackfunction> m_callbacks;
 };
 
