@@ -22,9 +22,6 @@ TCPNetworkConnection::~TCPNetworkConnection() {}
 void TCPNetworkConnection::registerNetworkEvent() {
   connect(this, &TCPNetworkConnection::signal_establish_long_connnection, this,
           &TCPNetworkConnection::slot_establish_long_connnection);
-
-  connect(this, &TCPNetworkConnection::signal_send_data, this,
-          &TCPNetworkConnection::slot_send_data);
 }
 
 void TCPNetworkConnection::registerSocketSignal() {
@@ -134,11 +131,12 @@ void TCPNetworkConnection::slot_establish_long_connnection(
   m_socket.connectToHost(m_server.host, m_server.port);
 }
 
-void TCPNetworkConnection::slot_send_data(SendNode<QByteArray> data) {
-  QByteArray array = std::move(data.getMessage());
+void TCPNetworkConnection::send_data(SendNode<QByteArray> &&data) {
+    QByteArray send_buffer;
+    QDataStream ds(&send_buffer, QIODevice::WriteOnly);
+    ds.setByteOrder(QDataStream::BigEndian);
 
-  /*setup network byte sequence*/
-  QDataStream ds(&array, QIODevice::WriteOnly);
-  ds.setByteOrder(QDataStream::BigEndian);
-  m_socket.write(array);
+    ds << data.getMessageID() << data.getTotalLenth();
+    send_buffer.append(data.getMessage());
+    m_socket.write(send_buffer);
 }

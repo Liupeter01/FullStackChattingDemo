@@ -22,6 +22,14 @@ class TCPNetworkConnection
 
 public:
   struct ChattingServerInfo {
+      //init
+      ChattingServerInfo()
+          :uuid()
+          ,host()
+          ,token()
+          ,port(0)
+      {}
+
     QString uuid = "";
     QString host = "";
     std::size_t port = 0;
@@ -30,6 +38,9 @@ public:
 
 public:
   ~TCPNetworkConnection();
+
+    /*use signal to trigger data sending*/
+    void send_data(SendNode<QByteArray>&& data);
 
 private:
   TCPNetworkConnection();
@@ -46,9 +57,6 @@ private slots:
   void slot_establish_long_connnection(
       TCPNetworkConnection::ChattingServerInfo info);
 
-  /*use it to send data to server*/
-  void slot_send_data(SendNode<QByteArray> data);
-
 signals:
   void signal_establish_long_connnection(
       TCPNetworkConnection::ChattingServerInfo info);
@@ -61,9 +69,6 @@ signals:
 
   /*if login success, then switch to chatting dialog*/
   void signal_switch_chatting_dialog();
-
-  /*use signal to trigger data sending*/
-  void signal_send_data(SendNode<QByteArray> data);
 
 private:
   /*establish tcp socket with server*/
