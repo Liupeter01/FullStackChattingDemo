@@ -2,10 +2,10 @@
 #pragma once
 #ifndef _MSGNODE_H_
 #define _MSGNODE_H_
-#include <string>
 #include <algorithm>
 #include <cstdint>
 #include <optional>
+#include <string>
 #include <type_traits> //SFINAE
 #include <utility>     // for std::declval
 
@@ -76,17 +76,12 @@ public:
   }
 };
 
-template<typename Container>
-struct MessageNode {
-    MessageNode()
-        :_msg_id(0)
-        ,_msg_length(0)
-        ,_msg_data(0)
-    {}
+template <typename Container> struct MessageNode {
+  MessageNode() : _msg_id(0), _msg_length(0), _msg_data(0) {}
 
-    uint16_t _msg_id;
-    uint16_t _msg_length;
-    Container _msg_data;
+  uint16_t _msg_id;
+  uint16_t _msg_length;
+  Container _msg_data;
 };
 
 template <typename Container> struct MsgBody {
@@ -110,7 +105,7 @@ public:
 
   std::optional<MessageNode<Container>> getMessageNode() {
     if (!isHeaderReady() || !isBodyReady()) {
-        return std::nullopt;
+      return std::nullopt;
     }
     /*
      * because data are ready, now invalid those data
@@ -143,19 +138,21 @@ public:
 
 private:
   void check_header() {
-      char *addr_msg_id = reinterpret_cast<char *>(this->_msg.data());
-      this->_node._msg_id = *(reinterpret_cast<uint16_t *>(addr_msg_id));
+    char *addr_msg_id = reinterpret_cast<char *>(this->_msg.data());
+    this->_node._msg_id = *(reinterpret_cast<uint16_t *>(addr_msg_id));
 
-      /*only store the valid message length, HEADER_LENGTH is not included*/
-      char *addr_total_length = addr_msg_id + sizeof(uint16_t);
-      this->_node._msg_length =  *(reinterpret_cast<uint16_t *>(addr_total_length)) - this->HEADER_LENGTH;
+    /*only store the valid message length, HEADER_LENGTH is not included*/
+    char *addr_total_length = addr_msg_id + sizeof(uint16_t);
+    this->_node._msg_length =
+        *(reinterpret_cast<uint16_t *>(addr_total_length)) -
+        this->HEADER_LENGTH;
 
-      /*we have retrieved all header data, moving to parse body*/
-      _header_loading_status = true;
+    /*we have retrieved all header data, moving to parse body*/
+    _header_loading_status = true;
 
-      /*remove msg_id and length_info from buffer*/
-      auto it = this->_msg.begin();
-      std::advance(it, this->HEADER_LENGTH);
+    /*remove msg_id and length_info from buffer*/
+    auto it = this->_msg.begin();
+    std::advance(it, this->HEADER_LENGTH);
 
     this->_msg.erase(this->_msg.begin(), it);
   }
@@ -197,32 +194,27 @@ private:
 
 template <typename Container>
 class SendNode<Container, typename std::enable_if<
-                              send_msg_check<Container>::value, void>::type>
-{
+                              send_msg_check<Container>::value, void>::type> {
 public:
-    SendNode():_node(){}
+  SendNode() : _node() {}
 
-    /*
-     * string.size() is the size of message body
-     * the total length should also include the size of HEADER_LENGTH
-     */
-  SendNode(const Container &string, uint16_t msg_id)
-      : _node()
-    {
-        /*set msg_id*/
-      _node._msg_id = msg_id;
+  /*
+   * string.size() is the size of message body
+   * the total length should also include the size of HEADER_LENGTH
+   */
+  SendNode(const Container &string, uint16_t msg_id) : _node() {
+    /*set msg_id*/
+    _node._msg_id = msg_id;
 
-        /*set msg_length feild, MUST INCLUDE HEADER_LENGTH!*/
-      _node._msg_length = string.size() + this->HEADER_LENGTH;
+    /*set msg_length feild, MUST INCLUDE HEADER_LENGTH!*/
+    _node._msg_length = string.size() + this->HEADER_LENGTH;
 
-      _node._msg_data.append(std::to_string(_node._msg_id));
-      _node._msg_data.append(std::to_string(_node._msg_length));
-      _node._msg_data.append(string);
-    }
+    _node._msg_data.append(std::to_string(_node._msg_id));
+    _node._msg_data.append(std::to_string(_node._msg_length));
+    _node._msg_data.append(string);
+  }
 
-    const Container& getMessage()const{
-        return _node._msg_data;
-    }
+  const Container &getMessage() const { return _node._msg_data; }
 
 private:
   /* -------------------------------------------------------

@@ -22,17 +22,17 @@ class TCPNetworkConnection
 
 public:
   struct ChattingServerInfo {
-      QString uuid = "";
-      QString host = "";
-      std::size_t port = 0;
-      QString token = "";
+    QString uuid = "";
+    QString host = "";
+    std::size_t port = 0;
+    QString token = "";
   };
 
 public:
   ~TCPNetworkConnection();
 
 private:
-   TCPNetworkConnection();
+  TCPNetworkConnection();
 
   void registerNetworkEvent();
   void registerSocketSignal();
@@ -43,14 +43,15 @@ private:
   bool checkJsonForm(const QJsonObject &json);
 
 private slots:
-  void
-  slot_establish_long_connnection(TCPNetworkConnection::ChattingServerInfo info);
+  void slot_establish_long_connnection(
+      TCPNetworkConnection::ChattingServerInfo info);
 
   /*use it to send data to server*/
   void slot_send_data(SendNode<QByteArray> data);
 
 signals:
-  void signal_establish_long_connnection(TCPNetworkConnection::ChattingServerInfo info);
+  void signal_establish_long_connnection(
+      TCPNetworkConnection::ChattingServerInfo info);
 
   /*return connection status to login class*/
   void signal_connection_status(bool status);
@@ -74,7 +75,7 @@ private:
   /*create a connection buffer to store the data transfer from server*/
   RecvNode<QByteArray> m_buffer;
 
-/*according to service type to execute callback*/
+  /*according to service type to execute callback*/
   std::map<ServiceType, Callbackfunction> m_callbacks;
 };
 

@@ -62,10 +62,9 @@ void LoginInterface::registerNetworkEvent() {
           &HttpNetworkConnection::signal_login_finished, this,
           &LoginInterface::slot_login_finished);
 
-    connect(this, &LoginInterface::signal_establish_long_connnection,
-         TCPNetworkConnection::get_instance().get(),
-         &TCPNetworkConnection::signal_establish_long_connnection
-         );
+  connect(this, &LoginInterface::signal_establish_long_connnection,
+          TCPNetworkConnection::get_instance().get(),
+          &TCPNetworkConnection::signal_establish_long_connnection);
 }
 
 void LoginInterface::regisrerCallBackFunctions() {
@@ -158,25 +157,17 @@ void LoginInterface::on_login_button_clicked() {
   ui->login_button->setEnabled(false);
 }
 
-void LoginInterface::slot_connection_status(bool status)
-{
-    if(status){
-        Tools::setWidgetAttribute(
-            ui->status_label_3,
-            QString("Connection Established, Connecting..."),
-            true
-        );
+void LoginInterface::slot_connection_status(bool status) {
+  if (status) {
+    Tools::setWidgetAttribute(ui->status_label_3,
+                              QString("Connection Established, Connecting..."),
+                              true);
 
-    }
-    else
-    {
-        Tools::setWidgetAttribute(
-            ui->status_label_3,
-            QString("Network error!"),
-            false
-        );
+  } else {
+    Tools::setWidgetAttribute(ui->status_label_3, QString("Network error!"),
+                              false);
 
-        /*restore button input*/
-        ui->login_button->setEnabled(true);
-    }
+    /*restore button input*/
+    ui->login_button->setEnabled(true);
+  }
 }
