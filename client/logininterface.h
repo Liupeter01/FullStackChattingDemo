@@ -53,6 +53,7 @@ private slots:
 private:
   Ui::LoginInterface *ui;
   std::map<ServiceType, CallBackFunc> m_callbacks;
+  TCPNetworkConnection::ChattingServerInfo m_info;
 };
 
 #endif // LOGININTERFACE_H
