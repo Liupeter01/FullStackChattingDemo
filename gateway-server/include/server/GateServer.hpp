@@ -7,7 +7,7 @@
 class GateServer : public std::enable_shared_from_this<GateServer> {
 public:
   GateServer(boost::asio::io_context &_ioc, unsigned short port);
-  ~GateServer() = default;
+  ~GateServer();
 
 public:
   void serverStart();
