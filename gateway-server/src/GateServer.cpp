@@ -25,15 +25,19 @@ void GateServer::serverStart() {
 void GateServer::handleAccept(std::shared_ptr<Session<GateServer>> session,
                               boost::system::error_code ec) {
   if (!ec) {
-    /*add to session pool*/
-    this->m_sessions.insert(std::make_pair(session->s_uuid, session));
 
-    /*establish HTTPConnection to handle socket*/
-    std::shared_ptr<HTTPConnection> http(
-        std::make_shared<HTTPConnection>(session->s_socket));
-    http->start_service();
+            /*establish HTTPConnection to handle socket*/
+            std::shared_ptr<HTTPConnection> http(
+                      std::make_shared<HTTPConnection>(session->s_socket));
+            http->start_service();
+
+           /*add to session pool*/
+            std::lock_guard<std::mutex> _lckg(m_mtx);
+               this->m_sessions.insert(std::make_pair(session->s_uuid, session));
+   
   } else /*error occured!*/
   {
+            spdlog::info("GateWay Server Accept {} failed", session->s_uuid);
     this->terminateSession(session->s_uuid);
   }
 
@@ -42,5 +46,11 @@ void GateServer::handleAccept(std::shared_ptr<Session<GateServer>> session,
 }
 
 void GateServer::terminateSession(const std::string &uuid) {
-  this->m_sessions.erase(uuid);
+          /*then remove it from the map, we should also lock it first*/
+          std::lock_guard<std::mutex> _lckg(m_mtx);
+
+          /*add safety consideration*/
+          if (this->m_sessions.find(uuid) != this->m_sessions.end()) {
+                    this->m_sessions.erase(uuid);
+          }
 }
