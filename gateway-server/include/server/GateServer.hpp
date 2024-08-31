@@ -18,6 +18,8 @@ private:
   void terminateSession(const std::string &uuid);
 
 private:
+  /*create a mutex to protect m_sessions*/
+  std::mutex m_mtx;
   boost::asio::io_context &m_ioc;
   boost::asio::ip::tcp::acceptor m_acceptor;
   std::map<
