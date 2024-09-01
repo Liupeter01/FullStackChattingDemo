@@ -108,6 +108,7 @@ FetchContent_MakeAvailable(
 
 add_subdirectory(inifile)
 add_subdirectory(spdlog)
+add_subdirectory(jsoncpp)
 
 target_link_libraries(ChattingServer PUBLIC 
         Boost::asio
@@ -116,6 +117,7 @@ target_link_libraries(ChattingServer PUBLIC
         libprotobuf
         inicpp::inicpp
         spdlog::spdlog
+        jsoncpp_object
 )
 
 target_compile_definitions(ChattingServer PUBLIC 
