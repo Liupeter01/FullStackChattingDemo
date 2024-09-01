@@ -17,7 +17,8 @@ enum class ServiceType : uint8_t {
   SERVICE_LOGINRESPONSE, // login server response
   SERVICE_RESERVE_2,     //
   SERVICE_RESERVE_3,     //
-  SERVICE_RESERVE_4      //
+  SERVICE_RESERVE_4,      //
+  SERVICE_UNKNOWN          //unkown service
 };
 
 enum class ServiceStatus : uint8_t {
