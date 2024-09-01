@@ -51,8 +51,11 @@ void GateServer::terminateSession(const std::string &uuid) {
   /*then remove it from the map, we should also lock it first*/
   std::lock_guard<std::mutex> _lckg(m_mtx);
 
+  auto it = this->m_sessions.find(uuid);
+
   /*add safety consideration*/
-  if (this->m_sessions.find(uuid) != this->m_sessions.end()) {
+  if (it != this->m_sessions.end()) { 
+            it->second->closeSession();
     this->m_sessions.erase(uuid);
   }
 }
