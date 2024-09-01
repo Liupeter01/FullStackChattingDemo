@@ -54,8 +54,8 @@ void GateServer::terminateSession(const std::string &uuid) {
   auto it = this->m_sessions.find(uuid);
 
   /*add safety consideration*/
-  if (it != this->m_sessions.end()) { 
-            it->second->closeSession();
+  if (it != this->m_sessions.end()) {
+    it->second->closeSession();
     this->m_sessions.erase(uuid);
   }
 }

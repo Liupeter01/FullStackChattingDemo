@@ -17,15 +17,15 @@ struct Session : public std::enable_shared_from_this<Session<_Base>> {
     this->s_uuid = boost::uuids::to_string(uuid_gen);
   }
 
-  ~Session() { 
-            if (!s_closed) {
-                      closeSession();
-            }
+  ~Session() {
+    if (!s_closed) {
+      closeSession();
+    }
   }
   void closeSession() {
-            /*close by accident or gateserver*/
-            s_closed = true;
-            s_socket.close();
+    /*close by accident or gateserver*/
+    s_closed = true;
+    s_socket.close();
   }
 
   bool s_closed;
