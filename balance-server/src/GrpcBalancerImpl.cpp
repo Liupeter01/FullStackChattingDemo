@@ -51,13 +51,15 @@ grpc::GrpcBalancerImpl::getUserToken(std::size_t uuid) {
   return target->second;
 }
 
-ServiceStatus grpc::GrpcBalancerImpl::verifyUserToken(std::size_t uuid, const std::string& tokens)
-{
-          std::optional<std::string_view> target = getUserToken(uuid);
-          if (!target.has_value()) {
-                    return ServiceStatus::LOGIN_UNSUCCESSFUL;
-          }
-          return (target.value() == tokens ? ServiceStatus::SERVICE_SUCCESS : ServiceStatus::LOGIN_INFO_ERROR);
+ServiceStatus
+grpc::GrpcBalancerImpl::verifyUserToken(std::size_t uuid,
+                                        const std::string &tokens) {
+  std::optional<std::string_view> target = getUserToken(uuid);
+  if (!target.has_value()) {
+    return ServiceStatus::LOGIN_UNSUCCESSFUL;
+  }
+  return (target.value() == tokens ? ServiceStatus::SERVICE_SUCCESS
+                                   : ServiceStatus::LOGIN_INFO_ERROR);
 }
 
 ::grpc::Status grpc::GrpcBalancerImpl::AddNewUserToServer(
@@ -79,16 +81,14 @@ ServiceStatus grpc::GrpcBalancerImpl::verifyUserToken(std::size_t uuid, const st
   return grpc::Status::OK;
 }
 
-::grpc::Status
-grpc::GrpcBalancerImpl::UserLoginToServer(::grpc::ServerContext* context,
-          const ::message::LoginChattingServer* request,
-          ::message::LoginChattingResponse* response)
-{
-          /*verify user token*/
-          response->set_error(
-                    static_cast<std::size_t>(verifyUserToken(request->uuid(), request->token()))
-          );
-          return grpc::Status::OK;
+::grpc::Status grpc::GrpcBalancerImpl::UserLoginToServer(
+    ::grpc::ServerContext *context,
+    const ::message::LoginChattingServer *request,
+    ::message::LoginChattingResponse *response) {
+  /*verify user token*/
+  response->set_error(static_cast<std::size_t>(
+      verifyUserToken(request->uuid(), request->token())));
+  return grpc::Status::OK;
 }
 
 std::string grpc::GrpcBalancerImpl::userTokenGenerator() {
