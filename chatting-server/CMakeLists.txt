@@ -113,6 +113,7 @@ add_subdirectory(jsoncpp)
 target_link_libraries(ChattingServer PUBLIC 
         Boost::asio
         Boost::uuid
+        Boost::mysql
         grpc++
         libprotobuf
         inicpp::inicpp
