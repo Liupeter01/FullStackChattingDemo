@@ -13,6 +13,13 @@ public:
   std::string BalanceServiceAddress;
   std::string BalanceServicePort;
 
+  std::string MySQL_host;
+  std::string MySQL_port;
+  std::string MySQL_username;
+  std::string MySQL_passwd;
+  std::string MySQL_database;
+  std::size_t MySQL_timeout;
+
   ~ServerConfig() = default;
 
 private:
@@ -21,6 +28,7 @@ private:
     m_ini.load(CONFIG_HOME "config.ini");
     loadChattingServiceInfo();
     loadBalanceServiceInfo();
+    loadMySQLInfo();
   }
 
   void loadChattingServiceInfo() {
@@ -33,6 +41,14 @@ private:
     BalanceServiceAddress = m_ini["BalanceService"]["host"].as<std::string>();
     BalanceServicePort =
         std::to_string(m_ini["BalanceService"]["port"].as<unsigned short>());
+  }
+  void loadMySQLInfo() {
+            MySQL_username = m_ini["MySQL"]["username"].as<std::string>();
+            MySQL_passwd = m_ini["MySQL"]["password"].as<std::string>();
+            MySQL_database = m_ini["MySQL"]["database"].as<std::string>();
+            MySQL_host = m_ini["MySQL"]["host"].as<std::string>();
+            MySQL_port = m_ini["MySQL"]["port"].as<std::string>();
+            MySQL_timeout = m_ini["MySQL"]["timeout"].as<unsigned long>();
   }
 
 private:
