@@ -29,25 +29,25 @@ struct gRPCBalancerService {
   }
 
   static message::LoginChattingResponse
-            userLoginToServer(std::size_t uuid, const std::string &token) {
-            grpc::ClientContext context;
-            message::LoginChattingServer request;
-            message::LoginChattingResponse response;
-            request.set_uuid(uuid);
-            request.set_token(token);
+  userLoginToServer(std::size_t uuid, const std::string &token) {
+    grpc::ClientContext context;
+    message::LoginChattingServer request;
+    message::LoginChattingResponse response;
+    request.set_uuid(uuid);
+    request.set_token(token);
 
-            connection::ConnectionRAII<stubpool::BalancerServicePool,
-                      message::BalancerService::Stub>
-                      raii;
+    connection::ConnectionRAII<stubpool::BalancerServicePool,
+                               message::BalancerService::Stub>
+        raii;
 
-            grpc::Status status =
-                      raii->get()->UserLoginToServer(&context, request, &response);
+    grpc::Status status =
+        raii->get()->UserLoginToServer(&context, request, &response);
 
-            ///*error occured*/
-            if (!status.ok()) {
-                      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
-            }
-            return response;
+    ///*error occured*/
+    if (!status.ok()) {
+      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
+    }
+    return response;
   }
 };
 
