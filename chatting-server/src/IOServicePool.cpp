@@ -17,7 +17,7 @@ IOServicePool::IOServicePool(std::size_t threads)
   }
 }
 
-IOServicePool::~IOServicePool() { }
+IOServicePool::~IOServicePool() {}
 
 void IOServicePool::shutdown() {
   for (auto &work : m_work_pool) {
