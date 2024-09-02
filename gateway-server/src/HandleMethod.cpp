@@ -1,4 +1,4 @@
-#include <grpc/GrpcChattingService.hpp>
+#include <grpc/GrpcBalanceService.hpp>
 #include <grpc/GrpcVerificationService.hpp>
 #include <handler/HandleMethod.hpp>
 #include <http/HttpConnection.hpp>
@@ -326,7 +326,7 @@ void HandleMethod::registerPostCallBacks() {
          *pass user's uuid parameter to the server, and returns available server
          *address to user
          */
-        auto response = gRPCChattingService::addNewUserToServer(uuid);
+        auto response = gRPCBalancerService::addNewUserToServer(uuid);
 
         if (response.error() !=
             static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
