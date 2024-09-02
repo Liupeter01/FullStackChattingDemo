@@ -4,7 +4,7 @@
 #include <grpc/BalanceServicePool.hpp>
 #include <network/def.hpp>
 
-struct gRPCChattingService {
+struct gRPCBalancerService {
   // pass user's uuid parameter to the server, and returns available server
   // address to user
   static message::GetAllocatedChattingServer
@@ -14,8 +14,8 @@ struct gRPCChattingService {
     message::GetAllocatedChattingServer response;
     request.set_uuid(uuid);
 
-    connection::ConnectionRAII<stubpool::ChattingServicePool,
-                               message::ChattingServiceBalancer::Stub>
+    connection::ConnectionRAII<stubpool::BalancerServicePool,
+                               message::BalancerService::Stub>
         raii;
 
     grpc::Status status =
