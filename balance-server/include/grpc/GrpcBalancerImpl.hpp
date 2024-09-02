@@ -18,7 +18,7 @@ struct ChattingServerConfig {
 };
 
 class GrpcBalancerImpl final
-    : public message::ChattingServiceBalancer::Service {
+    : public message::BalancerService::Service {
 public:
   ~GrpcBalancerImpl();
   GrpcBalancerImpl();
