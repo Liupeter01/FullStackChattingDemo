@@ -190,17 +190,16 @@ const char descriptor_table_protodef_message_2eproto[] PROTOBUF_SECTION_VARIABLE
   "oginChattingResponse\022\r\n\005error\030\001 \001(\0052q\n\023V"
   "erificationService\022Z\n\023GetVerificationCod"
   "e\022\037.message.GetVerificationRequest\032 .mes"
-  "sage.GetVerificationResponse\"\0002\310\001\n\027Chatt"
-  "ingServiceBalancer\022X\n\022AddNewUserToServer"
-  "\022\033.message.RegisterToBalancer\032#.message."
-  "GetAllocatedChattingServer\"\000\022S\n\021UserLogi"
-  "nToServer\022\034.message.LoginChattingServer\032"
-  "\036.message.LoginChattingResponse\"\000b\006proto"
-  "3"
+  "sage.GetVerificationResponse\"\0002\300\001\n\017Balan"
+  "cerService\022X\n\022AddNewUserToServer\022\033.messa"
+  "ge.RegisterToBalancer\032#.message.GetAlloc"
+  "atedChattingServer\"\000\022S\n\021UserLoginToServe"
+  "r\022\034.message.LoginChattingServer\032\036.messag"
+  "e.LoginChattingResponse\"\000b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_message_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_message_2eproto = {
-    false, false, 681, descriptor_table_protodef_message_2eproto,
+    false, false, 673, descriptor_table_protodef_message_2eproto,
     "message.proto",
     &descriptor_table_message_2eproto_once, nullptr, 0, 6,
     schemas, file_default_instances, TableStruct_message_2eproto::offsets,
