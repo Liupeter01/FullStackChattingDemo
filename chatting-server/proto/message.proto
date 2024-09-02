@@ -8,6 +8,9 @@ service VerificationService{
 service ChattingServiceBalancer{
     //pass user's uuid parameter to the server, and returns available server address to user
     rpc AddNewUserToServer(RegisterToBalancer) returns (GetAllocatedChattingServer){}
+
+    //user send SERVICE_LOGINSERVER request
+    rpc UserLoginToServer(LoginChattingServer) returns (LoginChattingResponse){}
 }
 
 message GetVerificationRequest{
@@ -31,4 +34,14 @@ message GetAllocatedChattingServer{
     string host = 2;
     string port = 3;
     string token = 4;
+}
+
+//transfer uuid and token to balanceserver to check validation
+message LoginChattingServer{
+    int32 uuid = 1;
+    string token = 2;
+}
+
+message LoginChattingResponse{
+    int32 error = 1;
 }
