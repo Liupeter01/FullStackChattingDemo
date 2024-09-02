@@ -234,10 +234,10 @@ class VerificationService final {
   typedef WithStreamedUnaryMethod_GetVerificationCode<Service > StreamedService;
 };
 
-class ChattingServiceBalancer final {
+class BalancerService final {
  public:
   static constexpr char const* service_full_name() {
-    return "message.ChattingServiceBalancer";
+    return "message.BalancerService";
   }
   class StubInterface {
    public:

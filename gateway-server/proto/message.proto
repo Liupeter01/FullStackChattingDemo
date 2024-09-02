@@ -5,7 +5,7 @@ service VerificationService{
     rpc GetVerificationCode(GetVerificationRequest) returns (GetVerificationResponse){}
 }
 
-service ChattingServiceBalancer{
+service BalancerService{
     //pass user's uuid parameter to the server, and returns available server address to user
     rpc AddNewUserToServer(RegisterToBalancer) returns (GetAllocatedChattingServer){}
 
