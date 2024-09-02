@@ -7,6 +7,7 @@
 #include <optional>
 #include <string_view>
 #include <unordered_map>
+#include <network/def.hpp>
 
 namespace grpc {
 struct ChattingServerConfig {
@@ -28,12 +29,18 @@ public:
                      const ::message::RegisterToBalancer *request,
                      ::message::GetAllocatedChattingServer *response);
 
+  ::grpc::Status
+  UserLoginToServer(::grpc::ServerContext* context, 
+            const ::message::LoginChattingServer* request, 
+            ::message::LoginChattingResponse* response);
+
   static std::string userTokenGenerator();
 
 private:
   const grpc::ChattingServerConfig &serverLoadBalancer();
   void registerUserToken(std::size_t uuid, const std::string &tokens);
   std::optional<std::string_view> getUserToken(std::size_t uuid);
+  ServiceStatus verifyUserToken(std::size_t uuid, const std::string& tokens);
 
 private:
   std::mutex server_mtx;
