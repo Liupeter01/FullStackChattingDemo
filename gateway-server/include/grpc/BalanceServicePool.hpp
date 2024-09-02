@@ -10,8 +10,7 @@
 namespace stubpool {
 class BalancerServicePool
     : public connection::ConnectionPool<
-          BalancerServicePool,
-          typename message::BalancerService::Stub> {
+          BalancerServicePool, typename message::BalancerService::Stub> {
   using self = BalancerServicePool;
   using data_type = typename message::BalancerService::Stub;
   using context = data_type;
