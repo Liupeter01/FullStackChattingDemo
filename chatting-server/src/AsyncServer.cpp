@@ -42,14 +42,19 @@ void AsyncServer::handleAccept(std::shared_ptr<Session> session,
 void AsyncServer::terminateConnection(const std::string &uuid) {
   std::lock_guard<std::mutex> _lckg(m_mtx);
 
-  auto it = this->m_sessions.find(uuid);
+  auto session = this->m_sessions.find(uuid);
+  auto auth = this->m_authusers.find(uuid);
 
   /*add safety consideration*/
-  if (it != this->m_sessions.end()) {
+  if (session != this->m_sessions.end()) {
     /*shutdown connection*/
-    it->second->closeSession();
+    session->second->closeSession();
 
     /*erase it from map*/
-    this->m_sessions.erase(uuid);
+    this->m_sessions.erase(session);
+  }
+
+  if (auth != this->m_authusers.end()) {
+    this->m_authusers.erase(auth);
   }
 }

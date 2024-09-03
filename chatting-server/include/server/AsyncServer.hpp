@@ -5,8 +5,11 @@
 #include <server/Session.hpp>
 #include <unordered_map>
 
+class SyncLogic;
+
 class AsyncServer : public std::enable_shared_from_this<AsyncServer> {
   friend class Session;
+  friend class SyncLogic;
 
 public:
   AsyncServer(boost::asio::io_context &_ioc, unsigned short port);
@@ -32,9 +35,16 @@ private:
 
   /*maintain user's connection*/
   std::unordered_map<
-      /*uuid*/ std::string,
+      /*unique_string*/ std::string,
       /*connected session*/ std::shared_ptr<Session>>
       m_sessions;
+
+  /*the user who is authorized by loginserver command*/
+  std::unordered_map<
+      /*uuid*/ std::string_view,
+      /*unique_string*/ std::size_t>
+      m_authusers;
+  /*uid*/
 };
 
 #endif
