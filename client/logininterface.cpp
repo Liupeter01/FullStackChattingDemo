@@ -169,8 +169,9 @@ void LoginInterface::slot_connection_status(bool status) {
     QJsonDocument json_doc(json_obj);
 
     SendNode<QByteArray> send_buffer(
-        json_doc.toJson(),
-        static_cast<uint16_t>(ServiceType::SERVICE_LOGINSERVER));
+        static_cast<uint16_t>(ServiceType::SERVICE_LOGINSERVER),
+        json_doc.toJson()
+    );
 
     /*after connection to server, send TCP request*/
     TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
