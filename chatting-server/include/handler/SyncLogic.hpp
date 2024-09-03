@@ -34,8 +34,8 @@ private:
   void processing();
   void registerCallbacks();
   void execute(pair &&node);
-  void SyncLogic::generateErrorMessage(const std::string &msg, ServiceType type,
-                                       ServiceStatus status, SessionPtr conn);
+  void generateErrorMessage(const std::string &log, ServiceType type,
+                            ServiceStatus status, SessionPtr conn);
 
   /*Execute Operations*/
   void handlingLogin(ServiceType srv_type, std::shared_ptr<Session> session,
@@ -60,4 +60,4 @@ private:
   std::unordered_map<ServiceType, CallbackFunc> m_callbacks;
 };
 
-#endif _SYNCLOGIC_HPP_
+#endif //_SYNCLOGIC_HPP_
