@@ -9,6 +9,8 @@
 #include <type_traits> //SFINAE
 #include <utility>     // for std::declval
 
+class QString;
+
 template <typename _Ty> struct add_const_lvalue_reference {
   using type = std::add_lvalue_reference_t<std::add_const_t<std::decay_t<_Ty>>>;
 };
@@ -148,14 +150,20 @@ template <typename Container> struct MsgHeader {
     if (!check_body_remaining()) {
       return std::nullopt;
     }
-    /*Ignore Header part*/
-    auto ib = _buffer.begin();
-    auto ie = _buffer.begin();
-    std::advance(ib, HEADER_LENGTH);
-    std::advance(ie, _length);
-    Container ret;
-    ret.assign(ib, ie);
-    return ret;
+
+    /*unfortunely, QByteArray does not support assign
+     * QString is an exception
+     * auto ib = _buffer.begin();
+     * auto ie = _buffer.begin();
+     * std::advance(ib, HEADER_LENGTH);
+     * std::advance(ie, _length);
+     * Container ret;
+     * ret.assign(ib, ie);
+     */
+    if constexpr (std::is_same_v<Container, QString>) {
+      return this->_buffer.mid(HEADER_LENGTH, _length);
+    }
+    return Container(get_body_base(), _length - HEADER_LENGTH);
   }
   void update_pointer_pos(const uint16_t increment) {
     _cur_length += increment;
