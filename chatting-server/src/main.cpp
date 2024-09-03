@@ -2,10 +2,12 @@
 #include <server/AsyncServer.hpp>
 #include <service/IOServicePool.hpp>
 #include <spdlog/spdlog.h>
+#include <sql/MySQLConnectionPool.hpp>
 
 int main() {
   try {
-    auto &service_pool = IOServicePool::get_instance();
+    [[maybe_unused]] auto &service_pool = IOServicePool::get_instance();
+    [[maybe_unused]] auto &mysql = mysql::MySQLConnectionPool::get_instance();
 
     /*setting up signal*/
     boost::asio::io_context ioc;
