@@ -282,7 +282,7 @@ void HandleMethod::registerPostCallBacks() {
         auto body =
             boost::beast::buffers_to_string(conn->http_request.body().data());
 
-        spdlog::info("Server receive registration request, post data: {}",
+        spdlog::info("Server receive server allocation request, post data: {}",
                      body.c_str());
 
         Json::Value send_root; /*write into body*/
