@@ -40,34 +40,52 @@ void TCPNetworkConnection::registerSocketSignal() {
   /*receive data from server*/
   connect(&m_socket, &QTcpSocket::readyRead, [this]() {
     QByteArray array = m_socket.readAll();
-    if (m_buffer.getMessageNode().has_value()) {
-      auto msg = m_buffer.getMessageNode().value();
-      qDebug() << "msg_id = " << msg._msg_id
-               << "msg_length = " << msg._msg_length
-               << "msg_data = " << msg._msg_data;
 
-      QJsonDocument json_obj = QJsonDocument::fromJson(msg._msg_data);
-      if (json_obj.isNull()) { // converting failed
+    /*make sure header is full*/
+    if(m_buffer.check_header_remaining()){
+        [[maybe_unused]]auto res = m_buffer.insert_header(array);
+        return;
+    }
+
+    /*insert body until it meets the requirement of the length*/
+    if(!m_buffer.insert_body(array)){
+        return;
+    }
+
+    /*record them temporarily*/
+    m_received._id = m_buffer.get_id().value();
+    m_received._length = m_buffer.get_length().value();
+    m_received._msg = m_buffer.get_msg_body().value();
+
+    qDebug() << "msg_id = " << m_received._id
+             << "msg_length = " << m_received._length
+             << "msg_data = " << m_received._msg;
+
+    /*erase current packet(include header and body)*/
+    m_buffer.clear();
+
+    /*parse it as json*/
+    QJsonDocument json_obj = QJsonDocument::fromJson(m_received._msg);
+    if (json_obj.isNull()) { // converting failed
         // journal log system
         qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
         emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
         return;
-      }
+    }
 
-      if (!json_obj.isObject()) {
+    if (!json_obj.isObject()) {
         // journal log system
         qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
         emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
         return;
-      }
+    }
 
       /*to prevent app crash due to callback is not exists*/
-      try {
-        m_callbacks[static_cast<ServiceType>(msg._msg_id)](
+    try {
+        m_callbacks[static_cast<ServiceType>(m_received._id)](
             std::move(json_obj.object()));
-      } catch (const std::exception &e) {
+    } catch (const std::exception &e) {
         qDebug() << e.what();
-      }
     }
   });
 }
@@ -136,8 +154,8 @@ void TCPNetworkConnection::send_data(SendNode<QByteArray> &&data) {
   QDataStream ds(&send_buffer, QIODevice::WriteOnly);
   ds.setByteOrder(QDataStream::BigEndian);
 
-  ds << static_cast<quint16>(data.getMessageID())
-     << static_cast<quint16>(data.getTotalLenth());
-  send_buffer.append(data.getMessage());
+  ds << static_cast<quint16>(data.get_id().value())
+     << static_cast<quint16>(data.get_full_length());
+  send_buffer.append(data.get_msg_body().value());
   m_socket.write(send_buffer);
 }
