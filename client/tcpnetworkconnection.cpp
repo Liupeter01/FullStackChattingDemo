@@ -42,14 +42,14 @@ void TCPNetworkConnection::registerSocketSignal() {
     QByteArray array = m_socket.readAll();
 
     /*make sure header is full*/
-    if(m_buffer.check_header_remaining()){
-        [[maybe_unused]]auto res = m_buffer.insert_header(array);
-        return;
+    if (m_buffer.check_header_remaining()) {
+      [[maybe_unused]] auto res = m_buffer.insert_header(array);
+      return;
     }
 
     /*insert body until it meets the requirement of the length*/
-    if(!m_buffer.insert_body(array)){
-        return;
+    if (!m_buffer.insert_body(array)) {
+      return;
     }
 
     /*record them temporarily*/
@@ -67,25 +67,25 @@ void TCPNetworkConnection::registerSocketSignal() {
     /*parse it as json*/
     QJsonDocument json_obj = QJsonDocument::fromJson(m_received._msg);
     if (json_obj.isNull()) { // converting failed
-        // journal log system
-        qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
-        emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
-        return;
+      // journal log system
+      qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
+      emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
+      return;
     }
 
     if (!json_obj.isObject()) {
-        // journal log system
-        qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
-        emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
-        return;
+      // journal log system
+      qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
+      emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
+      return;
     }
 
-      /*to prevent app crash due to callback is not exists*/
+    /*to prevent app crash due to callback is not exists*/
     try {
-        m_callbacks[static_cast<ServiceType>(m_received._id)](
-            std::move(json_obj.object()));
+      m_callbacks[static_cast<ServiceType>(m_received._id)](
+          std::move(json_obj.object()));
     } catch (const std::exception &e) {
-        qDebug() << e.what();
+      qDebug() << e.what();
     }
   });
 }

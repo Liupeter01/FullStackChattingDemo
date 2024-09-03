@@ -170,8 +170,7 @@ void LoginInterface::slot_connection_status(bool status) {
 
     SendNode<QByteArray> send_buffer(
         static_cast<uint16_t>(ServiceType::SERVICE_LOGINSERVER),
-        json_doc.toJson()
-    );
+        json_doc.toJson());
 
     /*after connection to server, send TCP request*/
     TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
