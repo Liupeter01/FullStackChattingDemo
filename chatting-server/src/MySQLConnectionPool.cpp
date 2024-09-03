@@ -72,6 +72,10 @@ void mysql::MySQLConnectionPool::registerSQLStatement() {
       std::pair(MySQLSelection::USER_LOGIN_CHECK,
                 fmt::format("SELECT uid FROM user_info WHERE {} = ? AND {} = ?",
                             std::string("username"), std::string("password"))));
+
+  m_sql.insert(std::pair(
+      MySQLSelection::USER_UUID_CHECK,
+      fmt::format("SELECT * FROM user_info WHERE {} = ?", std::string("uid"))));
 }
 
 void mysql::MySQLConnectionPool::roundRobinChecking(std::size_t timeout) {

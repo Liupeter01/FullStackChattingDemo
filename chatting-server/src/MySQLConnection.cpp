@@ -152,6 +152,16 @@ bool mysql::MySQLConnection::checkTimeout(
   return true;
 }
 
+bool mysql::MySQLConnection::checkUUID(std::size_t &uuid) {
+  auto res = executeCommand(MySQLSelection::USER_UUID_CHECK, uuid);
+  if (!res.has_value()) {
+    return false;
+  }
+
+  boost::mysql::results result = res.value();
+  return result.rows().size();
+}
+
 bool mysql::MySQLConnection::sendHeartBeat() {
   return executeCommand(MySQLSelection::HEART_BEAT).has_value();
 }

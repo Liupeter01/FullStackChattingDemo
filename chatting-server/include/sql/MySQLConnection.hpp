@@ -25,7 +25,8 @@ enum class MySQLSelection : uint8_t {
   ACQUIRE_NEW_UID,    // get uid for user
   UPDATE_UID_COUNTER, // add up to uid accounter
   UPDATE_USER_PASSWD, // update user password
-  USER_LOGIN_CHECK    // check login username & password
+  USER_LOGIN_CHECK,   // check login username & password
+  USER_UUID_CHECK     // check account uuid in DB
 };
 
 class MySQLConnection {
@@ -55,6 +56,8 @@ public:
 
   bool checkTimeout(const std::chrono::steady_clock::time_point &curr,
                     std::size_t timeout);
+
+  bool checkUUID(std::size_t &uuid);
 
 private:
   template <typename... Args>
