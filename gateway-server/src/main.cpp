@@ -1,11 +1,21 @@
 #include <config/ServerConfig.hpp>
 #include <iostream>
+#include <redis/RedisManager.hpp>
 #include <server/GateServer.hpp>
 #include <service/IOServicePool.hpp>
+#include <sql/MySQLConnectionPool.hpp>
 
 int main() {
   try {
-    auto &service_pool = IOServicePool::get_instance();
+    /*init all kinds of pools in advance
+     * 1. IOServicePool
+     * 2. MySQLConnectionPool
+     * 3. RedisConnectionPool
+     * */
+    [[maybe_unused]] auto &service_pool = IOServicePool::get_instance();
+    [[maybe_unused]] auto &sql = mysql::MySQLConnectionPool::get_instance();
+    [[maybe_unused]] auto &redis = redis::RedisConnectionPool::get_instance();
+
     /*setting up signal*/
     boost::asio::io_context ioc;
     boost::asio::signal_set signal{ioc, SIGINT, SIGTERM};
