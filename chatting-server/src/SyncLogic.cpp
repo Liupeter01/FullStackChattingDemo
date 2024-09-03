@@ -4,6 +4,7 @@
 #include <json/json.h>
 #include <json/reader.h>
 #include <json/value.h>
+#include <server/AsyncServer.hpp>
 #include <spdlog/spdlog.h>
 #include <sql/MySQLConnectionPool.hpp>
 
@@ -32,6 +33,15 @@ void SyncLogic::commit(pair recv_node) {
   }
   m_queue.push(std::move(recv_node));
   m_cv.notify_one();
+}
+
+void SyncLogic::generateErrorMessage(const std::string &log, ServiceType type,
+                                     ServiceStatus status, SessionPtr conn) {
+
+  Json::Value root;
+  spdlog::error(log);
+  root["error"] = static_cast<uint8_t>(status);
+  conn->sendMessage(type, root.toStyledString());
 }
 
 void SyncLogic::processing() {
@@ -82,13 +92,25 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
   std::optional<std::string> body = recv->get_msg_body();
   /*recv message error*/
   if (!body.has_value()) {
-
+    generateErrorMessage("Failed to parse json data",
+                         ServiceType::SERVICE_LOGINRESPONSE,
+                         ServiceStatus::JSONPARSE_ERROR, session);
     return;
   }
 
   /*parse error*/
   if (!reader.parse(body.value(), src_root)) {
+    generateErrorMessage("Failed to parse json data",
+                         ServiceType::SERVICE_LOGINRESPONSE,
+                         ServiceStatus::LOGIN_UNSUCCESSFUL, session);
+    return;
+  }
 
+  /*parsing failed*/
+  if (!(src_root.isMember("uuid") && src_root.isMember("token"))) {
+    generateErrorMessage("Failed to parse json data",
+                         ServiceType::SERVICE_LOGINRESPONSE,
+                         ServiceStatus::LOGIN_UNSUCCESSFUL, session);
     return;
   }
 
@@ -99,14 +121,56 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
 
   auto response = gRPCBalancerService::userLoginToServer(uuid, token);
   send_root["error"] = response.error();
+
   if (response.error() !=
       static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS)) {
+    spdlog::error("[UUID = {}] Trying to login to ChattingServer Failed!",
+                  uuid);
+    generateErrorMessage("Internel Server Error",
+                         ServiceType::SERVICE_LOGINRESPONSE,
+                         ServiceStatus::LOGIN_UNSUCCESSFUL, session);
     return;
   }
 
-  /*MYSQL(check uuid)*/
-  connection::ConnectionRAII<mysql::MySQLConnectionPool, mysql::MySQLConnection>
-      mysql;
+  /* 1. check account info inside memory, if not exists then goto 2
+   * 2. check account info inside MYSQL(check uuid),
+   * if there is no data inside then return error message*/
+
+  auto it = session->s_gate->m_authusers.find(session->s_uuid);
+  if (it == session->s_gate->m_authusers.end()) { /*find nothing in memory*/
+    connection::ConnectionRAII<mysql::MySQLConnectionPool,
+                               mysql::MySQLConnection>
+        mysql;
+
+    /*user info not found!*/
+    if (!mysql->get()->checkUUID(uuid)) {
+      spdlog::error("[UUID = {}] No User Account Found!", uuid);
+      generateErrorMessage("No User Account Found",
+                           ServiceType::SERVICE_LOGINRESPONSE,
+                           ServiceStatus::LOGIN_INFO_ERROR, session);
+      return;
+    }
+
+    // now insert the new user into the auth users
+    try {
+
+      /*we have to lock it because we are going to insert new node*/
+      {
+        std::lock_guard<std::mutex> _lckg(session->s_gate->m_mtx);
+
+        session->s_gate->m_authusers.insert(
+            std::make_pair(session->s_uuid, uuid));
+      }
+      send_root["uuid"] = std::to_string(uuid);
+
+    } catch (const std::exception &e) {
+      spdlog::error("[UUID = {}]Insert new user error {}", uuid, e.what());
+      send_root["error"] =
+          static_cast<uint8_t>(ServiceStatus::LOGIN_UNSUCCESSFUL);
+    }
+    session->sendMessage(ServiceType::SERVICE_LOGINRESPONSE,
+                         send_root.toStyledString());
+  }
 }
 
 void SyncLogic::handlingLogout(ServiceType srv_type,
