@@ -32,7 +32,8 @@ enum class ServiceStatus : uint8_t {
   MYSQL_MISSING_INFO,       // mysql missing account info
   MYSQL_ACCOUNT_NOT_EXISTS, // mysql account not exists
   LOGIN_INFO_ERROR,         // login info error
-  LOGIN_UNSUCCESSFUL // common login uncessfully reason, due to internel error
+  LOGIN_UNSUCCESSFUL, // common login uncessfully reason, due to internel error
+  LOGIN_FOR_MULTIPLE_TIMES // this user have already logined!
 };
 
 #define _DEF_HPP_
