@@ -81,9 +81,9 @@ void LoginInterface::regisrerCallBackFunctions() {
         Tools::setWidgetAttribute(this->ui->status_label_3,
                                   QString("Login Success!"), true);
 
-        m_info.uuid = json["uuid"].toString();
+        m_info.uuid = json["uuid"].toInt();
         m_info.host = json["host"].toString();
-        m_info.port = json["port"].toInt();
+        m_info.port = json["port"].toString();
         m_info.token = json["token"].toString();
 
         emit signal_establish_long_connnection(m_info);
@@ -163,7 +163,7 @@ void LoginInterface::slot_connection_status(bool status) {
                               true);
 
     QJsonObject json_obj;
-    json_obj["uuid"] = m_info.uuid;
+    json_obj["uuid"] = QString::number(m_info.uuid);
     json_obj["token"] = m_info.token;
 
     QJsonDocument json_doc(json_obj);
