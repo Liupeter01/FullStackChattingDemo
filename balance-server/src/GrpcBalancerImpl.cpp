@@ -91,6 +91,9 @@ void grpc::GrpcBalancerImpl::registerUserInfo(std::size_t uuid, std::string&& to
 
                     registerUserInfo(uuid, std::move(token), target);
           }
+          else {
+                    response->set_error(static_cast<std::size_t>(ServiceStatus::LOGIN_FOR_MULTIPLE_TIMES));
+          }
           return grpc::Status::OK;
 }
 
