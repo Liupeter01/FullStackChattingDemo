@@ -142,11 +142,14 @@ void TCPNetworkConnection::registerCallback() {
 
 void TCPNetworkConnection::slot_establish_long_connnection(
     TCPNetworkConnection::ChattingServerInfo info) {
-  qDebug() << "Connecting to Server" << "host = \n"
-           << info.host << "ip = " << info.port;
+  qDebug() << "Connecting to Server"
+                << "\nuuid = " << info.uuid
+                << "\nhost = " << info.host
+                << "\nport = " << info.port
+             << "\ntoken = " << info.token << '\n';
 
   m_server = std::move(info);
-  m_socket.connectToHost(m_server.host, m_server.port);
+  m_socket.connectToHost(m_server.host, m_server.port.toUShort());
 }
 
 void TCPNetworkConnection::send_data(SendNode<QByteArray> &&data) {
