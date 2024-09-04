@@ -91,6 +91,10 @@ mysql::MySQLConnection::checkAccountLogin(std::string_view username,
     return false;
   }
   boost::mysql::row_view row = *result.rows().begin();
+  /*solve segmentation fault*/
+  if (!row.size()) {
+    return false;
+  }
   return static_cast<std::size_t>(row.at(0).as_int64());
 }
 
