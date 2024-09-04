@@ -330,15 +330,20 @@ void HandleMethod::registerPostCallBacks() {
 
         if (response.error() !=
             static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
-          spdlog::error("[client {}] try login server failed!",
-                        std::to_string(uuid));
+
+                  spdlog::error("[client {}] try login server failed!, error code {}",
+                            std::to_string(uuid), response.error());
         }
 
         send_root["uuid"] = std::to_string(uuid);
         send_root["error"] = response.error();
-        send_root["host"] = response.host();
-        send_root["port"] = response.port();
-        send_root["token"] = response.token();
+
+        /*user login to server for more than one time in a connection session*/
+        if (response.error() != static_cast<int32_t>(ServiceStatus::LOGIN_FOR_MULTIPLE_TIMES)) {
+                  send_root["host"] = response.host();
+                  send_root["port"] = response.port();
+                  send_root["token"] = response.token();
+        }
 
         boost::beast::ostream(conn->http_response.body())
             << send_root.toStyledString();
