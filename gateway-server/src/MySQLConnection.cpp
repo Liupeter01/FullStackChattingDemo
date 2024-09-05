@@ -54,10 +54,10 @@ mysql::MySQLConnection::executeCommand(MySQLSelection select, Args &&...args) {
     conn.execute(stmt.bind(std::forward<Args>(args)...), result);
 
     /*is there any results find?
-    * prevent segementation fault
-    */
+     * prevent segementation fault
+     */
     if (result.rows().begin() == result.rows().end()) {
-              return std::nullopt;
+      return std::nullopt;
     }
     return result;
 
@@ -92,7 +92,7 @@ mysql::MySQLConnection::checkAccountLogin(std::string_view username,
   auto res =
       executeCommand(MySQLSelection::USER_LOGIN_CHECK, username, password);
   if (!res.has_value()) {
-            return std::nullopt;
+    return std::nullopt;
   }
   boost::mysql::results result = res.value();
   boost::mysql::row_view row = *result.rows().begin();

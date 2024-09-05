@@ -52,7 +52,15 @@ mysql::MySQLConnection::executeCommand(MySQLSelection select, Args &&...args) {
     spdlog::info("Executing MySQL Query: {}", key);
     boost::mysql::statement stmt = conn.prepare_statement(key);
     conn.execute(stmt.bind(std::forward<Args>(args)...), result);
+
+    /*is there any results find?
+     * prevent segementation fault
+     */
+    if (result.rows().begin() == result.rows().end()) {
+      return std::nullopt;
+    }
     return result;
+
   } catch (const boost::mysql::error_with_diagnostics &err) {
     spdlog::error(
         "{0}:{1} Operation failed with error code: {2} Server diagnostics: {3}",
@@ -84,12 +92,9 @@ mysql::MySQLConnection::checkAccountLogin(std::string_view username,
   auto res =
       executeCommand(MySQLSelection::USER_LOGIN_CHECK, username, password);
   if (!res.has_value()) {
-    return false;
+    return std::nullopt;
   }
   boost::mysql::results result = res.value();
-  if (!result.size()) {
-    return false;
-  }
   boost::mysql::row_view row = *result.rows().begin();
   return static_cast<std::size_t>(row.at(0).as_int64());
 }
