@@ -1,5 +1,6 @@
 /* be aware, messagenode.hpp needs c++17 */
 #pragma once
+#include <iterator>
 #ifndef _MSGNODE_H_
 #define _MSGNODE_H_
 #include <cstdint>
@@ -226,26 +227,27 @@ template <typename Container>
 struct SendNode<Container, typename std::enable_if<
                                send_msg_check<Container>::value, void>::type>
     : public MsgHeader<Container> {
-  using ConvertorType = std::function<uint16_t(uint16_t)>;
 
-  /*
-   * string.size() is the size of message body
-   * the total length should also include the size of HEADER_LENGTH
-   */
-  SendNode(uint16_t msg_id, const Container &string)
-      : MsgHeader<Container>(msg_id, string) {}
-
-  SendNode(uint16_t msg_id, const Container &string,
-           ConvertorType &&convert) noexcept
+  template <typename _Callable>
+  SendNode(uint16_t msg_id, Container &string, _Callable &&convert) noexcept
       : MsgHeader<Container>(msg_id, string) {
 
+    auto cv_id = convert(this->_id);
+    auto cv_length = convert(this->_length);
+
     if constexpr (std::is_same_v<Container, std::string>) {
-      this->_buffer.append(std::to_string(convert(this->_id)));
-      this->_buffer.append(std::to_string(convert(this->_length)));
+      this->_buffer.append(std::to_string(cv_id));
+      this->_buffer.append(std::to_string(cv_length));
     } else {
-      this->_buffer.append(Container::number(convert(this->_id)));
-      this->_buffer.append(Container::number(convert(this->_length)));
+      this->_buffer.append(Container::number(cv_id));
+      this->_buffer.append(Container::number(cv_length));
     }
+    for (auto &ch : string) {
+      ch = static_cast<typename std::iterator_traits<
+          typename Container::iterator>::value_type>(convert(ch));
+    }
+
+    /**/
     this->_buffer.append(string);
   }
 
