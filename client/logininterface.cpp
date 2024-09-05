@@ -81,8 +81,8 @@ void LoginInterface::regisrerCallBackFunctions() {
           Tools::setWidgetAttribute(this->ui->status_label_3,
                                     QString("Service Error!"), false);
 
-        /*restore button input*/
-        ui->login_button->setEnabled(true);
+          /*restore button input*/
+          ui->login_button->setEnabled(true);
           return;
         }
 
