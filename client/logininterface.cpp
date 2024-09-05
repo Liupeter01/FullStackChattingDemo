@@ -3,6 +3,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QUrl>
+#include <QtEndian>
 
 #include "logininterface.h"
 #include "passworddisplayswitching.h"
@@ -176,9 +177,14 @@ void LoginInterface::slot_connection_status(bool status) {
 
     QJsonDocument json_doc(json_obj);
 
+    /*it should be store as a temporary object, because send_buffer will modify it!*/
+    auto json_data = json_doc.toJson();
+
     SendNode<QByteArray> send_buffer(
         static_cast<uint16_t>(ServiceType::SERVICE_LOGINSERVER),
-        json_doc.toJson());
+        json_data,
+        [](auto x){return qToBigEndian(x);}
+    );
 
     /*after connection to server, send TCP request*/
     TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
