@@ -65,6 +65,11 @@ void LoginInterface::registerNetworkEvent() {
   connect(this, &LoginInterface::signal_establish_long_connnection,
           TCPNetworkConnection::get_instance().get(),
           &TCPNetworkConnection::signal_establish_long_connnection);
+
+  /*connect connection signal <--> slot */
+  connect(TCPNetworkConnection::get_instance().get(),
+          &TCPNetworkConnection::signal_connection_status, this,
+          &LoginInterface::slot_connection_status);
 }
 
 void LoginInterface::regisrerCallBackFunctions() {
@@ -75,6 +80,9 @@ void LoginInterface::regisrerCallBackFunctions() {
         if (error != static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS)) {
           Tools::setWidgetAttribute(this->ui->status_label_3,
                                     QString("Service Error!"), false);
+
+        /*restore button input*/
+        ui->login_button->setEnabled(true);
           return;
         }
 
