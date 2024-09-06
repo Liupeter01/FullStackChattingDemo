@@ -13,14 +13,15 @@
 
 class SyncLogic : public Singleton<SyncLogic> {
   friend class Singleton<SyncLogic>;
-  using CallbackFunc =
-      std::function<void(ServiceType, std::shared_ptr<Session>,
-                         std::unique_ptr<RecvNode<std::string>>)>;
-
 public:
-  using SessionPtr = std::shared_ptr<Session>;
-  using NodePtr = std::unique_ptr<RecvNode<std::string>>;
-  using pair = std::pair<SessionPtr, NodePtr>;
+          using Convertor = std::function<unsigned short(unsigned short)>;
+          using SessionPtr = std::shared_ptr<Session>;
+          using NodePtr = std::unique_ptr<RecvNode<std::string, Convertor>>;
+          using pair = std::pair<SessionPtr, NodePtr>;
+
+private:
+          using CallbackFunc =
+                    std::function<void(ServiceType, std::shared_ptr<Session>, NodePtr)>;
 
 public:
   ~SyncLogic();
@@ -39,9 +40,9 @@ private:
 
   /*Execute Operations*/
   void handlingLogin(ServiceType srv_type, std::shared_ptr<Session> session,
-                     std::unique_ptr<RecvNode<std::string>> recv);
+            NodePtr recv);
   void handlingLogout(ServiceType srv_type, std::shared_ptr<Session> session,
-                      std::unique_ptr<RecvNode<std::string>> recv);
+            NodePtr recv);
 
 private:
   std::atomic<bool> m_stop;
