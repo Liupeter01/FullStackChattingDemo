@@ -7,7 +7,18 @@ enum class ServiceType : uint8_t {
   SERVICE_REGISTERATION, // user registeration
   SERVICE_CHECKEEXISTS,  // check account existance
   SERVICE_RESETPASSWD,   // password reset
-  SERVICE_LOGINSERVER    // try to login into server
+
+  /*
+   * before login, user has to get the address of
+   * chatting server which is dispatched by balance-server
+   */
+  SERVICE_LOGINDISPATCH,
+  SERVICE_LOGINSERVER,   // try to login into server
+  SERVICE_LOGINRESPONSE, // login server response
+  SERVICE_RESERVE_2,     //
+  SERVICE_RESERVE_3,     //
+  SERVICE_RESERVE_4,     //
+  SERVICE_UNKNOWN        // unkown service
 };
 
 enum class ServiceStatus : uint8_t {
@@ -21,7 +32,8 @@ enum class ServiceStatus : uint8_t {
   MYSQL_MISSING_INFO,       // mysql missing account info
   MYSQL_ACCOUNT_NOT_EXISTS, // mysql account not exists
   LOGIN_INFO_ERROR,         // login info error
-  LOGIN_UNSUCCESSFUL // common login uncessfully reason, due to internel error
+  LOGIN_UNSUCCESSFUL, // common login uncessfully reason, due to internel error
+  LOGIN_FOR_MULTIPLE_TIMES // this user have already logined!
 };
 
 #define _DEF_HPP_

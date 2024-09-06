@@ -77,7 +77,7 @@ if(NOT MSVC)
     endif()
 endif()
 
-project (ChattingServer VERSION 1.0.0 LANGUAGES CXX )
+project (ChattingServer VERSION 1.0.2 LANGUAGES CXX )
 
 file(GLOB_RECURSE source_file CONFIGURE_DEPENDS src/*.cpp src/*.cc src/*.c)
 file(GLOB_RECURSE header_file CONFIGURE_DEPENDS include/*.hpp  include/*.h)
@@ -108,14 +108,17 @@ FetchContent_MakeAvailable(
 
 add_subdirectory(inifile)
 add_subdirectory(spdlog)
+add_subdirectory(jsoncpp)
 
 target_link_libraries(ChattingServer PUBLIC 
         Boost::asio
         Boost::uuid
+        Boost::mysql
         grpc++
         libprotobuf
         inicpp::inicpp
         spdlog::spdlog
+        jsoncpp_object
 )
 
 target_compile_definitions(ChattingServer PUBLIC 

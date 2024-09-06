@@ -47,9 +47,13 @@ signals:
 private slots:
   void on_login_button_clicked();
 
+  /*connection status, indicator*/
+  void slot_connection_status(bool status);
+
 private:
   Ui::LoginInterface *ui;
   std::map<ServiceType, CallBackFunc> m_callbacks;
+  TCPNetworkConnection::ChattingServerInfo m_info;
 };
 
 #endif // LOGININTERFACE_H

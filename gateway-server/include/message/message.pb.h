@@ -54,6 +54,12 @@ extern GetVerificationRequestDefaultTypeInternal _GetVerificationRequest_default
 class GetVerificationResponse;
 struct GetVerificationResponseDefaultTypeInternal;
 extern GetVerificationResponseDefaultTypeInternal _GetVerificationResponse_default_instance_;
+class LoginChattingResponse;
+struct LoginChattingResponseDefaultTypeInternal;
+extern LoginChattingResponseDefaultTypeInternal _LoginChattingResponse_default_instance_;
+class LoginChattingServer;
+struct LoginChattingServerDefaultTypeInternal;
+extern LoginChattingServerDefaultTypeInternal _LoginChattingServer_default_instance_;
 class RegisterToBalancer;
 struct RegisterToBalancerDefaultTypeInternal;
 extern RegisterToBalancerDefaultTypeInternal _RegisterToBalancer_default_instance_;
@@ -62,6 +68,8 @@ PROTOBUF_NAMESPACE_OPEN
 template<> ::message::GetAllocatedChattingServer* Arena::CreateMaybeMessage<::message::GetAllocatedChattingServer>(Arena*);
 template<> ::message::GetVerificationRequest* Arena::CreateMaybeMessage<::message::GetVerificationRequest>(Arena*);
 template<> ::message::GetVerificationResponse* Arena::CreateMaybeMessage<::message::GetVerificationResponse>(Arena*);
+template<> ::message::LoginChattingResponse* Arena::CreateMaybeMessage<::message::LoginChattingResponse>(Arena*);
+template<> ::message::LoginChattingServer* Arena::CreateMaybeMessage<::message::LoginChattingServer>(Arena*);
 template<> ::message::RegisterToBalancer* Arena::CreateMaybeMessage<::message::RegisterToBalancer>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace message {
@@ -743,6 +751,318 @@ class GetAllocatedChattingServer final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_message_2eproto;
 };
+// -------------------------------------------------------------------
+
+class LoginChattingServer final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:message.LoginChattingServer) */ {
+ public:
+  inline LoginChattingServer() : LoginChattingServer(nullptr) {}
+  ~LoginChattingServer() override;
+  explicit PROTOBUF_CONSTEXPR LoginChattingServer(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  LoginChattingServer(const LoginChattingServer& from);
+  LoginChattingServer(LoginChattingServer&& from) noexcept
+    : LoginChattingServer() {
+    *this = ::std::move(from);
+  }
+
+  inline LoginChattingServer& operator=(const LoginChattingServer& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline LoginChattingServer& operator=(LoginChattingServer&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const LoginChattingServer& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const LoginChattingServer* internal_default_instance() {
+    return reinterpret_cast<const LoginChattingServer*>(
+               &_LoginChattingServer_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(LoginChattingServer& a, LoginChattingServer& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(LoginChattingServer* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(LoginChattingServer* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  LoginChattingServer* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<LoginChattingServer>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const LoginChattingServer& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const LoginChattingServer& from) {
+    LoginChattingServer::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(LoginChattingServer* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "message.LoginChattingServer";
+  }
+  protected:
+  explicit LoginChattingServer(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTokenFieldNumber = 2,
+    kUuidFieldNumber = 1,
+  };
+  // string token = 2;
+  void clear_token();
+  const std::string& token() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_token(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_token();
+  PROTOBUF_NODISCARD std::string* release_token();
+  void set_allocated_token(std::string* token);
+  private:
+  const std::string& _internal_token() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_token(const std::string& value);
+  std::string* _internal_mutable_token();
+  public:
+
+  // int32 uuid = 1;
+  void clear_uuid();
+  int32_t uuid() const;
+  void set_uuid(int32_t value);
+  private:
+  int32_t _internal_uuid() const;
+  void _internal_set_uuid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:message.LoginChattingServer)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr token_;
+    int32_t uuid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_message_2eproto;
+};
+// -------------------------------------------------------------------
+
+class LoginChattingResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:message.LoginChattingResponse) */ {
+ public:
+  inline LoginChattingResponse() : LoginChattingResponse(nullptr) {}
+  ~LoginChattingResponse() override;
+  explicit PROTOBUF_CONSTEXPR LoginChattingResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  LoginChattingResponse(const LoginChattingResponse& from);
+  LoginChattingResponse(LoginChattingResponse&& from) noexcept
+    : LoginChattingResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline LoginChattingResponse& operator=(const LoginChattingResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline LoginChattingResponse& operator=(LoginChattingResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const LoginChattingResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const LoginChattingResponse* internal_default_instance() {
+    return reinterpret_cast<const LoginChattingResponse*>(
+               &_LoginChattingResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(LoginChattingResponse& a, LoginChattingResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(LoginChattingResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(LoginChattingResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  LoginChattingResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<LoginChattingResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const LoginChattingResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const LoginChattingResponse& from) {
+    LoginChattingResponse::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(LoginChattingResponse* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "message.LoginChattingResponse";
+  }
+  protected:
+  explicit LoginChattingResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kErrorFieldNumber = 1,
+  };
+  // int32 error = 1;
+  void clear_error();
+  int32_t error() const;
+  void set_error(int32_t value);
+  private:
+  int32_t _internal_error() const;
+  void _internal_set_error(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:message.LoginChattingResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int32_t error_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_message_2eproto;
+};
 // ===================================================================
 
 
@@ -1126,9 +1446,111 @@ inline void GetAllocatedChattingServer::set_allocated_token(std::string* token) 
   // @@protoc_insertion_point(field_set_allocated:message.GetAllocatedChattingServer.token)
 }
 
+// -------------------------------------------------------------------
+
+// LoginChattingServer
+
+// int32 uuid = 1;
+inline void LoginChattingServer::clear_uuid() {
+  _impl_.uuid_ = 0;
+}
+inline int32_t LoginChattingServer::_internal_uuid() const {
+  return _impl_.uuid_;
+}
+inline int32_t LoginChattingServer::uuid() const {
+  // @@protoc_insertion_point(field_get:message.LoginChattingServer.uuid)
+  return _internal_uuid();
+}
+inline void LoginChattingServer::_internal_set_uuid(int32_t value) {
+  
+  _impl_.uuid_ = value;
+}
+inline void LoginChattingServer::set_uuid(int32_t value) {
+  _internal_set_uuid(value);
+  // @@protoc_insertion_point(field_set:message.LoginChattingServer.uuid)
+}
+
+// string token = 2;
+inline void LoginChattingServer::clear_token() {
+  _impl_.token_.ClearToEmpty();
+}
+inline const std::string& LoginChattingServer::token() const {
+  // @@protoc_insertion_point(field_get:message.LoginChattingServer.token)
+  return _internal_token();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void LoginChattingServer::set_token(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.token_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:message.LoginChattingServer.token)
+}
+inline std::string* LoginChattingServer::mutable_token() {
+  std::string* _s = _internal_mutable_token();
+  // @@protoc_insertion_point(field_mutable:message.LoginChattingServer.token)
+  return _s;
+}
+inline const std::string& LoginChattingServer::_internal_token() const {
+  return _impl_.token_.Get();
+}
+inline void LoginChattingServer::_internal_set_token(const std::string& value) {
+  
+  _impl_.token_.Set(value, GetArenaForAllocation());
+}
+inline std::string* LoginChattingServer::_internal_mutable_token() {
+  
+  return _impl_.token_.Mutable(GetArenaForAllocation());
+}
+inline std::string* LoginChattingServer::release_token() {
+  // @@protoc_insertion_point(field_release:message.LoginChattingServer.token)
+  return _impl_.token_.Release();
+}
+inline void LoginChattingServer::set_allocated_token(std::string* token) {
+  if (token != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.token_.SetAllocated(token, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.token_.IsDefault()) {
+    _impl_.token_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:message.LoginChattingServer.token)
+}
+
+// -------------------------------------------------------------------
+
+// LoginChattingResponse
+
+// int32 error = 1;
+inline void LoginChattingResponse::clear_error() {
+  _impl_.error_ = 0;
+}
+inline int32_t LoginChattingResponse::_internal_error() const {
+  return _impl_.error_;
+}
+inline int32_t LoginChattingResponse::error() const {
+  // @@protoc_insertion_point(field_get:message.LoginChattingResponse.error)
+  return _internal_error();
+}
+inline void LoginChattingResponse::_internal_set_error(int32_t value) {
+  
+  _impl_.error_ = value;
+}
+inline void LoginChattingResponse::set_error(int32_t value) {
+  _internal_set_error(value);
+  // @@protoc_insertion_point(field_set:message.LoginChattingResponse.error)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

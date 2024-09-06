@@ -159,26 +159,26 @@ void ResetPasswdInterface::registerEditFinishedEvent() {
   });
   connect(
       ui->newpasswd_show, &PasswordDisplaySwitching::clicked, this, [this]() {
-          auto state = ui->newpasswd_show->getState();
-          if (state.visiable == LabelState::VisiableStatus::ENABLED) {
-              this->ui->newpasswd_edit->setEchoMode(QLineEdit::Normal);
-              Tools::setQLableImage(ui->newpasswd_show, "show_password.png");
-          } else {
-              this->ui->newpasswd_edit->setEchoMode(QLineEdit::Password);
-              Tools::setQLableImage(ui->newpasswd_show, "invisiable_password.png");
-          }
+        auto state = ui->newpasswd_show->getState();
+        if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+          this->ui->newpasswd_edit->setEchoMode(QLineEdit::Normal);
+          Tools::setQLableImage(ui->newpasswd_show, "show_password.png");
+        } else {
+          this->ui->newpasswd_edit->setEchoMode(QLineEdit::Password);
+          Tools::setQLableImage(ui->newpasswd_show, "invisiable_password.png");
+        }
       });
 
   connect(
       ui->newconfirm_show, &PasswordDisplaySwitching::clicked, this, [this]() {
-          auto state = ui->newconfirm_show->getState();
-          if (state.visiable == LabelState::VisiableStatus::ENABLED) {
-              this->ui->newconfirm_edit->setEchoMode(QLineEdit::Normal);
-              Tools::setQLableImage(ui->newconfirm_show, "show_password.png");
-          } else {
-              this->ui->newconfirm_edit->setEchoMode(QLineEdit::Password);
-              Tools::setQLableImage(ui->newconfirm_show, "invisiable_password.png");
-          }
+        auto state = ui->newconfirm_show->getState();
+        if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+          this->ui->newconfirm_edit->setEchoMode(QLineEdit::Normal);
+          Tools::setQLableImage(ui->newconfirm_show, "show_password.png");
+        } else {
+          this->ui->newconfirm_edit->setEchoMode(QLineEdit::Password);
+          Tools::setQLableImage(ui->newconfirm_show, "invisiable_password.png");
+        }
       });
 }
 

@@ -27,3 +27,6 @@
 [submodule "chatting-server/inifile"]
 	path = chatting-server/inifile
 	url = https://github.com/Rookfighter/inifile-cpp.git
+[submodule "chatting-server/jsoncpp"]
+	path = chatting-server/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp.git

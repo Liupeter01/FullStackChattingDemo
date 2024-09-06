@@ -8,21 +8,20 @@
 #include <spdlog/spdlog.h>
 
 namespace stubpool {
-class ChattingServicePool
+class BalancerServicePool
     : public connection::ConnectionPool<
-          ChattingServicePool,
-          typename message::ChattingServiceBalancer::Stub> {
-  using self = ChattingServicePool;
-  using data_type = typename message::ChattingServiceBalancer::Stub;
+          BalancerServicePool, typename message::BalancerService::Stub> {
+  using self = BalancerServicePool;
+  using data_type = typename message::BalancerService::Stub;
   using context = data_type;
   using context_ptr = std::unique_ptr<data_type>;
-  friend class Singleton<ChattingServicePool>;
+  friend class Singleton<BalancerServicePool>;
 
   grpc::string m_host;
   grpc::string m_port;
   std::shared_ptr<grpc::ChannelCredentials> m_cred;
 
-  ChattingServicePool()
+  BalancerServicePool()
       : connection::ConnectionPool<self, data_type>(),
         m_host(ServerConfig::get_instance()->BalanceServiceAddress),
         m_port(ServerConfig::get_instance()->BalanceServicePort),
@@ -33,13 +32,13 @@ class ChattingServicePool
 
     /*creating multiple stub*/
     for (std::size_t i = 0; i < m_queue_size; ++i) {
-      m_stub_queue.push(std::move(message::ChattingServiceBalancer::NewStub(
+      m_stub_queue.push(std::move(message::BalancerService::NewStub(
           grpc::CreateChannel(address, m_cred))));
     }
   }
 
 public:
-  ~ChattingServicePool() = default;
+  ~BalancerServicePool() = default;
 };
 } // namespace stubpool
 

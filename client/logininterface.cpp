@@ -3,13 +3,14 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QUrl>
+#include <QtEndian>
 
 #include "logininterface.h"
 #include "passworddisplayswitching.h"
 #include "ui_logininterface.h"
 
 LoginInterface::LoginInterface(QWidget *parent)
-    : QDialog(parent), ui(new Ui::LoginInterface) {
+    : m_info(), QDialog(parent), ui(new Ui::LoginInterface) {
   ui->setupUi(this);
 
   /*register pushbutton signal for page swiping*/
@@ -61,29 +62,40 @@ void LoginInterface::registerNetworkEvent() {
   connect(HttpNetworkConnection::get_instance().get(),
           &HttpNetworkConnection::signal_login_finished, this,
           &LoginInterface::slot_login_finished);
+
+  connect(this, &LoginInterface::signal_establish_long_connnection,
+          TCPNetworkConnection::get_instance().get(),
+          &TCPNetworkConnection::signal_establish_long_connnection);
+
+  /*connect connection signal <--> slot */
+  connect(TCPNetworkConnection::get_instance().get(),
+          &TCPNetworkConnection::signal_connection_status, this,
+          &LoginInterface::slot_connection_status);
 }
 
 void LoginInterface::regisrerCallBackFunctions() {
   m_callbacks.insert(std::pair<ServiceType, CallBackFunc>(
-      ServiceType::SERVICE_LOGINSERVER, [this](QJsonObject &&json) {
+      ServiceType::SERVICE_LOGINDISPATCH, [this](QJsonObject &&json) {
         auto error = json["error"].toInt();
 
         if (error != static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS)) {
           Tools::setWidgetAttribute(this->ui->status_label_3,
                                     QString("Service Error!"), false);
+
+          /*restore button input*/
+          ui->login_button->setEnabled(true);
           return;
         }
 
         Tools::setWidgetAttribute(this->ui->status_label_3,
                                   QString("Login Success!"), true);
 
-        TCPNetworkConnection::ChattingServerInfo info;
-        info.uuid = json["uuid"].toString();
-        info.host = json["host"].toString();
-        info.port = json["port"].toInt();
-        info.token = json["token"].toString();
+        m_info.uuid = json["uuid"].toInt();
+        m_info.host = json["host"].toString();
+        m_info.port = json["port"].toString();
+        m_info.token = json["token"].toString();
 
-        emit signal_establish_long_connnection(info);
+        emit signal_establish_long_connnection(m_info);
       }));
 }
 
@@ -94,6 +106,9 @@ void LoginInterface::slot_login_finished(ServiceType srv_type,
   if (!json_data.length() && srv_status == ServiceStatus::NETWORK_ERROR) {
     Tools::setWidgetAttribute(this->ui->status_label_3,
                               QString("Network Error!"), false);
+
+    /*restore button input*/
+    ui->login_button->setEnabled(true);
     return;
   }
 
@@ -104,6 +119,9 @@ void LoginInterface::slot_login_finished(ServiceType srv_type,
                               QString("Retrieve Data Error!"), false);
     // journal log system
     qDebug() << "[FATAL ERROR]: json object is null!\n";
+
+    /*restore button input*/
+    ui->login_button->setEnabled(true);
     return;
   }
 
@@ -112,6 +130,9 @@ void LoginInterface::slot_login_finished(ServiceType srv_type,
                               QString("Retrieve Data Error!"), false);
     // journal log system
     qDebug() << "[FATAL ERROR]: json can not be converted to an object!\n";
+
+    /*restore button input*/
+    ui->login_button->setEnabled(true);
     return;
   }
 
@@ -138,5 +159,40 @@ void LoginInterface::on_login_button_clicked() {
 
   HttpNetworkConnection::get_instance()->postHttpRequest(
       Tools::getTargetUrl("/trylogin_server"), json,
-      ServiceType::SERVICE_LOGINSERVER);
+      ServiceType::SERVICE_LOGINDISPATCH);
+
+  /*prevent user click the button so many times*/
+  ui->login_button->setEnabled(false);
+}
+
+void LoginInterface::slot_connection_status(bool status) {
+  if (status) {
+    Tools::setWidgetAttribute(ui->status_label_3,
+                              QString("Connection Established, Connecting..."),
+                              true);
+
+    QJsonObject json_obj;
+    json_obj["uuid"] = QString::number(m_info.uuid);
+    json_obj["token"] = m_info.token;
+
+    QJsonDocument json_doc(json_obj);
+
+    /*it should be store as a temporary object, because send_buffer will modify
+     * it!*/
+    auto json_data = json_doc.toJson();
+
+    SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
+        static_cast<uint16_t>(ServiceType::SERVICE_LOGINSERVER), json_data,
+        [](auto x) { return qToBigEndian(x); });
+
+    /*after connection to server, send TCP request*/
+    TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
+
+  } else {
+    Tools::setWidgetAttribute(ui->status_label_3, QString("Network error!"),
+                              false);
+
+    /*restore button input*/
+    ui->login_button->setEnabled(true);
+  }
 }
