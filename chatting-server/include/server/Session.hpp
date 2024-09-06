@@ -5,6 +5,7 @@
 #include <memory>
 #include <mutex>
 #include <network/def.hpp>
+#include <functional>
 #include <queue>
 #include <server/MsgNode.hpp>
 
@@ -14,6 +15,12 @@ class SyncLogic;
 class Session : public std::enable_shared_from_this<Session> {
   friend class AsyncServer;
   friend class SyncLogic;
+
+  using Convertor = std::function<unsigned short(unsigned short)>;
+  using Recv = RecvNode<std::string, Convertor>;
+  using Send = SendNode<std::string, Convertor>;
+  using RecvPtr = std::unique_ptr<Recv>;
+  using SendPtr = std::unique_ptr<Send>;
 
 public:
   Session(boost::asio::io_context &_ioc, AsyncServer *my_gate);
@@ -51,11 +58,11 @@ private:
 
   /*header and message recv buffer, after receiving header, m_header_status flag
    * will be set to true*/
-  std::unique_ptr<RecvNode<std::string>> m_recv_buffer;
+  RecvPtr m_recv_buffer;
 
   /*sending queue*/
   std::mutex m_mtx;
-  std::queue<std::unique_ptr<SendNode<std::string>>> m_send_queue;
+  std::queue<SendPtr > m_send_queue;
 
   /* the length of the header
    * the max length of receiving buffer
