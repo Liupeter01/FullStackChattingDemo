@@ -3,7 +3,9 @@
 #include <QDebug>
 #include <QJsonDocument>
 
-TCPNetworkConnection::TCPNetworkConnection() : m_buffer() {
+TCPNetworkConnection::TCPNetworkConnection()
+    : m_buffer([](auto x){return qToLittleEndian(x);})
+{
   /*callbacks should be registered at first(before signal)*/
   registerCallback();
 
@@ -152,13 +154,6 @@ void TCPNetworkConnection::slot_establish_long_connnection(
   m_socket.connectToHost(m_server.host, m_server.port.toUShort());
 }
 
-void TCPNetworkConnection::send_data(SendNode<QByteArray> &&data) {
-  QByteArray send_buffer;
-  QDataStream ds(&send_buffer, QIODevice::WriteOnly);
-  ds.setByteOrder(QDataStream::BigEndian);
-
-  ds << static_cast<quint16>(data.get_id().value())
-     << static_cast<quint16>(data.get_full_length());
-  send_buffer.append(data.get_msg_body().value());
-  m_socket.write(send_buffer);
+void TCPNetworkConnection::send_data(SendNode<QByteArray, std::function<uint16_t(uint16_t)>> &&data) {
+  m_socket.write(data.get_buffer());
 }
