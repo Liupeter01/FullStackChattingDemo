@@ -22,7 +22,7 @@ class TCPNetworkConnection
 
 public:
   struct ChattingServerInfo {
-    ChattingServerInfo(): uuid(0){}
+    ChattingServerInfo() : uuid(0) {}
     std::size_t uuid;
     QString host;
     QString port;
@@ -33,7 +33,8 @@ public:
   ~TCPNetworkConnection();
 
   /*use signal to trigger data sending*/
-  void send_data(SendNode<QByteArray, std::function<uint16_t(uint16_t)>> &&data);
+  void
+  send_data(SendNode<QByteArray, std::function<uint16_t(uint16_t)>> &&data);
 
 private:
   TCPNetworkConnection();

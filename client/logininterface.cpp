@@ -177,14 +177,13 @@ void LoginInterface::slot_connection_status(bool status) {
 
     QJsonDocument json_doc(json_obj);
 
-    /*it should be store as a temporary object, because send_buffer will modify it!*/
+    /*it should be store as a temporary object, because send_buffer will modify
+     * it!*/
     auto json_data = json_doc.toJson();
 
     SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
-        static_cast<uint16_t>(ServiceType::SERVICE_LOGINSERVER),
-        json_data,
-        [](auto x){return qToBigEndian(x);}
-    );
+        static_cast<uint16_t>(ServiceType::SERVICE_LOGINSERVER), json_data,
+        [](auto x) { return qToBigEndian(x); });
 
     /*after connection to server, send TCP request*/
     TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
