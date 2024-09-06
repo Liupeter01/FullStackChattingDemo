@@ -33,7 +33,7 @@ public:
   ~TCPNetworkConnection();
 
   /*use signal to trigger data sending*/
-  void send_data(SendNode<QByteArray> &&data);
+  void send_data(SendNode<QByteArray, std::function<uint16_t(uint16_t)>> &&data);
 
 private:
   TCPNetworkConnection();
@@ -77,7 +77,7 @@ private:
   } m_received;
 
   /*create a connection buffer to store the data transfer from server*/
-  RecvNode<QByteArray> m_buffer;
+  RecvNode<QByteArray, std::function<uint16_t(uint16_t)>> m_buffer;
 
   /*according to service type to execute callback*/
   std::map<ServiceType, Callbackfunction> m_callbacks;
