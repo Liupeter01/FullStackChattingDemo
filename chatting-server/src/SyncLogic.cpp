@@ -84,8 +84,7 @@ void SyncLogic::execute(pair &&node) {
 }
 
 void SyncLogic::handlingLogin(ServiceType srv_type,
-                              std::shared_ptr<Session> session,
-          NodePtr recv) {
+                              std::shared_ptr<Session> session, NodePtr recv) {
   Json::Value src_root;  /*store json from client*/
   Json::Value send_root; /*write into body*/
   Json::Reader reader;
@@ -115,21 +114,21 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
     return;
   }
 
-  //std::size_t uuid = src_root["uuid"].asInt();
+  // std::size_t uuid = src_root["uuid"].asInt();
   std::string uuid_str = src_root["uuid"].asString();
   std::string token = src_root["token"].asString();
   spdlog::info("[UUID = {}] Trying to login to ChattingServer with Token {}",
                uuid_str, token);
 
   auto uuid_optional = tools::string_to_value<std::size_t>(uuid_str);
- if (!uuid_optional.has_value()) {
-           generateErrorMessage("Failed to convert string to number",
-                     ServiceType::SERVICE_LOGINRESPONSE,
-                     ServiceStatus::LOGIN_UNSUCCESSFUL, session);
-           return;
- }
+  if (!uuid_optional.has_value()) {
+    generateErrorMessage("Failed to convert string to number",
+                         ServiceType::SERVICE_LOGINRESPONSE,
+                         ServiceStatus::LOGIN_UNSUCCESSFUL, session);
+    return;
+  }
 
- std::size_t uuid = uuid_optional.value();
+  std::size_t uuid = uuid_optional.value();
 
   auto response = gRPCBalancerService::userLoginToServer(uuid, token);
   send_root["error"] = response.error();
@@ -186,8 +185,8 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
 }
 
 void SyncLogic::handlingLogout(ServiceType srv_type,
-                               std::shared_ptr<Session> session,
-          NodePtr recv) {}
+                               std::shared_ptr<Session> session, NodePtr recv) {
+}
 
 void SyncLogic::shutdown() {
   m_stop = true;

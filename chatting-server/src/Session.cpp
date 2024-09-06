@@ -9,10 +9,9 @@
 
 Session::Session(boost::asio::io_context &_ioc, AsyncServer *my_gate)
     : s_closed(false), s_socket(_ioc), s_gate(my_gate),
-      m_recv_buffer(
-                std::make_unique<Recv>([](auto x) {
-                          return boost::asio::detail::socket_ops::network_to_host_short(x);
-                })) /*init header buffer init*/
+      m_recv_buffer(std::make_unique<Recv>([](auto x) {
+        return boost::asio::detail::socket_ops::network_to_host_short(x);
+      })) /*init header buffer init*/
 {
   /*generate uuid string*/
   boost::uuids::uuid uuid_gen = boost::uuids::random_generator()();
@@ -56,10 +55,9 @@ void Session::sendMessage(ServiceType srv_type, const std::string &message) {
     std::string temporary = message;
 
     m_send_queue.push(std::make_unique<Send>(
-              static_cast<uint16_t>(srv_type), 
-              temporary,
-              [](auto x) {return boost::asio::detail::socket_ops::network_to_host_short(x); })
-    );
+        static_cast<uint16_t>(srv_type), temporary, [](auto x) {
+          return boost::asio::detail::socket_ops::network_to_host_short(x);
+        }));
 
     /*currently, there is no task inside queue*/
     if (m_send_queue.empty()) {
@@ -166,7 +164,7 @@ void Session::handle_header(std::shared_ptr<Session> session,
       return;
     }
 
-    uint16_t msg_length =length.value();
+    uint16_t msg_length = length.value();
 
     if (msg_length > MAX_LENGTH) {
       session->s_gate->terminateConnection(session->s_uuid);
@@ -216,7 +214,7 @@ void Session::handle_msgbody(std::shared_ptr<Session> session,
     /*release owner ship of the data, you must release in another unique_ptr*/
     RecvPtr recv(m_recv_buffer.release());
 
-     /*send the received data to SyncLogic to process it */
+    /*send the received data to SyncLogic to process it */
     SyncLogic::get_instance()->commit(std::make_pair(session, std::move(recv)));
 
     /*
@@ -224,9 +222,9 @@ void Session::handle_msgbody(std::shared_ptr<Session> session,
      * Warning: m_header has already been init(cleared)
      * RecvNode<std::string>: only create a Header
      */
-    m_recv_buffer.reset(
-              new Recv([](auto x) {return boost::asio::detail::socket_ops::network_to_host_short(x); })
-    );
+    m_recv_buffer.reset(new Recv([](auto x) {
+      return boost::asio::detail::socket_ops::network_to_host_short(x);
+    }));
 
     boost::asio::async_read(
         session->s_socket,

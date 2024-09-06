@@ -2,10 +2,10 @@
 #ifndef _SESSION_HPP_
 #define _SESSION_HPP_
 #include <boost/asio.hpp>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <network/def.hpp>
-#include <functional>
 #include <queue>
 #include <server/MsgNode.hpp>
 
@@ -62,7 +62,7 @@ private:
 
   /*sending queue*/
   std::mutex m_mtx;
-  std::queue<SendPtr > m_send_queue;
+  std::queue<SendPtr> m_send_queue;
 
   /* the length of the header
    * the max length of receiving buffer
