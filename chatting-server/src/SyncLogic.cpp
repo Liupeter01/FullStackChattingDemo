@@ -7,6 +7,7 @@
 #include <server/AsyncServer.hpp>
 #include <spdlog/spdlog.h>
 #include <sql/MySQLConnectionPool.hpp>
+#include <tools/tools.hpp>
 
 SyncLogic::SyncLogic() : m_stop(false) {
   /*register callbacks*/
@@ -67,7 +68,7 @@ void SyncLogic::processing() {
 
 void SyncLogic::execute(pair &&node) {
   std::shared_ptr<Session> session = node.first;
-  ServiceType type = static_cast<ServiceType>(node.second->get_id().value());
+  ServiceType type = static_cast<ServiceType>(node.second->_id);
   try {
     /*executing callback on specific type*/
     auto it = m_callbacks.find(type);
@@ -84,7 +85,7 @@ void SyncLogic::execute(pair &&node) {
 
 void SyncLogic::handlingLogin(ServiceType srv_type,
                               std::shared_ptr<Session> session,
-                              std::unique_ptr<RecvNode<std::string>> recv) {
+          NodePtr recv) {
   Json::Value src_root;  /*store json from client*/
   Json::Value send_root; /*write into body*/
   Json::Reader reader;
@@ -114,10 +115,21 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
     return;
   }
 
-  std::size_t uuid = src_root["uuid"].asUInt();
+  //std::size_t uuid = src_root["uuid"].asInt();
+  std::string uuid_str = src_root["uuid"].asString();
   std::string token = src_root["token"].asString();
   spdlog::info("[UUID = {}] Trying to login to ChattingServer with Token {}",
-               uuid, token);
+               uuid_str, token);
+
+  auto uuid_optional = tools::string_to_value<std::size_t>(uuid_str);
+ if (!uuid_optional.has_value()) {
+           generateErrorMessage("Failed to convert string to number",
+                     ServiceType::SERVICE_LOGINRESPONSE,
+                     ServiceStatus::LOGIN_UNSUCCESSFUL, session);
+           return;
+ }
+
+ std::size_t uuid = uuid_optional.value();
 
   auto response = gRPCBalancerService::userLoginToServer(uuid, token);
   send_root["error"] = response.error();
@@ -175,7 +187,7 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
 
 void SyncLogic::handlingLogout(ServiceType srv_type,
                                std::shared_ptr<Session> session,
-                               std::unique_ptr<RecvNode<std::string>> recv) {}
+          NodePtr recv) {}
 
 void SyncLogic::shutdown() {
   m_stop = true;
