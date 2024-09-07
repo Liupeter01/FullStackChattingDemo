@@ -269,12 +269,6 @@ public:
     else
       return Container(this->get_body_base(),
                        this->_length - this->get_header_length());
-
-    // for(auto &item:temporary){
-    //     item = static_cast<typename std::iterator_traits<
-    //         typename Container::iterator>::value_type>(m_convertor(item));
-    // }
-    // return temporary;
   }
 
 private:
@@ -301,11 +295,6 @@ struct SendNode<
     /*msg body base*/
     auto it = this->_buffer.begin();
     std::advance(it, this->get_header_length());
-
-    // for (auto &ch : string) {
-    //     ch = static_cast<typename std::iterator_traits<
-    //       typename Container::iterator>::value_type>(m_convertor(ch));
-    // }
 
     std::copy(string.begin(), string.end(), it);
   }
