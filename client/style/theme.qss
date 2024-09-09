@@ -37,3 +37,7 @@
 #forgot_passwd_label[state='incorrect']{
     color: white;
 }
+
+#setting{
+	background-color:rgb(50,50,50);
+}
