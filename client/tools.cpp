@@ -11,6 +11,7 @@ QString Tools::url_info{};
 bool Tools::url_init_flag{false};
 
 std::map<QString, QImage> Tools::s_images{};
+std::map<QString, QIcon> Tools::s_icons{};
 
 void Tools::refreshQssStyle(QWidget *widget) {
   widget->style()->unpolish(widget);
@@ -133,5 +134,44 @@ void Tools::setQLableImage(QLabel *label, const QString &target) {
   label->update();
 }
 
+std::optional<QIcon> Tools::loadIcon(const QString &path)
+{
+    QFile load_file(path);
+    if (!load_file.exists()) {
+        qDebug() << "Open image path: " << path << " failed!";
+        return std::nullopt;
+    }
+    return QIcon(path);
+}
+
+void Tools::loadIconResources(std::initializer_list<QString> file_list)
+{
+    for (const auto &path : file_list) {
+
+        auto image = loadIcon(QT_DEMO_HOME "/res/" + path);
+
+        if (!image.has_value()) {
+            qDebug() << "qicon: " << path << " load error!";
+            continue;
+        }
+        qDebug() << "resource icon file: " << path << " load successfully!";
+        Tools::s_icons.insert(std::pair<QString, QIcon>(path, image.value()));
+    }
+}
+
+void Tools::setPushButtonIcon(QPushButton* button, const QString &target) {
+    auto it = Tools::s_icons.find(target);
+    if (it == Tools::s_icons.end()) {
+        qDebug() << "icon: " << target << " not found!";
+        return;
+    }
+    button->setIcon(it->second);
+    button->setIconSize(button->size());
+    button->update();
+}
+
 LabelState::LabelState()
     : visiable(VisiableStatus::DISABLED), hover(HoverStatus::DISABLED) {}
+
+PushButtonState::PushButtonState()
+    : select(SelectedStatus::DISABLED), hover(HoverStatus::DISABLED) {}

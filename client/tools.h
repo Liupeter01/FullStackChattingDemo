@@ -12,6 +12,7 @@
 #include <map>
 #include <optional>
 #include <type_traits>
+#include <QPushButton>
 
 struct LabelState {
   LabelState();
@@ -24,6 +25,19 @@ struct LabelState {
 
   enum class HoverStatus : uint8_t { DISABLED, ENABLED } hover;
 };
+
+struct PushButtonState {
+    PushButtonState();
+
+    /*
+   * Default status = DISABLE
+   * VisiableStatus will be changed after every clicked!
+   */
+    enum SelectedStatus { DISABLED, ENABLED } select;
+
+    enum class HoverStatus : uint8_t { DISABLED, ENABLED } hover;
+};
+
 
 template <typename Widget, class = void>
 struct has_settext_function : std::false_type {};
@@ -71,6 +85,13 @@ struct Tools {
   static void setQLableImage(QLabel *label, const QString &target);
   static std::optional<QImage> loadImages(const QString &path, int width,
                                           int height);
+
+  /*load icon for chatting main frame*/
+  static std::map<QString, QIcon> s_icons;
+
+  static std::optional<QIcon> loadIcon(const QString &path);
+  static void setPushButtonIcon(QPushButton* button, const QString &target);
+  static void loadIconResources(std::initializer_list<QString> file_list);
 };
 
 #endif // TOOLS_H
