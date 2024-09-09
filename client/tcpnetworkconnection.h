@@ -9,6 +9,7 @@
 #include <QTcpSocket>
 #include <QUrl>
 #include <functional>
+#include <QtEndian>
 #include <singleton.hpp>
 
 class TCPNetworkConnection
