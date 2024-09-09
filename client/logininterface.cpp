@@ -8,9 +8,10 @@
 #include "logininterface.h"
 #include "passworddisplayswitching.h"
 #include "ui_logininterface.h"
+#include "useraccountmanager.hpp"
 
 LoginInterface::LoginInterface(QWidget *parent)
-    : m_info(), QDialog(parent), ui(new Ui::LoginInterface) {
+    : QDialog(parent), ui(new Ui::LoginInterface) {
   ui->setupUi(this);
 
   /*register pushbutton signal for page swiping*/
@@ -90,12 +91,12 @@ void LoginInterface::regisrerCallBackFunctions() {
         Tools::setWidgetAttribute(this->ui->status_label_3,
                                   QString("Login Success!"), true);
 
-        m_info.uuid = json["uuid"].toInt();
-        m_info.host = json["host"].toString();
-        m_info.port = json["port"].toString();
-        m_info.token = json["token"].toString();
+        UserAccountManager::get_instance()->set_uuid(json["uuid"].toInt());
+        UserAccountManager::get_instance()->set_host(json["host"].toString());
+        UserAccountManager::get_instance()->set_port(json["port"].toString());
+        UserAccountManager::get_instance()->set_token(json["token"].toString());
 
-        emit signal_establish_long_connnection(m_info);
+        emit signal_establish_long_connnection();
       }));
 }
 
@@ -172,8 +173,8 @@ void LoginInterface::slot_connection_status(bool status) {
                               true);
 
     QJsonObject json_obj;
-    json_obj["uuid"] = QString::number(m_info.uuid);
-    json_obj["token"] = m_info.token;
+    json_obj["uuid"] = QString::number(UserAccountManager::get_instance()->get_uuid());
+    json_obj["token"] = UserAccountManager::get_instance()->get_token();
 
     QJsonDocument json_doc(json_obj);
 

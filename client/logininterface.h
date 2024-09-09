@@ -41,8 +41,8 @@ signals:
   /*switch to reset interface*/
   void switchReset();
 
-  void signal_establish_long_connnection(
-      TCPNetworkConnection::ChattingServerInfo info);
+  /*try to connect to chatting server*/
+  void signal_establish_long_connnection();
 
 private slots:
   void on_login_button_clicked();
@@ -53,7 +53,6 @@ private slots:
 private:
   Ui::LoginInterface *ui;
   std::map<ServiceType, CallBackFunc> m_callbacks;
-  TCPNetworkConnection::ChattingServerInfo m_info;
 };
 
 #endif // LOGININTERFACE_H
