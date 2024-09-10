@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   switchingToLoginDialog();
 
-  emit TCPNetworkConnection::get_instance()->signal_switch_chatting_dialog();
+  emit TCPNetworkConnection::get_instance() -> signal_switch_chatting_dialog();
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -33,7 +33,7 @@ void MainWindow::switchingToRegInterface() {
   connect(m_register, &registerinterface::switchToLogin, this,
           &MainWindow::switchingToLoginDialog);
 
-    setFixedSize(m_register->minimumSize());
+  setFixedSize(m_register->minimumSize());
   setFramelessWindow(m_register);
   displayDefaultWindow(m_register);
 }
@@ -50,10 +50,11 @@ void MainWindow::switchingToLoginDialog() {
           &MainWindow::switchingToResetDialog);
 
   /*connect switch to chatting main frame info event*/
-  connect(TCPNetworkConnection::get_instance().get(), &TCPNetworkConnection::signal_switch_chatting_dialog, this,
+  connect(TCPNetworkConnection::get_instance().get(),
+          &TCPNetworkConnection::signal_switch_chatting_dialog, this,
           &MainWindow::swithcingToChattingInf);
 
-    setFixedSize(m_login->minimumSize());
+  setFixedSize(m_login->minimumSize());
   setFramelessWindow(m_login);
   displayDefaultWindow(m_login);
 }
@@ -65,17 +66,16 @@ void MainWindow::switchingToResetDialog() {
   connect(this->m_reset, &ResetPasswdInterface::switchToLogin, this,
           &MainWindow::switchingToLoginDialog);
 
-    setFixedSize(m_reset->minimumSize());
+  setFixedSize(m_reset->minimumSize());
   setFramelessWindow(m_reset);
   displayDefaultWindow(m_reset);
 }
 
-void MainWindow::swithcingToChattingInf()
-{
-    m_chattingMainFrame = new ChattingDlgMainFrame(this);
+void MainWindow::swithcingToChattingInf() {
+  m_chattingMainFrame = new ChattingDlgMainFrame(this);
 
-    setFixedSize(m_chattingMainFrame->maximumSize());
+  setFixedSize(m_chattingMainFrame->maximumSize());
 
-    setFramelessWindow(m_chattingMainFrame);
-    displayDefaultWindow(m_chattingMainFrame);
+  setFramelessWindow(m_chattingMainFrame);
+  displayDefaultWindow(m_chattingMainFrame);
 }

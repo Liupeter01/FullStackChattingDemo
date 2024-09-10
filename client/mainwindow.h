@@ -2,10 +2,10 @@
 #define MAINWINDOW_H
 
 // #include <stack>
+#include "chattingdlgmainframe.h"
 #include "logininterface.h"
 #include "registerinterface.h"
 #include "resetpasswdinterface.h"
-#include "chattingdlgmainframe.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE

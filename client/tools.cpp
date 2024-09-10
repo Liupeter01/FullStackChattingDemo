@@ -134,40 +134,38 @@ void Tools::setQLableImage(QLabel *label, const QString &target) {
   label->update();
 }
 
-std::optional<QIcon> Tools::loadIcon(const QString &path)
-{
-    QFile load_file(path);
-    if (!load_file.exists()) {
-        qDebug() << "Open image path: " << path << " failed!";
-        return std::nullopt;
-    }
-    return QIcon(path);
+std::optional<QIcon> Tools::loadIcon(const QString &path) {
+  QFile load_file(path);
+  if (!load_file.exists()) {
+    qDebug() << "Open image path: " << path << " failed!";
+    return std::nullopt;
+  }
+  return QIcon(path);
 }
 
-void Tools::loadIconResources(std::initializer_list<QString> file_list)
-{
-    for (const auto &path : file_list) {
+void Tools::loadIconResources(std::initializer_list<QString> file_list) {
+  for (const auto &path : file_list) {
 
-        auto image = loadIcon(QT_DEMO_HOME "/res/" + path);
+    auto image = loadIcon(QT_DEMO_HOME "/res/" + path);
 
-        if (!image.has_value()) {
-            qDebug() << "qicon: " << path << " load error!";
-            continue;
-        }
-        qDebug() << "resource icon file: " << path << " load successfully!";
-        Tools::s_icons.insert(std::pair<QString, QIcon>(path, image.value()));
+    if (!image.has_value()) {
+      qDebug() << "qicon: " << path << " load error!";
+      continue;
     }
+    qDebug() << "resource icon file: " << path << " load successfully!";
+    Tools::s_icons.insert(std::pair<QString, QIcon>(path, image.value()));
+  }
 }
 
-void Tools::setPushButtonIcon(QPushButton* button, const QString &target) {
-    auto it = Tools::s_icons.find(target);
-    if (it == Tools::s_icons.end()) {
-        qDebug() << "icon: " << target << " not found!";
-        return;
-    }
-    button->setIcon(it->second);
-    button->setIconSize(button->size());
-    button->update();
+void Tools::setPushButtonIcon(QPushButton *button, const QString &target) {
+  auto it = Tools::s_icons.find(target);
+  if (it == Tools::s_icons.end()) {
+    qDebug() << "icon: " << target << " not found!";
+    return;
+  }
+  button->setIcon(it->second);
+  button->setIconSize(button->size());
+  button->update();
 }
 
 LabelState::LabelState()

@@ -8,8 +8,8 @@
 #include <QString>
 #include <QTcpSocket>
 #include <QUrl>
-#include <functional>
 #include <QtEndian>
+#include <functional>
 #include <singleton.hpp>
 
 class TCPNetworkConnection

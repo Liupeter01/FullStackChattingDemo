@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QString>
 #include <QUrl>
 #include <QWidget>
@@ -12,7 +13,6 @@
 #include <map>
 #include <optional>
 #include <type_traits>
-#include <QPushButton>
 
 struct LabelState {
   LabelState();
@@ -27,17 +27,16 @@ struct LabelState {
 };
 
 struct PushButtonState {
-    PushButtonState();
+  PushButtonState();
 
-    /*
+  /*
    * Default status = DISABLE
    * VisiableStatus will be changed after every clicked!
    */
-    enum SelectedStatus { DISABLED, ENABLED } select;
+  enum SelectedStatus { DISABLED, ENABLED } select;
 
-    enum class HoverStatus : uint8_t { DISABLED, ENABLED } hover;
+  enum class HoverStatus : uint8_t { DISABLED, ENABLED } hover;
 };
-
 
 template <typename Widget, class = void>
 struct has_settext_function : std::false_type {};
@@ -90,7 +89,7 @@ struct Tools {
   static std::map<QString, QIcon> s_icons;
 
   static std::optional<QIcon> loadIcon(const QString &path);
-  static void setPushButtonIcon(QPushButton* button, const QString &target);
+  static void setPushButtonIcon(QPushButton *button, const QString &target);
   static void loadIconResources(std::initializer_list<QString> file_list);
 };
 

@@ -173,7 +173,8 @@ void LoginInterface::slot_connection_status(bool status) {
                               true);
 
     QJsonObject json_obj;
-    json_obj["uuid"] = QString::number(UserAccountManager::get_instance()->get_uuid());
+    json_obj["uuid"] =
+        QString::number(UserAccountManager::get_instance()->get_uuid());
     json_obj["token"] = UserAccountManager::get_instance()->get_token();
 
     QJsonDocument json_doc(json_obj);
