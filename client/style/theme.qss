@@ -41,3 +41,7 @@
 #setting{
 	background-color:rgb(50,50,50);
 }
+
+#search_user_edit{
+	border: 2px solid #f1f1f1;
+}
