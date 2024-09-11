@@ -54,7 +54,6 @@ private:
   void registerNetworkEvent();
   void regisrerCallBackFunctions();
 
-
   /*display/hide password button clicked*/
   void handle_clicked();
 

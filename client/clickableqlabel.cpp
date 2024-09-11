@@ -2,8 +2,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 
-ClickableQLabel::ClickableQLabel(QWidget *parent,
-                                                   Qt::WindowFlags f)
+ClickableQLabel::ClickableQLabel(QWidget *parent, Qt::WindowFlags f)
     : m_state(), QLabel(parent) {}
 
 ClickableQLabel::~ClickableQLabel() {}

@@ -5,14 +5,14 @@
 #include <QWidget>
 #include <Qt>
 
-//ClickableQLabel
-//clickableqlabel
+// ClickableQLabel
+// clickableqlabel
 class ClickableQLabel : public QLabel {
   Q_OBJECT
 
 public:
   ClickableQLabel(QWidget *parent = nullptr,
-                           Qt::WindowFlags f = Qt::WindowFlags());
+                  Qt::WindowFlags f = Qt::WindowFlags());
   ~ClickableQLabel();
 
   const LabelState &getState() const;

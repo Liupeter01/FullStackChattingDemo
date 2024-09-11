@@ -158,27 +158,26 @@ void ResetPasswdInterface::registerEditFinishedEvent() {
         ui->newpasswd_edit, ui->newconfirm_edit, ui->status_label_2);
   });
 
-  connect(
-      ui->newpasswd_show, &ClickableQLabel::clicked, this, [this]() {
-          handle_clicked();
-          handle_hover();
-      });
-
-  connect(
-      ui->newconfirm_show, &ClickableQLabel::clicked, this, [this]() {
-          handle_clicked();
-          handle_hover();
-      });
-
-  connect(ui->newpasswd_show, &ClickableQLabel::update_display, this, [this](){
-      handle_clicked();
-      handle_hover();
+  connect(ui->newpasswd_show, &ClickableQLabel::clicked, this, [this]() {
+    handle_clicked();
+    handle_hover();
   });
 
-  connect(ui->newconfirm_show, &ClickableQLabel::update_display, this, [this](){
-      handle_clicked();
-      handle_hover();
+  connect(ui->newconfirm_show, &ClickableQLabel::clicked, this, [this]() {
+    handle_clicked();
+    handle_hover();
   });
+
+  connect(ui->newpasswd_show, &ClickableQLabel::update_display, this, [this]() {
+    handle_clicked();
+    handle_hover();
+  });
+
+  connect(ui->newconfirm_show, &ClickableQLabel::update_display, this,
+          [this]() {
+            handle_clicked();
+            handle_hover();
+          });
 }
 
 /*
@@ -198,40 +197,36 @@ void ResetPasswdInterface::switchResetSuccessfulPage() {
   m_timer->start(1000 /*default time interval = 1000ms(1s)*/);
 }
 
-void ResetPasswdInterface::handle_clicked()
-{
-    auto click = [this](ClickableQLabel *label, QLineEdit *edit){
-        auto state = label->getState();
-        if (state.visiable == LabelState::VisiableStatus::ENABLED) {
-            edit->setEchoMode(QLineEdit::Normal);
-            Tools::setQLableImage(label, "show_password.png");
-        } else {
-            edit->setEchoMode(QLineEdit::Password);
-            Tools::setQLableImage(label, "invisiable_password.png");
-        }
-    };
+void ResetPasswdInterface::handle_clicked() {
+  auto click = [this](ClickableQLabel *label, QLineEdit *edit) {
+    auto state = label->getState();
+    if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+      edit->setEchoMode(QLineEdit::Normal);
+      Tools::setQLableImage(label, "show_password.png");
+    } else {
+      edit->setEchoMode(QLineEdit::Password);
+      Tools::setQLableImage(label, "invisiable_password.png");
+    }
+  };
 
-    click(ui->newpasswd_show, ui->newpasswd_edit);
-    click(ui->newconfirm_show, ui->newconfirm_edit);
+  click(ui->newpasswd_show, ui->newpasswd_edit);
+  click(ui->newconfirm_show, ui->newconfirm_edit);
 }
 
-void ResetPasswdInterface::handle_hover()
-{
-    auto hover = [this](ClickableQLabel *label){
-        auto state = label->getState();
-        if(state.hover == LabelState::HoverStatus::ENABLED){
-            Tools::setQLableImage(label, state.visiable
-                                             ? "show_passwd_selected.png"
-                                             : "invisiable_passwd_selected.png");
-        }
-        else{
-            Tools::setQLableImage(label, state.visiable
-                                             ? "show_password.png"
-                                             : "invisiable_password.png");
-        }
-    };
-    hover(ui->newpasswd_show);
-    hover(ui->newconfirm_show);
+void ResetPasswdInterface::handle_hover() {
+  auto hover = [this](ClickableQLabel *label) {
+    auto state = label->getState();
+    if (state.hover == LabelState::HoverStatus::ENABLED) {
+      Tools::setQLableImage(label, state.visiable
+                                       ? "show_passwd_selected.png"
+                                       : "invisiable_passwd_selected.png");
+    } else {
+      Tools::setQLableImage(label, state.visiable ? "show_password.png"
+                                                  : "invisiable_password.png");
+    }
+  };
+  hover(ui->newpasswd_show);
+  hover(ui->newconfirm_show);
 }
 
 void ResetPasswdInterface::signal_accountvalidating_finished(
