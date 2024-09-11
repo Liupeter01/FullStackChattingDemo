@@ -54,6 +54,13 @@ private:
   void registerNetworkEvent();
   void regisrerCallBackFunctions();
 
+
+  /*display/hide password button clicked*/
+  void handle_clicked();
+
+  /*mouse enter/leave qimage area*/
+  void handle_hover();
+
   /*
    * switch to registeration successful page
    * by using stackedWidget switch to

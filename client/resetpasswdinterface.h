@@ -40,6 +40,12 @@ private:
   void switchResetPasswordPage();
   void switchResetSuccessfulPage();
 
+  /*display/hide password button clicked*/
+  void handle_clicked();
+
+  /*mouse enter/leave qimage area*/
+  void handle_hover();
+
 private slots:
   void on_go_back_login_2_clicked();
   void on_go_back_login_1_clicked();

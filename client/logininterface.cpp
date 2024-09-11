@@ -6,7 +6,6 @@
 #include <QtEndian>
 
 #include "logininterface.h"
-#include "passworddisplayswitching.h"
 #include "ui_logininterface.h"
 #include "useraccountmanager.hpp"
 
@@ -40,17 +39,16 @@ void LoginInterface::registerSignal() {
           &LoginInterface::switchWindow);
   connect(this->ui->forgot_passwd_label, &ForgotPassword::clicked, this,
           &LoginInterface::slot_forgot_passwd);
-  connect(this->ui->passwd_display, &PasswordDisplaySwitching::clicked, this,
+
+  connect(this->ui->passwd_display, &ClickableQLabel::clicked, this,
           [this]() {
-            auto state = ui->passwd_display->getState();
-            if (state.visiable == LabelState::VisiableStatus::ENABLED) {
-              this->ui->passwd_edit->setEchoMode(QLineEdit::Normal);
-              Tools::setQLableImage(ui->passwd_display, "show_password.png");
-            } else {
-              this->ui->passwd_edit->setEchoMode(QLineEdit::Password);
-              Tools::setQLableImage(ui->passwd_display,
-                                    "invisiable_password.png");
-            }
+              handle_clicked();
+            handle_hover();
+          });
+  connect(this->ui->passwd_display, &ClickableQLabel::update_display, this,
+          [this]() {
+              handle_clicked();
+              handle_hover();
           });
 }
 
@@ -143,6 +141,41 @@ void LoginInterface::slot_login_finished(ServiceType srv_type,
   } catch (const std::exception &e) {
     qDebug() << e.what();
   }
+}
+
+void LoginInterface::handle_clicked()
+{
+    auto click = [this](ClickableQLabel *label, QLineEdit *edit){
+        auto state = label->getState();
+        if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+            edit->setEchoMode(QLineEdit::Normal);
+            Tools::setQLableImage(label, "show_password.png");
+        } else {
+            edit->setEchoMode(QLineEdit::Password);
+            Tools::setQLableImage(label, "invisiable_password.png");
+        }
+    };
+
+    click(ui->passwd_display, ui->passwd_edit);
+}
+
+void LoginInterface::handle_hover()
+{
+    auto hover = [this](ClickableQLabel *label){
+        auto state = label->getState();
+        if(state.hover == LabelState::HoverStatus::ENABLED){
+            Tools::setQLableImage(label, state.visiable
+                                             ? "show_passwd_selected.png"
+                                             : "invisiable_passwd_selected.png");
+        }
+        else{
+            Tools::setQLableImage(label, state.visiable
+                                             ? "show_password.png"
+                                             : "invisiable_password.png");
+        }
+    };
+
+    hover(ui->passwd_display);
 }
 
 void LoginInterface::slot_forgot_passwd() {

@@ -34,6 +34,12 @@ private:
   void slot_login_finished(ServiceType srv_type, QString json_data,
                            ServiceStatus srv_status);
 
+  /*display/hide password button clicked*/
+  void handle_clicked();
+
+  /*mouse enter/leave qimage area*/
+  void handle_hover();
+
 signals:
   /*switch to register interface*/
   void switchWindow();
