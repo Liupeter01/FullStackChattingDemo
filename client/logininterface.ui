@@ -163,7 +163,7 @@
         </widget>
        </item>
        <item>
-        <widget class="PasswordDisplaySwitching" name="passwd_display">
+        <widget class="ClickableQLabel" name="passwd_display">
          <property name="minimumSize">
           <size>
            <width>30</width>
@@ -362,14 +362,14 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ClickableQLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">clickableqlabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>ForgotPassword</class>
    <extends>QLabel</extends>
    <header>forgotpassword.h</header>
-  </customwidget>
-  <customwidget>
-   <class>PasswordDisplaySwitching</class>
-   <extends>QLabel</extends>
-   <header>passworddisplayswitching.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
