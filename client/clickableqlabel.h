@@ -5,8 +5,6 @@
 #include <QWidget>
 #include <Qt>
 
-// ClickableQLabel
-// clickableqlabel
 class ClickableQLabel : public QLabel {
   Q_OBJECT
 
@@ -22,6 +20,8 @@ signals:
   void clicked();
 
 protected:
+  virtual void mouseReleaseEvent(QMouseEvent *event) override;
+
   virtual void mousePressEvent(QMouseEvent *event) override;
 
   /*mouse enter selected section*/
