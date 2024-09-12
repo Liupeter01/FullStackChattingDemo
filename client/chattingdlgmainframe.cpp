@@ -43,7 +43,7 @@ void ChattingDlgMainFrame::registerSignal() {
           &ChattingDlgMainFrame::updateSearchUserButton);
   connect(ui->search_user_button, &ButtonDisplaySwitching::update_display, this,
           &ChattingDlgMainFrame::updateSearchUserButton);
-  connect(ui->show_lists, &ChattingUserLists::signal_load_more_record, this,
+  connect(ui->show_lists, &MainFrameShowLists::signal_load_more_record, this,
           &ChattingDlgMainFrame::slot_load_more_record);
 }
 

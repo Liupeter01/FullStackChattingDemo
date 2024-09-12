@@ -37,11 +37,10 @@ private:
   QAction *m_cancelAction;
   Ui::ChattingDlgMainFrame *ui;
 
-  enum class ChattingDlgMode{
-      ChattingDlgChattingMode,//show multiple user chatting dialog
-      ChattingDlgSearchingMode  //allow user to add new/search exists friend
+  enum class ChattingDlgMode {
+    ChattingDlgChattingMode, // show multiple user chatting dialog
+    ChattingDlgSearchingMode // allow user to add new/search exists friend
   } m_dlgMode;
-
 };
 
 #endif // CHATTINGDLGMAINFRAME_H
