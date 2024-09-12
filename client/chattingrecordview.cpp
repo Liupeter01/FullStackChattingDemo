@@ -1,12 +1,11 @@
 #include "chattingrecordview.h"
 #include <QScrollBar>
 #include <QHBoxLayout>
+#include <QListWidgetItem>
 
 ChattingRecordView::ChattingRecordView(QWidget *parent)
     : m_newdataarrived(false)
     , QListWidget{parent}
-    , m_layout(new QVBoxLayout)
-    , m_scroll(new QScrollArea)
 {
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -31,30 +30,69 @@ void ChattingRecordView::registerSignal()
 
 void ChattingRecordView::pushBackItem(QWidget *item)
 {
+     randomInsertItem(this->count() - 1, item);
 }
 
 void ChattingRecordView::pushFrontItem(QWidget *item)
 {
+    randomInsertItem(0, item);
 }
 
-void ChattingRecordView::randomInsertItem(QWidget *pos, QWidget *item)
-{   
+void ChattingRecordView::randomInsertItem(int pos, QWidget *item)
+{
+    /*invalid pos number*/
+    if(pos < 0 || pos > this->count() - 1){
+        return;
+    }
+
+    QListWidgetItem *inserted_item(new QListWidgetItem);
+
+    //setup size according to widget size
+    inserted_item->setSizeHint(item->sizeHint());
+
+    this->insertItem(pos, inserted_item);
+    this->setItemWidget(inserted_item, item);
+    this->update();
 }
 
 bool ChattingRecordView::eventFilter(QObject *object, QEvent *event)
 {
-    if(object == m_scroll && event->type() == QEvent::Enter){
-        /*if max > 0, then don't show scroll bar*/
-        m_scroll->verticalScrollBar()->setHidden(!m_scroll->verticalScrollBar()->maximum());
+    if(object == this->viewport()){
+        if(event->type() == QEvent::Enter){
+            /*mouse hover&enter then show the scroll bar*/
+            this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        }
+        else if(event->type() == QEvent::Leave){
+            /*mouse leave then hide the scroll bar*/
+            this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        }
     }
-    else if(object == m_scroll && event->type() == QEvent::Leave){
-        m_scroll->verticalScrollBar()->setHidden(true);
+
+    /*check mouse wheel event*/
+    if(this->viewport() == object && event->type() == QEvent::Wheel){
+        QWheelEvent* wheel = reinterpret_cast<QWheelEvent*>(event);
+
+        /*calculate the up/down parameters*/
+        int degrees = wheel->angleDelta().y() / 8;
+        int steps  = degrees / 15;
+
+        this->verticalScrollBar()->setValue(this->verticalScrollBar()->value() - steps);
+
+        /* the scrollbar has already arrived at the button
+         * check should we load more chatting user*/
+        QScrollBar*scroll = this->verticalScrollBar();
+        if(scroll->maximum() - scroll->value()<=0){
+            //qDebug() << "Load more chatting";
+            //emit signal_load_more_record();
+        }
+
+        /**/
+        //return true;
     }
     return QWidget::eventFilter(object, event);
 }
 
 void ChattingRecordView::paintEvent(QPaintEvent *event)
 {
-
     QWidget::paintEvent(event);
 }

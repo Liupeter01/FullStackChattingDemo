@@ -2,11 +2,8 @@
 #define CHATTINGRECORDVIEW_H
 
 #include <QWidget>
-#include <QObject>
 #include <QEvent>
 #include <QPaintEvent>
-#include <QVBoxLayout>
-#include <QScrollArea>
 #include <QListWidget>
 
 class ChattingRecordView : public QListWidget
@@ -23,7 +20,7 @@ public:
     void pushFrontItem(QWidget *item);
 
     /*insert randomly*/
-    void randomInsertItem(QWidget *pos, QWidget *item);;
+    void randomInsertItem(int pos, QWidget *item);;
 
     static constexpr std::size_t max_size = 16777215;
 
@@ -39,8 +36,6 @@ private slots:
 
 private:
     bool m_newdataarrived;
-    QVBoxLayout *m_layout;
-    QScrollArea *m_scroll;
 };
 
 #endif // CHATTINGRECORDVIEW_H
