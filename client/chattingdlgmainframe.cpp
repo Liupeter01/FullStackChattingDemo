@@ -3,9 +3,15 @@
 #include "ui_chattingdlgmainframe.h"
 #include <QAction>
 #include <QFile>
+#include <QRandomGenerator>
+#include <listitemwidget.h>
+#include "loadingwaitdialog.h"
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
-    : QDialog(parent), ui(new Ui::ChattingDlgMainFrame) {
+    : QDialog(parent)
+    , ui(new Ui::ChattingDlgMainFrame)
+    , m_dlgMode(ChattingDlgMode::ChattingDlgChattingMode) /*chatting mode by default*/
+{
   ui->setupUi(this);
 
   /*register signal for ui display*/
@@ -20,6 +26,10 @@ ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
   /*constraint the length of username when client try to search*/
   ui->search_user_edit->setMaxLength(20);
 
+  /*set show list to hidden status*/
+  //ui->show_lists->setHidden(true);
+  addItemToShowLists();
+
   /*load qicon for chatting main frame*/
   Tools::loadIconResources({"add_friend_normal.png", "add_friend_hover.png",
                             "add_friend_clicked.png"});
@@ -33,6 +43,8 @@ void ChattingDlgMainFrame::registerSignal() {
           &ChattingDlgMainFrame::updateSearchUserButton);
   connect(ui->search_user_button, &ButtonDisplaySwitching::update_display, this,
           &ChattingDlgMainFrame::updateSearchUserButton);
+  connect(ui->show_lists, &ChattingUserLists::signal_load_more_record, this,
+          &ChattingDlgMainFrame::slot_load_more_record);
 }
 
 void ChattingDlgMainFrame::registerSearchEditAction() {
@@ -78,6 +90,9 @@ void ChattingDlgMainFrame::registerSearchEditSignal() {
 
     /**/
     ui->search_user_edit->clearFocus();
+
+    /*set show list to hidden status*/
+    ui->show_lists->setHidden(true);
   });
 }
 
@@ -106,8 +121,39 @@ void ChattingDlgMainFrame::updateSearchUserButton() {
   }
 }
 
+void ChattingDlgMainFrame::slot_load_more_record()
+{
+    LoadingWaitDialog*loadingInf(new LoadingWaitDialog(this));
+
+    /*do not block the execute flow*/
+    loadingInf->setModal(true);
+    loadingInf->show();
+
+    /*load more data to the list*/
+    qDebug() << "load more data to the list";
+    addItemToShowLists();
+
+    loadingInf->deleteLater();
+}
+
 ChattingDlgMainFrame::~ChattingDlgMainFrame() {
   delete m_searchAction;
   delete m_cancelAction;
   delete ui;
+}
+
+void ChattingDlgMainFrame::addItemToShowLists()
+{
+    for(std::size_t i = 0 ; i < 40 ; ++i){
+         auto random = QRandomGenerator::global()->bounded(10000);
+        ListItemWidget* new_inserted(new ListItemWidget());
+        new_inserted->setItemDisplay(QString::number(random),QT_DEMO_HOME "/res/microsoft.png",QString::number(random));
+
+        QListWidgetItem* item(new QListWidgetItem);
+        item->setSizeHint(new_inserted->sizeHint());
+
+        ui->show_lists->addItem(item);
+        ui->show_lists->setItemWidget(item, new_inserted);
+        ui->show_lists->update();
+    }
 }

@@ -3,8 +3,6 @@
 
 #include <QDialog>
 #include <QIcon>
-#include <map>
-#include <optional>
 
 namespace Ui {
 class ChattingDlgMainFrame;
@@ -17,6 +15,9 @@ public:
   explicit ChattingDlgMainFrame(QWidget *parent = nullptr);
   ~ChattingDlgMainFrame();
 
+protected:
+  void addItemToShowLists();
+
 private:
   void registerSignal();
 
@@ -25,6 +26,9 @@ private:
   void registerSearchEditSignal();
   void updateSearchUserButton();
 
+private slots:
+  void slot_load_more_record();
+
 private:
   /*reserve for search line edit*/
   QAction *m_searchAction;
@@ -32,6 +36,12 @@ private:
   /*reserve for cancel user searching*/
   QAction *m_cancelAction;
   Ui::ChattingDlgMainFrame *ui;
+
+  enum class ChattingDlgMode{
+      ChattingDlgChattingMode,//show multiple user chatting dialog
+      ChattingDlgSearchingMode  //allow user to add new/search exists friend
+  } m_dlgMode;
+
 };
 
 #endif // CHATTINGDLGMAINFRAME_H
