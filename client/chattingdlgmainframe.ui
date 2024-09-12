@@ -350,7 +350,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="ChattingUserLists" name="show_lists"/>
+          <widget class="MainFrameShowLists" name="show_lists"/>
          </item>
         </layout>
        </widget>
@@ -363,7 +363,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="ChattingPageWidget" name="chattingpage"/>
+     <widget class="ChattingStackPage" name="chattingpage"/>
      <widget class="QWidget" name="page_2"/>
     </widget>
    </item>
@@ -381,15 +381,15 @@
    <header location="global">restrictusersearchinginput.h</header>
   </customwidget>
   <customwidget>
-   <class>ChattingUserLists</class>
-   <extends>QListWidget</extends>
-   <header location="global">chattinguserlists.h</header>
+   <class>ChattingStackPage</class>
+   <extends>QWidget</extends>
+   <header>chattingstackpage.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ChattingPageWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">chattingpagewidget.h</header>
-   <container>1</container>
+   <class>MainFrameShowLists</class>
+   <extends>QListWidget</extends>
+   <header>mainframeshowlists.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
