@@ -7,16 +7,15 @@ namespace Ui {
 class ChattingStackPage;
 }
 
-class ChattingStackPage : public QWidget
-{
-    Q_OBJECT
+class ChattingStackPage : public QWidget {
+  Q_OBJECT
 
 public:
-    explicit ChattingStackPage(QWidget *parent = nullptr);
-    ~ChattingStackPage();
+  explicit ChattingStackPage(QWidget *parent = nullptr);
+  ~ChattingStackPage();
 
 private:
-    Ui::ChattingStackPage *ui;
+  Ui::ChattingStackPage *ui;
 };
 
 #endif // CHATTINGSTACKPAGE_H
