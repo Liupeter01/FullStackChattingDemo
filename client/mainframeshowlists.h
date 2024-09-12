@@ -1,16 +1,16 @@
-#ifndef CHATTINGUSERLISTS_H
-#define CHATTINGUSERLISTS_H
+#ifndef MAINFRAMESHOWLISTS_H
+#define MAINFRAMESHOWLISTS_H
 
 #include <QEvent>
 #include <QListWidget>
 
-class ChattingUserLists : public QListWidget
+class MainFrameShowLists : public QListWidget
 {
     Q_OBJECT
 
 public:
-    ChattingUserLists(QWidget *parent = nullptr);
-    ~ChattingUserLists();
+    MainFrameShowLists(QWidget *parent = nullptr);
+    ~MainFrameShowLists();
 
 protected:
     /*customlized functions*/
@@ -23,4 +23,4 @@ private:
 
 };
 
-#endif // CHATTINGUSERLISTS_H
+#endif // MainFrameShowLists_H

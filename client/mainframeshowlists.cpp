@@ -1,8 +1,8 @@
-#include "chattinguserlists.h"
+#include "mainframeshowlists.h"
 #include <QWheelEvent>
 #include <QScrollBar>
 
-ChattingUserLists::ChattingUserLists(QWidget *parent)
+MainFrameShowLists::MainFrameShowLists(QWidget *parent)
     :QListWidget(parent)
 {
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -12,9 +12,9 @@ ChattingUserLists::ChattingUserLists(QWidget *parent)
     this->viewport()->installEventFilter(this);
 }
 
-ChattingUserLists::~ChattingUserLists(){}
+MainFrameShowLists::~MainFrameShowLists(){}
 
-bool ChattingUserLists::eventFilter(QObject *object, QEvent *event)
+bool MainFrameShowLists::eventFilter(QObject *object, QEvent *event)
 {
     /*check mouse's status: hover&entered or leave*/
     if(this->viewport() == object){
