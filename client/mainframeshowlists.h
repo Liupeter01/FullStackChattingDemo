@@ -4,23 +4,21 @@
 #include <QEvent>
 #include <QListWidget>
 
-class MainFrameShowLists : public QListWidget
-{
-    Q_OBJECT
+class MainFrameShowLists : public QListWidget {
+  Q_OBJECT
 
 public:
-    MainFrameShowLists(QWidget *parent = nullptr);
-    ~MainFrameShowLists();
+  MainFrameShowLists(QWidget *parent = nullptr);
+  ~MainFrameShowLists();
 
 protected:
-    /*customlized functions*/
-    bool eventFilter(QObject *object, QEvent *event) override;
+  /*customlized functions*/
+  bool eventFilter(QObject *object, QEvent *event) override;
 
 signals:
-    void signal_load_more_record();
+  void signal_load_more_record();
 
 private:
-
 };
 
 #endif // MainFrameShowLists_H

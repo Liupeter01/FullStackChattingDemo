@@ -9,19 +9,18 @@ ClickableQLabel::~ClickableQLabel() {}
 
 const LabelState &ClickableQLabel::getState() const { return m_state; }
 
-void ClickableQLabel::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton) {
-        qDebug() << QString("left button release!");
+void ClickableQLabel::mouseReleaseEvent(QMouseEvent *event) {
+  if (event->button() == Qt::LeftButton) {
+    qDebug() << QString("left button release!");
 
-        /*switch visiable status after each mouse press event*/
-        this->m_state.visiable =
-            (!this->m_state.visiable ? LabelState::VisiableStatus::ENABLED
-                                     : LabelState::VisiableStatus::DISABLED);
+    /*switch visiable status after each mouse press event*/
+    this->m_state.visiable =
+        (!this->m_state.visiable ? LabelState::VisiableStatus::ENABLED
+                                 : LabelState::VisiableStatus::DISABLED);
 
-        emit clicked();
-    }
-    QLabel::mouseReleaseEvent(event);
+    emit clicked();
+  }
+  QLabel::mouseReleaseEvent(event);
 }
 
 void ClickableQLabel::mousePressEvent(QMouseEvent *event) {
