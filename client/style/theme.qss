@@ -63,19 +63,22 @@
 	outline: none;
 }
 
-#user_lists::focus{
-	border: none;
-	outline: none;
-}
-
 #tools{
-	background-color: #2D2D2D;
+	background-color: rgb(250,250,250);
+	border: 1px solid #2D2D2D;
+}
+
+#chatting_input, #user_input{
+	background-color: rgb(250,250,250);
 	border: none;
 	outline: none;
 }
 
-#chatting_control{
-	background-color: #2D2D2D;
+#chatting_msg, #chatting_record, #user_lists::focus, #chatting_input, #user_input, #widget_3, #show_lists{
 	border: none;
 	outline: none;
+}
+
+#user_input{
+	color: black;
 }
