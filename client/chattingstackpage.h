@@ -17,7 +17,7 @@ public:
 private slots:
   void on_send_message_clicked();
 
-  private:
+private:
   Ui::ChattingStackPage *ui;
 };
 
