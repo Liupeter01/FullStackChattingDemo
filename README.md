@@ -23,7 +23,9 @@ using QT6(Q::Widgets Qt::Network)
 
 ### Forgot password page
 
-<img src="./assets/forgot_1.png" style="zoom:50%;" />
+<img src="./assets/client_interface_1.png" alt="client_interface_1" style="zoom:50%;" />
+
+
 
 ## **Servers**
 
