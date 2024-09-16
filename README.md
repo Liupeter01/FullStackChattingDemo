@@ -21,7 +21,7 @@ using QT6(Q::Widgets Qt::Network)
 
 ![](./assets/after_reg.png)
 
-### Forgot password page
+### Chatting Main Dialog
 
 <img src="./assets/client_interface_1.png" alt="client_interface_1" style="zoom:50%;" />
 
