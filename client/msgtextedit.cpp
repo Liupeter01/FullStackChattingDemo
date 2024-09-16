@@ -1,314 +1,278 @@
 #include "msgtextedit.h"
-#include <QTextCursor>
-#include <QFileInfo>
-#include <QIcon>
-#include <QFileIconProvider>
 #include <QDebug>
-#include <QMessageBox>
+#include <QFileIconProvider>
+#include <QFileInfo>
 #include <QFont>
 #include <QFontMetrics>
+#include <QIcon>
+#include <QMessageBox>
 #include <QPainter>
+#include <QTextCursor>
 
-MsgTextEdit::MsgTextEdit(QWidget *parent)
-    :QTextEdit(parent)
-{ 
-}
+MsgTextEdit::MsgTextEdit(QWidget *parent) : QTextEdit(parent) {}
 
-MsgTextEdit::~MsgTextEdit()
-{
-}
+MsgTextEdit::~MsgTextEdit() {}
 
-const QVector<MsgInfo> &MsgTextEdit::getMsgList()
-{
-    /*clear processed storage*/
-    m_processed_list.clear();
+const QVector<MsgInfo> &MsgTextEdit::getMsgList() {
+  /*clear processed storage*/
+  m_processed_list.clear();
 
-    std::size_t url_index{0};
-    std::size_t ammount = m_temporary_list.size();
+  std::size_t url_index{0};
+  std::size_t ammount = m_temporary_list.size();
 
-    QString text = "";
-    QString plaintext = this->document()->toPlainText();
+  QString text = "";
+  QString plaintext = this->document()->toPlainText();
 
-    /* iterates over each character in the plain text of the document */
-    for(std::size_t index = 0; index < plaintext.size() ; ++index){
+  /* iterates over each character in the plain text of the document */
+  for (std::size_t index = 0; index < plaintext.size(); ++index) {
 
-        /*
-         * Detect if the character represents an embedded object (likely an image)
-         * we need to know whether its likely to be an image or not
-        */
-        if(plaintext[index] == QChar::ObjectReplacementCharacter){
+    /*
+     * Detect if the character represents an embedded object (likely an image)
+     * we need to know whether its likely to be an image or not
+     */
+    if (plaintext[index] == QChar::ObjectReplacementCharacter) {
 
-             // If there's accumulated text, append it to the list as a "text" message
-            if(!text.isEmpty()){
-                MsgInfo info = {
-                    MsgType::TEXT,
-                    text,
-                    QPixmap()
-                };
-
-                insertMsgList(std::move(info));
-                text.clear();
-            }
-            // Now process the image
-            while(url_index < ammount){
-                MsgInfo msg = m_temporary_list[url_index];
-                url_index++;
-
-                // Check if the image path (msg.content) is present in the HTML
-                if(this->document()->toHtml().contains(msg.content, Qt::CaseSensitive)){
-                    m_processed_list.append(msg);
-                    break;
-                }
-            }
-        }
-        else{
-             // Accumulate plain text
-            text.append(plaintext[index]);
-        }
-    }
-
-    /*handle remainning*/
-    if(!text.isEmpty()){
-        MsgInfo info = {
-            MsgType::TEXT,
-            text,
-            QPixmap()
-        };
+      // If there's accumulated text, append it to the list as a "text" message
+      if (!text.isEmpty()) {
+        MsgInfo info = {MsgType::TEXT, text, QPixmap()};
 
         insertMsgList(std::move(info));
         text.clear();
-    }
+      }
+      // Now process the image
+      while (url_index < ammount) {
+        MsgInfo msg = m_temporary_list[url_index];
+        url_index++;
 
-    m_temporary_list.clear();
-    this->clear();
-    return m_processed_list;
-}
-
-QStringList MsgTextEdit::getURL(QString text)
-{
-    QStringList urls;
-    if(text.isEmpty()) return urls;
-
-    QStringList list = text.split("\n");
-    foreach (QString url, list) {
-        if(!url.isEmpty()){
-            QStringList str = url.split("///");
-            if(str.size()>=2)
-                urls.append(str.at(1));
+        // Check if the image path (msg.content) is present in the HTML
+        if (this->document()->toHtml().contains(msg.content,
+                                                Qt::CaseSensitive)) {
+          m_processed_list.append(msg);
+          break;
         }
+      }
+    } else {
+      // Accumulate plain text
+      text.append(plaintext[index]);
     }
+  }
+
+  /*handle remainning*/
+  if (!text.isEmpty()) {
+    MsgInfo info = {MsgType::TEXT, text, QPixmap()};
+
+    insertMsgList(std::move(info));
+    text.clear();
+  }
+
+  m_temporary_list.clear();
+  this->clear();
+  return m_processed_list;
+}
+
+QStringList MsgTextEdit::getURL(QString text) {
+  QStringList urls;
+  if (text.isEmpty())
     return urls;
+
+  QStringList list = text.split("\n");
+  foreach (QString url, list) {
+    if (!url.isEmpty()) {
+      QStringList str = url.split("///");
+      if (str.size() >= 2)
+        urls.append(str.at(1));
+    }
+  }
+  return urls;
 }
 
-QString MsgTextEdit::getFileSize(qint64 size)
-{
-    QString Unit;
-    double num;
-    if(size < 1024){
-        num = size;
-        Unit = "B";
-    }
-    else if(size < 1024 * 1224){
-        num = size / 1024.0;
-        Unit = "KB";
-    }
-    else if(size <  1024 * 1024 * 1024){
-        num = size / 1024.0 / 1024.0;
-        Unit = "MB";
-    }
-    else{
-        num = size / 1024.0 / 1024.0/ 1024.0;
-        Unit = "GB";
-    }
-    return QString::number(num,'f',2) + " " + Unit;
+QString MsgTextEdit::getFileSize(qint64 size) {
+  QString Unit;
+  double num;
+  if (size < 1024) {
+    num = size;
+    Unit = "B";
+  } else if (size < 1024 * 1224) {
+    num = size / 1024.0;
+    Unit = "KB";
+  } else if (size < 1024 * 1024 * 1024) {
+    num = size / 1024.0 / 1024.0;
+    Unit = "MB";
+  } else {
+    num = size / 1024.0 / 1024.0 / 1024.0;
+    Unit = "GB";
+  }
+  return QString::number(num, 'f', 2) + " " + Unit;
 }
 
-QPixmap MsgTextEdit::getFileIconPixmap(const QString &path)
-{
-    QFileIconProvider provder;
-    QFileInfo fileinfo(path);
+QPixmap MsgTextEdit::getFileIconPixmap(const QString &path) {
+  QFileIconProvider provder;
+  QFileInfo fileinfo(path);
 
-    /*get file icon*/
-    QIcon icon = provder.icon(fileinfo);
+  /*get file icon*/
+  QIcon icon = provder.icon(fileinfo);
 
-    /*get file size info*/
-    QString strFileSize = getFileSize(fileinfo.size());
-    qDebug() << "FileSize=" << fileinfo.size();
+  /*get file size info*/
+  QString strFileSize = getFileSize(fileinfo.size());
+  qDebug() << "FileSize=" << fileinfo.size();
 
-    QFont font(QString("Times New Roman"),10,QFont::Normal,false);
-    QFontMetrics fontMetrics(font);
-    QSize textSize = fontMetrics.size(Qt::TextSingleLine, fileinfo.fileName());
+  QFont font(QString("Times New Roman"), 10, QFont::Normal, false);
+  QFontMetrics fontMetrics(font);
+  QSize textSize = fontMetrics.size(Qt::TextSingleLine, fileinfo.fileName());
 
-    QSize FileSize = fontMetrics.size(Qt::TextSingleLine, strFileSize);
-    int maxWidth = textSize.width() > FileSize.width() ? textSize.width() :FileSize.width();
-    QPixmap pix(50 + maxWidth + 10, 50);
-    pix.fill();
+  QSize FileSize = fontMetrics.size(Qt::TextSingleLine, strFileSize);
+  int maxWidth =
+      textSize.width() > FileSize.width() ? textSize.width() : FileSize.width();
+  QPixmap pix(50 + maxWidth + 10, 50);
+  pix.fill();
 
-    QPainter painter;
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setFont(font);
-    painter.begin(&pix);
+  QPainter painter;
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.setFont(font);
+  painter.begin(&pix);
 
-    /*file icon*/
-    QRect rect(0, 0, 50, 50);
-    painter.drawPixmap(rect, icon.pixmap(40,40));
-    painter.setPen(Qt::black);
+  /*file icon*/
+  QRect rect(0, 0, 50, 50);
+  painter.drawPixmap(rect, icon.pixmap(40, 40));
+  painter.setPen(Qt::black);
 
-    /*file name*/
-    QRect rectText(50+10, 3, textSize.width(), textSize.height());
-    painter.drawText(rectText, fileinfo.fileName());
+  /*file name*/
+  QRect rectText(50 + 10, 3, textSize.width(), textSize.height());
+  painter.drawText(rectText, fileinfo.fileName());
 
-    /*file size*/
-    QRect rectFile(50+10, textSize.height()+5, FileSize.width(), FileSize.height());
-    painter.drawText(rectFile, strFileSize);
-    painter.end();
-    return pix;
+  /*file size*/
+  QRect rectFile(50 + 10, textSize.height() + 5, FileSize.width(),
+                 FileSize.height());
+  painter.drawText(rectFile, strFileSize);
+  painter.end();
+  return pix;
 }
 
-void MsgTextEdit::keyPressEvent(QKeyEvent *e)
-{
-    /*when user press enter and return*/
-    if(e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return){
-        /*emit sending signal*/
-        emit send();
-        return;
-    }
-    QTextEdit::keyPressEvent(e);
+void MsgTextEdit::keyPressEvent(QKeyEvent *e) {
+  /*when user press enter and return*/
+  if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) {
+    /*emit sending signal*/
+    emit send();
+    return;
+  }
+  QTextEdit::keyPressEvent(e);
 }
 
-void MsgTextEdit::dragEnterEvent(QDragEnterEvent *e)
-{
-    if(e->source() == this)
-        e->ignore();
-    else
-        e->accept();
-
-    QTextEdit::dragEnterEvent(e);
-}
-
-void MsgTextEdit::dropEvent(QDropEvent *e)
-{
-    insertFromMimeData(e->mimeData());
+void MsgTextEdit::dragEnterEvent(QDragEnterEvent *e) {
+  if (e->source() == this)
+    e->ignore();
+  else
     e->accept();
 
-    /*we do not need to use base class's dropevent*/
+  QTextEdit::dragEnterEvent(e);
 }
 
-bool MsgTextEdit::canInsertFromMimeData(const QMimeData *source) const
-{
-    return QTextEdit::canInsertFromMimeData(source);
+void MsgTextEdit::dropEvent(QDropEvent *e) {
+  insertFromMimeData(e->mimeData());
+  e->accept();
+
+  /*we do not need to use base class's dropevent*/
 }
 
-void MsgTextEdit::insertFromMimeData(const QMimeData *source)
-{
-    QStringList list = getURL(source->text());
-
-    if(list.isEmpty()){
-        return;
-    }
-
-    foreach (QString url, list) {
-        if(isImage(url))
-            insertImage(url);
-        else
-            insertTextFile(url);
-    }
+bool MsgTextEdit::canInsertFromMimeData(const QMimeData *source) const {
+  return QTextEdit::canInsertFromMimeData(source);
 }
 
-bool MsgTextEdit::isImage(const QString &path)
-{
-    QStringList formatList = imageFormat.split(',');
+void MsgTextEdit::insertFromMimeData(const QMimeData *source) {
+  QStringList list = getURL(source->text());
 
-    /* check file info, check file suffix */
-    QFileInfo file(path);
+  if (list.isEmpty()) {
+    return;
+  }
 
-    /*file is not even exist*/
-    if(!file.exists()){
-        qDebug() << "file is not even exist!";
-        return false;
-    }
-
-    /*check suffix contains or not*/
-    return formatList.contains(file.suffix(), Qt::CaseInsensitive);
+  foreach (QString url, list) {
+    if (isImage(url))
+      insertImage(url);
+    else
+      insertTextFile(url);
+  }
 }
 
-void MsgTextEdit::insertImage(const QString &url)
-{
-    QImage image(url);
+bool MsgTextEdit::isImage(const QString &path) {
+  QStringList formatList = imageFormat.split(',');
 
-    /*scale ratio*/
-    if(image.width() > PICTURE_WIDTH || image.height() > PICTURE_HEIGHT){
-        if(image.width() > image.height())
-            image = image.scaledToWidth(PICTURE_WIDTH, Qt::SmoothTransformation);
-        else
-            image = image.scaledToHeight(PICTURE_HEIGHT, Qt::SmoothTransformation);
-    }
+  /* check file info, check file suffix */
+  QFileInfo file(path);
 
-    QTextCursor cursor = this->textCursor();
-    cursor.insertImage(image, url);
+  /*file is not even exist*/
+  if (!file.exists()) {
+    qDebug() << "file is not even exist!";
+    return false;
+  }
 
-    MsgInfo info = {
-        MsgType::IMAGE,
-        url,
-        QPixmap::fromImage(image)
-    };
-
-    m_temporary_list.append(std::move(info));
+  /*check suffix contains or not*/
+  return formatList.contains(file.suffix(), Qt::CaseInsensitive);
 }
 
-void MsgTextEdit::insertTextFile(const QString &path)
-{
-    /*load file*/
-    QFileInfo file(path);
+void MsgTextEdit::insertImage(const QString &url) {
+  QImage image(url);
 
-    /*file is not even exist*/
-    if(!file.exists()){
-        QMessageBox::information(this, "Error" ,"File is not exist!");
-        qDebug() << "file is not even exist!";
-        return;
-    }
+  /*scale ratio*/
+  if (image.width() > PICTURE_WIDTH || image.height() > PICTURE_HEIGHT) {
+    if (image.width() > image.height())
+      image = image.scaledToWidth(PICTURE_WIDTH, Qt::SmoothTransformation);
+    else
+      image = image.scaledToHeight(PICTURE_HEIGHT, Qt::SmoothTransformation);
+  }
 
-    if(!file.isDir()){
-        QMessageBox::information(this, "Error" ,"you are selecting a directory!");
-        qDebug() << "you are selecting a directory!";
-        return;
-    }
+  QTextCursor cursor = this->textCursor();
+  cursor.insertImage(image, url);
 
-    /*file size over 100MB*/
-    if(file.size() > 100 * 1024 * 1024){
-        QMessageBox::information(this, "Error" ,"file size over 100M!");
-        qDebug() << "file size over 100M!";
-        return;
-    }
+  MsgInfo info = {MsgType::IMAGE, url, QPixmap::fromImage(image)};
 
-
-    QPixmap picture = getFileIconPixmap(path);
-    QTextCursor cursor = this->textCursor();
-    cursor.insertImage(picture.toImage(), path);
-
-    MsgInfo info = {
-        MsgType::FILE,
-        path,
-        picture
-    };
-
-    m_temporary_list.append(std::move(info));
+  m_temporary_list.append(std::move(info));
 }
 
-void MsgTextEdit::insertMultiItems(const QStringList &lists)
-{
-    if(lists.empty()){
-        return;
-    }
-    foreach(QString url, lists){
-        if(isImage(url))
-            insertImage(url);
-        else
-            insertTextFile(url);
-    }
+void MsgTextEdit::insertTextFile(const QString &path) {
+  /*load file*/
+  QFileInfo file(path);
+
+  /*file is not even exist*/
+  if (!file.exists()) {
+    QMessageBox::information(this, "Error", "File is not exist!");
+    qDebug() << "file is not even exist!";
+    return;
+  }
+
+  if (!file.isDir()) {
+    QMessageBox::information(this, "Error", "you are selecting a directory!");
+    qDebug() << "you are selecting a directory!";
+    return;
+  }
+
+  /*file size over 100MB*/
+  if (file.size() > 100 * 1024 * 1024) {
+    QMessageBox::information(this, "Error", "file size over 100M!");
+    qDebug() << "file size over 100M!";
+    return;
+  }
+
+  QPixmap picture = getFileIconPixmap(path);
+  QTextCursor cursor = this->textCursor();
+  cursor.insertImage(picture.toImage(), path);
+
+  MsgInfo info = {MsgType::FILE, path, picture};
+
+  m_temporary_list.append(std::move(info));
 }
 
-void MsgTextEdit::insertMsgList(MsgInfo &&info)
-{
-    m_processed_list.append(std::move(info));
+void MsgTextEdit::insertMultiItems(const QStringList &lists) {
+  if (lists.empty()) {
+    return;
+  }
+  foreach (QString url, lists) {
+    if (isImage(url))
+      insertImage(url);
+    else
+      insertTextFile(url);
+  }
+}
+
+void MsgTextEdit::insertMsgList(MsgInfo &&info) {
+  m_processed_list.append(std::move(info));
 }
