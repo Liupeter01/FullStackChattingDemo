@@ -127,7 +127,7 @@
              <number>0</number>
             </property>
             <property name="topMargin">
-             <number>0</number>
+             <number>5</number>
             </property>
             <property name="rightMargin">
              <number>0</number>
@@ -153,11 +153,20 @@
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <property name="leftMargin">
           <number>5</number>
          </property>
          <property name="topMargin">
           <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
          </property>
          <item>
           <widget class="ClickableQLabel" name="emo_label">
@@ -254,7 +263,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEdit"/>
+          <widget class="MsgTextEdit" name="user_input"/>
          </item>
         </layout>
        </widget>
@@ -390,6 +399,11 @@
    <class>ChattingRecordView</class>
    <extends>QListWidget</extends>
    <header location="global">chattingrecordview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MsgTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>msgtextedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
