@@ -14,7 +14,10 @@ public:
   explicit ChattingStackPage(QWidget *parent = nullptr);
   ~ChattingStackPage();
 
-private:
+private slots:
+  void on_send_message_clicked();
+
+  private:
   Ui::ChattingStackPage *ui;
 };
 
