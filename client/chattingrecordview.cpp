@@ -63,11 +63,11 @@ bool ChattingRecordView::eventFilter(QObject *object, QEvent *event)
     if(object == this->viewport()){
         if(event->type() == QEvent::Enter){
             /*mouse hover&enter then show the scroll bar*/
-            this->verticalScrollBar()->setHidden(!this->verticalScrollBar()->maximum());
+            this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         }
         else if(event->type() == QEvent::Leave){
             /*mouse leave then hide the scroll bar*/
-            this->verticalScrollBar()->setHidden(true);
+            this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         }
     }
 
