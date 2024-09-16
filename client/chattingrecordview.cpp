@@ -1,6 +1,6 @@
 #include "chattingrecordview.h"
 #include <QScrollBar>
-#include <QHBoxLayout>
+#include <QStyleOption>
 #include <QListWidgetItem>
 
 ChattingRecordView::ChattingRecordView(QWidget *parent)
@@ -30,7 +30,7 @@ void ChattingRecordView::registerSignal()
 
 void ChattingRecordView::pushBackItem(QWidget *item)
 {
-     randomInsertItem(this->count() - 1, item);
+    randomInsertItem(this->count(), item);
 }
 
 void ChattingRecordView::pushFrontItem(QWidget *item)
@@ -41,7 +41,7 @@ void ChattingRecordView::pushFrontItem(QWidget *item)
 void ChattingRecordView::randomInsertItem(int pos, QWidget *item)
 {
     /*invalid pos number*/
-    if(pos < 0 || pos > this->count() - 1){
+    if(pos < 0 || pos > this->count()){
         return;
     }
 
@@ -53,6 +53,9 @@ void ChattingRecordView::randomInsertItem(int pos, QWidget *item)
     this->insertItem(pos, inserted_item);
     this->setItemWidget(inserted_item, item);
     this->update();
+
+    /*we need to add more content and extend scroll bar!*/
+    m_newdataarrived = true;
 }
 
 bool ChattingRecordView::eventFilter(QObject *object, QEvent *event)
@@ -60,11 +63,11 @@ bool ChattingRecordView::eventFilter(QObject *object, QEvent *event)
     if(object == this->viewport()){
         if(event->type() == QEvent::Enter){
             /*mouse hover&enter then show the scroll bar*/
-            this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+            this->verticalScrollBar()->setHidden(!this->verticalScrollBar()->maximum());
         }
         else if(event->type() == QEvent::Leave){
             /*mouse leave then hide the scroll bar*/
-            this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            this->verticalScrollBar()->setHidden(true);
         }
     }
 
