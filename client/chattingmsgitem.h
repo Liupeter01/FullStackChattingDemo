@@ -29,6 +29,9 @@ public:
 signals:
 
 private:
+    void addStyleSheet();
+
+private:
   QFont m_font;
   ChattingRole m_role;
   QLabel *m_nameLabel; /*display name*/

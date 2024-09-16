@@ -7,7 +7,7 @@ ChattingMsgItem::ChattingMsgItem(ChattingRole role, QWidget *parent)
                                QSizePolicy::Minimum)),
       m_bubble(new QWidget) {
   m_font.setPointSize(10);
-  m_nameLabel->setObjectName("username");
+  m_nameLabel->setObjectName("msg_item_username");
   m_nameLabel->setFont(m_font);
   m_nameLabel->setFixedHeight(20);
 
@@ -91,4 +91,11 @@ void ChattingMsgItem::setupBubbleWidget(QWidget *bubble) {
     delete m_bubble;
   }
   m_bubble = bubble;
+}
+
+void ChattingMsgItem::addStyleSheet() {
+    /*setup style sheet for username display*/
+    m_nameLabel->setStyleSheet(
+        "#msg_item_username{color:black;font-size:14px;font-family: \"Microsoft YaHei\""
+    );
 }
