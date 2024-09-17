@@ -30,7 +30,7 @@ protected:
   /*mouse leave*/
   virtual void leaveEvent(QEvent *event) override;
 
-private:
+protected:
   LabelState m_state;
 };
 
