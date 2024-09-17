@@ -20,7 +20,6 @@ public:
 
   /*insert randomly*/
   void randomInsertItem(int pos, QWidget *item);
-  ;
 
   static constexpr std::size_t max_size = 16777215;
 

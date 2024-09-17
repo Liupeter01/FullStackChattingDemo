@@ -94,8 +94,7 @@ void ChattingMsgItem::setupBubbleWidget(QWidget *bubble) {
 }
 
 void ChattingMsgItem::addStyleSheet() {
-    /*setup style sheet for username display*/
-    m_nameLabel->setStyleSheet(
-        "#msg_item_username{color:black;font-size:14px;font-family: \"Microsoft YaHei\""
-    );
+  /*setup style sheet for username display*/
+  m_nameLabel->setStyleSheet("#msg_item_username{color:black;font-size:14px;"
+                             "font-family: \"Microsoft YaHei\"");
 }

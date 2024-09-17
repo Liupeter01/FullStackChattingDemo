@@ -32,7 +32,6 @@ private:
   /*register handler for Contact list*/
   void updateMyContact();
 
-
 private slots:
   void slot_load_more_record();
 

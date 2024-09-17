@@ -1,16 +1,16 @@
 #include "chattingdlgmainframe.h"
+#include "loadingwaitdialog.h"
 #include "tools.h"
 #include "ui_chattingdlgmainframe.h"
 #include <QAction>
 #include <QFile>
 #include <QRandomGenerator>
 #include <listitemwidget.h>
-#include "loadingwaitdialog.h"
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
-    : QDialog(parent)
-    , ui(new Ui::ChattingDlgMainFrame)
-    , m_dlgMode(ChattingDlgMode::ChattingDlgChattingMode) /*chatting mode by default*/
+    : QDialog(parent), ui(new Ui::ChattingDlgMainFrame),
+      m_dlgMode(
+          ChattingDlgMode::ChattingDlgChattingMode) /*chatting mode by default*/
 {
   ui->setupUi(this);
 
@@ -27,7 +27,7 @@ ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
   ui->search_user_edit->setMaxLength(20);
 
   /*set show list to hidden status*/
-  //ui->show_lists->setHidden(true);
+  // ui->show_lists->setHidden(true);
   addItemToShowLists();
 
   /*load qicon for chatting main frame*/
@@ -38,13 +38,12 @@ ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
   Tools::setPushButtonIcon(ui->search_user_button, "add_friend_normal.png");
 
   /*load qimage for side bar*/
-  Tools::loadImgResources(
-      {"chat_icon_normal.png", "chat_icon_hover.png",
-          "chat_icon_clicked.png", "contact_list_normal.png",
-          "contact_list_hover.png", "contact_list_clicked.png"
-      },
-      (ui->my_chat->width() + ui->my_chat->width()) / 2,
-      (ui->my_chat->height() + ui->my_chat->height()) / 2);
+  Tools::loadImgResources({"chat_icon_normal.png", "chat_icon_hover.png",
+                           "chat_icon_clicked.png", "contact_list_normal.png",
+                           "contact_list_hover.png",
+                           "contact_list_clicked.png"},
+                          (ui->my_chat->width() + ui->my_chat->width()) / 2,
+                          (ui->my_chat->height() + ui->my_chat->height()) / 2);
 
   Tools::setQLableImage(ui->my_chat, "chat_icon_normal.png");
   Tools::setQLableImage(ui->my_contact, "contact_list_normal.png");
@@ -55,11 +54,15 @@ void ChattingDlgMainFrame::registerSignal() {
           &ChattingDlgMainFrame::updateSearchUserButton);
   connect(ui->search_user_button, &ButtonDisplaySwitching::update_display, this,
           &ChattingDlgMainFrame::updateSearchUserButton);
-  connect(ui->my_chat, &SideBarWidget::clicked, this, &ChattingDlgMainFrame::updateMyChat);
-  connect(ui->my_chat, &SideBarWidget::update_display, this, &ChattingDlgMainFrame::updateMyChat);
+  connect(ui->my_chat, &SideBarWidget::clicked, this,
+          &ChattingDlgMainFrame::updateMyChat);
+  connect(ui->my_chat, &SideBarWidget::update_display, this,
+          &ChattingDlgMainFrame::updateMyChat);
 
-  connect(ui->my_contact, &SideBarWidget::clicked, this, &ChattingDlgMainFrame::updateMyContact);
-  connect(ui->my_contact, &SideBarWidget::update_display, this, &ChattingDlgMainFrame::updateMyContact);
+  connect(ui->my_contact, &SideBarWidget::clicked, this,
+          &ChattingDlgMainFrame::updateMyContact);
+  connect(ui->my_contact, &SideBarWidget::update_display, this,
+          &ChattingDlgMainFrame::updateMyContact);
 
   connect(ui->show_lists, &MainFrameShowLists::signal_load_more_record, this,
           &ChattingDlgMainFrame::slot_load_more_record);
@@ -139,57 +142,56 @@ void ChattingDlgMainFrame::updateSearchUserButton() {
   }
 }
 
-void ChattingDlgMainFrame::updateMyChat()
-{
-    auto state = ui->my_chat->getState();
-    if (state.visiable == LabelState::VisiableStatus::ENABLED) {
-        setCursor(Qt::PointingHandCursor);
-        Tools::setQLableImage(ui->my_chat, "chat_icon_clicked.png");
-    } else {
-        Tools::setQLableImage(ui->my_chat,
-                              state.hover == LabelState::HoverStatus::DISABLED
-                                  ? "chat_icon_normal.png" : "chat_icon_hover.png");
+void ChattingDlgMainFrame::updateMyChat() {
+  auto state = ui->my_chat->getState();
+  if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+    setCursor(Qt::PointingHandCursor);
+    Tools::setQLableImage(ui->my_chat, "chat_icon_clicked.png");
+  } else {
+    Tools::setQLableImage(ui->my_chat,
+                          state.hover == LabelState::HoverStatus::DISABLED
+                              ? "chat_icon_normal.png"
+                              : "chat_icon_hover.png");
 
-        if (state.hover == LabelState::HoverStatus::ENABLED) {
-            setCursor(Qt::PointingHandCursor);
-        } else {
-            unsetCursor();
-        }
+    if (state.hover == LabelState::HoverStatus::ENABLED) {
+      setCursor(Qt::PointingHandCursor);
+    } else {
+      unsetCursor();
     }
+  }
 }
 
-void ChattingDlgMainFrame::updateMyContact()
-{
-    auto state = ui->my_contact->getState();
-    if (state.visiable == LabelState::VisiableStatus::ENABLED) {
-        setCursor(Qt::PointingHandCursor);
-        Tools::setQLableImage(ui->my_contact, "contact_list_clicked.png");
-    } else {
-        Tools::setQLableImage(ui->my_contact,
-            state.hover == LabelState::HoverStatus::DISABLED
-                ? "contact_list_normal.png" : "contact_list_hover.png");
+void ChattingDlgMainFrame::updateMyContact() {
+  auto state = ui->my_contact->getState();
+  if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+    setCursor(Qt::PointingHandCursor);
+    Tools::setQLableImage(ui->my_contact, "contact_list_clicked.png");
+  } else {
+    Tools::setQLableImage(ui->my_contact,
+                          state.hover == LabelState::HoverStatus::DISABLED
+                              ? "contact_list_normal.png"
+                              : "contact_list_hover.png");
 
-        if (state.hover == LabelState::HoverStatus::ENABLED) {
-            setCursor(Qt::PointingHandCursor);
-        } else {
-            unsetCursor();
-        }
+    if (state.hover == LabelState::HoverStatus::ENABLED) {
+      setCursor(Qt::PointingHandCursor);
+    } else {
+      unsetCursor();
     }
+  }
 }
 
-void ChattingDlgMainFrame::slot_load_more_record()
-{
-    LoadingWaitDialog*loadingInf(new LoadingWaitDialog(this));
+void ChattingDlgMainFrame::slot_load_more_record() {
+  LoadingWaitDialog *loadingInf(new LoadingWaitDialog(this));
 
-    /*do not block the execute flow*/
-    loadingInf->setModal(true);
-    loadingInf->show();
+  /*do not block the execute flow*/
+  loadingInf->setModal(true);
+  loadingInf->show();
 
-    /*load more data to the list*/
-    qDebug() << "load more data to the list";
-    addItemToShowLists();
+  /*load more data to the list*/
+  qDebug() << "load more data to the list";
+  addItemToShowLists();
 
-    loadingInf->deleteLater();
+  loadingInf->deleteLater();
 }
 
 ChattingDlgMainFrame::~ChattingDlgMainFrame() {
@@ -198,18 +200,19 @@ ChattingDlgMainFrame::~ChattingDlgMainFrame() {
   delete ui;
 }
 
-void ChattingDlgMainFrame::addItemToShowLists()
-{
-    for(std::size_t i = 0 ; i < 40 ; ++i){
-         auto random = QRandomGenerator::global()->bounded(10000);
-        ListItemWidget* new_inserted(new ListItemWidget());
-        new_inserted->setItemDisplay(QString::number(random),QT_DEMO_HOME "/res/microsoft.png",QString::number(random));
+void ChattingDlgMainFrame::addItemToShowLists() {
+  for (std::size_t i = 0; i < 40; ++i) {
+    auto random = QRandomGenerator::global()->bounded(10000);
+    ListItemWidget *new_inserted(new ListItemWidget());
+    new_inserted->setItemDisplay(QString::number(random),
+                                 QT_DEMO_HOME "/res/microsoft.png",
+                                 QString::number(random));
 
-        QListWidgetItem* item(new QListWidgetItem);
-        item->setSizeHint(new_inserted->sizeHint());
+    QListWidgetItem *item(new QListWidgetItem);
+    item->setSizeHint(new_inserted->sizeHint());
 
-        ui->show_lists->addItem(item);
-        ui->show_lists->setItemWidget(item, new_inserted);
-        ui->show_lists->update();
-    }
+    ui->show_lists->addItem(item);
+    ui->show_lists->setItemWidget(item, new_inserted);
+    ui->show_lists->update();
+  }
 }

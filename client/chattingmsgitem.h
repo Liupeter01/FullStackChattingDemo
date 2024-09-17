@@ -26,10 +26,8 @@ public:
   static constexpr std::size_t icon_width = 45;
   static constexpr std::size_t icon_height = 45;
 
-signals:
-
 private:
-    void addStyleSheet();
+  void addStyleSheet();
 
 private:
   QFont m_font;

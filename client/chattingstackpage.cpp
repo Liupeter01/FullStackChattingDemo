@@ -12,15 +12,13 @@ ChattingStackPage::ChattingStackPage(QWidget *parent)
 ChattingStackPage::~ChattingStackPage() { delete ui; }
 
 void ChattingStackPage::on_send_message_clicked() {
-  //ChattingRole role = ChattingRole::Sender;
+  // ChattingRole role = ChattingRole::Sender;
   QString recv_name = "Bob";
   QString send_name = "Alex";
   QString recv_icon = QT_DEMO_HOME "/res/recv.png";
   QString send_icon = QT_DEMO_HOME "/res/send.png";
 
   const QVector<MsgInfo> &list = ui->user_input->getMsgList();
-
-
 
   for (std::size_t index = 0; index < list.size(); ++index) {
     /*currently, we are the msssage sender*/
@@ -47,7 +45,8 @@ void ChattingStackPage::on_send_message_clicked() {
     } else if (info.type == MsgType::FILE) {
     }
 
-    bubble_recv = new TextMsgBubble(ChattingRole::Receiver, QString("recv success!"));
+    bubble_recv =
+        new TextMsgBubble(ChattingRole::Receiver, QString("recv success!"));
 
     if (bubble_send != nullptr && bubble_recv != nullptr) {
       item_sender->setupBubbleWidget(bubble_send);
