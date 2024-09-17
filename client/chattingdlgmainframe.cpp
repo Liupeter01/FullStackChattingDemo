@@ -36,6 +36,18 @@ ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
 
   /*set default button icon*/
   Tools::setPushButtonIcon(ui->search_user_button, "add_friend_normal.png");
+
+  /*load qimage for side bar*/
+  Tools::loadImgResources(
+      {"chat_icon_normal.png", "chat_icon_hover.png",
+          "chat_icon_clicked.png", "contact_list_normal.png",
+          "contact_list_hover.png", "contact_list_clicked.png"
+      },
+      (ui->my_chat->width() + ui->my_chat->width()) / 2,
+      (ui->my_chat->height() + ui->my_chat->height()) / 2);
+
+  Tools::setQLableImage(ui->my_chat, "chat_icon_normal.png");
+  Tools::setQLableImage(ui->my_contact, "contact_list_normal.png");
 }
 
 void ChattingDlgMainFrame::registerSignal() {
@@ -43,6 +55,12 @@ void ChattingDlgMainFrame::registerSignal() {
           &ChattingDlgMainFrame::updateSearchUserButton);
   connect(ui->search_user_button, &ButtonDisplaySwitching::update_display, this,
           &ChattingDlgMainFrame::updateSearchUserButton);
+  connect(ui->my_chat, &SideBarWidget::clicked, this, &ChattingDlgMainFrame::updateMyChat);
+  connect(ui->my_chat, &SideBarWidget::update_display, this, &ChattingDlgMainFrame::updateMyChat);
+
+  connect(ui->my_contact, &SideBarWidget::clicked, this, &ChattingDlgMainFrame::updateMyContact);
+  connect(ui->my_contact, &SideBarWidget::update_display, this, &ChattingDlgMainFrame::updateMyContact);
+
   connect(ui->show_lists, &MainFrameShowLists::signal_load_more_record, this,
           &ChattingDlgMainFrame::slot_load_more_record);
 }
@@ -119,6 +137,44 @@ void ChattingDlgMainFrame::updateSearchUserButton() {
       unsetCursor();
     }
   }
+}
+
+void ChattingDlgMainFrame::updateMyChat()
+{
+    auto state = ui->my_chat->getState();
+    if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+        setCursor(Qt::PointingHandCursor);
+        Tools::setQLableImage(ui->my_chat, "chat_icon_clicked.png");
+    } else {
+        Tools::setQLableImage(ui->my_chat,
+                              state.hover == LabelState::HoverStatus::DISABLED
+                                  ? "chat_icon_normal.png" : "chat_icon_hover.png");
+
+        if (state.hover == LabelState::HoverStatus::ENABLED) {
+            setCursor(Qt::PointingHandCursor);
+        } else {
+            unsetCursor();
+        }
+    }
+}
+
+void ChattingDlgMainFrame::updateMyContact()
+{
+    auto state = ui->my_contact->getState();
+    if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+        setCursor(Qt::PointingHandCursor);
+        Tools::setQLableImage(ui->my_contact, "contact_list_clicked.png");
+    } else {
+        Tools::setQLableImage(ui->my_contact,
+            state.hover == LabelState::HoverStatus::DISABLED
+                ? "contact_list_normal.png" : "contact_list_hover.png");
+
+        if (state.hover == LabelState::HoverStatus::ENABLED) {
+            setCursor(Qt::PointingHandCursor);
+        } else {
+            unsetCursor();
+        }
+    }
 }
 
 void ChattingDlgMainFrame::slot_load_more_record()
