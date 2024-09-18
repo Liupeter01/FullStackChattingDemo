@@ -9,7 +9,8 @@
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
     : QDialog(parent), ui(new Ui::ChattingDlgMainFrame),
-      m_dlgMode(
+    m_curQLabel(nullptr)
+    ,m_dlgMode(
           ChattingDlgMode::ChattingDlgChattingMode) /*chatting mode by default*/
 {
   ui->setupUi(this);
@@ -47,6 +48,10 @@ ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
 
   Tools::setQLableImage(ui->my_chat, "chat_icon_normal.png");
   Tools::setQLableImage(ui->my_contact, "contact_list_normal.png");
+
+  /*add label to global control*/
+  addLabel(ui->my_chat);
+  addLabel(ui->my_contact);
 }
 
 void ChattingDlgMainFrame::registerSignal() {
@@ -145,6 +150,9 @@ void ChattingDlgMainFrame::updateSearchUserButton() {
 void ChattingDlgMainFrame::updateMyChat() {
   auto state = ui->my_chat->getState();
   if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+
+    resetAllLabels(ui->my_chat);
+
     setCursor(Qt::PointingHandCursor);
     Tools::setQLableImage(ui->my_chat, "chat_icon_clicked.png");
   } else {
@@ -164,6 +172,9 @@ void ChattingDlgMainFrame::updateMyChat() {
 void ChattingDlgMainFrame::updateMyContact() {
   auto state = ui->my_contact->getState();
   if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+
+    resetAllLabels(ui->my_contact);
+
     setCursor(Qt::PointingHandCursor);
     Tools::setQLableImage(ui->my_contact, "contact_list_clicked.png");
   } else {
@@ -178,6 +189,32 @@ void ChattingDlgMainFrame::updateMyContact() {
       unsetCursor();
     }
   }
+}
+
+void ChattingDlgMainFrame::addLabel(SideBarWidget *widget)
+{
+    m_qlabelSet.push_back(std::shared_ptr<SideBarWidget>(widget,
+        [](SideBarWidget *widget){}));
+}
+
+void ChattingDlgMainFrame::resetAllLabels(SideBarWidget *new_widget)
+{
+    if(m_curQLabel == nullptr){
+        m_curQLabel = new_widget;
+        return;
+    }
+    /*user push the same button*/
+    if(m_curQLabel == new_widget){
+        return;
+    }
+    for(auto &label: m_qlabelSet){
+        /*do not clear new_widget's status*/
+        if(label.get() != new_widget){
+            label->clearState();
+        }
+    }
+
+    m_curQLabel = new_widget;
 }
 
 void ChattingDlgMainFrame::slot_load_more_record() {
