@@ -3,9 +3,9 @@
 
 #include <QDialog>
 #include <QIcon>
+#include <QLabel>
 #include <QVector>
 #include <memory>
-#include <QLabel>
 
 class SideBarWidget;
 
@@ -38,9 +38,8 @@ private:
   void updateMyContact();
 
   /*delegate sidebar widget*/
-  void addLabel(SideBarWidget* widget);
-  void resetAllLabels(SideBarWidget*new_widget);
-
+  void addLabel(SideBarWidget *widget);
+  void resetAllLabels(SideBarWidget *new_widget);
 
 private slots:
   void slot_load_more_record();
@@ -56,7 +55,7 @@ private:
   QVector<std::shared_ptr<SideBarWidget>> m_qlabelSet;
 
   /*cur qlabel*/
-  SideBarWidget* m_curQLabel;
+  SideBarWidget *m_curQLabel;
 
   enum class ChattingDlgMode {
     ChattingDlgChattingMode, // show multiple user chatting dialog

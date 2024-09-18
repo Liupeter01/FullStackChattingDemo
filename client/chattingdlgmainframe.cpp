@@ -8,9 +8,8 @@
 #include <listitemwidget.h>
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
-    : QDialog(parent), ui(new Ui::ChattingDlgMainFrame),
-    m_curQLabel(nullptr)
-    ,m_dlgMode(
+    : QDialog(parent), ui(new Ui::ChattingDlgMainFrame), m_curQLabel(nullptr),
+      m_dlgMode(
           ChattingDlgMode::ChattingDlgChattingMode) /*chatting mode by default*/
 {
   ui->setupUi(this);
@@ -191,30 +190,28 @@ void ChattingDlgMainFrame::updateMyContact() {
   }
 }
 
-void ChattingDlgMainFrame::addLabel(SideBarWidget *widget)
-{
-    m_qlabelSet.push_back(std::shared_ptr<SideBarWidget>(widget,
-        [](SideBarWidget *widget){}));
+void ChattingDlgMainFrame::addLabel(SideBarWidget *widget) {
+  m_qlabelSet.push_back(
+      std::shared_ptr<SideBarWidget>(widget, [](SideBarWidget *widget) {}));
 }
 
-void ChattingDlgMainFrame::resetAllLabels(SideBarWidget *new_widget)
-{
-    if(m_curQLabel == nullptr){
-        m_curQLabel = new_widget;
-        return;
-    }
-    /*user push the same button*/
-    if(m_curQLabel == new_widget){
-        return;
-    }
-    for(auto &label: m_qlabelSet){
-        /*do not clear new_widget's status*/
-        if(label.get() != new_widget){
-            label->clearState();
-        }
-    }
-
+void ChattingDlgMainFrame::resetAllLabels(SideBarWidget *new_widget) {
+  if (m_curQLabel == nullptr) {
     m_curQLabel = new_widget;
+    return;
+  }
+  /*user push the same button*/
+  if (m_curQLabel == new_widget) {
+    return;
+  }
+  for (auto &label : m_qlabelSet) {
+    /*do not clear new_widget's status*/
+    if (label.get() != new_widget) {
+      label->clearState();
+    }
+  }
+
+  m_curQLabel = new_widget;
 }
 
 void ChattingDlgMainFrame::slot_load_more_record() {
