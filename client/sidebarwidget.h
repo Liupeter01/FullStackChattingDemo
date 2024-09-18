@@ -11,8 +11,13 @@ public:
   explicit SideBarWidget(QWidget *parent = nullptr);
   ~SideBarWidget();
 
+public:
+  /*clear LabelState*/
+  void clearState();
+
 protected:
-  // void paintEvent(QPaintEvent *) override;
+  /*we have to maintain the display*/
+  virtual void mousePressEvent(QMouseEvent *event) override;
 
 private:
   /*create a red point to indicate new msg/invite arrived*/

@@ -8,6 +8,18 @@ SideBarWidget::SideBarWidget(QWidget *parent)
 
 SideBarWidget::~SideBarWidget() {}
 
+void SideBarWidget::clearState()
+{
+    m_state.hover = LabelState::HoverStatus::DISABLED;
+    m_state.visiable = LabelState::VisiableStatus::DISABLED;
+    emit update_display();
+}
+
+void SideBarWidget::mousePressEvent(QMouseEvent *event)
+{
+  QLabel::mousePressEvent(event);
+}
+
 void SideBarWidget::createMsgNoticeIns() {
   this->m_newMsg->setObjectName("new_arriving_msg");
   this->m_newMsg->setAlignment(Qt::AlignCenter);
