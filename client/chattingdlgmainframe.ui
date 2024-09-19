@@ -174,7 +174,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="contact_area" native="true">
+    <widget class="QWidget" name="list_area" native="true">
      <property name="minimumSize">
       <size>
        <width>250</width>
@@ -321,7 +321,7 @@
       </item>
       <item>
        <widget class="QWidget" name="widget_3" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
          <property name="spacing">
           <number>0</number>
          </property>
@@ -338,7 +338,13 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="MainFrameShowLists" name="show_lists"/>
+          <widget class="MainFrameShowLists" name="search_list"/>
+         </item>
+         <item>
+          <widget class="MainFrameShowLists" name="contact_list"/>
+         </item>
+         <item>
+          <widget class="MainFrameShowLists" name="chat_list"/>
          </item>
         </layout>
        </widget>
