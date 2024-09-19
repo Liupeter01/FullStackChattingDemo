@@ -31,6 +31,9 @@ private:
   void registerSearchEditSignal();
   void updateSearchUserButton();
 
+  /*windows switcher(accroding to m_dlgMode)*/
+  void switchRelevantListWidget();
+
   /*register handler for chatting*/
   void updateMyChat();
 
@@ -42,7 +45,14 @@ private:
   void resetAllLabels(SideBarWidget *new_widget);
 
 private slots:
+  /*search text changed*/
+  void slot_search_text_changed();
+
   void slot_load_more_record();
+
+  /*when side bar button activated, then display relevant info on show_list*/
+  void slot_display_chat_list();
+  void slot_display_contact_list();
 
 private:
   /*reserve for search line edit*/
@@ -59,7 +69,8 @@ private:
 
   enum class ChattingDlgMode {
     ChattingDlgChattingMode, // show multiple user chatting dialog
-    ChattingDlgSearchingMode // allow user to add new/search exists friend
+    ChattingDlgSearchingMode,// allow user to search
+    chattingDlgContactMode   // show contacts
   } m_dlgMode;
 };
 
