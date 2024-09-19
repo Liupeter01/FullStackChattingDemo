@@ -16,8 +16,7 @@ public:
   void clearState();
 
 protected:
-  /*we have to maintain the display*/
-  virtual void mousePressEvent(QMouseEvent *event) override;
+  virtual void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
   /*create a red point to indicate new msg/invite arrived*/

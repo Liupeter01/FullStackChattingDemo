@@ -14,8 +14,9 @@ void SideBarWidget::clearState() {
   emit update_display();
 }
 
-void SideBarWidget::mousePressEvent(QMouseEvent *event) {
-  QLabel::mousePressEvent(event);
+void SideBarWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+  QLabel::mouseReleaseEvent(event);
 }
 
 void SideBarWidget::createMsgNoticeIns() {
