@@ -57,30 +57,32 @@ ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
 }
 
 void ChattingDlgMainFrame::registerSignal() {
-  /*when the text input changed inside search widget, then trigger slot and switch list widget*/
-  connect(ui->search_user_edit, &QLineEdit::textChanged, this, &ChattingDlgMainFrame::slot_search_text_changed);
+  /*when the text input changed inside search widget, then trigger slot and
+   * switch list widget*/
+  connect(ui->search_user_edit, &QLineEdit::textChanged, this,
+          &ChattingDlgMainFrame::slot_search_text_changed);
 
   connect(ui->search_user_button, &ButtonDisplaySwitching::clicked, this,
           &ChattingDlgMainFrame::updateSearchUserButton);
   connect(ui->search_user_button, &ButtonDisplaySwitching::update_display, this,
           &ChattingDlgMainFrame::updateSearchUserButton);
-  connect(ui->my_chat, &SideBarWidget::clicked, this, [this](){
-      /*update UI display*/
-      this->updateMyChat();
+  connect(ui->my_chat, &SideBarWidget::clicked, this, [this]() {
+    /*update UI display*/
+    this->updateMyChat();
 
-      /*when chat button was clicked, then display chat list*/
-      this->slot_display_chat_list();
+    /*when chat button was clicked, then display chat list*/
+    this->slot_display_chat_list();
   });
 
   connect(ui->my_chat, &SideBarWidget::update_display, this,
           &ChattingDlgMainFrame::updateMyChat);
 
-  connect(ui->my_contact, &SideBarWidget::clicked, this, [this](){
-      /*update UI display*/
-      this->updateMyContact();
+  connect(ui->my_contact, &SideBarWidget::clicked, this, [this]() {
+    /*update UI display*/
+    this->updateMyContact();
 
-       /*when contact button was clicked, then display contact list*/
-      this->slot_display_contact_list();
+    /*when contact button was clicked, then display contact list*/
+    this->slot_display_contact_list();
   });
 
   connect(ui->my_contact, &SideBarWidget::update_display, this,
@@ -164,28 +166,27 @@ void ChattingDlgMainFrame::updateSearchUserButton() {
   }
 }
 
-void ChattingDlgMainFrame::switchRelevantListWidget()
-{
-    /*accroding to m_dlgMode mode*/
-    switch (m_dlgMode) {
-    case ChattingDlgMode::ChattingDlgChattingMode:
-        ui->chat_list->show();
-        ui->contact_list->hide();
-        ui->search_list->hide();
-        break;
-    case ChattingDlgMode::chattingDlgContactMode:
-        ui->chat_list->hide();
-        ui->contact_list->show();
-        ui->search_list->hide();
-        break;
-    case ChattingDlgMode::ChattingDlgSearchingMode:
-        ui->chat_list->hide();
-        ui->contact_list->hide();
-        ui->search_list->show();
-        break;
-    default:
-        break;
-    }
+void ChattingDlgMainFrame::switchRelevantListWidget() {
+  /*accroding to m_dlgMode mode*/
+  switch (m_dlgMode) {
+  case ChattingDlgMode::ChattingDlgChattingMode:
+    ui->chat_list->show();
+    ui->contact_list->hide();
+    ui->search_list->hide();
+    break;
+  case ChattingDlgMode::chattingDlgContactMode:
+    ui->chat_list->hide();
+    ui->contact_list->show();
+    ui->search_list->hide();
+    break;
+  case ChattingDlgMode::ChattingDlgSearchingMode:
+    ui->chat_list->hide();
+    ui->contact_list->hide();
+    ui->search_list->show();
+    break;
+  default:
+    break;
+  }
 }
 
 void ChattingDlgMainFrame::updateMyChat() {
@@ -256,15 +257,14 @@ void ChattingDlgMainFrame::resetAllLabels(SideBarWidget *new_widget) {
   m_curQLabel = new_widget;
 }
 
-void ChattingDlgMainFrame::slot_search_text_changed()
-{
-    qDebug() << "Search Text Changed!";
+void ChattingDlgMainFrame::slot_search_text_changed() {
+  qDebug() << "Search Text Changed!";
 
-    /*switch status*/
-    m_dlgMode = ChattingDlgMode::ChattingDlgSearchingMode;
+  /*switch status*/
+  m_dlgMode = ChattingDlgMode::ChattingDlgSearchingMode;
 
-    /*after switch status, then switch window*/
-    switchRelevantListWidget();
+  /*after switch status, then switch window*/
+  switchRelevantListWidget();
 }
 
 void ChattingDlgMainFrame::slot_load_more_record() {
@@ -281,26 +281,24 @@ void ChattingDlgMainFrame::slot_load_more_record() {
   loadingInf->deleteLater();
 }
 
-void ChattingDlgMainFrame::slot_display_chat_list()
-{
-    qDebug() << "Chat Button Clicked!";
+void ChattingDlgMainFrame::slot_display_chat_list() {
+  qDebug() << "Chat Button Clicked!";
 
-    /*switch status*/
-    m_dlgMode = ChattingDlgMode::ChattingDlgChattingMode;
+  /*switch status*/
+  m_dlgMode = ChattingDlgMode::ChattingDlgChattingMode;
 
-    /*after switch status, then switch window*/
-    switchRelevantListWidget();
+  /*after switch status, then switch window*/
+  switchRelevantListWidget();
 }
 
-void ChattingDlgMainFrame::slot_display_contact_list()
-{
-    qDebug() << "Contact Button Clicked!";
+void ChattingDlgMainFrame::slot_display_contact_list() {
+  qDebug() << "Contact Button Clicked!";
 
-    /*switch status*/
-    m_dlgMode = ChattingDlgMode::chattingDlgContactMode;
+  /*switch status*/
+  m_dlgMode = ChattingDlgMode::chattingDlgContactMode;
 
-    /*after switch status, then switch window*/
-    switchRelevantListWidget();
+  /*after switch status, then switch window*/
+  switchRelevantListWidget();
 }
 
 ChattingDlgMainFrame::~ChattingDlgMainFrame() {
@@ -311,7 +309,7 @@ ChattingDlgMainFrame::~ChattingDlgMainFrame() {
 
 void ChattingDlgMainFrame::addItemToShowLists() {
 
-    for (std::size_t i = 0; i < 40; ++i) {
+  for (std::size_t i = 0; i < 40; ++i) {
     auto random = QRandomGenerator::global()->bounded(10000);
     ListItemWidget *new_inserted(new ListItemWidget());
     new_inserted->setItemDisplay(QString::number(random),
@@ -325,5 +323,4 @@ void ChattingDlgMainFrame::addItemToShowLists() {
     ui->chat_list->setItemWidget(item, new_inserted);
     ui->chat_list->update();
   }
-
 }
