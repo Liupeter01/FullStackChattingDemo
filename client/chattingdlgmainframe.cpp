@@ -86,7 +86,7 @@ void ChattingDlgMainFrame::registerSignal() {
   connect(ui->my_contact, &SideBarWidget::update_display, this,
           &ChattingDlgMainFrame::updateMyContact);
 
-  connect(ui->search_list, &MainFrameShowLists::signal_load_more_record, this,
+  connect(ui->chat_list, &MainFrameShowLists::signal_load_more_record, this,
           &ChattingDlgMainFrame::slot_load_more_record);
 }
 
