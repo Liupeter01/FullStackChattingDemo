@@ -338,13 +338,52 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="MainFrameSearchLists" name="search_list"/>
+          <widget class="MainFrameSearchLists" name="search_list">
+           <property name="minimumSize">
+            <size>
+             <width>250</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>250</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
          </item>
          <item>
-          <widget class="MainFrameShowLists" name="contact_list"/>
+          <widget class="MainFrameShowLists" name="contact_list">
+           <property name="minimumSize">
+            <size>
+             <width>250</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>250</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
          </item>
          <item>
-          <widget class="MainFrameShowLists" name="chat_list"/>
+          <widget class="MainFrameShowLists" name="chat_list">
+           <property name="minimumSize">
+            <size>
+             <width>250</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>250</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
