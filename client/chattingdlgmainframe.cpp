@@ -260,6 +260,11 @@ void ChattingDlgMainFrame::resetAllLabels(SideBarWidget *new_widget) {
 void ChattingDlgMainFrame::slot_search_text_changed() {
   qDebug() << "Search Text Changed!";
 
+  /*clean all QLabel state!!*/
+  for (auto &label : m_qlabelSet) {
+    label->clearState();
+  }
+
   /*switch status*/
   m_dlgMode = ChattingDlgMode::ChattingDlgSearchingMode;
 
