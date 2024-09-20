@@ -6,6 +6,8 @@
 #include <QFile>
 #include <QRandomGenerator>
 #include <listitemwidget.h>
+#include <QPoint>
+#include <QMouseEvent>
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
     : QDialog(parent), ui(new Ui::ChattingDlgMainFrame), m_curQLabel(nullptr),
@@ -22,6 +24,11 @@ ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
 
   /*register search edit signal*/
   registerSearchEditSignal();
+
+  /* install event filter
+   * clean text inside search_edit when mouse moving outside the widget area
+   */
+  this->installEventFilter(this);
 
   /*constraint the length of username when client try to search*/
   ui->search_user_edit->setMaxLength(20);
@@ -48,7 +55,8 @@ ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
                           (ui->my_chat->width() + ui->my_chat->width()) / 2,
                           (ui->my_chat->height() + ui->my_chat->height()) / 2);
 
-  Tools::setQLableImage(ui->my_chat, "chat_icon_normal.png");
+  /*set chatting page as default*/
+  Tools::setQLableImage(ui->my_chat, "chat_icon_clicked.png");
   Tools::setQLableImage(ui->my_contact, "contact_list_normal.png");
 
   /*add label to global control*/
@@ -257,6 +265,23 @@ void ChattingDlgMainFrame::resetAllLabels(SideBarWidget *new_widget) {
   m_curQLabel = new_widget;
 }
 
+void ChattingDlgMainFrame::clearSearchByMousePos(QMouseEvent *event)
+{
+    /*current mode has to be SearchingMode*/
+    if(m_dlgMode != ChattingDlgMode::ChattingDlgSearchingMode){
+        return;
+    }
+
+    /*get mouse position inside search list*/
+    auto mousePosGlob = event->globalPosition();
+    auto mouseInsideSearch = ui->search_list->mapFromGlobal(mousePosGlob);
+
+    /*if mouse position OUTSIDE search_list, then clear search edit text*/
+    if(!ui->search_list->rect().contains(mouseInsideSearch.toPoint())){
+        ui->search_user_edit->clear();
+    }
+}
+
 void ChattingDlgMainFrame::slot_search_text_changed() {
   qDebug() << "Search Text Changed!";
 
@@ -328,4 +353,16 @@ void ChattingDlgMainFrame::addItemToShowLists() {
     ui->chat_list->setItemWidget(item, new_inserted);
     ui->chat_list->update();
   }
+}
+
+bool ChattingDlgMainFrame::eventFilter(QObject *object, QEvent *event)
+{
+    /*mouse button press event*/
+    if(event->type() == QEvent::MouseButtonPress){
+        QMouseEvent* mouse(reinterpret_cast<QMouseEvent*>(event));
+
+         /*clear search_edit according to mouse position*/
+        clearSearchByMousePos(mouse);
+    }
+    return QDialog::eventFilter(object, event);
 }
