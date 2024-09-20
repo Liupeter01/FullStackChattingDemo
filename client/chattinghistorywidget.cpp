@@ -13,8 +13,8 @@ ChattingHistoryWidget::ChattingHistoryWidget(QWidget *parent)
 ChattingHistoryWidget::~ChattingHistoryWidget() { delete ui; }
 
 void ChattingHistoryWidget::setItemDisplay(const QString &_username,
-                                    const QString &_avator,
-                                    const QString &_last_message) {
+                                           const QString &_avator,
+                                           const QString &_last_message) {
   m_username = _username;
   m_avatorpath = _avator;
   m_lastmsg = _last_message;
