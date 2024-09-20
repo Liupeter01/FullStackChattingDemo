@@ -68,9 +68,9 @@ private:
   SideBarWidget *m_curQLabel;
 
   enum class ChattingDlgMode {
-    ChattingDlgChattingMode, // show multiple user chatting dialog
-    ChattingDlgSearchingMode,// allow user to search
-    chattingDlgContactMode   // show contacts
+    ChattingDlgChattingMode,  // show multiple user chatting dialog
+    ChattingDlgSearchingMode, // allow user to search
+    chattingDlgContactMode    // show contacts
   } m_dlgMode;
 };
 
