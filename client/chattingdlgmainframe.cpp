@@ -7,7 +7,7 @@
 #include <QMouseEvent>
 #include <QPoint>
 #include <QRandomGenerator>
-#include <listitemwidget.h>
+#include <chattinghistorywidget.h>
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
     : QDialog(parent), ui(new Ui::ChattingDlgMainFrame), m_curQLabel(nullptr),
@@ -340,7 +340,7 @@ void ChattingDlgMainFrame::addItemToShowLists() {
 
   for (std::size_t i = 0; i < 40; ++i) {
     auto random = QRandomGenerator::global()->bounded(10000);
-    ListItemWidget *new_inserted(new ListItemWidget());
+    ChattingHistoryWidget *new_inserted(new ChattingHistoryWidget());
     new_inserted->setItemDisplay(QString::number(random),
                                  QT_DEMO_HOME "/res/microsoft.png",
                                  QString::number(random));
