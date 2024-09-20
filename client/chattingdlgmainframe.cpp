@@ -4,10 +4,10 @@
 #include "ui_chattingdlgmainframe.h"
 #include <QAction>
 #include <QFile>
+#include <QMouseEvent>
+#include <QPoint>
 #include <QRandomGenerator>
 #include <listitemwidget.h>
-#include <QPoint>
-#include <QMouseEvent>
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
     : QDialog(parent), ui(new Ui::ChattingDlgMainFrame), m_curQLabel(nullptr),
@@ -265,21 +265,20 @@ void ChattingDlgMainFrame::resetAllLabels(SideBarWidget *new_widget) {
   m_curQLabel = new_widget;
 }
 
-void ChattingDlgMainFrame::clearSearchByMousePos(QMouseEvent *event)
-{
-    /*current mode has to be SearchingMode*/
-    if(m_dlgMode != ChattingDlgMode::ChattingDlgSearchingMode){
-        return;
-    }
+void ChattingDlgMainFrame::clearSearchByMousePos(QMouseEvent *event) {
+  /*current mode has to be SearchingMode*/
+  if (m_dlgMode != ChattingDlgMode::ChattingDlgSearchingMode) {
+    return;
+  }
 
-    /*get mouse position inside search list*/
-    auto mousePosGlob = event->globalPosition();
-    auto mouseInsideSearch = ui->search_list->mapFromGlobal(mousePosGlob);
+  /*get mouse position inside search list*/
+  auto mousePosGlob = event->globalPosition();
+  auto mouseInsideSearch = ui->search_list->mapFromGlobal(mousePosGlob);
 
-    /*if mouse position OUTSIDE search_list, then clear search edit text*/
-    if(!ui->search_list->rect().contains(mouseInsideSearch.toPoint())){
-        ui->search_user_edit->clear();
-    }
+  /*if mouse position OUTSIDE search_list, then clear search edit text*/
+  if (!ui->search_list->rect().contains(mouseInsideSearch.toPoint())) {
+    ui->search_user_edit->clear();
+  }
 }
 
 void ChattingDlgMainFrame::slot_search_text_changed() {
@@ -355,14 +354,13 @@ void ChattingDlgMainFrame::addItemToShowLists() {
   }
 }
 
-bool ChattingDlgMainFrame::eventFilter(QObject *object, QEvent *event)
-{
-    /*mouse button press event*/
-    if(event->type() == QEvent::MouseButtonPress){
-        QMouseEvent* mouse(reinterpret_cast<QMouseEvent*>(event));
+bool ChattingDlgMainFrame::eventFilter(QObject *object, QEvent *event) {
+  /*mouse button press event*/
+  if (event->type() == QEvent::MouseButtonPress) {
+    QMouseEvent *mouse(reinterpret_cast<QMouseEvent *>(event));
 
-         /*clear search_edit according to mouse position*/
-        clearSearchByMousePos(mouse);
-    }
-    return QDialog::eventFilter(object, event);
+    /*clear search_edit according to mouse position*/
+    clearSearchByMousePos(mouse);
+  }
+  return QDialog::eventFilter(object, event);
 }
