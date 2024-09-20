@@ -12,16 +12,11 @@
         <file>res/close_transparent.png</file>
         <file>res/loading.gif</file>
         <file>res/search.png</file>
-        <file>res/addtip.png</file>
         <file>res/arowdown.png</file>
         <file>res/chat_icon_clicked.png</file>
         <file>res/chat_icon_hover.png</file>
         <file>res/chat_icon_normal.png</file>
-        <file>res/chat_icon_select_hover.png</file>
-        <file>res/chat_icon_select_press.png</file>
-        <file>res/contact_list.png</file>
         <file>res/contact_list_hover.png</file>
-        <file>res/contact_list_press.png</file>
         <file>res/emoj_clicked.png</file>
         <file>res/emoj_hover.png</file>
         <file>res/emoj_normal.png</file>
@@ -36,7 +31,6 @@
         <file>res/msg_chat_press.png</file>
         <file>res/recv.png</file>
         <file>res/red_point.png</file>
-        <file>res/right_tip.png</file>
         <file>res/send.png</file>
         <file>res/tipclose.png</file>
         <file>res/video_chat_hover.png</file>
@@ -45,5 +39,9 @@
         <file>res/voice_chat_hover.png</file>
         <file>res/voice_chat_normal.png</file>
         <file>res/voice_chat_press.png</file>
+        <file>res/add_image.png</file>
+        <file>res/contact_list_clicked.png</file>
+        <file>res/contact_list_normal.png</file>
+        <file>res/proceed_image.png</file>
     </qresource>
 </RCC>
