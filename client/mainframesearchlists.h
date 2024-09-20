@@ -3,32 +3,30 @@
 
 #include "mainframeshowlists.h"
 
-//forward declearation
+// forward declearation
 class QListWidgetItem;
 
-class MainFrameSearchLists : public MainFrameShowLists
-{
-    Q_OBJECT
+class MainFrameSearchLists : public MainFrameShowLists {
+  Q_OBJECT
 
 public:
-    MainFrameSearchLists(QWidget *parent = nullptr);
-    ~MainFrameSearchLists();
+  MainFrameSearchLists(QWidget *parent = nullptr);
+  ~MainFrameSearchLists();
 
 private:
-    void registerSignal();
+  void registerSignal();
 
-    /*add a startup widget inside the list*/
-    void addNewUserWidget();
+  /*add a startup widget inside the list*/
+  void addNewUserWidget();
 
-    /*add style sheet*/
-    void addStyleSheet();
+  /*add style sheet*/
+  void addStyleSheet();
 
 private slots:
-    /*user click the item shown in the ListWidget*/
-    void slot_item_clicked(QListWidgetItem *clicked_item);
+  /*user click the item shown in the ListWidget*/
+  void slot_item_clicked(QListWidgetItem *clicked_item);
 
 private:
-
 };
 
 #endif // MAINFRAMESEARCHLISTS_H
