@@ -74,7 +74,7 @@
 	outline: none;
 }
 
-#chatting_msg, #chatting_record, #user_lists::focus, #chatting_input, #user_input, #widget_3, #show_lists{
+#chatting_msg, #chatting_record, #user_lists::focus, #chatting_input, #user_input, #widget_3{
 	border: none;
 	outline: none;
 }
