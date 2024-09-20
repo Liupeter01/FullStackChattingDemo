@@ -1,17 +1,18 @@
-#include "listitemwidget.h"
+#include "chattinghistorywidget.h"
 #include "tools.h"
-#include "ui_listitemwidget.h"
+#include "ui_chattinghistorywidget.h"
 
-ListItemWidget::ListItemWidget(QWidget *parent)
-    : QWidget(parent), ui(new Ui::ListItemWidget) {
+ChattingHistoryWidget::ChattingHistoryWidget(QWidget *parent)
+    : ListItemWidgetBase(parent), ui(new Ui::ChattingHistoryWidget) {
   ui->setupUi(this);
+
+  /*set item type to chatting history*/
+  this->setItemType(ListItemType::ChattingHistory);
 }
 
-ListItemWidget::~ListItemWidget() { delete ui; }
+ChattingHistoryWidget::~ChattingHistoryWidget() { delete ui; }
 
-QSize ListItemWidget::sizeHint() const { return QSize(width, height); }
-
-void ListItemWidget::setItemDisplay(const QString &_username,
+void ChattingHistoryWidget::setItemDisplay(const QString &_username,
                                     const QString &_avator,
                                     const QString &_last_message) {
   m_username = _username;

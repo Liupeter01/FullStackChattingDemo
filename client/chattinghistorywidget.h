@@ -1,33 +1,27 @@
-#ifndef LISTITEMWIDGET_H
-#define LISTITEMWIDGET_H
+#ifndef CHATTINGHISTORYWIDGET_H
+#define CHATTINGHISTORYWIDGET_H
 
-#endif // LISTITEMWIDGET_H
-
-#include <QWidget>
+#include "listitemwidgetbase.h"
 
 namespace Ui {
-class ListItemWidget;
+class ChattingHistoryWidget;
 }
 
-class ListItemWidget : public QWidget {
+class ChattingHistoryWidget : public ListItemWidgetBase {
   Q_OBJECT
 
 public:
-  ListItemWidget(QWidget *parent = nullptr);
-  ~ListItemWidget();
-
-  virtual QSize sizeHint() const;
+  ChattingHistoryWidget(QWidget *parent = nullptr);
+  ~ChattingHistoryWidget();
 
   void setItemDisplay(const QString &_username, const QString &_avator,
                       const QString &_last_message);
 
-public:
-  static constexpr std::size_t width = 250;
-  static constexpr std::size_t height = 70;
-
 private:
-  Ui::ListItemWidget *ui;
+  Ui::ChattingHistoryWidget *ui;
   QString m_username;
   QString m_avatorpath;
   QString m_lastmsg;
 };
+
+#endif // CHATTINGHISTORYWIDGET_H
