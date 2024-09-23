@@ -40,11 +40,20 @@ void LoginInterface::registerSignal() {
   connect(this->ui->forgot_passwd_label, &ForgotPassword::clicked, this,
           &LoginInterface::slot_forgot_passwd);
 
-  connect(this->ui->passwd_display, &ClickableQLabel::clicked, this, [this]() {
+  connect(this->ui->forgot_passwd_label, &ForgotPassword::update_display, this, [this](){
+      auto state = ui->forgot_passwd_label->getState();
+      if (state.hover == LabelState::HoverStatus::ENABLED) {
+        Tools::setWidgetAttribute(ui->forgot_passwd_label, "forgot password?", true);
+      } else {
+        Tools::setWidgetAttribute(ui->forgot_passwd_label, "forgot password?", false);
+      }
+  });
+
+  connect(this->ui->passwd_display, &MultiClickableQLabel::clicked, this, [this]() {
     handle_clicked();
     handle_hover();
   });
-  connect(this->ui->passwd_display, &ClickableQLabel::update_display, this,
+  connect(this->ui->passwd_display, &MultiClickableQLabel::update_display, this,
           [this]() {
             handle_clicked();
             handle_hover();
@@ -143,7 +152,7 @@ void LoginInterface::slot_login_finished(ServiceType srv_type,
 }
 
 void LoginInterface::handle_clicked() {
-  auto click = [this](ClickableQLabel *label, QLineEdit *edit) {
+  auto click = [this](MultiClickableQLabel *label, QLineEdit *edit) {
     auto state = label->getState();
     if (state.visiable == LabelState::VisiableStatus::ENABLED) {
       edit->setEchoMode(QLineEdit::Normal);
@@ -158,7 +167,7 @@ void LoginInterface::handle_clicked() {
 }
 
 void LoginInterface::handle_hover() {
-  auto hover = [this](ClickableQLabel *label) {
+  auto hover = [this](MultiClickableQLabel *label) {
     auto state = label->getState();
     if (state.hover == LabelState::HoverStatus::ENABLED) {
       Tools::setQLableImage(label, state.visiable
