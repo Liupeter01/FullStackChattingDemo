@@ -101,22 +101,22 @@ void registerinterface::registerEditFinishedEvent() {
         Tools::checkCaptcha(ui->verification_edit, ui->status_label);
   });
 
-  connect(ui->display_passwd, &ClickableQLabel::clicked, this, [this]() {
+  connect(ui->display_passwd, &MultiClickableQLabel::clicked, this, [this]() {
     handle_clicked();
     handle_hover();
   });
 
-  connect(ui->display_confirm, &ClickableQLabel::clicked, this, [this]() {
+  connect(ui->display_confirm, &MultiClickableQLabel::clicked, this, [this]() {
     handle_clicked();
     handle_hover();
   });
 
-  connect(ui->display_passwd, &ClickableQLabel::update_display, this, [this]() {
+  connect(ui->display_passwd, &MultiClickableQLabel::update_display, this, [this]() {
     handle_clicked();
     handle_hover();
   });
 
-  connect(ui->display_confirm, &ClickableQLabel::update_display, this,
+  connect(ui->display_confirm, &MultiClickableQLabel::update_display, this,
           [this]() {
             handle_clicked();
             handle_hover();
@@ -165,7 +165,7 @@ void registerinterface::regisrerCallBackFunctions() {
 }
 
 void registerinterface::handle_clicked() {
-  auto click = [this](ClickableQLabel *label, QLineEdit *edit) {
+  auto click = [this](MultiClickableQLabel *label, QLineEdit *edit) {
     auto state = label->getState();
     if (state.visiable == LabelState::VisiableStatus::ENABLED) {
       edit->setEchoMode(QLineEdit::Normal);
@@ -181,7 +181,7 @@ void registerinterface::handle_clicked() {
 }
 
 void registerinterface::handle_hover() {
-  auto hover = [this](ClickableQLabel *label) {
+  auto hover = [this](MultiClickableQLabel *label) {
     auto state = label->getState();
     if (state.hover == LabelState::HoverStatus::ENABLED) {
       Tools::setQLableImage(label, state.visiable

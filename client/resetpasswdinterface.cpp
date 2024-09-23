@@ -158,22 +158,22 @@ void ResetPasswdInterface::registerEditFinishedEvent() {
         ui->newpasswd_edit, ui->newconfirm_edit, ui->status_label_2);
   });
 
-  connect(ui->newpasswd_show, &ClickableQLabel::clicked, this, [this]() {
+  connect(ui->newpasswd_show, &MultiClickableQLabel::clicked, this, [this]() {
     handle_clicked();
     handle_hover();
   });
 
-  connect(ui->newconfirm_show, &ClickableQLabel::clicked, this, [this]() {
+  connect(ui->newconfirm_show, &MultiClickableQLabel::clicked, this, [this]() {
     handle_clicked();
     handle_hover();
   });
 
-  connect(ui->newpasswd_show, &ClickableQLabel::update_display, this, [this]() {
+  connect(ui->newpasswd_show, &MultiClickableQLabel::update_display, this, [this]() {
     handle_clicked();
     handle_hover();
   });
 
-  connect(ui->newconfirm_show, &ClickableQLabel::update_display, this,
+  connect(ui->newconfirm_show, &MultiClickableQLabel::update_display, this,
           [this]() {
             handle_clicked();
             handle_hover();
@@ -198,7 +198,7 @@ void ResetPasswdInterface::switchResetSuccessfulPage() {
 }
 
 void ResetPasswdInterface::handle_clicked() {
-  auto click = [this](ClickableQLabel *label, QLineEdit *edit) {
+  auto click = [this](MultiClickableQLabel *label, QLineEdit *edit) {
     auto state = label->getState();
     if (state.visiable == LabelState::VisiableStatus::ENABLED) {
       edit->setEchoMode(QLineEdit::Normal);
@@ -214,7 +214,7 @@ void ResetPasswdInterface::handle_clicked() {
 }
 
 void ResetPasswdInterface::handle_hover() {
-  auto hover = [this](ClickableQLabel *label) {
+  auto hover = [this](MultiClickableQLabel *label) {
     auto state = label->getState();
     if (state.hover == LabelState::HoverStatus::ENABLED) {
       Tools::setQLableImage(label, state.visiable
