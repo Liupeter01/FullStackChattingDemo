@@ -225,7 +225,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="MultiClickableQLabel" name="forgot_passwd_label">
+        <widget class="ForgotPassword" name="forgot_passwd_label">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -365,6 +365,11 @@
    <class>MultiClickableQLabel</class>
    <extends>QLabel</extends>
    <header location="global">multiclickableqlabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ForgotPassword</class>
+   <extends>QLabel</extends>
+   <header>forgotpassword.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
