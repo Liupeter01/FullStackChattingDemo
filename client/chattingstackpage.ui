@@ -169,7 +169,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="ClickableQLabel" name="emo_label">
+          <widget class="MultiClickableQLabel" name="emo_label">
            <property name="minimumSize">
             <size>
              <width>35</width>
@@ -207,7 +207,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="ClickableQLabel" name="file_label">
+          <widget class="MultiClickableQLabel" name="file_label">
            <property name="minimumSize">
             <size>
              <width>35</width>
@@ -391,11 +391,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ClickableQLabel</class>
-   <extends>QLabel</extends>
-   <header location="global">clickableqlabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>ChattingRecordView</class>
    <extends>QListWidget</extends>
    <header location="global">chattingrecordview.h</header>
@@ -404,6 +399,11 @@
    <class>MsgTextEdit</class>
    <extends>QTextEdit</extends>
    <header>msgtextedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MultiClickableQLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">multiclickableqlabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
