@@ -1,10 +1,10 @@
 #ifndef SIDEBARWIDGET_H
 #define SIDEBARWIDGET_H
 
-#include "clickableqlabel.h"
+#include "multiclickableqlabel.h"
 #include <QVBoxLayout>
 
-class SideBarWidget : public ClickableQLabel {
+class SideBarWidget : public MultiClickableQLabel {
   Q_OBJECT
 
 public:
