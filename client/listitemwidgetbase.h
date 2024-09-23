@@ -7,7 +7,9 @@ enum class ListItemType {
   Default,         // current nothing being set
   ChattingHistory, // display on chatting list
   ContactHistory,  // display on contact list
-  AddNewusr,       // display search for uid widget
+  SearchUserId,     // search user clickable widget
+  UserNameCard,     // display username card
+  AddUserRequest,   // display friend request dialog
   NoUserFound      // server return no user found
 };
 
