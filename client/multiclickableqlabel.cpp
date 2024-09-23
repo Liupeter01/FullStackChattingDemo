@@ -1,15 +1,15 @@
-#include "clickableqlabel.h"
+#include "multiClickableQLabel.h"
 #include <QDebug>
 #include <QMouseEvent>
 
-ClickableQLabel::ClickableQLabel(QWidget *parent, Qt::WindowFlags f)
+MultiClickableQLabel::MultiClickableQLabel(QWidget *parent, Qt::WindowFlags f)
     : m_state(), QLabel(parent) {}
 
-ClickableQLabel::~ClickableQLabel() {}
+MultiClickableQLabel::~MultiClickableQLabel() {}
 
-const LabelState &ClickableQLabel::getState() const { return m_state; }
+const LabelState &MultiClickableQLabel::getState() const { return m_state; }
 
-void ClickableQLabel::mouseReleaseEvent(QMouseEvent *event) {
+void MultiClickableQLabel::mouseReleaseEvent(QMouseEvent *event) {
   if (event->button() == Qt::LeftButton) {
     qDebug() << QString("left button release!");
 
@@ -23,7 +23,7 @@ void ClickableQLabel::mouseReleaseEvent(QMouseEvent *event) {
   QLabel::mouseReleaseEvent(event);
 }
 
-void ClickableQLabel::mousePressEvent(QMouseEvent *event) {
+void MultiClickableQLabel::mousePressEvent(QMouseEvent *event) {
   if (event->button() == Qt::LeftButton) {
     qDebug() << QString("left button clicked!");
 
@@ -38,7 +38,7 @@ void ClickableQLabel::mousePressEvent(QMouseEvent *event) {
 }
 
 /*mouse enter selected section*/
-void ClickableQLabel::enterEvent(QEnterEvent *event) {
+void MultiClickableQLabel::enterEvent(QEnterEvent *event) {
   qDebug() << QString("mouse entered!");
   this->m_state.hover = LabelState::HoverStatus::ENABLED;
   emit update_display();
@@ -46,7 +46,7 @@ void ClickableQLabel::enterEvent(QEnterEvent *event) {
 }
 
 /*mouse leave*/
-void ClickableQLabel::leaveEvent(QEvent *event) {
+void MultiClickableQLabel::leaveEvent(QEvent *event) {
   qDebug() << QString("mouse leave!");
   this->m_state.hover = LabelState::HoverStatus::DISABLED;
   emit update_display();

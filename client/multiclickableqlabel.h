@@ -1,17 +1,17 @@
-#ifndef CLICKABLEQLABEL_H
-#define CLICKABLEQLABEL_H
+#ifndef MULTIClickableQLabel_H
+#define MULTIClickableQLabel_H
 #include "tools.h"
 #include <QLabel>
 #include <QWidget>
 #include <Qt>
 
-class ClickableQLabel : public QLabel {
+class MultiClickableQLabel : public QLabel {
   Q_OBJECT
 
 public:
-  ClickableQLabel(QWidget *parent = nullptr,
+  MultiClickableQLabel(QWidget *parent = nullptr,
                   Qt::WindowFlags f = Qt::WindowFlags());
-  ~ClickableQLabel();
+  ~MultiClickableQLabel();
 
   const LabelState &getState() const;
 
@@ -34,4 +34,4 @@ protected:
   LabelState m_state;
 };
 
-#endif // ClickableQLabel_H
+#endif // MultiClickableQLabel_H
