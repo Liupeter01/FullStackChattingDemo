@@ -7,7 +7,7 @@ AddNewUserWidget::AddNewUserWidget(QWidget *parent)
   ui->setupUi(this);
 
   /*set item type to add new user*/
-  this->setItemType(ListItemType::AddNewusr);
+  this->setItemType(ListItemType::SearchUserId);
 
   /*load qimage for image display*/
   Tools::loadImgResources(
