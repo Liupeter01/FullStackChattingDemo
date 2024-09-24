@@ -10,7 +10,7 @@ class MultiClickableQLabel : public QLabel {
 
 public:
   MultiClickableQLabel(QWidget *parent = nullptr,
-                  Qt::WindowFlags f = Qt::WindowFlags());
+                       Qt::WindowFlags f = Qt::WindowFlags());
   ~MultiClickableQLabel();
 
   const LabelState &getState() const;

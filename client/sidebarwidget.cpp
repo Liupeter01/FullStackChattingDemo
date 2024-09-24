@@ -3,8 +3,8 @@
 #include <QStyleOption>
 
 SideBarWidget::SideBarWidget(QWidget *parent)
-    : m_newMsg(new QLabel), m_layout(new QVBoxLayout), MultiClickableQLabel(parent) {
-}
+    : m_newMsg(new QLabel), m_layout(new QVBoxLayout),
+      MultiClickableQLabel(parent) {}
 
 SideBarWidget::~SideBarWidget() {}
 

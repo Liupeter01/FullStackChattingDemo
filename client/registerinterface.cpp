@@ -111,10 +111,11 @@ void registerinterface::registerEditFinishedEvent() {
     handle_hover();
   });
 
-  connect(ui->display_passwd, &MultiClickableQLabel::update_display, this, [this]() {
-    handle_clicked();
-    handle_hover();
-  });
+  connect(ui->display_passwd, &MultiClickableQLabel::update_display, this,
+          [this]() {
+            handle_clicked();
+            handle_hover();
+          });
 
   connect(ui->display_confirm, &MultiClickableQLabel::update_display, this,
           [this]() {

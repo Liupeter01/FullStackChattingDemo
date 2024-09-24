@@ -3,19 +3,18 @@
 
 #include <QLabel>
 
-class OnceClickableQLabel : public QLabel
-{
-    Q_OBJECT
+class OnceClickableQLabel : public QLabel {
+  Q_OBJECT
 
 public:
-    OnceClickableQLabel(QWidget* parent = nullptr);
-    ~OnceClickableQLabel();
+  OnceClickableQLabel(QWidget *parent = nullptr);
+  ~OnceClickableQLabel();
 
 signals:
-    void clicked(QString);
+  void clicked(QString);
 
 protected:
-    virtual void mousePressEvent(QMouseEvent *event) override;
+  virtual void mousePressEvent(QMouseEvent *event) override;
 };
 
 #endif // ONCECLICKABLEQLABEL_H
