@@ -53,14 +53,19 @@ void AddUserRequestDialog::registerSignal() {
 }
 
 void AddUserRequestDialog::setupDefaultInfo() {
+
+    /**limit user input ammount to 21**/
+    ui->nick_name_edit->setMaxLength(21);
+    ui->request_msg_edit->setMaxLength(21);
+    ui->tag_input->setMaxLength(21);
+
   /*input label
    * 1. setup start pos
    * 2. setup widget height
-   * 3. **limit user input ammount to 21**
    */
   ui->tag_input->move(2, 2);
   ui->tag_input->setFixedHeight(36);
-  ui->tag_input->setMaxLength(21);
+
 
   /*hide status display bar*/
   ui->user_tag_display_bar->hide();
