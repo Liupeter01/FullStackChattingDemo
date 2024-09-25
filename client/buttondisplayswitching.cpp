@@ -2,7 +2,10 @@
 #include <QMouseEvent>
 
 ButtonDisplaySwitching::ButtonDisplaySwitching(QWidget *parent)
-    : m_state(), QPushButton(parent) {}
+    : m_state(), QPushButton(parent) {
+    setCursor(Qt::PointingHandCursor);  //set cursor
+    setFocusPolicy(Qt::NoFocus);        //set to no focus
+}
 
 ButtonDisplaySwitching::~ButtonDisplaySwitching() {}
 
