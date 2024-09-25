@@ -145,13 +145,13 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
            </widget>
@@ -180,13 +180,13 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
            </widget>
@@ -233,51 +233,45 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>40</height>
+                 <height>35</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>40</height>
+                 <height>35</height>
                 </size>
                </property>
                <widget class="RestrictUserSearchingInput" name="tag_input">
                 <property name="geometry">
                  <rect>
-                  <x>2</x>
+                  <x>0</x>
                   <y>2</y>
                   <width>108</width>
-                  <height>25</height>
+                  <height>30</height>
                  </rect>
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>0</width>
-                  <height>25</height>
+                  <width>21</width>
+                  <height>30</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>16777215</width>
-                  <height>25</height>
+                  <height>30</height>
                  </size>
                 </property>
                </widget>
               </widget>
              </item>
              <item>
-              <widget class="QWidget" name="tag_display" native="true">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>40</height>
-                </size>
-               </property>
+              <widget class="QWidget" name="user_tag_display_bar" native="true">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>40</height>
+                 <height>30</height>
                 </size>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -297,21 +291,12 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="OnceClickableQLabel" name="tag_label">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>30</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>30</height>
-                   </size>
-                  </property>
+                 <widget class="OnceClickableQLabel" name="tag_display">
                   <property name="text">
-                   <string>label</string>
+                   <string/>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -329,7 +314,7 @@
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>200</height>
+                 <height>250</height>
                 </size>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -349,7 +334,25 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QWidget" name="label_list_widget" native="true"/>
+                 <widget class="QWidget" name="existing_tag_widget" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                  </layout>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QWidget" name="widget_7" native="true">
@@ -573,6 +576,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>OnceClickableQLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">onceclickableqlabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>ButtonDisplaySwitching</class>
    <extends>QPushButton</extends>
    <header location="global">buttondisplayswitching.h</header>
@@ -581,11 +589,6 @@
    <class>RestrictUserSearchingInput</class>
    <extends>QLineEdit</extends>
    <header location="global">restrictusersearchinginput.h</header>
-  </customwidget>
-  <customwidget>
-   <class>OnceClickableQLabel</class>
-   <extends>QLabel</extends>
-   <header>onceclickableqlabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
