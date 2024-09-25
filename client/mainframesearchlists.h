@@ -1,9 +1,9 @@
 #ifndef MAINFRAMESEARCHLISTS_H
 #define MAINFRAMESEARCHLISTS_H
 
-#include <memory>
-#include "mainframeshowlists.h"
 #include "addusernamecarddialog.h"
+#include "mainframeshowlists.h"
+#include <memory>
 
 // forward declearation
 class QListWidgetItem;

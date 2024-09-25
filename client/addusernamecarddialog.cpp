@@ -1,55 +1,43 @@
 #include "addusernamecarddialog.h"
-#include "ui_addusernamecarddialog.h"
 #include "adduserrequestdialog.h"
+#include "ui_addusernamecarddialog.h"
 
 AddUserNameCardDialog::AddUserNameCardDialog(QWidget *parent)
-    : QDialog(parent)
-    , ui(new Ui::AddUserNameCardDialog)
-{
-    ui->setupUi(this);
+    : QDialog(parent), ui(new Ui::AddUserNameCardDialog) {
+  ui->setupUi(this);
 
-    /*register signal slot*/
-    registerSignal();
+  /*register signal slot*/
+  registerSignal();
 
-    /*set window style*/
-    setWindowsStatus();
+  /*set window style*/
+  setWindowsStatus();
 }
 
-AddUserNameCardDialog::~AddUserNameCardDialog()
-{
-    delete ui;
+AddUserNameCardDialog::~AddUserNameCardDialog() { delete ui; }
+
+void AddUserNameCardDialog::setupUserInfo(std::unique_ptr<UserNameCard> info) {
+  m_info = std::move(info);
+  ui->user_name->setText(m_info->m_nickname);
 }
 
-void AddUserNameCardDialog::setupUserInfo(std::unique_ptr<UserNameCard> info)
-{
-    m_info = std::move(info);
-    ui->user_name->setText(m_info->m_nickname);
+void AddUserNameCardDialog::setWindowsStatus() {
+  setWindowTitle("Add friend");
+  setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
+
+  /*set it to modal*/
+  setModal(true);
 }
 
-void AddUserNameCardDialog::setWindowsStatus()
-{
-    setWindowTitle("Add friend");
-    setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
+void AddUserNameCardDialog::registerSignal() {}
 
-    /*set it to modal*/
-    setModal(true);
+void AddUserNameCardDialog::on_add_friend_button_clicked() {
+  qDebug() << "Add friend button clicked!";
+
+  /*hide current AddUserNameCardDialog*/
+  this->hide();
+
+  /*display AddUserRequestDialog UI*/
+  AddUserRequestDialog *dialog(new AddUserRequestDialog(this));
+  dialog->setModal(true);
+  dialog->show();
 }
-
-void AddUserNameCardDialog::registerSignal()
-{
-
-}
-
-void AddUserNameCardDialog::on_add_friend_button_clicked()
-{
-    qDebug() << "Add friend button clicked!";
-
-    /*hide current AddUserNameCardDialog*/
-    this->hide();
-
-    /*display AddUserRequestDialog UI*/
-    AddUserRequestDialog* dialog(new AddUserRequestDialog(this));
-    dialog->setModal(true);
-    dialog->show();
-}
-
