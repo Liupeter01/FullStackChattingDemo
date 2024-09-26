@@ -32,10 +32,18 @@ private:
   /*customlized functions*/
   bool eventFilter(QObject *object, QEvent *event) override;
 
-  /*add tag*/
-  void addNewTag(const QString &text);
+  /*add new tag to the list*/
+  void addNewTag2Container(const QString &text);
 
+  /*add new tag input tag widget*/
+  void addNewTag2InputTag(const QString &text);
+
+  /*add new tag to exisiting existing_tag_widget*/
+  void addNewTag2ExistingTag(const QString &text);
+
+  /*creat selected or existing tag by using smart pointer*/
   void createSelectedTag(const QString &text, UserTagWidget *widget);
+  void createExistingTag(const QString &text, OnceClickableQLabel *widget);
 
   /*reset labels*/
   // void resetLabels();
@@ -51,7 +59,7 @@ private slots:
   void on_cancel_button_clicked();
 
   /*connect with show_more_label clickable qlabel*/
-  // void slot_show_more_label();
+  void slot_show_more_label();
 
   /*user press enter at tag_input*/
   void slot_input_tag_press_enter();
@@ -60,13 +68,13 @@ private slots:
   void slot_remove_selected_tag();
 
   /*user click existing tag*/
-  // void slot_change_display_bar_by_existing_tag();
+  void slot_change_by_existing_tag(QString str, LabelState state);
 
   /*user input text in tag_input, bind with textchange signal*/
   void slot_input_tag_textchange(const QString &text);
 
   /*user finished input text in tag_input*/
-  // void slot_input_tag_finished();
+  void slot_input_tag_finished();
 
   /*user create a new friend tag, save it in existing by click*/
   // void slot_create_tag_by_click();
@@ -84,6 +92,9 @@ private:
    */
   QPoint m_existing_cur_pos;
   QPoint m_selected_cur_pos;
+
+  /*store all tags*/
+  std::vector<QString> m_tagLists;
 
   /*labels that were already created! might store in server & local database*/
   std::vector<QString> m_existing_key;

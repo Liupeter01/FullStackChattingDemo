@@ -1,4 +1,5 @@
 #include "adduserrequestdialog.h"
+#include "onceclickableqlabel.h"
 #include "tools.h"
 #include "ui_adduserrequestdialog.h"
 #include <QDebug>
@@ -11,7 +12,9 @@ AddUserRequestDialog::AddUserRequestDialog(QWidget *parent)
           QPoint(COMPENSATION_WIDTH,
                  COMPENSATION_HEIGHT)) /*init existing tag current pos*/
       ,
-      m_selected_cur_pos(QPoint(COMPENSATION_WIDTH, COMPENSATION_HEIGHT)) {
+      m_selected_cur_pos(
+          QPoint(COMPENSATION_WIDTH, COMPENSATION_HEIGHT)) /*init selected tag*/
+{
   ui->setupUi(this);
 
   /*register signal<->slot*/
@@ -33,8 +36,8 @@ AddUserRequestDialog::~AddUserRequestDialog() { delete ui; }
 
 void AddUserRequestDialog::registerSignal() {
   /*bind with show more label click event*/
-  // connect(ui->show_more_label, &OnceClickableQLabel::clicked,
-  //     this, &AddUserRequestDialog::slot_show_more_label);
+  connect(ui->show_more_label, &OnceClickableQLabel::clicked, this,
+          &AddUserRequestDialog::slot_show_more_label);
 
   /*bind with press enter inside tag_input widget*/
   connect(ui->tag_input, &RestrictUserSearchingInput::returnPressed, this,
@@ -45,8 +48,8 @@ void AddUserRequestDialog::registerSignal() {
           &AddUserRequestDialog::slot_input_tag_textchange);
 
   /*bind with editfinished event inside tag_input*/
-  // connect(ui->tag_input, &RestrictUserSearchingInput::editingFinished, this,
-  // &AddUserRequestDialog::slot_input_tag_finished);
+  connect(ui->tag_input, &RestrictUserSearchingInput::editingFinished, this,
+          &AddUserRequestDialog::slot_input_tag_finished);
 
   // connect(ui->tag_display, &OnceClickableQLabel::clicked, this,
   // &AddUserRequestDialog::slo)
@@ -96,13 +99,21 @@ bool AddUserRequestDialog::eventFilter(QObject *object, QEvent *event) {
   return QDialog::eventFilter(object, event);
 }
 
-void AddUserRequestDialog::addNewTag(const QString &text) {
+void AddUserRequestDialog::addNewTag2Container(const QString &text) {
+  /*store all tags*/
+  auto it = std::find(m_tagLists.begin(), m_tagLists.end(), text);
+  if (it == m_tagLists.end()) {
+    m_tagLists.push_back(text);
+  }
+}
+
+void AddUserRequestDialog::addNewTag2InputTag(const QString &text) {
   /*clear input text*/
   ui->tag_input->clear();
 
-  /*we find it inside existing key*/
-  auto it = std::find(m_existing_key.begin(), m_existing_key.end(), text);
-  if (it != m_existing_key.end()) {
+  /*we find it inside select key*/
+  auto it = std::find(m_selected_key.begin(), m_selected_key.end(), text);
+  if (it != m_selected_key.end()) {
     return;
   }
 
@@ -140,7 +151,8 @@ void AddUserRequestDialog::addNewTag(const QString &text) {
                             COMPENSATION_HEIGHT);
   }
 
-  /*move tag_input's position*/
+  /*move tag_input's position, adjust height*/
+  ui->tag_input->setFixedHeight(tag->height() + COMPENSATION_HEIGHT);
   ui->tag_input->move(m_selected_cur_pos);
 
   /*extend the height of input tag widget*/
@@ -150,11 +162,72 @@ void AddUserRequestDialog::addNewTag(const QString &text) {
   }
 }
 
+void AddUserRequestDialog::addNewTag2ExistingTag(const QString &text) {
+  /*we find it inside existing key*/
+  auto it = std::find(m_existing_key.begin(), m_existing_key.end(), text);
+  if (it != m_existing_key.end()) {
+    return;
+  }
+
+  auto label = m_exist_label.find(text);
+  if (label != m_exist_label.end()) {
+    /*if we found this text, then set the status to selected*/
+    label->second->setCurrentState(LabelState::VisiableStatus::ENABLED);
+    return;
+  }
+
+  /*add a new onceclickableqlabel for display existing tag*/
+  OnceClickableQLabel *exist = new OnceClickableQLabel(ui->existing_tag_widget);
+  exist->setText(text);
+  exist->setObjectName("exist_tag");
+  exist->setCurrentState(
+      LabelState::VisiableStatus::ENABLED); // set it to selected
+
+  connect(exist, &OnceClickableQLabel::clicked, this,
+          &AddUserRequestDialog::slot_change_by_existing_tag);
+
+  /*add new widget and text to specfic data structure*/
+  createExistingTag(text, exist);
+
+  /**/
+  QFontMetricsF fontMetrics(exist->font());
+
+  auto text_width = fontMetrics.horizontalAdvance(exist->text());
+  auto text_height = fontMetrics.height();
+
+  qDebug() << "text_width = " << text_width << "\ntext_height = " << text_height
+           << "\n";
+
+  /*calculate do we need to generate this object at a new line*/
+  if (m_existing_cur_pos.x() + text_width > ui->existing_tag_widget->width()) {
+    m_existing_cur_pos.setX(COMPENSATION_WIDTH);
+    m_existing_cur_pos.setY(m_existing_cur_pos.y() + text_height +
+                            COMPENSATION_HEIGHT);
+  }
+
+  /*move it to new place*/
+  // exist->move(m_existing_cur_pos);
+  // exist->show();
+
+  /*update m_selected_cur_pos to the newest status*/
+  m_existing_cur_pos.setX(m_existing_cur_pos.x() + text_width +
+                          COMPENSATION_WIDTH);
+  m_existing_cur_pos.setY(m_existing_cur_pos.y());
+}
+
 void AddUserRequestDialog::createSelectedTag(const QString &text,
                                              UserTagWidget *widget) {
   m_selected_key.push_back(text);
   m_selected_label.insert(std::pair<QString, std::shared_ptr<UserTagWidget>>(
       text, std::shared_ptr<UserTagWidget>(widget, [](UserTagWidget *) {})));
+}
+
+void AddUserRequestDialog::createExistingTag(const QString &text,
+                                             OnceClickableQLabel *widget) {
+  m_existing_key.push_back(text);
+  m_exist_label.insert(std::pair<QString, std::shared_ptr<OnceClickableQLabel>>(
+      text, std::shared_ptr<OnceClickableQLabel>(
+                widget, [](OnceClickableQLabel *) {})));
 }
 
 void AddUserRequestDialog::closeDialog() {
@@ -167,21 +240,36 @@ void AddUserRequestDialog::on_confirm_button_clicked() { closeDialog(); }
 
 void AddUserRequestDialog::on_cancel_button_clicked() { closeDialog(); }
 
+void AddUserRequestDialog::slot_show_more_label() {}
+
 void AddUserRequestDialog::slot_input_tag_press_enter() {
+  auto text = ui->tag_input->text();
+
   /*no text*/
-  if (ui->tag_input->text().isEmpty()) {
+  if (text.isEmpty()) {
     return;
   }
 
-  /*add it to new tag*/
-  addNewTag(ui->tag_input->text());
-
   /*hide input notification widget*/
   ui->user_tag_display_bar->hide();
+
+  /*store all tags*/
+  addNewTag2Container(text);
+
+  /*add it to new tag*/
+  addNewTag2InputTag(text);
+
+  /*add new tag to exisiting existing_tag_widget*/
+  addNewTag2ExistingTag(text);
 }
 
 void AddUserRequestDialog::slot_remove_selected_tag() {}
 
+void AddUserRequestDialog::slot_change_by_existing_tag(QString str,
+                                                       LabelState state) {}
+
 void AddUserRequestDialog::slot_input_tag_textchange(const QString &text) {
   ui->tag_input->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
 }
+
+void AddUserRequestDialog::slot_input_tag_finished() {}
