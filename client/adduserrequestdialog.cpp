@@ -206,12 +206,12 @@ void AddUserRequestDialog::addNewTag2ExistingTag(const QString &text) {
   }
 
   /*move it to new place*/
-  // exist->move(m_existing_cur_pos);
-  // exist->show();
+  exist->move(m_existing_cur_pos);
+  exist->show();
 
   /*update m_selected_cur_pos to the newest status*/
   m_existing_cur_pos.setX(m_existing_cur_pos.x() + text_width +
-                          COMPENSATION_WIDTH);
+                          2 * COMPENSATION_WIDTH);
   m_existing_cur_pos.setY(m_existing_cur_pos.y());
 }
 
