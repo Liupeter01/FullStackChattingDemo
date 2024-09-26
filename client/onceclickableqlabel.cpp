@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 
-OnceClickableQLabel::OnceClickableQLabel(QWidget *parent) {
+OnceClickableQLabel::OnceClickableQLabel(QWidget *parent) : QLabel(parent) {
   this->setCursor(Qt::PointingHandCursor);
 }
 
