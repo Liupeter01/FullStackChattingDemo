@@ -239,28 +239,28 @@
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>35</height>
+                 <height>16</height>
                 </size>
                </property>
                <widget class="RestrictUserSearchingInput" name="tag_input">
                 <property name="geometry">
                  <rect>
-                  <x>0</x>
+                  <x>2</x>
                   <y>2</y>
                   <width>108</width>
-                  <height>30</height>
+                  <height>16</height>
                  </rect>
                 </property>
                 <property name="minimumSize">
                  <size>
                   <width>21</width>
-                  <height>30</height>
+                  <height>16</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>16777215</width>
-                  <height>30</height>
+                  <height>16</height>
                  </size>
                 </property>
                </widget>
@@ -268,10 +268,16 @@
              </item>
              <item>
               <widget class="QWidget" name="user_tag_display_bar" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>30</height>
+                 <height>20</height>
                 </size>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -292,11 +298,23 @@
                 </property>
                 <item>
                  <widget class="OnceClickableQLabel" name="tag_display">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string/>
                   </property>
                   <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                   <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                   </property>
                  </widget>
                 </item>
