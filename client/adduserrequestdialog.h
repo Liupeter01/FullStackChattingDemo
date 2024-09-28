@@ -51,6 +51,8 @@ private:
   /*shutdown AddUserRequestDialog*/
   void closeDialog();
 
+  void loadtestFunction();
+
 private slots:
   /*click confirm*/
   void on_confirm_button_clicked();
@@ -67,23 +69,25 @@ private slots:
   /*user press close icon on qlabel*/
   void slot_remove_selected_tag();
 
-  /*user click existing tag*/
-  void slot_change_by_existing_tag(QString str, LabelState state);
-
   /*user input text in tag_input, bind with textchange signal*/
   void slot_input_tag_textchange(const QString &text);
 
   /*user finished input text in tag_input*/
   void slot_input_tag_finished();
 
-  /*user create a new friend tag, save it in existing by click*/
-  // void slot_create_tag_by_click();
+  /*1.user choose a tag from existing tag, and add it to selected_label
+   *2.user click the user_tag_display_bar, and add it to both selected & existing label
+   */
+  void slot_choose_tag_by_click(QString str, LabelState state);
 
 private:
   Ui::AddUserRequestDialog *ui;
 
+  /*prefix string*/
+  const QString prefix_string;
+
   /*using a parameter to adjust height for user experience*/
-  static constexpr std::size_t COMPENSATION_HEIGHT = 2;
+  static constexpr std::size_t COMPENSATION_HEIGHT = 4;
   static constexpr std::size_t COMPENSATION_WIDTH = 2;
 
   /*

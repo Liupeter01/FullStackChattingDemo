@@ -7,8 +7,9 @@
 #include <algorithm>
 
 AddUserRequestDialog::AddUserRequestDialog(QWidget *parent)
-    : QDialog(parent), ui(new Ui::AddUserRequestDialog),
-      m_existing_cur_pos(
+    : QDialog(parent), ui(new Ui::AddUserRequestDialog)
+    , prefix_string(QString("New Tag: "))
+    , m_existing_cur_pos(
           QPoint(COMPENSATION_WIDTH,
                  COMPENSATION_HEIGHT)) /*init existing tag current pos*/
       ,
@@ -25,6 +26,9 @@ AddUserRequestDialog::AddUserRequestDialog(QWidget *parent)
 
   /*set up ui style*/
   setupWindowStyle();
+
+  /*test*/
+  loadtestFunction();
 
   /*load image for usertag widget*/
   Tools::loadImgResources({"unselect_tag.png"},
@@ -51,8 +55,8 @@ void AddUserRequestDialog::registerSignal() {
   connect(ui->tag_input, &RestrictUserSearchingInput::editingFinished, this,
           &AddUserRequestDialog::slot_input_tag_finished);
 
-  // connect(ui->tag_display, &OnceClickableQLabel::clicked, this,
-  // &AddUserRequestDialog::slo)
+  connect(ui->tag_display, &OnceClickableQLabel::clicked, this,
+          &AddUserRequestDialog::slot_choose_tag_by_click);
 }
 
 void AddUserRequestDialog::setupDefaultInfo() {
@@ -67,7 +71,7 @@ void AddUserRequestDialog::setupDefaultInfo() {
    * 2. setup widget height
    */
   ui->tag_input->move(2, 2);
-  ui->tag_input->setFixedHeight(36);
+  ui->tag_input->setFixedHeight(20);
 
   /*hide status display bar*/
   ui->user_tag_display_bar->hide();
@@ -158,7 +162,9 @@ void AddUserRequestDialog::addNewTag2InputTag(const QString &text) {
   /*extend the height of input tag widget*/
   if (ui->input_tag_widget->height() <
       m_selected_cur_pos.y() + tag->height() + COMPENSATION_HEIGHT) {
-    ui->input_tag_widget->setFixedHeight(2 * ui->input_tag_widget->height());
+      ui->input_tag_widget->setFixedHeight(
+          m_selected_cur_pos.y() + tag->height() * 2 + COMPENSATION_HEIGHT
+      );
   }
 }
 
@@ -179,17 +185,19 @@ void AddUserRequestDialog::addNewTag2ExistingTag(const QString &text) {
   /*add a new onceclickableqlabel for display existing tag*/
   OnceClickableQLabel *exist = new OnceClickableQLabel(ui->existing_tag_widget);
   exist->setText(text);
+  exist->adjustSize();
   exist->setObjectName("exist_tag");
+  /*set size*/
+  //exist->setFixedSize(text_width, text_height);
   exist->setCurrentState(
       LabelState::VisiableStatus::ENABLED); // set it to selected
 
   connect(exist, &OnceClickableQLabel::clicked, this,
-          &AddUserRequestDialog::slot_change_by_existing_tag);
+          &AddUserRequestDialog::slot_choose_tag_by_click);
 
   /*add new widget and text to specfic data structure*/
   createExistingTag(text, exist);
 
-  /**/
   QFontMetricsF fontMetrics(exist->font());
 
   auto text_width = fontMetrics.horizontalAdvance(exist->text());
@@ -213,6 +221,18 @@ void AddUserRequestDialog::addNewTag2ExistingTag(const QString &text) {
   m_existing_cur_pos.setX(m_existing_cur_pos.x() + text_width +
                           2 * COMPENSATION_WIDTH);
   m_existing_cur_pos.setY(m_existing_cur_pos.y());
+
+  /*extend the height of exisiting tag widget*/
+  if (ui->existing_tag_widget->height() <
+      m_selected_cur_pos.y() + text_height + COMPENSATION_HEIGHT) {
+      ui->existing_tag_widget->setFixedHeight(
+          m_selected_cur_pos.y() + text_height * 2 + COMPENSATION_HEIGHT
+          );
+  }
+
+  /*ignore tag widget height part*/
+  //auto diff = m_existing_cur_pos.y() + text_height + COMPENSATION_HEIGHT - ui->existing_tag_widget->height();
+  //ui->scrollArea->setFixedHeight(ui->scrollArea->height() + diff);
 }
 
 void AddUserRequestDialog::createSelectedTag(const QString &text,
@@ -234,6 +254,17 @@ void AddUserRequestDialog::closeDialog() {
   qDebug() << "closing AddUserRequestDialog";
   this->hide();
   deleteLater();
+}
+
+void AddUserRequestDialog::loadtestFunction()
+{
+    m_tagLists = {"Python", "NodeJS", "C", "Java", "C++ Primer Plus", "Java",
+                  "Block", "Family Member", "Classmate", "COMPUTER gAmes"
+    };
+
+    for(const auto &i : m_tagLists){
+        addNewTag2ExistingTag(i);
+    }
 }
 
 void AddUserRequestDialog::on_confirm_button_clicked() { closeDialog(); }
@@ -263,13 +294,62 @@ void AddUserRequestDialog::slot_input_tag_press_enter() {
   addNewTag2ExistingTag(text);
 }
 
-void AddUserRequestDialog::slot_remove_selected_tag() {}
+void AddUserRequestDialog::slot_remove_selected_tag() {
 
-void AddUserRequestDialog::slot_change_by_existing_tag(QString str,
-                                                       LabelState state) {}
+}
 
 void AddUserRequestDialog::slot_input_tag_textchange(const QString &text) {
-  ui->tag_input->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
+    /*no text*/
+    if (text.isEmpty()) {
+        /*clear text*/
+        ui->user_tag_display_bar->hide();
+        ui->tag_display->setText(QString(""));
+        return;
+    }
+
+    auto it = std::find(m_tagLists.begin(), m_tagLists.end(), text);
+    auto show_string = (it != m_tagLists.end()
+        ? text : prefix_string + text
+    );
+
+    ui->tag_display->setText(show_string);
+    ui->user_tag_display_bar->show();
 }
 
 void AddUserRequestDialog::slot_input_tag_finished() {}
+
+void AddUserRequestDialog::slot_choose_tag_by_click(QString str, LabelState state)
+{
+    if(state.visiable != LabelState::VisiableStatus::ENABLED){
+        return;
+    }
+    /*condition 1
+     * user click the user_tag_display_bar, and add it to both selected & existing label
+     */
+    int index = str.indexOf(prefix_string);
+    if(index != -1){
+
+        /* condition 1
+         * user click the user_tag_display_bar, and add it to both selected & existing label
+         */
+        auto text = str.mid(index + prefix_string.length());
+
+        addNewTag2Container(text);
+
+        /*add it to new tag*/
+        addNewTag2InputTag(text);
+
+        /*add new tag to exisiting existing_tag_widget*/
+        addNewTag2ExistingTag(text);
+    }
+    else{
+        /* condition 2
+         * user choose a tag from existing tag, and add it to selected_label
+         */
+        addNewTag2Container(str);
+
+        /*add it to new tag*/
+        addNewTag2InputTag(str);
+    }
+
+}
