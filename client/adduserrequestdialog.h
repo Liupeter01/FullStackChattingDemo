@@ -76,7 +76,8 @@ private slots:
   void slot_input_tag_finished();
 
   /*1.user choose a tag from existing tag, and add it to selected_label
-   *2.user click the user_tag_display_bar, and add it to both selected & existing label
+   *2.user click the user_tag_display_bar, and add it to both selected &
+   *existing label
    */
   void slot_choose_tag_by_click(QString str, LabelState state);
 
