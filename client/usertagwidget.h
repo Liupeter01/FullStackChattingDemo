@@ -3,6 +3,7 @@
 
 #include <QSize>
 #include <QWidget>
+#include "tools.h"
 
 namespace Ui {
 class UserTagWidget;
@@ -27,10 +28,10 @@ public:
     virtual QSize sizeHint() const;
 
 signals:
-    void signal_close();
+    void signal_close(QString str, LabelState state);
 
 public slots:
-    void slot_close(QString);
+    void slot_close(QString str, LabelState state);
 
 private:
 
@@ -39,8 +40,8 @@ private:
     static constexpr std::size_t COMPENSATION_WIDTH = 4;
 
     /*reserve for image*/
-    static constexpr std::size_t image_width = 20;
-    static constexpr std::size_t image_height = 20;
+    static constexpr std::size_t image_width = 15;
+    static constexpr std::size_t image_height = 15;
 
     /*add image*/
     void loadImage();

@@ -1,4 +1,3 @@
-#include "tools.h"
 #include <QFontMetricsF>
 #include "usertagwidget.h"
 #include "ui_usertagwidget.h"
@@ -41,9 +40,10 @@ const QSize UserTagWidget::getImageSize()
     return QSize(image_width, image_height);
 }
 
-void UserTagWidget::slot_close(QString)
+void UserTagWidget::slot_close(QString str, LabelState state)
 {
-
+    /*emit signal to the outside*/
+    emit signal_close(str, state);
 }
 
 void UserTagWidget::loadImage()
@@ -53,7 +53,7 @@ void UserTagWidget::loadImage()
 
 void UserTagWidget::addStyleSheet()
 {
-    ui->widget->setStyleSheet(QString("#UserTagWidget{background:#daf6e7;color:#48bf56;border-radius:10px}"));
+    ui->widget->setStyleSheet(QString("#UserTagWidget QWidget{background-color:#daf6e7;color:#48bf56;border-radius:10px;}"));
 }
 
 void UserTagWidget::registerSignal()
