@@ -63,6 +63,18 @@
 	outline: none;
 }
 
+#contact_list::item::selected{
+	background-color: #d3d7d4;
+	border: none;
+	outline: none;
+}
+
+#contact_list::item::hover{
+	background-color: rgb(250,250,250);
+	border: none;
+	outline: none;
+}
+
 #tools{
 	background-color: rgb(250,250,250);
 	border: 1px solid #2D2D2D;
