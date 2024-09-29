@@ -354,7 +354,7 @@
           </widget>
          </item>
          <item>
-          <widget class="MainFrameShowLists" name="contact_list">
+          <widget class="ChattingContactList" name="contact_list">
            <property name="minimumSize">
             <size>
              <width>250</width>
@@ -434,6 +434,11 @@
    <class>MainFrameSearchLists</class>
    <extends>QListWidget</extends>
    <header>mainframesearchlists.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ChattingContactList</class>
+   <extends>QListWidget</extends>
+   <header location="global">chattingcontactlist.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
