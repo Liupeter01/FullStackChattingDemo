@@ -113,14 +113,17 @@ void Tools::loadImgResources(std::initializer_list<QString> file_list,
                              int width, int height) {
   for (const auto &path : file_list) {
 
-    auto image = Tools::loadImages(QT_DEMO_HOME "/res/" + path, width, height);
+      /*we do not allow duplication in map*/
+      if(Tools::s_images.find(path) == Tools::s_images.end()){
+          auto image = Tools::loadImages(QT_DEMO_HOME "/res/" + path, width, height);
 
-    if (!image.has_value()) {
-      qDebug() << "image: " << path << " load error!";
-      continue;
-    }
-    qDebug() << "resource image file: " << path << " load successfully!";
-    Tools::s_images.insert(std::pair<QString, QImage>(path, image.value()));
+          if (!image.has_value()) {
+              qDebug() << "image: " << path << " load error!";
+              continue;
+          }
+          qDebug() << "resource image file: " << path << " load successfully!";
+          Tools::s_images.insert(std::pair<QString, QImage>(path, image.value()));
+      }
   }
 }
 
