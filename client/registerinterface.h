@@ -24,7 +24,7 @@ class registerinterface : public QDialog {
 
 public:
   explicit registerinterface(QWidget *parent = nullptr);
-  ~registerinterface();
+  virtual ~registerinterface();
 
 signals:
   void switchToLogin();

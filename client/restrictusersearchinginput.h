@@ -9,7 +9,7 @@ class RestrictUserSearchingInput : public QLineEdit {
 public:
   RestrictUserSearchingInput(QWidget *parent = nullptr);
   RestrictUserSearchingInput(std::size_t max_length, QWidget *parent = nullptr);
-  ~RestrictUserSearchingInput();
+  virtual ~RestrictUserSearchingInput();
   void setMaxLength(std::size_t max_length);
 
 protected:

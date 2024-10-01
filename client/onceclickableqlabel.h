@@ -8,7 +8,7 @@ class OnceClickableQLabel : public QLabel {
 
 public:
   OnceClickableQLabel(QWidget *parent = nullptr);
-  ~OnceClickableQLabel();
+  virtual ~OnceClickableQLabel();
 
 public:
   void setCurrentState(LabelState::VisiableStatus status);

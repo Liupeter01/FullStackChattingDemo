@@ -14,7 +14,7 @@ class ChattingContactList : public MainFrameShowLists {
 
 public:
   ChattingContactList(QWidget *parent = nullptr);
-  ~ChattingContactList();
+  virtual ~ChattingContactList();
 
 public:
   /*set AddUserWidget*/

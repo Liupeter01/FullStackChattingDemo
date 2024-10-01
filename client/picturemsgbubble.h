@@ -10,7 +10,7 @@ class PictureMsgBubble : public MsgBubbleBase {
 public:
   PictureMsgBubble(ChattingRole role, const QPixmap &picture,
                    QWidget *parent = nullptr);
-  ~PictureMsgBubble();
+  virtual ~PictureMsgBubble();
 
 public:
   static constexpr std::size_t PICTURE_WIDTH = 160;

@@ -14,7 +14,7 @@ class UserTagWidget : public QWidget {
 
 public:
   explicit UserTagWidget(QWidget *parent = nullptr);
-  ~UserTagWidget();
+  virtual ~UserTagWidget();
 
 public:
   /*load image parameters*/

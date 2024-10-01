@@ -12,7 +12,7 @@ class AddNewUserWidget : public ListItemWidgetBase {
 
 public:
   explicit AddNewUserWidget(QWidget *parent = nullptr);
-  ~AddNewUserWidget();
+  virtual ~AddNewUserWidget();
 
 private:
   Ui::AddNewUserWidget *ui;

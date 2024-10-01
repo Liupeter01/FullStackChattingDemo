@@ -13,7 +13,7 @@ class MainFrameSearchLists : public MainFrameShowLists {
 
 public:
   MainFrameSearchLists(QWidget *parent = nullptr);
-  ~MainFrameSearchLists();
+  virtual ~MainFrameSearchLists();
 
 private:
   void registerSignal();

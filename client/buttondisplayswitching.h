@@ -10,7 +10,7 @@ class ButtonDisplaySwitching : public QPushButton {
 
 public:
   explicit ButtonDisplaySwitching(QWidget *parent = nullptr);
-  ~ButtonDisplaySwitching();
+  virtual ~ButtonDisplaySwitching();
 
 signals:
   void update_display();

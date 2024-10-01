@@ -9,7 +9,7 @@ class MainFrameShowLists : public QListWidget {
 
 public:
   MainFrameShowLists(QWidget *parent = nullptr);
-  ~MainFrameShowLists();
+  virtual ~MainFrameShowLists();
 
 protected:
   /*customlized functions*/

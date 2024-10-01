@@ -23,7 +23,7 @@ class LoginInterface : public QDialog {
 
 public:
   explicit LoginInterface(QWidget *parent = nullptr);
-  ~LoginInterface();
+  virtual ~LoginInterface();
 
 private:
   void registerSignal();

@@ -16,7 +16,7 @@ class ChattingMsgItem : public QWidget {
 
 public:
   explicit ChattingMsgItem(ChattingRole role, QWidget *parent = nullptr);
-  ~ChattingMsgItem();
+  virtual ~ChattingMsgItem();
 
 public:
   void setupUserName(const QString &name);

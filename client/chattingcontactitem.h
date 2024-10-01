@@ -14,7 +14,7 @@ class ChattingContactItem : public ListItemWidgetBase {
 
 public:
   explicit ChattingContactItem(QWidget *parent = nullptr);
-  ~ChattingContactItem();
+  virtual ~ChattingContactItem();
 
 public:
   virtual QSize sizeHint() const;

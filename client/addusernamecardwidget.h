@@ -12,7 +12,7 @@ class AddUserNameCardWidget : public QFrame {
 
 public:
   explicit AddUserNameCardWidget(QWidget *parent = nullptr);
-  ~AddUserNameCardWidget();
+  virtual ~AddUserNameCardWidget();
   void setFriendName(const QString &name);
   void setFriendAvator(const QPixmap &pic);
   void setRequestMsg(const QString &msg);

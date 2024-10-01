@@ -11,7 +11,7 @@ public:
 
 public:
   ForgotPassword(QWidget *parent = nullptr);
-  ~ForgotPassword();
+  virtual ~ForgotPassword();
 
 protected:
   virtual void mouseReleaseEvent(QMouseEvent *event) override;

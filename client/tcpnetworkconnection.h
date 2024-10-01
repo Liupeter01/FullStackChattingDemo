@@ -22,7 +22,7 @@ class TCPNetworkConnection
   using Callbackfunction = std::function<void(QJsonObject &&)>;
 
 public:
-  ~TCPNetworkConnection();
+  virtual ~TCPNetworkConnection();
 
   /*use signal to trigger data sending*/
   void

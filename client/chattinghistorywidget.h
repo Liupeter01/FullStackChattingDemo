@@ -12,7 +12,7 @@ class ChattingHistoryWidget : public ListItemWidgetBase {
 
 public:
   ChattingHistoryWidget(QWidget *parent = nullptr);
-  ~ChattingHistoryWidget();
+  virtual ~ChattingHistoryWidget();
 
   void setItemDisplay(const QString &_username, const QString &_avator,
                       const QString &_last_message);

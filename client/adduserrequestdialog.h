@@ -17,7 +17,7 @@ class AddUserRequestDialog : public QDialog {
 
 public:
   explicit AddUserRequestDialog(QWidget *parent = nullptr);
-  ~AddUserRequestDialog();
+  virtual ~AddUserRequestDialog();
 
 private:    
   /*register signal<->slot*/

@@ -9,7 +9,7 @@ class SideBarWidget : public MultiClickableQLabel {
 
 public:
   explicit SideBarWidget(QWidget *parent = nullptr);
-  ~SideBarWidget();
+  virtual ~SideBarWidget();
 
 public:
   /*clear LabelState*/

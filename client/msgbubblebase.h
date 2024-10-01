@@ -17,7 +17,7 @@ class MsgBubbleBase : public QFrame {
 
 public:
   explicit MsgBubbleBase(ChattingRole role, QWidget *parent = nullptr);
-  ~MsgBubbleBase();
+  virtual ~MsgBubbleBase();
 
 public:
   /*setup margin for both top and left(right)*/

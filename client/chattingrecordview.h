@@ -10,6 +10,7 @@ class ChattingRecordView : public QListWidget {
   Q_OBJECT
 public:
   explicit ChattingRecordView(QWidget *parent = nullptr);
+    virtual ~ChattingRecordView();
 
 public:
   /*back insert*/

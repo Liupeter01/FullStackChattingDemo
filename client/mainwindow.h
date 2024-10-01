@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow {
 
 public:
   MainWindow(QWidget *parent = nullptr);
-  ~MainWindow();
+  virtual ~MainWindow();
 
 private:
   void setFramelessWindow(QDialog *dialog);

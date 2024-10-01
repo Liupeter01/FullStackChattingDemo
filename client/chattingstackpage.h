@@ -12,7 +12,7 @@ class ChattingStackPage : public QWidget {
 
 public:
   explicit ChattingStackPage(QWidget *parent = nullptr);
-  ~ChattingStackPage();
+  virtual ~ChattingStackPage();
 
 private slots:
   void on_send_message_clicked();

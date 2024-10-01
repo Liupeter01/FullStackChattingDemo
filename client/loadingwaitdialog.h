@@ -12,7 +12,7 @@ class LoadingWaitDialog : public QDialog {
 
 public:
   explicit LoadingWaitDialog(QWidget *parent = nullptr);
-  ~LoadingWaitDialog();
+  virtual ~LoadingWaitDialog();
 
 private:
   void setupWindowsAttribute();

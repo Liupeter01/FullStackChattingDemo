@@ -22,7 +22,7 @@ class ResetPasswdInterface : public QDialog {
 
 public:
   explicit ResetPasswdInterface(QWidget *parent = nullptr);
-  ~ResetPasswdInterface();
+  virtual ~ResetPasswdInterface();
 
 private:
   void setResetAttribute();

@@ -17,7 +17,7 @@ class ListItemWidgetBase : public QWidget {
   Q_OBJECT
 public:
   explicit ListItemWidgetBase(QWidget *parent = nullptr);
-  ~ListItemWidgetBase();
+  virtual ~ListItemWidgetBase();
 
 public:
   const ListItemType getItemType() const;

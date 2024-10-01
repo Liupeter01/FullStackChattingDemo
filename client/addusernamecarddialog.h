@@ -15,7 +15,7 @@ class AddUserNameCardDialog : public QDialog {
 
 public:
   explicit AddUserNameCardDialog(QWidget *parent = nullptr);
-  ~AddUserNameCardDialog();
+  virtual ~AddUserNameCardDialog();
 
   void setupUserInfo(std::unique_ptr<UserNameCard> info);
 

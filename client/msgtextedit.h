@@ -24,7 +24,7 @@ class MsgTextEdit : public QTextEdit {
 
 public:
   explicit MsgTextEdit(QWidget *parent = nullptr);
-  ~MsgTextEdit();
+  virtual ~MsgTextEdit();
 
 signals:
   /*when pressing enter & return, then send the image*/

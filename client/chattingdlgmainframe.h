@@ -19,7 +19,7 @@ class ChattingDlgMainFrame : public QDialog {
 
 public:
   explicit ChattingDlgMainFrame(QWidget *parent = nullptr);
-  ~ChattingDlgMainFrame();
+  virtual ~ChattingDlgMainFrame();
 
 protected:
   /*chat list test*/
