@@ -23,7 +23,13 @@ using QT6(Q::Widgets Qt::Network)
 
 ### Chatting Main Dialog
 
-<img src="./assets/client_interface_1.png" alt="client_interface_1" style="zoom:50%;" />
+<img src="./assets/client_interface_1.png" alt="client_interface_1" style="zoom:100%;" />
+
+### Search and add new contact
+
+![image-20241001102111981](./assets/client_interface_2.png)
+
+
 
 
 
