@@ -42,12 +42,12 @@ void ChattingContactList::addGroupSeperator(const QString &text) {
 void ChattingContactList::slot_itemClicked(QListWidgetItem *item) {}
 
 void ChattingContactList::loadContactsTest() {
-          /*add new friend button as a group*/
-          addGroupSeperator(static_text);
-          addAddUserWidget();
+  /*add new friend button as a group*/
+  addGroupSeperator(static_text);
+  addAddUserWidget();
 
-          /*show contact as a group*/
-          addGroupSeperator(QString("My Contact"));
+  /*show contact as a group*/
+  addGroupSeperator(QString("My Contact"));
 }
 
 void ChattingContactList::registerSignal() {
