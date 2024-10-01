@@ -64,6 +64,7 @@
 }
 
 #contact_list::item::selected{
+	color: black
 	background-color: #d3d7d4;
 	border: none;
 	outline: none;
