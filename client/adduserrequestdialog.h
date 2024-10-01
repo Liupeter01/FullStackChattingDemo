@@ -19,7 +19,7 @@ public:
   explicit AddUserRequestDialog(QWidget *parent = nullptr);
   ~AddUserRequestDialog();
 
-private:
+private:    
   /*register signal<->slot*/
   void registerSignal();
 
@@ -46,11 +46,12 @@ private:
   void createExistingTag(const QString &text, OnceClickableQLabel *widget);
 
   /*reset labels*/
-  // void resetLabels();
+  void resetLabels();
 
   /*shutdown AddUserRequestDialog*/
   void closeDialog();
 
+  /*test function*/
   void loadtestFunction();
 
 private slots:
@@ -105,9 +106,13 @@ private:
   std::vector<QString> m_existing_key;
   std::map<QString, std::shared_ptr<OnceClickableQLabel>> m_exist_label;
 
+  /*update existing ui display*/
+
   /*labels that are going to be added to textedit widget*/
   std::vector<QString> m_selected_key;
   std::map<QString, std::shared_ptr<UserTagWidget>> m_selected_label;
+
+  /*update existing ui display*/
 };
 
 #endif // ADDUSERREQUESTDIALOG_H
