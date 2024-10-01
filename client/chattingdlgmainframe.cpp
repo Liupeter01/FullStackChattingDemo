@@ -7,7 +7,8 @@
 #include <QMouseEvent>
 #include <QPoint>
 #include <QRandomGenerator>
-#include <chattinghistorywidget.h>
+#include "chattinghistorywidget.h"
+#include "chattingcontactlist.h"
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
     : QDialog(parent), ui(new Ui::ChattingDlgMainFrame), m_curQLabel(nullptr),
@@ -35,7 +36,9 @@ ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
 
   /*set show list to hidden status*/
   // ui->show_lists->setHidden(true);
-  addItemToShowLists();
+
+  /*chat list test*/
+  addItemToChatListTest();
 
   /*after switch status, then switch window*/
   switchRelevantListWidget();
@@ -305,7 +308,9 @@ void ChattingDlgMainFrame::slot_load_more_record() {
 
   /*load more data to the list*/
   qDebug() << "load more data to the list";
-  addItemToShowLists();
+
+  /*test*/
+  addItemToChatListTest();
 
   loadingInf->deleteLater();
 }
@@ -336,7 +341,7 @@ ChattingDlgMainFrame::~ChattingDlgMainFrame() {
   delete ui;
 }
 
-void ChattingDlgMainFrame::addItemToShowLists() {
+void ChattingDlgMainFrame::addItemToChatListTest() {
 
   for (std::size_t i = 0; i < 40; ++i) {
     auto random = QRandomGenerator::global()->bounded(10000);

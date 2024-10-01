@@ -22,7 +22,8 @@ public:
   ~ChattingDlgMainFrame();
 
 protected:
-  void addItemToShowLists();
+  /*chat list test*/
+  void addItemToChatListTest();
 
   /*customlized functions*/
   bool eventFilter(QObject *object, QEvent *event) override;
@@ -50,7 +51,6 @@ private:
 
   /*clear search_edit according to mouse position*/
   void clearSearchByMousePos(QMouseEvent *event);
-  ;
 
 private slots:
   /*search text changed*/
