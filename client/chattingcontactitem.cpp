@@ -11,6 +11,13 @@ ChattingContactItem::ChattingContactItem(QWidget *parent)
 
     /*set list item type, default value = ContactHistory*/
     setItemType(ListItemType::ContactHistory);
+
+
+    /*load qimage for AddUserWidget*/
+    Tools::loadImgResources({"add_friend_clicked.png"},
+                            ui->notification_label->width(),
+                            ui->notification_label->height()
+    );
 }
 
 ChattingContactItem::~ChattingContactItem()
@@ -27,20 +34,18 @@ void ChattingContactItem::setAddUserWidget()
     /*set list item type, AddUserWidget*/
     setItemType(ListItemType::AddUserWidget);
 
-    /*setup avator by static label*/
-    Tools::setQLableImage(ui->notification_label, "add_friend_clicked.png");
-
     /*setup text by static text*/
     ui->display_label->setText(static_text);
+
+    /*move notification label to front*/
+    ui->notification_label->raise();
+
+    /*setup avator by static label*/
+    Tools::setQLableImage(ui->notification_label, "add_friend_clicked.png");
 
     /*hide group zone*/
     ui->contact_zone->show();
     ui->group_zone->hide();
-
-    /*set qss style*/
-    //ui->group_zone->setStyleSheet(
-    //    QString("#group_zone{color:while;font-size:14px;"
-    //            "font-family: \"Microsoft YaHei\""));
 
     /*update contact zone's size*/
     m_size = ui->contact_zone->size();
@@ -61,11 +66,6 @@ void ChattingContactItem::setChattingContact(const QString &target_picture, cons
     ui->contact_zone->show();
     ui->group_zone->hide();
 
-    /*set qss style*/
-    //ui->contact_zone->setStyleSheet(
-    //    QString("#group_label{color:while;font-size:14px;"
-    //            "font-family: \"Microsoft YaHei\""));
-
     /*update contact zone's size*/
     m_size = ui->contact_zone->size();
 }
@@ -84,8 +84,15 @@ void ChattingContactItem::setGroupSeperator(const QString& text)
 
    /*set qss style*/
     ui->group_zone->setStyleSheet(
-        QString("#group_zone Qwidget{background-color:while;font-size:14px;"
-                "font-family: \"Microsoft YaHei\""));
+        QString("#group_zone{"
+                    "color:white;"
+                    "background-color:#d3d7d4;"
+                    "font-size:14px;"
+                    "font-family: \"Microsoft YaHei\";"
+                    "border: none;"
+                    "outline: none;"
+                "}")
+    );
 
     /*update group zone's size*/
     m_size = ui->group_zone->size();
