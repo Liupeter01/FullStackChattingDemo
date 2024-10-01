@@ -109,26 +109,50 @@ std::optional<QImage> Tools::loadImages(const QString &path, int width,
   return load_img;
 }
 
+std::optional<QIcon> Tools::loadIcon(const QString &path) {
+    QFile load_file(path);
+    if (!load_file.exists()) {
+        qDebug() << "Open image path: " << path << " failed!";
+        return std::nullopt;
+    }
+    return QIcon(path);
+}
+
 void Tools::loadImgResources(std::initializer_list<QString> file_list,
-                             int width, int height) {
+                             int width, int height, const QString &load_dir)
+{
   for (const auto &path : file_list) {
 
       /*we do not allow duplication in map*/
       if(Tools::s_images.find(path) == Tools::s_images.end()){
-          auto image = Tools::loadImages(QT_DEMO_HOME "/res/" + path, width, height);
+          auto image = Tools::loadImages(QT_DEMO_HOME + load_dir + path, width, height);
 
           if (!image.has_value()) {
               qDebug() << "image: " << path << " load error!";
               continue;
           }
           qDebug() << "resource image file: " << path << " load successfully!";
-          Tools::s_images.insert(std::pair<QString, QImage>(path, image.value()));
+          Tools::s_images.insert(std::pair<QString, QImage>(load_dir + path, image.value()));
       }
   }
 }
 
-void Tools::setQLableImage(QLabel *label, const QString &target) {
-  auto it = Tools::s_images.find(target);
+void Tools::loadIconResources(std::initializer_list<QString> file_list,  const QString &load_dir) {
+    for (const auto &path : file_list) {
+
+        auto image = loadIcon(QT_DEMO_HOME + load_dir + path);
+
+        if (!image.has_value()) {
+            qDebug() << "qicon: " << path << " load error!";
+            continue;
+        }
+        qDebug() << "resource icon file: " << path << " load successfully!";
+        Tools::s_icons.insert(std::pair<QString, QIcon>(load_dir + path, image.value()));
+    }
+}
+
+void Tools::setQLableImage(QLabel *label, const QString &target, const QString &load_dir) {
+  auto it = Tools::s_images.find(load_dir + target);
   if (it == Tools::s_images.end()) {
     qDebug() << "image: " << target << " not found!";
     return;
@@ -137,31 +161,8 @@ void Tools::setQLableImage(QLabel *label, const QString &target) {
   label->update();
 }
 
-std::optional<QIcon> Tools::loadIcon(const QString &path) {
-  QFile load_file(path);
-  if (!load_file.exists()) {
-    qDebug() << "Open image path: " << path << " failed!";
-    return std::nullopt;
-  }
-  return QIcon(path);
-}
-
-void Tools::loadIconResources(std::initializer_list<QString> file_list) {
-  for (const auto &path : file_list) {
-
-    auto image = loadIcon(QT_DEMO_HOME "/res/" + path);
-
-    if (!image.has_value()) {
-      qDebug() << "qicon: " << path << " load error!";
-      continue;
-    }
-    qDebug() << "resource icon file: " << path << " load successfully!";
-    Tools::s_icons.insert(std::pair<QString, QIcon>(path, image.value()));
-  }
-}
-
-void Tools::setPushButtonIcon(QPushButton *button, const QString &target) {
-  auto it = Tools::s_icons.find(target);
+void Tools::setPushButtonIcon(QPushButton *button, const QString &target, const QString &load_dir) {
+  auto it = Tools::s_icons.find(load_dir + target);
   if (it == Tools::s_icons.end()) {
     qDebug() << "icon: " << target << " not found!";
     return;
