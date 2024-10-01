@@ -1,4 +1,6 @@
 #include "chattingdlgmainframe.h"
+#include "chattingcontactlist.h"
+#include "chattinghistorywidget.h"
 #include "loadingwaitdialog.h"
 #include "tools.h"
 #include "ui_chattingdlgmainframe.h"
@@ -7,8 +9,6 @@
 #include <QMouseEvent>
 #include <QPoint>
 #include <QRandomGenerator>
-#include "chattinghistorywidget.h"
-#include "chattingcontactlist.h"
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
     : QDialog(parent), ui(new Ui::ChattingDlgMainFrame), m_curQLabel(nullptr),

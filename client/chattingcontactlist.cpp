@@ -1,80 +1,67 @@
 #include "chattingcontactlist.h"
 #include "chattingcontactitem.h"
-#include <QScrollBar>
 #include <QListWidgetItem>
+#include <QScrollBar>
 
 ChattingContactList::ChattingContactList(QWidget *parent)
-    : static_text("Add New Friend")
-    , MainFrameShowLists(parent)
-{
-    /*register signal*/
-    registerSignal();
+    : static_text("Add New Friend"), MainFrameShowLists(parent) {
+  /*register signal*/
+  registerSignal();
 
-    /*load contact test func*/
-    loadContactsTest();
-
-
+  /*load contact test func*/
+  loadContactsTest();
 }
 
-ChattingContactList::~ChattingContactList()
-{
+ChattingContactList::~ChattingContactList() {}
+
+void ChattingContactList::addAddUserWidget() {
+  ChattingContactItem *item(new ChattingContactItem);
+
+  /*set AddUserWidget*/
+  item->setAddUserWidget();
+  addItemWidget(item);
 }
 
-void ChattingContactList::addAddUserWidget()
-{
-    ChattingContactItem* item(new ChattingContactItem);
+void ChattingContactList::addChattingContact(const QString &target_picture,
+                                             const QString &text) {
+  ChattingContactItem *item(new ChattingContactItem);
 
-    /*set AddUserWidget*/
-    item->setAddUserWidget();
-    addItemWidget(item);
+  /*set chatting contact info*/
+  item->setChattingContact(target_picture, text);
+  addItemWidget(item);
 }
 
-void ChattingContactList::addChattingContact(const QString &target_picture,const QString& text)
-{
-    ChattingContactItem* item(new ChattingContactItem);
+void ChattingContactList::addGroupSeperator(const QString &text) {
+  ChattingContactItem *item(new ChattingContactItem);
 
-    /*set chatting contact info*/
-    item->setChattingContact(target_picture, text);
-    addItemWidget(item);
+  /*set dialog with seperator*/
+  item->setGroupSeperator(text);
+  addItemWidget(item);
 }
 
-void ChattingContactList::addGroupSeperator(const QString& text)
-{
-    ChattingContactItem* item(new ChattingContactItem);
+void ChattingContactList::slot_itemClicked(QListWidgetItem *item) {}
 
-    /*set dialog with seperator*/
-    item->setGroupSeperator(text);
-    addItemWidget(item);
+void ChattingContactList::loadContactsTest() {
+  addGroupSeperator(static_text);
+  addAddUserWidget();
 }
 
-void ChattingContactList::slot_itemClicked(QListWidgetItem *item)
-{
-
+void ChattingContactList::registerSignal() {
+  /*user click one of the contact, connect signal<->slot*/
+  connect(this, &QListWidget::itemClicked, this,
+          &ChattingContactList::slot_itemClicked);
 }
 
-void ChattingContactList::loadContactsTest()
-{
-    addGroupSeperator(static_text);
-    addAddUserWidget();
-}
+void ChattingContactList::addItemWidget(ChattingContactItem *new_inserted) {
+  if (new_inserted == nullptr) {
+    return;
+  }
 
-void ChattingContactList::registerSignal()
-{
-    /*user click one of the contact, connect signal<->slot*/
-    connect(this, &QListWidget::itemClicked, this, &ChattingContactList::slot_itemClicked);
-}
+  QListWidgetItem *item(new QListWidgetItem);
 
-void ChattingContactList::addItemWidget(ChattingContactItem *new_inserted)
-{
-    if(new_inserted == nullptr){
-        return;
-    }
+  item->setSizeHint(new_inserted->sizeHint());
 
-    QListWidgetItem *item(new QListWidgetItem);
-
-    item->setSizeHint(new_inserted->sizeHint());
-
-    this->addItem(item);
-    this->setItemWidget(item, new_inserted);
-    this->update();
+  this->addItem(item);
+  this->setItemWidget(item, new_inserted);
+  this->update();
 }

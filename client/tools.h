@@ -83,9 +83,11 @@ struct Tools {
    * all other user owned images should be loaded from "/static/" dir
    */
   static void loadImgResources(std::initializer_list<QString> file_list,
-                               int width, int height, const QString &load_dir = "/res/");
+                               int width, int height,
+                               const QString &load_dir = "/res/");
 
-  static void setQLableImage(QLabel *label, const QString &target, const QString &load_dir = "/res/");
+  static void setQLableImage(QLabel *label, const QString &target,
+                             const QString &load_dir = "/res/");
   static std::optional<QImage> loadImages(const QString &path, int width,
                                           int height);
 
@@ -93,13 +95,15 @@ struct Tools {
   static std::map<QString, QIcon> s_icons;
 
   static std::optional<QIcon> loadIcon(const QString &path);
-  static void setPushButtonIcon(QPushButton *button, const QString &target, const QString &load_dir = "/res/");
+  static void setPushButtonIcon(QPushButton *button, const QString &target,
+                                const QString &load_dir = "/res/");
 
   /*
    * all program needed images files should be inside "/res/" dir
    * all other user owned images should be loaded from "/static/" dir
    */
-  static void loadIconResources(std::initializer_list<QString> file_list, const QString &load_dir = "/res/");
+  static void loadIconResources(std::initializer_list<QString> file_list,
+                                const QString &load_dir = "/res/");
 };
 
 #endif // TOOLS_H
