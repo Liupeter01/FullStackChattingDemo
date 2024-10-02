@@ -2,8 +2,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 
-OnceClickableQLabel::OnceClickableQLabel(QWidget *parent) : QLabel(parent) {
-}
+OnceClickableQLabel::OnceClickableQLabel(QWidget *parent) : QLabel(parent) {}
 
 OnceClickableQLabel::~OnceClickableQLabel() {}
 

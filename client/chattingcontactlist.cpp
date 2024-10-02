@@ -1,9 +1,9 @@
-#include "tools.h"
 #include "chattingcontactlist.h"
 #include "chattingcontactitem.h"
+#include "tools.h"
 #include <QListWidgetItem>
-#include <QScrollBar>
 #include <QRandomGenerator>
+#include <QScrollBar>
 
 ChattingContactList::ChattingContactList(QWidget *parent)
     : static_text("Add New Friend"), MainFrameShowLists(parent) {
@@ -76,17 +76,17 @@ void ChattingContactList::loadContactsTest() {
   addGroupSeperator(QString("My Contact"));
 
   /*load test user avator image im "/static/" dir*/
-  Tools::loadImgResources({"0.png","1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png"},
+  Tools::loadImgResources({"0.png", "1.png", "2.png", "3.png", "4.png", "5.png",
+                           "6.png", "7.png", "8.png"},
                           ChattingContactItem::getImageSize().width(),
                           ChattingContactItem::getImageSize().height(),
-                          "/static/"
-                          );
+                          "/static/");
 
   for (std::size_t i = 0; i < 10; ++i) {
-      auto random = QRandomGenerator::global()->bounded(9);
-      auto path = QString::number(random) + ".png";
-      qDebug() << "static path = /static/" << path;
-      addChattingContact(path, QString::number(random));
+    auto random = QRandomGenerator::global()->bounded(9);
+    auto path = QString::number(random) + ".png";
+    qDebug() << "static path = /static/" << path;
+    addChattingContact(path, QString::number(random));
   }
 }
 

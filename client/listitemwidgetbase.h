@@ -4,13 +4,13 @@
 #include <QWidget>
 
 enum class ListItemType {
-  Default,         // current nothing being set
-  ChattingHistory, // display on chatting list
-  ContactHistory,  // display on contact list
-  ShowContactByGroup,   //seperate contact by group
-  SearchUserId,     // search user clickable widget
-  AddUserWidget,    // show a add user widget on contact list
-  NoUserFound      // server return no user found
+  Default,            // current nothing being set
+  ChattingHistory,    // display on chatting list
+  ContactHistory,     // display on contact list
+  ShowContactByGroup, // seperate contact by group
+  SearchUserId,       // search user clickable widget
+  AddUserWidget,      // show a add user widget on contact list
+  NoUserFound         // server return no user found
 };
 
 class ListItemWidgetBase : public QWidget {

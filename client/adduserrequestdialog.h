@@ -19,7 +19,7 @@ public:
   explicit AddUserRequestDialog(QWidget *parent = nullptr);
   virtual ~AddUserRequestDialog();
 
-private:    
+private:
   /*register signal<->slot*/
   void registerSignal();
 

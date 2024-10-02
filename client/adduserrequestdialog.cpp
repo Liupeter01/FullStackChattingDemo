@@ -249,10 +249,7 @@ void AddUserRequestDialog::createExistingTag(const QString &text,
                 widget, [](OnceClickableQLabel *) {})));
 }
 
-void AddUserRequestDialog::resetLabels()
-{
-
-}
+void AddUserRequestDialog::resetLabels() {}
 
 void AddUserRequestDialog::closeDialog() {
   qDebug() << "closing AddUserRequestDialog";
