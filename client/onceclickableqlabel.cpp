@@ -3,7 +3,6 @@
 #include <QMouseEvent>
 
 OnceClickableQLabel::OnceClickableQLabel(QWidget *parent) : QLabel(parent) {
-  this->setCursor(Qt::PointingHandCursor);
 }
 
 OnceClickableQLabel::~OnceClickableQLabel() {}

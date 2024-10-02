@@ -40,6 +40,7 @@ void MultiClickableQLabel::mousePressEvent(QMouseEvent *event) {
 /*mouse enter selected section*/
 void MultiClickableQLabel::enterEvent(QEnterEvent *event) {
   qDebug() << QString("mouse entered!");
+    this->setCursor(Qt::PointingHandCursor);
   this->m_state.hover = LabelState::HoverStatus::ENABLED;
   emit update_display();
   QLabel::enterEvent(event);
@@ -48,6 +49,7 @@ void MultiClickableQLabel::enterEvent(QEnterEvent *event) {
 /*mouse leave*/
 void MultiClickableQLabel::leaveEvent(QEvent *event) {
   qDebug() << QString("mouse leave!");
+    this->setCursor(Qt::ArrowCursor);
   this->m_state.hover = LabelState::HoverStatus::DISABLED;
   emit update_display();
   QLabel::leaveEvent(event);
