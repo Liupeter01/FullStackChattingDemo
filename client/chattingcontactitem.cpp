@@ -18,6 +18,11 @@ ChattingContactItem::ChattingContactItem(QWidget *parent)
 
 ChattingContactItem::~ChattingContactItem() {}
 
+const QSize ChattingContactItem::getImageSize()
+{
+    return QSize(image_width, image_height);
+}
+
 QSize ChattingContactItem::sizeHint() const { return m_size; }
 
 void ChattingContactItem::setAddUserWidget() {
@@ -47,10 +52,17 @@ void ChattingContactItem::setChattingContact(const QString &target_picture,
   setItemType(ListItemType::ContactHistory);
 
   /*setup avator by static label*/
-  Tools::setQLableImage(ui->notification_label, target_picture);
+  Tools::setQLableImage(
+      ui->notification_label,
+      target_picture,
+      "/static/"
+      );
 
   /*setup text by static text*/
   ui->display_label->setText(text);
+
+  /*move notification_label to front*/
+  ui->notification_label->raise();
 
   /*hide group zone*/
   ui->contact_zone->show();

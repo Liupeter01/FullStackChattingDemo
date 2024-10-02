@@ -17,6 +17,9 @@ public:
   virtual ~ChattingContactItem();
 
 public:
+  /*prepare for contact list*/
+  static const QSize getImageSize();
+
   virtual QSize sizeHint() const;
 
   /*set AddUserWidget*/
@@ -27,6 +30,10 @@ public:
 
   /*set dialog with seperator*/
   void setGroupSeperator(const QString &text);
+
+  /*prepare value for image*/
+  static constexpr std::size_t image_width = 40;
+  static constexpr std::size_t image_height = 40;
 
 private:
   QSize m_size;
