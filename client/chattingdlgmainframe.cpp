@@ -59,8 +59,10 @@ ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
                           (ui->my_chat->height() + ui->my_chat->height()) / 2);
 
   /*set chatting page as default*/
-  Tools::setQLableImage(ui->my_chat, "chat_icon_clicked.png");
+  Tools::setQLableImage(ui->my_chat, "chat_icon_normal.png");
   Tools::setQLableImage(ui->my_contact, "contact_list_normal.png");
+
+  emit ui->my_chat->clicked();
 
   /*add label to global control*/
   addLabel(ui->my_chat);
