@@ -39,9 +39,6 @@ private:
   /*signal<=>slot*/
   void registerSignal();
 
-  /*add widget item to the listwidget*/
-  void addItemWidget(ChattingContactItem *new_inserted);
-
 private:
   const QString static_text;
 };
