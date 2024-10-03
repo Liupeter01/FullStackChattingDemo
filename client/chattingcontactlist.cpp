@@ -65,7 +65,38 @@ void ChattingContactList::addGroupSeperator(const QString &text) {
   this->update();
 }
 
-void ChattingContactList::slot_itemClicked(QListWidgetItem *item) {}
+void ChattingContactList::slot_itemClicked(QListWidgetItem *item) {
+    /*get widget base type*/
+    ListItemWidgetBase* base = reinterpret_cast<ListItemWidgetBase*>(this->itemWidget(item));
+
+    if(base == nullptr){
+        qDebug() << "ListItemWidgetBase is null!\n";
+        return;
+    }
+
+    /*filter ListItemWidgetBase ItemType*/
+    if(base->getItemType() == ListItemType::Default){
+        qDebug() << "invalid widget object!\n";
+        return;
+    }
+    /*click Contact By Group*/
+    else if(base->getItemType() == ListItemType::ShowContactByGroup){
+        qDebug() << "group widget is clicked, after click this we could hide the contact!\n";
+        return;
+    }
+    /*click add user widget button*/
+    else if(base->getItemType() == ListItemType::AddUserWidget){
+        qDebug() << "add user widget button is clicked turn to add user widget\n";
+        //emit signal
+        //emit;
+    }
+    /*click Contact widget item*/
+    else if(base->getItemType() == ListItemType::ContactHistory){
+        qDebug() << "contact is clicked\n";
+        //emit signal
+        //emit;
+    }
+}
 
 void ChattingContactList::loadContactsTest() {
   /*add new friend button as a group*/
@@ -83,10 +114,11 @@ void ChattingContactList::loadContactsTest() {
                           "/static/");
 
   for (std::size_t i = 0; i < 10; ++i) {
-    auto random = QRandomGenerator::global()->bounded(9);
-    auto path = QString::number(random) + ".png";
+    auto random1 = QRandomGenerator::global()->bounded(9);
+    auto random2 = QRandomGenerator::global()->bounded(9);
+    auto path = QString::number(random1) + ".png";
     qDebug() << "static path = /static/" << path;
-    addChattingContact(path, QString::number(random));
+    addChattingContact(path, QString::number(random2));
   }
 }
 
