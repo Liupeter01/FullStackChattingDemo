@@ -66,36 +66,38 @@ void ChattingContactList::addGroupSeperator(const QString &text) {
 }
 
 void ChattingContactList::slot_itemClicked(QListWidgetItem *item) {
-    /*get widget base type*/
-    ListItemWidgetBase* base = reinterpret_cast<ListItemWidgetBase*>(this->itemWidget(item));
+  /*get widget base type*/
+  ListItemWidgetBase *base =
+      reinterpret_cast<ListItemWidgetBase *>(this->itemWidget(item));
 
-    if(base == nullptr){
-        qDebug() << "ListItemWidgetBase is null!\n";
-        return;
-    }
+  if (base == nullptr) {
+    qDebug() << "ListItemWidgetBase is null!\n";
+    return;
+  }
 
-    /*filter ListItemWidgetBase ItemType*/
-    if(base->getItemType() == ListItemType::Default){
-        qDebug() << "invalid widget object!\n";
-        return;
-    }
-    /*click Contact By Group*/
-    else if(base->getItemType() == ListItemType::ShowContactByGroup){
-        qDebug() << "group widget is clicked, after click this we could hide the contact!\n";
-        return;
-    }
-    /*click add user widget button*/
-    else if(base->getItemType() == ListItemType::AddUserWidget){
-        qDebug() << "add user widget button is clicked turn to add user widget\n";
-        //emit signal
-        //emit;
-    }
-    /*click Contact widget item*/
-    else if(base->getItemType() == ListItemType::ContactHistory){
-        qDebug() << "contact is clicked\n";
-        //emit signal
-        //emit;
-    }
+  /*filter ListItemWidgetBase ItemType*/
+  if (base->getItemType() == ListItemType::Default) {
+    qDebug() << "invalid widget object!\n";
+    return;
+  }
+  /*click Contact By Group*/
+  else if (base->getItemType() == ListItemType::ShowContactByGroup) {
+    qDebug() << "group widget is clicked, after click this we could hide the "
+                "contact!\n";
+    return;
+  }
+  /*click add user widget button*/
+  else if (base->getItemType() == ListItemType::AddUserWidget) {
+    qDebug() << "add user widget button is clicked turn to add user widget\n";
+    // emit signal
+    // emit;
+  }
+  /*click Contact widget item*/
+  else if (base->getItemType() == ListItemType::ContactHistory) {
+    qDebug() << "contact is clicked\n";
+    // emit signal
+    // emit;
+  }
 }
 
 void ChattingContactList::loadContactsTest() {
