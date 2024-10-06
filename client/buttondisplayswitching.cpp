@@ -3,8 +3,8 @@
 
 ButtonDisplaySwitching::ButtonDisplaySwitching(QWidget *parent)
     : m_state(), QPushButton(parent) {
-    setCursor(Qt::PointingHandCursor);  //set cursor
-    setFocusPolicy(Qt::NoFocus);        //set to no focus
+  setCursor(Qt::PointingHandCursor); // set cursor
+  setFocusPolicy(Qt::NoFocus);       // set to no focus
 }
 
 ButtonDisplaySwitching::~ButtonDisplaySwitching() {}
