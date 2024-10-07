@@ -1,6 +1,7 @@
 #ifndef USERNAMECARD_H
 #define USERNAMECARD_H
 #include <QString>
+#include <memory>
 #include <cstdlib>
 
 enum class Sex { Male, Female };
