@@ -40,19 +40,23 @@ void LoginInterface::registerSignal() {
   connect(this->ui->forgot_passwd_label, &ForgotPassword::clicked, this,
           &LoginInterface::slot_forgot_passwd);
 
-  connect(this->ui->forgot_passwd_label, &ForgotPassword::update_display, this, [this](){
-      auto state = ui->forgot_passwd_label->getState();
-      if (state.hover == LabelState::HoverStatus::ENABLED) {
-        Tools::setWidgetAttribute(ui->forgot_passwd_label, "forgot password?", true);
-      } else {
-        Tools::setWidgetAttribute(ui->forgot_passwd_label, "forgot password?", false);
-      }
-  });
+  connect(this->ui->forgot_passwd_label, &ForgotPassword::update_display, this,
+          [this]() {
+            auto state = ui->forgot_passwd_label->getState();
+            if (state.hover == LabelState::HoverStatus::ENABLED) {
+              Tools::setWidgetAttribute(ui->forgot_passwd_label,
+                                        "forgot password?", true);
+            } else {
+              Tools::setWidgetAttribute(ui->forgot_passwd_label,
+                                        "forgot password?", false);
+            }
+          });
 
-  connect(this->ui->passwd_display, &MultiClickableQLabel::clicked, this, [this]() {
-    handle_clicked();
-    handle_hover();
-  });
+  connect(this->ui->passwd_display, &MultiClickableQLabel::clicked, this,
+          [this]() {
+            handle_clicked();
+            handle_hover();
+          });
   connect(this->ui->passwd_display, &MultiClickableQLabel::update_display, this,
           [this]() {
             handle_clicked();

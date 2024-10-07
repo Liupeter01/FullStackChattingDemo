@@ -3,7 +3,7 @@
 
 #include "multiclickableqlabel.h"
 
-class ForgotPassword : public MultiClickableQLabel{
+class ForgotPassword : public MultiClickableQLabel {
   Q_OBJECT;
 
 public:

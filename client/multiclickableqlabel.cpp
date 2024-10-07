@@ -1,4 +1,4 @@
-#include "multiClickableQLabel.h"
+#include "multiclickableqlabel.h"
 #include <QDebug>
 #include <QMouseEvent>
 

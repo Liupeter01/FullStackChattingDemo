@@ -168,10 +168,11 @@ void ResetPasswdInterface::registerEditFinishedEvent() {
     handle_hover();
   });
 
-  connect(ui->newpasswd_show, &MultiClickableQLabel::update_display, this, [this]() {
-    handle_clicked();
-    handle_hover();
-  });
+  connect(ui->newpasswd_show, &MultiClickableQLabel::update_display, this,
+          [this]() {
+            handle_clicked();
+            handle_hover();
+          });
 
   connect(ui->newconfirm_show, &MultiClickableQLabel::update_display, this,
           [this]() {

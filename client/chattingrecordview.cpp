@@ -15,9 +15,7 @@ ChattingRecordView::ChattingRecordView(QWidget *parent)
   registerSignal();
 }
 
-ChattingRecordView::~ChattingRecordView()
-{
-}
+ChattingRecordView::~ChattingRecordView() {}
 
 void ChattingRecordView::slot_rangeChanged(int min, int max) {
   auto scroll_bar = this->verticalScrollBar();
