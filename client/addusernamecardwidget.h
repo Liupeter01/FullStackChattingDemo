@@ -2,6 +2,8 @@
 #define ADDUSERNAMECARDWIDGET_H
 
 #include <QFrame>
+#include <memory>
+#include "UserNameCard.h"
 
 namespace Ui {
 class AddUserNameCardWidget;
@@ -13,26 +15,32 @@ class AddUserNameCardWidget : public QFrame {
 public:
   explicit AddUserNameCardWidget(QWidget *parent = nullptr);
   virtual ~AddUserNameCardWidget();
-  void setFriendName(const QString &name);
-  void setFriendAvator(const QPixmap &pic);
-  void setRequestMsg(const QString &msg);
 
+public:
+  //void setFriendAvator(const QPixmap &pic);
+  void setNameCardInfo(std::unique_ptr<UserNameCard> info);
+
+  static const QSize getImageSize();
   virtual QSize sizeHint() const;
 
-  static constexpr std::size_t height = 30;
-  static constexpr std::size_t width = 30;
+  static constexpr std::size_t width = 270;
+  static constexpr std::size_t height = 64;
+
+  static constexpr std::size_t image_width = 40;
+  static constexpr std::size_t image_height = 40;
 
 private:
   void registerSignal();
 
 signals:
-  void signal_close_clicked();
+  void signal_add_friend();
 
 private slots:
-  void slot_close_clicked();
+
 
 private:
   Ui::AddUserNameCardWidget *ui;
+  std::unique_ptr<UserNameCard> m_info;
 };
 
 #endif // ADDUSERNAMECARDWIDGET_H
