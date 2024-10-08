@@ -10,6 +10,7 @@ class AddNewUserStackWidget;
 
 /*declare*/
 class AddUserNameCardWidget;
+struct UserNameCard;
 
 class AddNewUserStackWidget : public QWidget
 {
@@ -18,6 +19,14 @@ class AddNewUserStackWidget : public QWidget
 public:
     explicit AddNewUserStackWidget(QWidget *parent = nullptr);
     virtual ~AddNewUserStackWidget();
+
+public:
+    /*add new user widget to list*/
+    void addNewWidgetItem(std::unique_ptr<UserNameCard> info);
+
+private:
+    /*test function*/
+    void loadWidgetTest();
 
 signals:
 
@@ -28,6 +37,7 @@ private:
     std::unordered_map<
         /*uuid*/
         std::size_t,
+
         /*namecard widget*/
         std::shared_ptr<AddUserNameCardWidget>
     > m_friendList;
