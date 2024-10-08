@@ -27,6 +27,8 @@ public:
   void addGroupSeperator(const QString &text);
 
 signals:
+  /*connect with ChattingDlgMainFrame::switchNewUserPage*/
+  void signal_switch_addnewuser();
 
 private slots:
   /*user click one of the contact*/

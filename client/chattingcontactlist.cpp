@@ -89,8 +89,7 @@ void ChattingContactList::slot_itemClicked(QListWidgetItem *item) {
   /*click add user widget button*/
   else if (base->getItemType() == ListItemType::AddUserWidget) {
     qDebug() << "add user widget button is clicked turn to add user widget\n";
-    // emit signal
-    // emit;
+    emit signal_switch_addnewuser();
   }
   /*click Contact widget item*/
   else if (base->getItemType() == ListItemType::ContactHistory) {
