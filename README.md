@@ -27,6 +27,8 @@ using QT6(Q::Widgets Qt::Network)
 
 ### Search and add new contact
 
+![image-20241008180452143](./assets/client_interface_4.png)
+
 ![image-20241001102111981](./assets/client_interface_2.png)
 
 ### Contact Page
