@@ -107,7 +107,8 @@ void ChattingDlgMainFrame::registerSignal() {
   connect(ui->chat_list, &MainFrameShowLists::signal_load_more_record, this,
           &ChattingDlgMainFrame::slot_load_more_record);
 
-  connect(ui->contact_list, &ChattingContactList::signal_switch_addnewuser, this, &ChattingDlgMainFrame::switchNewUserPage);
+  connect(ui->contact_list, &ChattingContactList::signal_switch_addnewuser,
+          this, &ChattingDlgMainFrame::switchNewUserPage);
 }
 
 void ChattingDlgMainFrame::registerSearchEditAction() {
@@ -330,7 +331,7 @@ void ChattingDlgMainFrame::slot_display_chat_list() {
 
   /*after switch status, then switch window*/
   switchRelevantListWidget();
-  
+
   /*switch to chatting page*/
   switchChattingPage();
 }
@@ -384,12 +385,12 @@ bool ChattingDlgMainFrame::eventFilter(QObject *object, QEvent *event) {
  * switch to chatting page by using stackedWidget
  */
 void ChattingDlgMainFrame::switchChattingPage() {
-    ui->stackedWidget->setCurrentWidget(ui->chattingpage);
+  ui->stackedWidget->setCurrentWidget(ui->chattingpage);
 }
 
 /*
  * switch to new user page by using stackedWidget
  */
 void ChattingDlgMainFrame::switchNewUserPage() {
-    ui->stackedWidget->setCurrentWidget(ui->newuserpage);
+  ui->stackedWidget->setCurrentWidget(ui->newuserpage);
 }
