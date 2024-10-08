@@ -52,6 +52,12 @@ private:
   /*clear search_edit according to mouse position*/
   void clearSearchByMousePos(QMouseEvent *event);
 
+  /* switch to chatting page by using stackedWidget */
+  void switchChattingPage();
+
+  /* switch to new user page by using stackedWidget */
+  void switchNewUserPage();
+
 private slots:
   /*search text changed*/
   void slot_search_text_changed();
