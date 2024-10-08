@@ -70,8 +70,8 @@ void MainFrameSearchLists::slot_item_clicked(QListWidgetItem *clicked_item) {
     auto add = std::dynamic_pointer_cast<AddUserNameCardDialog>(m_Dlg);
 
     /*load image from "/static/ dir directly"*/
-    add->setupUserInfo(
-        std::make_unique<UserNameCard>(0, "4.png", "test_name", "test_desc", Sex::Male));
+    add->setupUserInfo(std::make_unique<UserNameCard>(0, "4.png", "test_name",
+                                                      "test_desc", Sex::Male));
     add->show();
     return;
   }
