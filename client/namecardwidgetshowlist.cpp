@@ -1,7 +1,11 @@
 #include "namecardwidgetshowlist.h"
 
 NameCardWidgetShowList::NameCardWidgetShowList(QWidget *parent)
-    :MainFrameShowLists(parent)
+    :MainFrameShowLists(parent){}
+
+NameCardWidgetShowList::~NameCardWidgetShowList(){}
+
+void NameCardWidgetShowList::addNameCardWidget()
 {
 
 }

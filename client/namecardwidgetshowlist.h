@@ -9,6 +9,7 @@ class NameCardWidgetShowList : public MainFrameShowLists
 
 public:
     NameCardWidgetShowList(QWidget* parent = nullptr);
+    virtual ~NameCardWidgetShowList();
 
 signals:
 
