@@ -30,7 +30,11 @@ public:
   static constexpr std::size_t image_height = 40;
 
 private:
+  /*register signal*/
   void registerSignal();
+
+  /*default settings*/
+  void loadDefaultSetting();
 
 signals:
   void signal_add_friend();

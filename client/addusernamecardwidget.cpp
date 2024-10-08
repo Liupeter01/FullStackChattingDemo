@@ -8,6 +8,9 @@ AddUserNameCardWidget::AddUserNameCardWidget(QWidget *parent)
 
   /*registerSignal*/
   registerSignal();
+
+  /*default settings*/
+  loadDefaultSetting();
 }
 
 AddUserNameCardWidget::~AddUserNameCardWidget() { delete ui; }
@@ -58,4 +61,11 @@ void AddUserNameCardWidget::registerSignal()
         ui->ignore_button->hide();
         ui->status_label->setText(QString("Ignored"));
     });
+}
+
+void AddUserNameCardWidget::loadDefaultSetting()
+{
+    ui->add_button->show();
+    ui->ignore_button->show();
+    ui->status_label->hide();
 }
