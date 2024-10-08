@@ -1,6 +1,6 @@
-#include "tools.h"
 #include "addusernamecarddialog.h"
 #include "adduserrequestdialog.h"
+#include "tools.h"
 #include "ui_addusernamecarddialog.h"
 
 AddUserNameCardDialog::AddUserNameCardDialog(QWidget *parent)
@@ -21,12 +21,8 @@ void AddUserNameCardDialog::setupUserInfo(std::unique_ptr<UserNameCard> info) {
   ui->user_name->setText(m_info->m_nickname);
 
   /*load image resources*/
-  Tools::loadImgResources(
-      {m_info->m_avatorPath},
-      ui->user_avator->width(),
-      ui->user_avator->height(),
-      "/static/"
-    );
+  Tools::loadImgResources({m_info->m_avatorPath}, ui->user_avator->width(),
+                          ui->user_avator->height(), "/static/");
 
   Tools::setQLableImage(ui->user_avator, m_info->m_avatorPath, "/static/");
 }
