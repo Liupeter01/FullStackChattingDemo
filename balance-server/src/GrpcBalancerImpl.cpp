@@ -110,6 +110,32 @@ void grpc::GrpcBalancerImpl::registerUserInfo(
   return grpc::Status::OK;
 }
 
+::grpc::Status  grpc::GrpcBalancerImpl::GetPeerServerInfo(
+          ::grpc::ClientContext* context,
+          const ::message::GetChattingSeverPeerListsRequest* request,
+          ::message::PeerResponse* response) {
+
+          auto target = this->servers.find(request->cur_server_name());
+
+          /*we didn't find cur_server_name in unordered_map*/
+          if (target == this->servers.end()) {
+                    response->set_error(static_cast<std::size_t>(ServiceStatus::CHATTING_SERVER_NOT_EXISTS));
+          }
+          else {
+                    std::for_each(servers.begin(), servers.end(), [&request, &response](const decltype(*servers.begin())& peer) {
+                              if (peer.first != request->cur_server_name()) {
+                                        auto new_peer = response->add_lists();
+                                        new_peer->set_name(peer.second._name);
+                                        new_peer->set_host(peer.second._host);
+                                        new_peer->set_port(peer.second._port);
+                              }
+                    });
+
+                    response->set_error(static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
+          }
+          return grpc::Status::OK;
+}
+
 std::string grpc::GrpcBalancerImpl::userTokenGenerator() {
   boost::uuids::uuid uuid_gen = boost::uuids::random_generator()();
   return boost::uuids::to_string(uuid_gen);
