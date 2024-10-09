@@ -34,11 +34,10 @@ public:
                     const ::message::LoginChattingServer *request,
                     ::message::LoginChattingResponse *response);
 
-  ::grpc::Status 
-   GetPeerServerInfo(
-            ::grpc::ClientContext* context, 
-            const ::message::GetChattingSeverPeerListsRequest* request, 
-            ::message::PeerResponse* response);
+  ::grpc::Status
+  GetPeerServerInfo(::grpc::ClientContext *context,
+                    const ::message::GetChattingSeverPeerListsRequest *request,
+                    ::message::PeerResponse *response);
 
   static std::string userTokenGenerator();
 
