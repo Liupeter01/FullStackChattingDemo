@@ -50,8 +50,9 @@ message LoginChattingServer {
 message LoginChattingResponse { int32 error = 1; }
 
 message ChattingPeerServer {
-  string host = 1;
-  string port = 2;
+  string name = 1;
+  string host = 2;
+  string port = 3;
 }
 
 message GetChattingSeverPeerListsRequest {
