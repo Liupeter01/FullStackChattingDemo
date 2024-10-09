@@ -185,5 +185,192 @@ BalancerService::Service::~Service() {
 }
 
 
+static const char* DistributedChattingService_method_names[] = {
+  "/message.DistributedChattingService/SendFriendRequest",
+  "/message.DistributedChattingService/ConfirmFriendRequest",
+  "/message.DistributedChattingService/FriendshipVerification",
+  "/message.DistributedChattingService/NormalChattingMsg",
+};
+
+std::unique_ptr< DistributedChattingService::Stub> DistributedChattingService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
+  (void)options;
+  std::unique_ptr< DistributedChattingService::Stub> stub(new DistributedChattingService::Stub(channel, options));
+  return stub;
+}
+
+DistributedChattingService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
+  : channel_(channel), rpcmethod_SendFriendRequest_(DistributedChattingService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ConfirmFriendRequest_(DistributedChattingService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_FriendshipVerification_(DistributedChattingService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_NormalChattingMsg_(DistributedChattingService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  {}
+
+::grpc::Status DistributedChattingService::Stub::SendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::message::AddNewFriendResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::message::AddNewFriendRequest, ::message::AddNewFriendResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_SendFriendRequest_, context, request, response);
+}
+
+void DistributedChattingService::Stub::async::SendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest* request, ::message::AddNewFriendResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::message::AddNewFriendRequest, ::message::AddNewFriendResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SendFriendRequest_, context, request, response, std::move(f));
+}
+
+void DistributedChattingService::Stub::async::SendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest* request, ::message::AddNewFriendResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SendFriendRequest_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::AddNewFriendResponse>* DistributedChattingService::Stub::PrepareAsyncSendFriendRequestRaw(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::AddNewFriendResponse, ::message::AddNewFriendRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_SendFriendRequest_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::AddNewFriendResponse>* DistributedChattingService::Stub::AsyncSendFriendRequestRaw(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncSendFriendRequestRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status DistributedChattingService::Stub::ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::message::AuthoriseResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::message::AuthoriseRequest, ::message::AuthoriseResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ConfirmFriendRequest_, context, request, response);
+}
+
+void DistributedChattingService::Stub::async::ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::message::AuthoriseRequest, ::message::AuthoriseResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ConfirmFriendRequest_, context, request, response, std::move(f));
+}
+
+void DistributedChattingService::Stub::async::ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ConfirmFriendRequest_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>* DistributedChattingService::Stub::PrepareAsyncConfirmFriendRequestRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::AuthoriseResponse, ::message::AuthoriseRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ConfirmFriendRequest_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>* DistributedChattingService::Stub::AsyncConfirmFriendRequestRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncConfirmFriendRequestRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status DistributedChattingService::Stub::FriendshipVerification(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::message::AuthoriseResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::message::AuthoriseRequest, ::message::AuthoriseResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_FriendshipVerification_, context, request, response);
+}
+
+void DistributedChattingService::Stub::async::FriendshipVerification(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::message::AuthoriseRequest, ::message::AuthoriseResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_FriendshipVerification_, context, request, response, std::move(f));
+}
+
+void DistributedChattingService::Stub::async::FriendshipVerification(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_FriendshipVerification_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>* DistributedChattingService::Stub::PrepareAsyncFriendshipVerificationRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::AuthoriseResponse, ::message::AuthoriseRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_FriendshipVerification_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>* DistributedChattingService::Stub::AsyncFriendshipVerificationRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncFriendshipVerificationRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status DistributedChattingService::Stub::NormalChattingMsg(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest& request, ::message::SendChattingMsgResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::message::SendChattingMsgRequest, ::message::SendChattingMsgResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_NormalChattingMsg_, context, request, response);
+}
+
+void DistributedChattingService::Stub::async::NormalChattingMsg(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest* request, ::message::SendChattingMsgResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::message::SendChattingMsgRequest, ::message::SendChattingMsgResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_NormalChattingMsg_, context, request, response, std::move(f));
+}
+
+void DistributedChattingService::Stub::async::NormalChattingMsg(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest* request, ::message::SendChattingMsgResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_NormalChattingMsg_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::SendChattingMsgResponse>* DistributedChattingService::Stub::PrepareAsyncNormalChattingMsgRaw(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::SendChattingMsgResponse, ::message::SendChattingMsgRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_NormalChattingMsg_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::SendChattingMsgResponse>* DistributedChattingService::Stub::AsyncNormalChattingMsgRaw(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncNormalChattingMsgRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+DistributedChattingService::Service::Service() {
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      DistributedChattingService_method_names[0],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< DistributedChattingService::Service, ::message::AddNewFriendRequest, ::message::AddNewFriendResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](DistributedChattingService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::message::AddNewFriendRequest* req,
+             ::message::AddNewFriendResponse* resp) {
+               return service->SendFriendRequest(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      DistributedChattingService_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< DistributedChattingService::Service, ::message::AuthoriseRequest, ::message::AuthoriseResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](DistributedChattingService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::message::AuthoriseRequest* req,
+             ::message::AuthoriseResponse* resp) {
+               return service->ConfirmFriendRequest(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      DistributedChattingService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< DistributedChattingService::Service, ::message::AuthoriseRequest, ::message::AuthoriseResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](DistributedChattingService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::message::AuthoriseRequest* req,
+             ::message::AuthoriseResponse* resp) {
+               return service->FriendshipVerification(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      DistributedChattingService_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< DistributedChattingService::Service, ::message::SendChattingMsgRequest, ::message::SendChattingMsgResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](DistributedChattingService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::message::SendChattingMsgRequest* req,
+             ::message::SendChattingMsgResponse* resp) {
+               return service->NormalChattingMsg(ctx, req, resp);
+             }, this)));
+}
+
+DistributedChattingService::Service::~Service() {
+}
+
+::grpc::Status DistributedChattingService::Service::SendFriendRequest(::grpc::ServerContext* context, const ::message::AddNewFriendRequest* request, ::message::AddNewFriendResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status DistributedChattingService::Service::ConfirmFriendRequest(::grpc::ServerContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status DistributedChattingService::Service::FriendshipVerification(::grpc::ServerContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status DistributedChattingService::Service::NormalChattingMsg(::grpc::ServerContext* context, const ::message::SendChattingMsgRequest* request, ::message::SendChattingMsgResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+
 }  // namespace message
 
