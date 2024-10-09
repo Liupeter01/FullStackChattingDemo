@@ -244,7 +244,8 @@ class BalancerService final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    // pass user's uuid parameter to the server, and returns available server address to user
+    // pass user's uuid parameter to the server, and returns available server
+    // address to user
     virtual ::grpc::Status AddNewUserToServer(::grpc::ClientContext* context, const ::message::RegisterToBalancer& request, ::message::GetAllocatedChattingServer* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::GetAllocatedChattingServer>> AsyncAddNewUserToServer(::grpc::ClientContext* context, const ::message::RegisterToBalancer& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::GetAllocatedChattingServer>>(AsyncAddNewUserToServerRaw(context, request, cq));
@@ -263,7 +264,8 @@ class BalancerService final {
     class async_interface {
      public:
       virtual ~async_interface() {}
-      // pass user's uuid parameter to the server, and returns available server address to user
+      // pass user's uuid parameter to the server, and returns available server
+      // address to user
       virtual void AddNewUserToServer(::grpc::ClientContext* context, const ::message::RegisterToBalancer* request, ::message::GetAllocatedChattingServer* response, std::function<void(::grpc::Status)>) = 0;
       virtual void AddNewUserToServer(::grpc::ClientContext* context, const ::message::RegisterToBalancer* request, ::message::GetAllocatedChattingServer* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // user send SERVICE_LOGINSERVER request
@@ -327,7 +329,8 @@ class BalancerService final {
    public:
     Service();
     virtual ~Service();
-    // pass user's uuid parameter to the server, and returns available server address to user
+    // pass user's uuid parameter to the server, and returns available server
+    // address to user
     virtual ::grpc::Status AddNewUserToServer(::grpc::ServerContext* context, const ::message::RegisterToBalancer* request, ::message::GetAllocatedChattingServer* response);
     // user send SERVICE_LOGINSERVER request
     virtual ::grpc::Status UserLoginToServer(::grpc::ServerContext* context, const ::message::LoginChattingServer* request, ::message::LoginChattingResponse* response);
