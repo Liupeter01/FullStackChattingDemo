@@ -5,11 +5,10 @@
 #include <grpc/GrpcBalancerImpl.hpp>
 #include <network/def.hpp>
 
-grpc::GrpcBalancerImpl::UserInfo::UserInfo(std::string&& tokens, const grpc::GrpcBalancerImpl::ChattingServerConfig& config)
-          :m_tokens(std::move(tokens))
-          , m_host(config._host)
-          , m_port(config._port)
-{}
+grpc::GrpcBalancerImpl::UserInfo::UserInfo(
+    std::string &&tokens,
+    const grpc::GrpcBalancerImpl::ChattingServerConfig &config)
+    : m_tokens(std::move(tokens)), m_host(config._host), m_port(config._port) {}
 
 grpc::GrpcBalancerImpl::GrpcBalancerImpl() {
   spdlog::info("Loading {} ChattingServer Configrations",
@@ -29,7 +28,8 @@ grpc::GrpcBalancerImpl::GrpcBalancerImpl() {
 
 grpc::GrpcBalancerImpl::~GrpcBalancerImpl() {}
 
-const grpc::GrpcBalancerImpl::ChattingServerConfig &grpc::GrpcBalancerImpl::serverLoadBalancer() {
+const grpc::GrpcBalancerImpl::ChattingServerConfig &
+grpc::GrpcBalancerImpl::serverLoadBalancer() {
   std::lock_guard<std::mutex> _lckg(server_mtx);
 
   /*remember the lowest load server in iterator*/
@@ -59,13 +59,15 @@ grpc::GrpcBalancerImpl::verifyUserToken(std::size_t uuid,
     return ServiceStatus::LOGIN_UNSUCCESSFUL;
   }
 
-  return (target.value()  == tokens ? ServiceStatus::SERVICE_SUCCESS
+  return (target.value() == tokens ? ServiceStatus::SERVICE_SUCCESS
                                    : ServiceStatus::LOGIN_INFO_ERROR);
 }
 
-void grpc::GrpcBalancerImpl::registerUserInfo(std::size_t uuid, std::string&& tokens, const grpc::GrpcBalancerImpl::ChattingServerConfig& server) {
-          std::lock_guard<std::mutex> _lckg(token_mtx);
-          users[uuid] = std::make_shared< UserInfo>(std::move(tokens), server);
+void grpc::GrpcBalancerImpl::registerUserInfo(
+    std::size_t uuid, std::string &&tokens,
+    const grpc::GrpcBalancerImpl::ChattingServerConfig &server) {
+  std::lock_guard<std::mutex> _lckg(token_mtx);
+  users[uuid] = std::make_shared<UserInfo>(std::move(tokens), server);
 }
 
 ::grpc::Status grpc::GrpcBalancerImpl::AddNewUserToServer(
@@ -73,28 +75,29 @@ void grpc::GrpcBalancerImpl::registerUserInfo(std::size_t uuid, std::string&& to
     const ::message::RegisterToBalancer *request,
     ::message::GetAllocatedChattingServer *response) {
 
-          auto uuid = request->uuid();
-          std::optional<std::string_view> exists = getUserToken(uuid);
+  auto uuid = request->uuid();
+  std::optional<std::string_view> exists = getUserToken(uuid);
 
-          /*check if it is registered?*/
-          if (!exists.has_value()) {
-                    /*get the lowest load server*/
-                    auto target = serverLoadBalancer();
+  /*check if it is registered?*/
+  if (!exists.has_value()) {
+    /*get the lowest load server*/
+    auto target = serverLoadBalancer();
 
-                    /*generate a user token and store it into the structure first*/
-                    std::string token = userTokenGenerator();
+    /*generate a user token and store it into the structure first*/
+    std::string token = userTokenGenerator();
 
-                    response->set_host(target._host);
-                    response->set_port(target._port);
-                    response->set_token(token);
-                    response->set_error(static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
+    response->set_host(target._host);
+    response->set_port(target._port);
+    response->set_token(token);
+    response->set_error(
+        static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
 
-                    registerUserInfo(uuid, std::move(token), target);
-          }
-          else {
-                    response->set_error(static_cast<std::size_t>(ServiceStatus::LOGIN_FOR_MULTIPLE_TIMES));
-          }
-          return grpc::Status::OK;
+    registerUserInfo(uuid, std::move(token), target);
+  } else {
+    response->set_error(
+        static_cast<std::size_t>(ServiceStatus::LOGIN_FOR_MULTIPLE_TIMES));
+  }
+  return grpc::Status::OK;
 }
 
 ::grpc::Status grpc::GrpcBalancerImpl::UserLoginToServer(

@@ -10,16 +10,15 @@
 #include <unordered_map>
 
 namespace grpc {
-class GrpcBalancerImpl final
-    : public message::BalancerService::Service {
+class GrpcBalancerImpl final : public message::BalancerService::Service {
 
 public:
-          struct ChattingServerConfig {
-                    std::string _host;
-                    std::string _port;
-                    std::string _name;
-                    std::size_t _connections = 0;         /*add init*/
-          };
+  struct ChattingServerConfig {
+    std::string _host;
+    std::string _port;
+    std::string _name;
+    std::size_t _connections = 0; /*add init*/
+  };
 
   ~GrpcBalancerImpl();
   GrpcBalancerImpl();
@@ -39,21 +38,24 @@ public:
 
 private:
   const grpc::GrpcBalancerImpl::ChattingServerConfig &serverLoadBalancer();
-  void registerUserInfo(std::size_t uuid, std::string&& tokens, const grpc::GrpcBalancerImpl::ChattingServerConfig&server);
+  void
+  registerUserInfo(std::size_t uuid, std::string &&tokens,
+                   const grpc::GrpcBalancerImpl::ChattingServerConfig &server);
   std::optional<std::string_view> getUserToken(std::size_t uuid);
   ServiceStatus verifyUserToken(std::size_t uuid, const std::string &tokens);
 
 private:
-          struct UserInfo {
-                    UserInfo(std::string&& tokens, const grpc::GrpcBalancerImpl::ChattingServerConfig& config);
+  struct UserInfo {
+    UserInfo(std::string &&tokens,
+             const grpc::GrpcBalancerImpl::ChattingServerConfig &config);
 
-                    /*user token*/
-                    std::string m_tokens;
+    /*user token*/
+    std::string m_tokens;
 
-                    /*server info*/
-                    std::string_view m_host;
-                    std::string_view m_port;
-          };
+    /*server info*/
+    std::string_view m_host;
+    std::string_view m_port;
+  };
 
   std::mutex server_mtx;
   std::mutex token_mtx;
