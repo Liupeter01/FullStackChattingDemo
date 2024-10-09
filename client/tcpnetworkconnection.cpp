@@ -1,4 +1,5 @@
 #include "tcpnetworkconnection.h"
+#include "useraccountmanager.hpp"
 #include <QDataStream>
 #include <QDebug>
 #include <QJsonDocument>
@@ -141,14 +142,18 @@ void TCPNetworkConnection::registerCallback() {
       }));
 }
 
-void TCPNetworkConnection::slot_establish_long_connnection(
-    TCPNetworkConnection::ChattingServerInfo info) {
-  qDebug() << "Connecting to Server" << "\nuuid = " << info.uuid
-           << "\nhost = " << info.host << "\nport = " << info.port
-           << "\ntoken = " << info.token << '\n';
+void TCPNetworkConnection::slot_establish_long_connnection() {
 
-  m_server = std::move(info);
-  m_socket.connectToHost(m_server.host, m_server.port.toUShort());
+  qDebug() << "Connecting to Server"
+           << "\nuuid = " << UserAccountManager::get_instance()->get_uuid()
+           << "\nhost = " << UserAccountManager::get_instance()->get_host()
+           << "\nport = " << UserAccountManager::get_instance()->get_port()
+           << "\ntoken = " << UserAccountManager::get_instance()->get_token()
+           << '\n';
+
+  m_socket.connectToHost(
+      UserAccountManager::get_instance()->get_host(),
+      UserAccountManager::get_instance()->get_port().toUShort());
 }
 
 void TCPNetworkConnection::send_data(

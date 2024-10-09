@@ -6,11 +6,11 @@
 #include <QtEndian>
 
 #include "logininterface.h"
-#include "passworddisplayswitching.h"
 #include "ui_logininterface.h"
+#include "useraccountmanager.hpp"
 
 LoginInterface::LoginInterface(QWidget *parent)
-    : m_info(), QDialog(parent), ui(new Ui::LoginInterface) {
+    : QDialog(parent), ui(new Ui::LoginInterface) {
   ui->setupUi(this);
 
   /*register pushbutton signal for page swiping*/
@@ -39,17 +39,28 @@ void LoginInterface::registerSignal() {
           &LoginInterface::switchWindow);
   connect(this->ui->forgot_passwd_label, &ForgotPassword::clicked, this,
           &LoginInterface::slot_forgot_passwd);
-  connect(this->ui->passwd_display, &PasswordDisplaySwitching::clicked, this,
+
+  connect(this->ui->forgot_passwd_label, &ForgotPassword::update_display, this,
           [this]() {
-            auto state = ui->passwd_display->getState();
-            if (state.visiable == LabelState::VisiableStatus::ENABLED) {
-              this->ui->passwd_edit->setEchoMode(QLineEdit::Normal);
-              Tools::setQLableImage(ui->passwd_display, "show_password.png");
+            auto state = ui->forgot_passwd_label->getState();
+            if (state.hover == LabelState::HoverStatus::ENABLED) {
+              Tools::setWidgetAttribute(ui->forgot_passwd_label,
+                                        "forgot password?", true);
             } else {
-              this->ui->passwd_edit->setEchoMode(QLineEdit::Password);
-              Tools::setQLableImage(ui->passwd_display,
-                                    "invisiable_password.png");
+              Tools::setWidgetAttribute(ui->forgot_passwd_label,
+                                        "forgot password?", false);
             }
+          });
+
+  connect(this->ui->passwd_display, &MultiClickableQLabel::clicked, this,
+          [this]() {
+            handle_clicked();
+            handle_hover();
+          });
+  connect(this->ui->passwd_display, &MultiClickableQLabel::update_display, this,
+          [this]() {
+            handle_clicked();
+            handle_hover();
           });
 }
 
@@ -90,12 +101,12 @@ void LoginInterface::regisrerCallBackFunctions() {
         Tools::setWidgetAttribute(this->ui->status_label_3,
                                   QString("Login Success!"), true);
 
-        m_info.uuid = json["uuid"].toInt();
-        m_info.host = json["host"].toString();
-        m_info.port = json["port"].toString();
-        m_info.token = json["token"].toString();
+        UserAccountManager::get_instance()->set_uuid(json["uuid"].toInt());
+        UserAccountManager::get_instance()->set_host(json["host"].toString());
+        UserAccountManager::get_instance()->set_port(json["port"].toString());
+        UserAccountManager::get_instance()->set_token(json["token"].toString());
 
-        emit signal_establish_long_connnection(m_info);
+        emit signal_establish_long_connnection();
       }));
 }
 
@@ -144,6 +155,37 @@ void LoginInterface::slot_login_finished(ServiceType srv_type,
   }
 }
 
+void LoginInterface::handle_clicked() {
+  auto click = [this](MultiClickableQLabel *label, QLineEdit *edit) {
+    auto state = label->getState();
+    if (state.visiable == LabelState::VisiableStatus::ENABLED) {
+      edit->setEchoMode(QLineEdit::Normal);
+      Tools::setQLableImage(label, "show_password.png");
+    } else {
+      edit->setEchoMode(QLineEdit::Password);
+      Tools::setQLableImage(label, "invisiable_password.png");
+    }
+  };
+
+  click(ui->passwd_display, ui->passwd_edit);
+}
+
+void LoginInterface::handle_hover() {
+  auto hover = [this](MultiClickableQLabel *label) {
+    auto state = label->getState();
+    if (state.hover == LabelState::HoverStatus::ENABLED) {
+      Tools::setQLableImage(label, state.visiable
+                                       ? "show_passwd_selected.png"
+                                       : "invisiable_passwd_selected.png");
+    } else {
+      Tools::setQLableImage(label, state.visiable ? "show_password.png"
+                                                  : "invisiable_password.png");
+    }
+  };
+
+  hover(ui->passwd_display);
+}
+
 void LoginInterface::slot_forgot_passwd() {
   emit switchReset();
   return;
@@ -172,8 +214,9 @@ void LoginInterface::slot_connection_status(bool status) {
                               true);
 
     QJsonObject json_obj;
-    json_obj["uuid"] = QString::number(m_info.uuid);
-    json_obj["token"] = m_info.token;
+    json_obj["uuid"] =
+        QString::number(UserAccountManager::get_instance()->get_uuid());
+    json_obj["token"] = UserAccountManager::get_instance()->get_token();
 
     QJsonDocument json_doc(json_obj);
 

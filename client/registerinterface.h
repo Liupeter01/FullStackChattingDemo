@@ -24,7 +24,7 @@ class registerinterface : public QDialog {
 
 public:
   explicit registerinterface(QWidget *parent = nullptr);
-  ~registerinterface();
+  virtual ~registerinterface();
 
 signals:
   void switchToLogin();
@@ -53,6 +53,12 @@ private:
   void registerEditFinishedEvent();
   void registerNetworkEvent();
   void regisrerCallBackFunctions();
+
+  /*display/hide password button clicked*/
+  void handle_clicked();
+
+  /*mouse enter/leave qimage area*/
+  void handle_hover();
 
   /*
    * switch to registeration successful page

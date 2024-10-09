@@ -1,24 +1,27 @@
-#ifndef PASSWORDDISPLAYSWITCHING_H
-#define PASSWORDDISPLAYSWITCHING_H
+#ifndef MULTIClickableQLabel_H
+#define MULTIClickableQLabel_H
 #include "tools.h"
 #include <QLabel>
 #include <QWidget>
 #include <Qt>
 
-class PasswordDisplaySwitching : public QLabel {
+class MultiClickableQLabel : public QLabel {
   Q_OBJECT
 
 public:
-  PasswordDisplaySwitching(QWidget *parent = nullptr,
-                           Qt::WindowFlags f = Qt::WindowFlags());
-  ~PasswordDisplaySwitching();
+  MultiClickableQLabel(QWidget *parent = nullptr,
+                       Qt::WindowFlags f = Qt::WindowFlags());
+  virtual ~MultiClickableQLabel();
 
   const LabelState &getState() const;
 
 signals:
+  void update_display();
   void clicked();
 
 protected:
+  virtual void mouseReleaseEvent(QMouseEvent *event) override;
+
   virtual void mousePressEvent(QMouseEvent *event) override;
 
   /*mouse enter selected section*/
@@ -27,8 +30,8 @@ protected:
   /*mouse leave*/
   virtual void leaveEvent(QEvent *event) override;
 
-private:
+protected:
   LabelState m_state;
 };
 
-#endif // PASSWORDDISPLAYSWITCHING_H
+#endif // MultiClickableQLabel_H

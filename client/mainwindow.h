@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 // #include <stack>
+#include "chattingdlgmainframe.h"
 #include "logininterface.h"
 #include "registerinterface.h"
 #include "resetpasswdinterface.h"
@@ -18,7 +19,7 @@ class MainWindow : public QMainWindow {
 
 public:
   MainWindow(QWidget *parent = nullptr);
-  ~MainWindow();
+  virtual ~MainWindow();
 
 private:
   void setFramelessWindow(QDialog *dialog);
@@ -26,11 +27,13 @@ private:
   void switchingToRegInterface();
   void switchingToLoginDialog();
   void switchingToResetDialog();
+  void swithcingToChattingInf();
 
 private:
   Ui::MainWindow *ui;
   registerinterface *m_register;
   LoginInterface *m_login;
   ResetPasswdInterface *m_reset;
+  ChattingDlgMainFrame *m_chattingMainFrame;
 };
 #endif // MAINWINDOW_H

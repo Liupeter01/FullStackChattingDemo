@@ -9,7 +9,7 @@
 class CountDownButton : public QPushButton {
 public:
   CountDownButton(QWidget *parent = nullptr, std::size_t seconds = 10);
-  ~CountDownButton();
+  virtual ~CountDownButton();
 
 private:
   void registerTimer(std::size_t seconds);

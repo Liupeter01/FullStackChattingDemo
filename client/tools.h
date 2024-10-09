@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QString>
 #include <QUrl>
 #include <QWidget>
@@ -21,6 +22,18 @@ struct LabelState {
    * VisiableStatus will be changed after every clicked!
    */
   enum VisiableStatus { DISABLED, ENABLED } visiable;
+
+  enum class HoverStatus : uint8_t { DISABLED, ENABLED } hover;
+};
+
+struct PushButtonState {
+  PushButtonState();
+
+  /*
+   * Default status = DISABLE
+   * VisiableStatus will be changed after every clicked!
+   */
+  enum SelectedStatus { DISABLED, ENABLED } select;
 
   enum class HoverStatus : uint8_t { DISABLED, ENABLED } hover;
 };
@@ -65,12 +78,32 @@ struct Tools {
   /*load image*/
   static std::map<QString, QImage> s_images;
 
-  /*all images files should be inside "/res" dir*/
+  /*
+   * all program needed images files should be inside "/res/" dir
+   * all other user owned images should be loaded from "/static/" dir
+   */
   static void loadImgResources(std::initializer_list<QString> file_list,
-                               int width, int height);
-  static void setQLableImage(QLabel *label, const QString &target);
+                               int width, int height,
+                               const QString &load_dir = "/res/");
+
+  static void setQLableImage(QLabel *label, const QString &target,
+                             const QString &load_dir = "/res/");
   static std::optional<QImage> loadImages(const QString &path, int width,
                                           int height);
+
+  /*load icon for chatting main frame*/
+  static std::map<QString, QIcon> s_icons;
+
+  static std::optional<QIcon> loadIcon(const QString &path);
+  static void setPushButtonIcon(QPushButton *button, const QString &target,
+                                const QString &load_dir = "/res/");
+
+  /*
+   * all program needed images files should be inside "/res/" dir
+   * all other user owned images should be loaded from "/static/" dir
+   */
+  static void loadIconResources(std::initializer_list<QString> file_list,
+                                const QString &load_dir = "/res/");
 };
 
 #endif // TOOLS_H

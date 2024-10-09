@@ -21,9 +21,21 @@ using QT6(Q::Widgets Qt::Network)
 
 ![](./assets/after_reg.png)
 
-### Forgot password page
+### Chatting Main Dialog
 
-<img src="./assets/forgot_1.png" style="zoom:50%;" />
+<img src="./assets/client_interface_1.png" alt="client_interface_1" style="zoom:100%;" />
+
+### Search and add new contact
+
+![image-20241008180452143](./assets/client_interface_4.png)
+
+![image-20241001102111981](./assets/client_interface_2.png)
+
+### Contact Page
+
+![client_interface_3](./assets/client_interface_3.png)
+
+
 
 ## **Servers**
 

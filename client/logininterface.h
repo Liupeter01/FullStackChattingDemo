@@ -23,7 +23,7 @@ class LoginInterface : public QDialog {
 
 public:
   explicit LoginInterface(QWidget *parent = nullptr);
-  ~LoginInterface();
+  virtual ~LoginInterface();
 
 private:
   void registerSignal();
@@ -34,6 +34,12 @@ private:
   void slot_login_finished(ServiceType srv_type, QString json_data,
                            ServiceStatus srv_status);
 
+  /*display/hide password button clicked*/
+  void handle_clicked();
+
+  /*mouse enter/leave qimage area*/
+  void handle_hover();
+
 signals:
   /*switch to register interface*/
   void switchWindow();
@@ -41,8 +47,8 @@ signals:
   /*switch to reset interface*/
   void switchReset();
 
-  void signal_establish_long_connnection(
-      TCPNetworkConnection::ChattingServerInfo info);
+  /*try to connect to chatting server*/
+  void signal_establish_long_connnection();
 
 private slots:
   void on_login_button_clicked();
@@ -53,7 +59,6 @@ private slots:
 private:
   Ui::LoginInterface *ui;
   std::map<ServiceType, CallBackFunc> m_callbacks;
-  TCPNetworkConnection::ChattingServerInfo m_info;
 };
 
 #endif // LOGININTERFACE_H

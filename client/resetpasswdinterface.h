@@ -22,7 +22,7 @@ class ResetPasswdInterface : public QDialog {
 
 public:
   explicit ResetPasswdInterface(QWidget *parent = nullptr);
-  ~ResetPasswdInterface();
+  virtual ~ResetPasswdInterface();
 
 private:
   void setResetAttribute();
@@ -39,6 +39,12 @@ private:
   void switchResetInfoPage();
   void switchResetPasswordPage();
   void switchResetSuccessfulPage();
+
+  /*display/hide password button clicked*/
+  void handle_clicked();
+
+  /*mouse enter/leave qimage area*/
+  void handle_hover();
 
 private slots:
   void on_go_back_login_2_clicked();

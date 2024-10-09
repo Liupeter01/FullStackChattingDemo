@@ -8,6 +8,7 @@
 #include <QString>
 #include <QTcpSocket>
 #include <QUrl>
+#include <QtEndian>
 #include <functional>
 #include <singleton.hpp>
 
@@ -21,16 +22,7 @@ class TCPNetworkConnection
   using Callbackfunction = std::function<void(QJsonObject &&)>;
 
 public:
-  struct ChattingServerInfo {
-    ChattingServerInfo() : uuid(0) {}
-    std::size_t uuid;
-    QString host;
-    QString port;
-    QString token;
-  };
-
-public:
-  ~TCPNetworkConnection();
+  virtual ~TCPNetworkConnection();
 
   /*use signal to trigger data sending*/
   void
@@ -48,12 +40,10 @@ private:
   bool checkJsonForm(const QJsonObject &json);
 
 private slots:
-  void slot_establish_long_connnection(
-      TCPNetworkConnection::ChattingServerInfo info);
+  void slot_establish_long_connnection();
 
 signals:
-  void signal_establish_long_connnection(
-      TCPNetworkConnection::ChattingServerInfo info);
+  void signal_establish_long_connnection();
 
   /*return connection status to login class*/
   void signal_connection_status(bool status);
@@ -67,9 +57,6 @@ signals:
 private:
   /*establish tcp socket with server*/
   QTcpSocket m_socket;
-
-  /*save server connection info*/
-  ChattingServerInfo m_server;
 
   struct RecvInfo {
     uint16_t _id = 0;

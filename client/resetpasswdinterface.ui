@@ -19,7 +19,7 @@
   <property name="maximumSize">
    <size>
     <width>300</width>
-    <height>16777215</height>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="reset_page">
         <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -389,7 +389,7 @@
              </widget>
             </item>
             <item>
-             <widget class="PasswordDisplaySwitching" name="newpasswd_show">
+             <widget class="MultiClickableQLabel" name="newpasswd_show">
               <property name="minimumSize">
                <size>
                 <width>25</width>
@@ -479,7 +479,7 @@
              </widget>
             </item>
             <item>
-             <widget class="PasswordDisplaySwitching" name="newconfirm_show">
+             <widget class="MultiClickableQLabel" name="newconfirm_show">
               <property name="minimumSize">
                <size>
                 <width>25</width>
@@ -879,9 +879,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PasswordDisplaySwitching</class>
+   <class>MultiClickableQLabel</class>
    <extends>QLabel</extends>
-   <header>passworddisplayswitching.h</header>
+   <header location="global">multiclickableqlabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
