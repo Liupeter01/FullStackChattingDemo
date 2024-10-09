@@ -1,47 +1,67 @@
 syntax="proto3";
 package message;
 
-service VerificationService{
-    rpc GetVerificationCode(GetVerificationRequest) returns (GetVerificationResponse){}
+/*prepared for verification service*/
+service VerificationService {
+  rpc GetVerificationCode(GetVerificationRequest)
+      returns (GetVerificationResponse) {}
 }
 
-service BalancerService{
-    //pass user's uuid parameter to the server, and returns available server address to user
-    rpc AddNewUserToServer(RegisterToBalancer) returns (GetAllocatedChattingServer){}
+message GetVerificationRequest { string email = 1; }
 
-    //user send SERVICE_LOGINSERVER request
-    rpc UserLoginToServer(LoginChattingServer) returns (LoginChattingResponse){}
+message GetVerificationResponse {
+  int32 error = 1;
+  string email = 2;
+  string message = 3;
 }
 
-message GetVerificationRequest{
-    string email = 1;
+/*prepared for balance service*/
+service BalancerService {
+  // pass user's uuid parameter to the server, and returns available server
+  // address to user
+  rpc AddNewUserToServer(RegisterToBalancer)
+      returns (GetAllocatedChattingServer) {}
+
+  // user send SERVICE_LOGINSERVER request
+  rpc UserLoginToServer(LoginChattingServer) returns (LoginChattingResponse) {}
+
+  // chatting server acquires other servers info through this service
+  rpc GetPeerServerInfo(GetChattingSeverPeerListsRequest)
+      returns (PeerResponse) {}
 }
 
-message GetVerificationResponse{
-    int32 error = 1;
-    string email = 2;
-    string message = 3;
+// register new uuid to balance and ask for chatting server allocation
+message RegisterToBalancer { int32 uuid = 1; }
+
+// get server host & port & token of one chatting server
+message GetAllocatedChattingServer {
+  int32 error = 1;
+  string host = 2;
+  string port = 3;
+  string token = 4;
 }
 
-//register new uuid to balance and ask for chatting server allocation
-message RegisterToBalancer{
-    int32 uuid = 1;
+// transfer uuid and token to balanceserver to check validation
+message LoginChattingServer {
+  int32 uuid = 1;
+  string token = 2;
 }
 
-//get server host & port & token of one chatting server
-message GetAllocatedChattingServer{
-    int32 error = 1;
-    string host = 2;
-    string port = 3;
-    string token = 4;
+message LoginChattingResponse { int32 error = 1; }
+
+message ChattingPeerServer {
+  string name = 1;
+  string host = 2;
+  string port = 3;
 }
 
-//transfer uuid and token to balanceserver to check validation
-message LoginChattingServer{
-    int32 uuid = 1;
-    string token = 2;
+message GetChattingSeverPeerListsRequest {
+  // current server's name
+  string cur_server_name = 1;
 }
 
-message LoginChattingResponse{
-    int32 error = 1;
+// return a array of servers ip address through balancer services
+message PeerResponse {
+  int32 error = 1;
+  repeated ChattingPeerServer lists = 2;
 }
