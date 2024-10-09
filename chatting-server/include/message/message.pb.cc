@@ -107,7 +107,8 @@ struct LoginChattingResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LoginChattingResponseDefaultTypeInternal _LoginChattingResponse_default_instance_;
 PROTOBUF_CONSTEXPR ChattingPeerServer::ChattingPeerServer(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.host_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+    /*decltype(_impl_.name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.host_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.port_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ChattingPeerServerDefaultTypeInternal {
@@ -296,6 +297,7 @@ const uint32_t TableStruct_message_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::message::ChattingPeerServer, _impl_.name_),
   PROTOBUF_FIELD_OFFSET(::message::ChattingPeerServer, _impl_.host_),
   PROTOBUF_FIELD_OFFSET(::message::ChattingPeerServer, _impl_.port_),
   ~0u,  // no _has_bits_
@@ -376,14 +378,14 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 33, -1, -1, sizeof(::message::LoginChattingServer)},
   { 41, -1, -1, sizeof(::message::LoginChattingResponse)},
   { 48, -1, -1, sizeof(::message::ChattingPeerServer)},
-  { 56, -1, -1, sizeof(::message::GetChattingSeverPeerListsRequest)},
-  { 63, -1, -1, sizeof(::message::PeerResponse)},
-  { 71, -1, -1, sizeof(::message::AddNewFriendRequest)},
-  { 81, -1, -1, sizeof(::message::AddNewFriendResponse)},
-  { 90, -1, -1, sizeof(::message::AuthoriseRequest)},
-  { 98, -1, -1, sizeof(::message::AuthoriseResponse)},
-  { 107, -1, -1, sizeof(::message::SendChattingMsgRequest)},
-  { 116, -1, -1, sizeof(::message::SendChattingMsgResponse)},
+  { 57, -1, -1, sizeof(::message::GetChattingSeverPeerListsRequest)},
+  { 64, -1, -1, sizeof(::message::PeerResponse)},
+  { 72, -1, -1, sizeof(::message::AddNewFriendRequest)},
+  { 82, -1, -1, sizeof(::message::AddNewFriendResponse)},
+  { 91, -1, -1, sizeof(::message::AuthoriseRequest)},
+  { 99, -1, -1, sizeof(::message::AuthoriseResponse)},
+  { 108, -1, -1, sizeof(::message::SendChattingMsgRequest)},
+  { 117, -1, -1, sizeof(::message::SendChattingMsgResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -413,47 +415,47 @@ const char descriptor_table_protodef_message_2eproto[] PROTOBUF_SECTION_VARIABLE
   "erver\022\r\n\005error\030\001 \001(\005\022\014\n\004host\030\002 \001(\t\022\014\n\004po"
   "rt\030\003 \001(\t\022\r\n\005token\030\004 \001(\t\"2\n\023LoginChatting"
   "Server\022\014\n\004uuid\030\001 \001(\005\022\r\n\005token\030\002 \001(\t\"&\n\025L"
-  "oginChattingResponse\022\r\n\005error\030\001 \001(\005\"0\n\022C"
-  "hattingPeerServer\022\014\n\004host\030\001 \001(\t\022\014\n\004port\030"
-  "\002 \001(\t\";\n GetChattingSeverPeerListsReques"
-  "t\022\027\n\017cur_server_name\030\001 \001(\t\"I\n\014PeerRespon"
-  "se\022\r\n\005error\030\001 \001(\005\022*\n\005lists\030\002 \003(\0132\033.messa"
-  "ge.ChattingPeerServer\"]\n\023AddNewFriendReq"
-  "uest\022\020\n\010src_uuid\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001(\005"
-  "\022\021\n\tnick_name\030\003 \001(\t\022\017\n\007req_msg\030\004 \001(\t\"I\n\024"
-  "AddNewFriendResponse\022\r\n\005error\030\001 \001(\005\022\020\n\010s"
-  "rc_uuid\030\002 \001(\005\022\020\n\010dst_uuid\030\003 \001(\005\"6\n\020Autho"
-  "riseRequest\022\020\n\010src_uuid\030\001 \001(\005\022\020\n\010dst_uui"
-  "d\030\002 \001(\005\"F\n\021AuthoriseResponse\022\r\n\005error\030\001 "
-  "\001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst_uuid\030\003 \001(\005\""
-  "M\n\026SendChattingMsgRequest\022\020\n\010src_uuid\030\001 "
-  "\001(\005\022\020\n\010dst_uuid\030\002 \001(\005\022\017\n\007message\030\003 \001(\t\"L"
-  "\n\027SendChattingMsgResponse\022\r\n\005error\030\001 \001(\005"
-  "\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst_uuid\030\003 \001(\0052q\n\023"
-  "VerificationService\022Z\n\023GetVerificationCo"
-  "de\022\037.message.GetVerificationRequest\032 .me"
-  "ssage.GetVerificationResponse\"\0002\231\002\n\017Bala"
-  "ncerService\022X\n\022AddNewUserToServer\022\033.mess"
-  "age.RegisterToBalancer\032#.message.GetAllo"
-  "catedChattingServer\"\000\022S\n\021UserLoginToServ"
-  "er\022\034.message.LoginChattingServer\032\036.messa"
-  "ge.LoginChattingResponse\"\000\022W\n\021GetPeerSer"
-  "verInfo\022).message.GetChattingSeverPeerLi"
-  "stsRequest\032\025.message.PeerResponse\"\0002\356\002\n\032"
-  "DistributedChattingService\022R\n\021SendFriend"
-  "Request\022\034.message.AddNewFriendRequest\032\035."
-  "message.AddNewFriendResponse\"\000\022O\n\024Confir"
-  "mFriendRequest\022\031.message.AuthoriseReques"
-  "t\032\032.message.AuthoriseResponse\"\000\022Q\n\026Frien"
-  "dshipVerification\022\031.message.AuthoriseReq"
-  "uest\032\032.message.AuthoriseResponse\"\000\022X\n\021No"
-  "rmalChattingMsg\022\037.message.SendChattingMs"
-  "gRequest\032 .message.SendChattingMsgRespon"
-  "se\"\000b\006proto3"
+  "oginChattingResponse\022\r\n\005error\030\001 \001(\005\">\n\022C"
+  "hattingPeerServer\022\014\n\004name\030\001 \001(\t\022\014\n\004host\030"
+  "\002 \001(\t\022\014\n\004port\030\003 \001(\t\";\n GetChattingSeverP"
+  "eerListsRequest\022\027\n\017cur_server_name\030\001 \001(\t"
+  "\"I\n\014PeerResponse\022\r\n\005error\030\001 \001(\005\022*\n\005lists"
+  "\030\002 \003(\0132\033.message.ChattingPeerServer\"]\n\023A"
+  "ddNewFriendRequest\022\020\n\010src_uuid\030\001 \001(\005\022\020\n\010"
+  "dst_uuid\030\002 \001(\005\022\021\n\tnick_name\030\003 \001(\t\022\017\n\007req"
+  "_msg\030\004 \001(\t\"I\n\024AddNewFriendResponse\022\r\n\005er"
+  "ror\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst_uuid\030"
+  "\003 \001(\005\"6\n\020AuthoriseRequest\022\020\n\010src_uuid\030\001 "
+  "\001(\005\022\020\n\010dst_uuid\030\002 \001(\005\"F\n\021AuthoriseRespon"
+  "se\022\r\n\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010d"
+  "st_uuid\030\003 \001(\005\"M\n\026SendChattingMsgRequest\022"
+  "\020\n\010src_uuid\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001(\005\022\017\n\007m"
+  "essage\030\003 \001(\t\"L\n\027SendChattingMsgResponse\022"
+  "\r\n\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst_"
+  "uuid\030\003 \001(\0052q\n\023VerificationService\022Z\n\023Get"
+  "VerificationCode\022\037.message.GetVerificati"
+  "onRequest\032 .message.GetVerificationRespo"
+  "nse\"\0002\231\002\n\017BalancerService\022X\n\022AddNewUserT"
+  "oServer\022\033.message.RegisterToBalancer\032#.m"
+  "essage.GetAllocatedChattingServer\"\000\022S\n\021U"
+  "serLoginToServer\022\034.message.LoginChatting"
+  "Server\032\036.message.LoginChattingResponse\"\000"
+  "\022W\n\021GetPeerServerInfo\022).message.GetChatt"
+  "ingSeverPeerListsRequest\032\025.message.PeerR"
+  "esponse\"\0002\356\002\n\032DistributedChattingService"
+  "\022R\n\021SendFriendRequest\022\034.message.AddNewFr"
+  "iendRequest\032\035.message.AddNewFriendRespon"
+  "se\"\000\022O\n\024ConfirmFriendRequest\022\031.message.A"
+  "uthoriseRequest\032\032.message.AuthoriseRespo"
+  "nse\"\000\022Q\n\026FriendshipVerification\022\031.messag"
+  "e.AuthoriseRequest\032\032.message.AuthoriseRe"
+  "sponse\"\000\022X\n\021NormalChattingMsg\022\037.message."
+  "SendChattingMsgRequest\032 .message.SendCha"
+  "ttingMsgResponse\"\000b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_message_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_message_2eproto = {
-    false, false, 1772, descriptor_table_protodef_message_2eproto,
+    false, false, 1786, descriptor_table_protodef_message_2eproto,
     "message.proto",
     &descriptor_table_message_2eproto_once, nullptr, 0, 15,
     schemas, file_default_instances, TableStruct_message_2eproto::offsets,
@@ -1883,11 +1885,20 @@ ChattingPeerServer::ChattingPeerServer(const ChattingPeerServer& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ChattingPeerServer* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.host_){}
+      decltype(_impl_.name_){}
+    , decltype(_impl_.host_){}
     , decltype(_impl_.port_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_name().empty()) {
+    _this->_impl_.name_.Set(from._internal_name(), 
+      _this->GetArenaForAllocation());
+  }
   _impl_.host_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.host_.Set("", GetArenaForAllocation());
@@ -1912,10 +1923,15 @@ inline void ChattingPeerServer::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.host_){}
+      decltype(_impl_.name_){}
+    , decltype(_impl_.host_){}
     , decltype(_impl_.port_){}
     , /*decltype(_impl_._cached_size_)*/{}
   };
+  _impl_.name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.host_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.host_.Set("", GetArenaForAllocation());
@@ -1937,6 +1953,7 @@ ChattingPeerServer::~ChattingPeerServer() {
 
 inline void ChattingPeerServer::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.name_.Destroy();
   _impl_.host_.Destroy();
   _impl_.port_.Destroy();
 }
@@ -1951,6 +1968,7 @@ void ChattingPeerServer::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.name_.ClearToEmpty();
   _impl_.host_.ClearToEmpty();
   _impl_.port_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -1962,9 +1980,19 @@ const char* ChattingPeerServer::_InternalParse(const char* ptr, ::_pbi::ParseCon
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string host = 1;
+      // string name = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "message.ChattingPeerServer.name"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string host = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_host();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -1972,9 +2000,9 @@ const char* ChattingPeerServer::_InternalParse(const char* ptr, ::_pbi::ParseCon
         } else
           goto handle_unusual;
         continue;
-      // string port = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+      // string port = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_port();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -2011,24 +2039,34 @@ uint8_t* ChattingPeerServer::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string host = 1;
+  // string name = 1;
+  if (!this->_internal_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "message.ChattingPeerServer.name");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_name(), target);
+  }
+
+  // string host = 2;
   if (!this->_internal_host().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_host().data(), static_cast<int>(this->_internal_host().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "message.ChattingPeerServer.host");
     target = stream->WriteStringMaybeAliased(
-        1, this->_internal_host(), target);
+        2, this->_internal_host(), target);
   }
 
-  // string port = 2;
+  // string port = 3;
   if (!this->_internal_port().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_port().data(), static_cast<int>(this->_internal_port().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "message.ChattingPeerServer.port");
     target = stream->WriteStringMaybeAliased(
-        2, this->_internal_port(), target);
+        3, this->_internal_port(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2047,14 +2085,21 @@ size_t ChattingPeerServer::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string host = 1;
+  // string name = 1;
+  if (!this->_internal_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_name());
+  }
+
+  // string host = 2;
   if (!this->_internal_host().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_host());
   }
 
-  // string port = 2;
+  // string port = 3;
   if (!this->_internal_port().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
@@ -2079,6 +2124,9 @@ void ChattingPeerServer::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_name().empty()) {
+    _this->_internal_set_name(from._internal_name());
+  }
   if (!from._internal_host().empty()) {
     _this->_internal_set_host(from._internal_host());
   }
@@ -2104,6 +2152,10 @@ void ChattingPeerServer::InternalSwap(ChattingPeerServer* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.name_, lhs_arena,
+      &other->_impl_.name_, rhs_arena
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.host_, lhs_arena,
       &other->_impl_.host_, rhs_arena

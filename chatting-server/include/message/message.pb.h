@@ -1222,10 +1222,25 @@ class ChattingPeerServer final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kHostFieldNumber = 1,
-    kPortFieldNumber = 2,
+    kNameFieldNumber = 1,
+    kHostFieldNumber = 2,
+    kPortFieldNumber = 3,
   };
-  // string host = 1;
+  // string name = 1;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
+  // string host = 2;
   void clear_host();
   const std::string& host() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1239,7 +1254,7 @@ class ChattingPeerServer final :
   std::string* _internal_mutable_host();
   public:
 
-  // string port = 2;
+  // string port = 3;
   void clear_port();
   const std::string& port() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1261,6 +1276,7 @@ class ChattingPeerServer final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr host_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr port_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -3109,7 +3125,57 @@ inline void LoginChattingResponse::set_error(int32_t value) {
 
 // ChattingPeerServer
 
-// string host = 1;
+// string name = 1;
+inline void ChattingPeerServer::clear_name() {
+  _impl_.name_.ClearToEmpty();
+}
+inline const std::string& ChattingPeerServer::name() const {
+  // @@protoc_insertion_point(field_get:message.ChattingPeerServer.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ChattingPeerServer::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:message.ChattingPeerServer.name)
+}
+inline std::string* ChattingPeerServer::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:message.ChattingPeerServer.name)
+  return _s;
+}
+inline const std::string& ChattingPeerServer::_internal_name() const {
+  return _impl_.name_.Get();
+}
+inline void ChattingPeerServer::_internal_set_name(const std::string& value) {
+  
+  _impl_.name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ChattingPeerServer::_internal_mutable_name() {
+  
+  return _impl_.name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* ChattingPeerServer::release_name() {
+  // @@protoc_insertion_point(field_release:message.ChattingPeerServer.name)
+  return _impl_.name_.Release();
+}
+inline void ChattingPeerServer::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.name_.SetAllocated(name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:message.ChattingPeerServer.name)
+}
+
+// string host = 2;
 inline void ChattingPeerServer::clear_host() {
   _impl_.host_.ClearToEmpty();
 }
@@ -3159,7 +3225,7 @@ inline void ChattingPeerServer::set_allocated_host(std::string* host) {
   // @@protoc_insertion_point(field_set_allocated:message.ChattingPeerServer.host)
 }
 
-// string port = 2;
+// string port = 3;
 inline void ChattingPeerServer::clear_port() {
   _impl_.port_.ClearToEmpty();
 }
