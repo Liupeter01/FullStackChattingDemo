@@ -77,7 +77,7 @@ if(NOT MSVC)
     endif()
 endif()
 
-project (ChattingServer VERSION 1.0.2 LANGUAGES CXX )
+project (ChattingServer VERSION 2.0.0 LANGUAGES CXX )
 
 file(GLOB_RECURSE source_file CONFIGURE_DEPENDS src/*.cpp src/*.cc src/*.c)
 file(GLOB_RECURSE header_file CONFIGURE_DEPENDS include/*.hpp  include/*.h)
