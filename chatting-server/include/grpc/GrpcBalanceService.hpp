@@ -1,4 +1,9 @@
 #pragma once
+#include "message/message.grpc.pb.h"
+#include "message/message.pb.h"
+#include "service/ConnectionPool.hpp"
+#include <grpcpp/client_context.h>
+#include <grpcpp/support/status.h>
 #ifndef GRPCBALANCESERVICE_HPP_
 #define GRPCBALANCESERVICE_HPP_
 #include <grpc/BalanceServicePool.hpp>
@@ -44,6 +49,26 @@ struct gRPCBalancerService {
         raii->get()->UserLoginToServer(&context, request, &response);
 
     ///*error occured*/
+    if (!status.ok()) {
+      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
+    }
+    return response;
+  }
+
+  static message::PeerResponse getPeerServerLists(const std::string &cur_name) {
+    grpc::ClientContext context;
+    message::GetChattingSeverPeerListsRequest request;
+    message::PeerResponse response;
+
+    request.set_cur_server_name(cur_name);
+
+    connection::ConnectionRAII<stubpool::BalancerServicePool,
+                               message::BalancerService::Stub>
+        raii;
+
+    grpc::Status status =
+        raii->get()->GetPeerServerInfo(&context, request, &response);
+
     if (!status.ok()) {
       response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
     }
