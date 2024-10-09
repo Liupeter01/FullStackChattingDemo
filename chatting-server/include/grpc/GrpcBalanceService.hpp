@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GRPCCHATTINGSERVICE_HPP_
-#define GRPCCHATTINGSERVICE_HPP_
+#ifndef GRPCBALANCESERVICE_HPP_
+#define GRPCBALANCESERVICE_HPP_
 #include <grpc/BalanceServicePool.hpp>
 #include <network/def.hpp>
 
@@ -51,4 +51,4 @@ struct gRPCBalancerService {
   }
 };
 
-#endif
+#endif // BALANCE
