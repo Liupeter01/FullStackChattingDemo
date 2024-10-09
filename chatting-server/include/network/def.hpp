@@ -22,18 +22,19 @@ enum class ServiceType : uint8_t {
 };
 
 enum class ServiceStatus : uint8_t {
-  SERVICE_SUCCESS,          // SUCCESS
-  JSONPARSE_ERROR,          // json parsing error
-  NETWORK_ERROR,            // network failed
-  GRPC_ERROR,               // grpc error
-  REDIS_UNKOWN_ERROR,       // redis server error code
-  REDIS_CPATCHA_NOT_FOUND,  // redis no cpatcha
-  MYSQL_INTERNAL_ERROR,     // mysql error
-  MYSQL_MISSING_INFO,       // mysql missing account info
-  MYSQL_ACCOUNT_NOT_EXISTS, // mysql account not exists
-  LOGIN_INFO_ERROR,         // login info error
-  LOGIN_UNSUCCESSFUL, // common login uncessfully reason, due to internel error
-  LOGIN_FOR_MULTIPLE_TIMES // this user have already logined!
+          SERVICE_SUCCESS,          // SUCCESS
+          JSONPARSE_ERROR,          // json parsing error
+          NETWORK_ERROR,            // network failed
+          GRPC_ERROR,               // grpc error
+          CHATTING_SERVER_NOT_EXISTS, //chatting server not exist
+          REDIS_UNKOWN_ERROR,       // redis server error code
+          REDIS_CPATCHA_NOT_FOUND,  // redis no cpatcha
+          MYSQL_INTERNAL_ERROR,     // mysql error
+          MYSQL_MISSING_INFO,       // mysql missing account info
+          MYSQL_ACCOUNT_NOT_EXISTS, // mysql account not exists
+          LOGIN_INFO_ERROR,         // login info error
+          LOGIN_UNSUCCESSFUL, // common login uncessfully reason, due to internel error
+          LOGIN_FOR_MULTIPLE_TIMES // this user have already logined!
 };
 
 #define _DEF_HPP_
