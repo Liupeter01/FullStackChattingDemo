@@ -85,6 +85,7 @@ VerificationService::Service::~Service() {
 static const char* BalancerService_method_names[] = {
   "/message.BalancerService/AddNewUserToServer",
   "/message.BalancerService/UserLoginToServer",
+  "/message.BalancerService/GetPeerServerInfo",
 };
 
 std::unique_ptr< BalancerService::Stub> BalancerService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -96,6 +97,7 @@ std::unique_ptr< BalancerService::Stub> BalancerService::NewStub(const std::shar
 BalancerService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_AddNewUserToServer_(BalancerService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_UserLoginToServer_(BalancerService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetPeerServerInfo_(BalancerService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status BalancerService::Stub::AddNewUserToServer(::grpc::ClientContext* context, const ::message::RegisterToBalancer& request, ::message::GetAllocatedChattingServer* response) {
@@ -144,6 +146,29 @@ void BalancerService::Stub::async::UserLoginToServer(::grpc::ClientContext* cont
   return result;
 }
 
+::grpc::Status BalancerService::Stub::GetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::message::PeerResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::message::GetChattingSeverPeerListsRequest, ::message::PeerResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetPeerServerInfo_, context, request, response);
+}
+
+void BalancerService::Stub::async::GetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest* request, ::message::PeerResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::message::GetChattingSeverPeerListsRequest, ::message::PeerResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetPeerServerInfo_, context, request, response, std::move(f));
+}
+
+void BalancerService::Stub::async::GetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest* request, ::message::PeerResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetPeerServerInfo_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::PeerResponse>* BalancerService::Stub::PrepareAsyncGetPeerServerInfoRaw(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::PeerResponse, ::message::GetChattingSeverPeerListsRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetPeerServerInfo_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::PeerResponse>* BalancerService::Stub::AsyncGetPeerServerInfoRaw(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetPeerServerInfoRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 BalancerService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       BalancerService_method_names[0],
@@ -165,6 +190,16 @@ BalancerService::Service::Service() {
              ::message::LoginChattingResponse* resp) {
                return service->UserLoginToServer(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      BalancerService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< BalancerService::Service, ::message::GetChattingSeverPeerListsRequest, ::message::PeerResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](BalancerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::message::GetChattingSeverPeerListsRequest* req,
+             ::message::PeerResponse* resp) {
+               return service->GetPeerServerInfo(ctx, req, resp);
+             }, this)));
 }
 
 BalancerService::Service::~Service() {
@@ -178,6 +213,13 @@ BalancerService::Service::~Service() {
 }
 
 ::grpc::Status BalancerService::Service::UserLoginToServer(::grpc::ServerContext* context, const ::message::LoginChattingServer* request, ::message::LoginChattingResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status BalancerService::Service::GetPeerServerInfo(::grpc::ServerContext* context, const ::message::GetChattingSeverPeerListsRequest* request, ::message::PeerResponse* response) {
   (void) context;
   (void) request;
   (void) response;

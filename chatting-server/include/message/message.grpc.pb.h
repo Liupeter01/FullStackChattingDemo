@@ -261,6 +261,14 @@ class BalancerService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginChattingResponse>> PrepareAsyncUserLoginToServer(::grpc::ClientContext* context, const ::message::LoginChattingServer& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginChattingResponse>>(PrepareAsyncUserLoginToServerRaw(context, request, cq));
     }
+    // chatting server acquires other servers info through this service
+    virtual ::grpc::Status GetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::message::PeerResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::PeerResponse>> AsyncGetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::PeerResponse>>(AsyncGetPeerServerInfoRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::PeerResponse>> PrepareAsyncGetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::PeerResponse>>(PrepareAsyncGetPeerServerInfoRaw(context, request, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
@@ -271,6 +279,9 @@ class BalancerService final {
       // user send SERVICE_LOGINSERVER request
       virtual void UserLoginToServer(::grpc::ClientContext* context, const ::message::LoginChattingServer* request, ::message::LoginChattingResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void UserLoginToServer(::grpc::ClientContext* context, const ::message::LoginChattingServer* request, ::message::LoginChattingResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // chatting server acquires other servers info through this service
+      virtual void GetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest* request, ::message::PeerResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest* request, ::message::PeerResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -280,6 +291,8 @@ class BalancerService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::GetAllocatedChattingServer>* PrepareAsyncAddNewUserToServerRaw(::grpc::ClientContext* context, const ::message::RegisterToBalancer& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginChattingResponse>* AsyncUserLoginToServerRaw(::grpc::ClientContext* context, const ::message::LoginChattingServer& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginChattingResponse>* PrepareAsyncUserLoginToServerRaw(::grpc::ClientContext* context, const ::message::LoginChattingServer& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::PeerResponse>* AsyncGetPeerServerInfoRaw(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::PeerResponse>* PrepareAsyncGetPeerServerInfoRaw(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -298,6 +311,13 @@ class BalancerService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::LoginChattingResponse>> PrepareAsyncUserLoginToServer(::grpc::ClientContext* context, const ::message::LoginChattingServer& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::LoginChattingResponse>>(PrepareAsyncUserLoginToServerRaw(context, request, cq));
     }
+    ::grpc::Status GetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::message::PeerResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::PeerResponse>> AsyncGetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::PeerResponse>>(AsyncGetPeerServerInfoRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::PeerResponse>> PrepareAsyncGetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::PeerResponse>>(PrepareAsyncGetPeerServerInfoRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
@@ -305,6 +325,8 @@ class BalancerService final {
       void AddNewUserToServer(::grpc::ClientContext* context, const ::message::RegisterToBalancer* request, ::message::GetAllocatedChattingServer* response, ::grpc::ClientUnaryReactor* reactor) override;
       void UserLoginToServer(::grpc::ClientContext* context, const ::message::LoginChattingServer* request, ::message::LoginChattingResponse* response, std::function<void(::grpc::Status)>) override;
       void UserLoginToServer(::grpc::ClientContext* context, const ::message::LoginChattingServer* request, ::message::LoginChattingResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest* request, ::message::PeerResponse* response, std::function<void(::grpc::Status)>) override;
+      void GetPeerServerInfo(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest* request, ::message::PeerResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -320,8 +342,11 @@ class BalancerService final {
     ::grpc::ClientAsyncResponseReader< ::message::GetAllocatedChattingServer>* PrepareAsyncAddNewUserToServerRaw(::grpc::ClientContext* context, const ::message::RegisterToBalancer& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::message::LoginChattingResponse>* AsyncUserLoginToServerRaw(::grpc::ClientContext* context, const ::message::LoginChattingServer& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::message::LoginChattingResponse>* PrepareAsyncUserLoginToServerRaw(::grpc::ClientContext* context, const ::message::LoginChattingServer& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::message::PeerResponse>* AsyncGetPeerServerInfoRaw(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::message::PeerResponse>* PrepareAsyncGetPeerServerInfoRaw(::grpc::ClientContext* context, const ::message::GetChattingSeverPeerListsRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_AddNewUserToServer_;
     const ::grpc::internal::RpcMethod rpcmethod_UserLoginToServer_;
+    const ::grpc::internal::RpcMethod rpcmethod_GetPeerServerInfo_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -334,6 +359,8 @@ class BalancerService final {
     virtual ::grpc::Status AddNewUserToServer(::grpc::ServerContext* context, const ::message::RegisterToBalancer* request, ::message::GetAllocatedChattingServer* response);
     // user send SERVICE_LOGINSERVER request
     virtual ::grpc::Status UserLoginToServer(::grpc::ServerContext* context, const ::message::LoginChattingServer* request, ::message::LoginChattingResponse* response);
+    // chatting server acquires other servers info through this service
+    virtual ::grpc::Status GetPeerServerInfo(::grpc::ServerContext* context, const ::message::GetChattingSeverPeerListsRequest* request, ::message::PeerResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_AddNewUserToServer : public BaseClass {
@@ -375,7 +402,27 @@ class BalancerService final {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_AddNewUserToServer<WithAsyncMethod_UserLoginToServer<Service > > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_GetPeerServerInfo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_GetPeerServerInfo() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_GetPeerServerInfo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetPeerServerInfo(::grpc::ServerContext* /*context*/, const ::message::GetChattingSeverPeerListsRequest* /*request*/, ::message::PeerResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetPeerServerInfo(::grpc::ServerContext* context, ::message::GetChattingSeverPeerListsRequest* request, ::grpc::ServerAsyncResponseWriter< ::message::PeerResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_AddNewUserToServer<WithAsyncMethod_UserLoginToServer<WithAsyncMethod_GetPeerServerInfo<Service > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_AddNewUserToServer : public BaseClass {
    private:
@@ -430,7 +477,34 @@ class BalancerService final {
     virtual ::grpc::ServerUnaryReactor* UserLoginToServer(
       ::grpc::CallbackServerContext* /*context*/, const ::message::LoginChattingServer* /*request*/, ::message::LoginChattingResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_AddNewUserToServer<WithCallbackMethod_UserLoginToServer<Service > > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_GetPeerServerInfo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_GetPeerServerInfo() {
+      ::grpc::Service::MarkMethodCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::message::GetChattingSeverPeerListsRequest, ::message::PeerResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::message::GetChattingSeverPeerListsRequest* request, ::message::PeerResponse* response) { return this->GetPeerServerInfo(context, request, response); }));}
+    void SetMessageAllocatorFor_GetPeerServerInfo(
+        ::grpc::MessageAllocator< ::message::GetChattingSeverPeerListsRequest, ::message::PeerResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::message::GetChattingSeverPeerListsRequest, ::message::PeerResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_GetPeerServerInfo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetPeerServerInfo(::grpc::ServerContext* /*context*/, const ::message::GetChattingSeverPeerListsRequest* /*request*/, ::message::PeerResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetPeerServerInfo(
+      ::grpc::CallbackServerContext* /*context*/, const ::message::GetChattingSeverPeerListsRequest* /*request*/, ::message::PeerResponse* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_AddNewUserToServer<WithCallbackMethod_UserLoginToServer<WithCallbackMethod_GetPeerServerInfo<Service > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_AddNewUserToServer : public BaseClass {
@@ -462,6 +536,23 @@ class BalancerService final {
     }
     // disable synchronous version of this method
     ::grpc::Status UserLoginToServer(::grpc::ServerContext* /*context*/, const ::message::LoginChattingServer* /*request*/, ::message::LoginChattingResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_GetPeerServerInfo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_GetPeerServerInfo() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod_GetPeerServerInfo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetPeerServerInfo(::grpc::ServerContext* /*context*/, const ::message::GetChattingSeverPeerListsRequest* /*request*/, ::message::PeerResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -507,6 +598,26 @@ class BalancerService final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_GetPeerServerInfo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_GetPeerServerInfo() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_GetPeerServerInfo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetPeerServerInfo(::grpc::ServerContext* /*context*/, const ::message::GetChattingSeverPeerListsRequest* /*request*/, ::message::PeerResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetPeerServerInfo(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_AddNewUserToServer : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -548,6 +659,28 @@ class BalancerService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* UserLoginToServer(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_GetPeerServerInfo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_GetPeerServerInfo() {
+      ::grpc::Service::MarkMethodRawCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetPeerServerInfo(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_GetPeerServerInfo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetPeerServerInfo(::grpc::ServerContext* /*context*/, const ::message::GetChattingSeverPeerListsRequest* /*request*/, ::message::PeerResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetPeerServerInfo(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -604,9 +737,36 @@ class BalancerService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedUserLoginToServer(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::LoginChattingServer,::message::LoginChattingResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_AddNewUserToServer<WithStreamedUnaryMethod_UserLoginToServer<Service > > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_GetPeerServerInfo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_GetPeerServerInfo() {
+      ::grpc::Service::MarkMethodStreamed(2,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::message::GetChattingSeverPeerListsRequest, ::message::PeerResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::message::GetChattingSeverPeerListsRequest, ::message::PeerResponse>* streamer) {
+                       return this->StreamedGetPeerServerInfo(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_GetPeerServerInfo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status GetPeerServerInfo(::grpc::ServerContext* /*context*/, const ::message::GetChattingSeverPeerListsRequest* /*request*/, ::message::PeerResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedGetPeerServerInfo(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::GetChattingSeverPeerListsRequest,::message::PeerResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_AddNewUserToServer<WithStreamedUnaryMethod_UserLoginToServer<WithStreamedUnaryMethod_GetPeerServerInfo<Service > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_AddNewUserToServer<WithStreamedUnaryMethod_UserLoginToServer<Service > > StreamedService;
+  typedef WithStreamedUnaryMethod_AddNewUserToServer<WithStreamedUnaryMethod_UserLoginToServer<WithStreamedUnaryMethod_GetPeerServerInfo<Service > > > StreamedService;
 };
 
 // prepared for distributed chatting service

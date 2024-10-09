@@ -105,6 +105,47 @@ struct LoginChattingResponseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LoginChattingResponseDefaultTypeInternal _LoginChattingResponse_default_instance_;
+PROTOBUF_CONSTEXPR ChattingPeerServer::ChattingPeerServer(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.host_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.port_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct ChattingPeerServerDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ChattingPeerServerDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ChattingPeerServerDefaultTypeInternal() {}
+  union {
+    ChattingPeerServer _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ChattingPeerServerDefaultTypeInternal _ChattingPeerServer_default_instance_;
+PROTOBUF_CONSTEXPR GetChattingSeverPeerListsRequest::GetChattingSeverPeerListsRequest(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.cur_server_name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct GetChattingSeverPeerListsRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GetChattingSeverPeerListsRequestDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GetChattingSeverPeerListsRequestDefaultTypeInternal() {}
+  union {
+    GetChattingSeverPeerListsRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetChattingSeverPeerListsRequestDefaultTypeInternal _GetChattingSeverPeerListsRequest_default_instance_;
+PROTOBUF_CONSTEXPR PeerResponse::PeerResponse(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.lists_)*/{}
+  , /*decltype(_impl_.error_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct PeerResponseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR PeerResponseDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~PeerResponseDefaultTypeInternal() {}
+  union {
+    PeerResponse _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PeerResponseDefaultTypeInternal _PeerResponse_default_instance_;
 PROTOBUF_CONSTEXPR AddNewFriendRequest::AddNewFriendRequest(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.nick_name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
@@ -196,7 +237,7 @@ struct SendChattingMsgResponseDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SendChattingMsgResponseDefaultTypeInternal _SendChattingMsgResponse_default_instance_;
 }  // namespace message
-static ::_pb::Metadata file_level_metadata_message_2eproto[12];
+static ::_pb::Metadata file_level_metadata_message_2eproto[15];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_message_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_message_2eproto = nullptr;
 
@@ -249,6 +290,29 @@ const uint32_t TableStruct_message_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::message::LoginChattingResponse, _impl_.error_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::message::ChattingPeerServer, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::message::ChattingPeerServer, _impl_.host_),
+  PROTOBUF_FIELD_OFFSET(::message::ChattingPeerServer, _impl_.port_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::message::GetChattingSeverPeerListsRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::message::GetChattingSeverPeerListsRequest, _impl_.cur_server_name_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::message::PeerResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::message::PeerResponse, _impl_.error_),
+  PROTOBUF_FIELD_OFFSET(::message::PeerResponse, _impl_.lists_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::message::AddNewFriendRequest, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -311,12 +375,15 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 23, -1, -1, sizeof(::message::GetAllocatedChattingServer)},
   { 33, -1, -1, sizeof(::message::LoginChattingServer)},
   { 41, -1, -1, sizeof(::message::LoginChattingResponse)},
-  { 48, -1, -1, sizeof(::message::AddNewFriendRequest)},
-  { 58, -1, -1, sizeof(::message::AddNewFriendResponse)},
-  { 67, -1, -1, sizeof(::message::AuthoriseRequest)},
-  { 75, -1, -1, sizeof(::message::AuthoriseResponse)},
-  { 84, -1, -1, sizeof(::message::SendChattingMsgRequest)},
-  { 93, -1, -1, sizeof(::message::SendChattingMsgResponse)},
+  { 48, -1, -1, sizeof(::message::ChattingPeerServer)},
+  { 56, -1, -1, sizeof(::message::GetChattingSeverPeerListsRequest)},
+  { 63, -1, -1, sizeof(::message::PeerResponse)},
+  { 71, -1, -1, sizeof(::message::AddNewFriendRequest)},
+  { 81, -1, -1, sizeof(::message::AddNewFriendResponse)},
+  { 90, -1, -1, sizeof(::message::AuthoriseRequest)},
+  { 98, -1, -1, sizeof(::message::AuthoriseResponse)},
+  { 107, -1, -1, sizeof(::message::SendChattingMsgRequest)},
+  { 116, -1, -1, sizeof(::message::SendChattingMsgResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -326,6 +393,9 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::message::_GetAllocatedChattingServer_default_instance_._instance,
   &::message::_LoginChattingServer_default_instance_._instance,
   &::message::_LoginChattingResponse_default_instance_._instance,
+  &::message::_ChattingPeerServer_default_instance_._instance,
+  &::message::_GetChattingSeverPeerListsRequest_default_instance_._instance,
+  &::message::_PeerResponse_default_instance_._instance,
   &::message::_AddNewFriendRequest_default_instance_._instance,
   &::message::_AddNewFriendResponse_default_instance_._instance,
   &::message::_AuthoriseRequest_default_instance_._instance,
@@ -343,42 +413,49 @@ const char descriptor_table_protodef_message_2eproto[] PROTOBUF_SECTION_VARIABLE
   "erver\022\r\n\005error\030\001 \001(\005\022\014\n\004host\030\002 \001(\t\022\014\n\004po"
   "rt\030\003 \001(\t\022\r\n\005token\030\004 \001(\t\"2\n\023LoginChatting"
   "Server\022\014\n\004uuid\030\001 \001(\005\022\r\n\005token\030\002 \001(\t\"&\n\025L"
-  "oginChattingResponse\022\r\n\005error\030\001 \001(\005\"]\n\023A"
-  "ddNewFriendRequest\022\020\n\010src_uuid\030\001 \001(\005\022\020\n\010"
-  "dst_uuid\030\002 \001(\005\022\021\n\tnick_name\030\003 \001(\t\022\017\n\007req"
-  "_msg\030\004 \001(\t\"I\n\024AddNewFriendResponse\022\r\n\005er"
-  "ror\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst_uuid\030"
-  "\003 \001(\005\"6\n\020AuthoriseRequest\022\020\n\010src_uuid\030\001 "
-  "\001(\005\022\020\n\010dst_uuid\030\002 \001(\005\"F\n\021AuthoriseRespon"
-  "se\022\r\n\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010d"
-  "st_uuid\030\003 \001(\005\"M\n\026SendChattingMsgRequest\022"
-  "\020\n\010src_uuid\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001(\005\022\017\n\007m"
-  "essage\030\003 \001(\t\"L\n\027SendChattingMsgResponse\022"
-  "\r\n\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst_"
-  "uuid\030\003 \001(\0052q\n\023VerificationService\022Z\n\023Get"
-  "VerificationCode\022\037.message.GetVerificati"
-  "onRequest\032 .message.GetVerificationRespo"
-  "nse\"\0002\300\001\n\017BalancerService\022X\n\022AddNewUserT"
-  "oServer\022\033.message.RegisterToBalancer\032#.m"
-  "essage.GetAllocatedChattingServer\"\000\022S\n\021U"
-  "serLoginToServer\022\034.message.LoginChatting"
-  "Server\032\036.message.LoginChattingResponse\"\000"
-  "2\356\002\n\032DistributedChattingService\022R\n\021SendF"
-  "riendRequest\022\034.message.AddNewFriendReque"
-  "st\032\035.message.AddNewFriendResponse\"\000\022O\n\024C"
-  "onfirmFriendRequest\022\031.message.AuthoriseR"
-  "equest\032\032.message.AuthoriseResponse\"\000\022Q\n\026"
-  "FriendshipVerification\022\031.message.Authori"
-  "seRequest\032\032.message.AuthoriseResponse\"\000\022"
-  "X\n\021NormalChattingMsg\022\037.message.SendChatt"
-  "ingMsgRequest\032 .message.SendChattingMsgR"
-  "esponse\"\000b\006proto3"
+  "oginChattingResponse\022\r\n\005error\030\001 \001(\005\"0\n\022C"
+  "hattingPeerServer\022\014\n\004host\030\001 \001(\t\022\014\n\004port\030"
+  "\002 \001(\t\";\n GetChattingSeverPeerListsReques"
+  "t\022\027\n\017cur_server_name\030\001 \001(\t\"I\n\014PeerRespon"
+  "se\022\r\n\005error\030\001 \001(\005\022*\n\005lists\030\002 \003(\0132\033.messa"
+  "ge.ChattingPeerServer\"]\n\023AddNewFriendReq"
+  "uest\022\020\n\010src_uuid\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001(\005"
+  "\022\021\n\tnick_name\030\003 \001(\t\022\017\n\007req_msg\030\004 \001(\t\"I\n\024"
+  "AddNewFriendResponse\022\r\n\005error\030\001 \001(\005\022\020\n\010s"
+  "rc_uuid\030\002 \001(\005\022\020\n\010dst_uuid\030\003 \001(\005\"6\n\020Autho"
+  "riseRequest\022\020\n\010src_uuid\030\001 \001(\005\022\020\n\010dst_uui"
+  "d\030\002 \001(\005\"F\n\021AuthoriseResponse\022\r\n\005error\030\001 "
+  "\001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst_uuid\030\003 \001(\005\""
+  "M\n\026SendChattingMsgRequest\022\020\n\010src_uuid\030\001 "
+  "\001(\005\022\020\n\010dst_uuid\030\002 \001(\005\022\017\n\007message\030\003 \001(\t\"L"
+  "\n\027SendChattingMsgResponse\022\r\n\005error\030\001 \001(\005"
+  "\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst_uuid\030\003 \001(\0052q\n\023"
+  "VerificationService\022Z\n\023GetVerificationCo"
+  "de\022\037.message.GetVerificationRequest\032 .me"
+  "ssage.GetVerificationResponse\"\0002\231\002\n\017Bala"
+  "ncerService\022X\n\022AddNewUserToServer\022\033.mess"
+  "age.RegisterToBalancer\032#.message.GetAllo"
+  "catedChattingServer\"\000\022S\n\021UserLoginToServ"
+  "er\022\034.message.LoginChattingServer\032\036.messa"
+  "ge.LoginChattingResponse\"\000\022W\n\021GetPeerSer"
+  "verInfo\022).message.GetChattingSeverPeerLi"
+  "stsRequest\032\025.message.PeerResponse\"\0002\356\002\n\032"
+  "DistributedChattingService\022R\n\021SendFriend"
+  "Request\022\034.message.AddNewFriendRequest\032\035."
+  "message.AddNewFriendResponse\"\000\022O\n\024Confir"
+  "mFriendRequest\022\031.message.AuthoriseReques"
+  "t\032\032.message.AuthoriseResponse\"\000\022Q\n\026Frien"
+  "dshipVerification\022\031.message.AuthoriseReq"
+  "uest\032\032.message.AuthoriseResponse\"\000\022X\n\021No"
+  "rmalChattingMsg\022\037.message.SendChattingMs"
+  "gRequest\032 .message.SendChattingMsgRespon"
+  "se\"\000b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_message_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_message_2eproto = {
-    false, false, 1497, descriptor_table_protodef_message_2eproto,
+    false, false, 1772, descriptor_table_protodef_message_2eproto,
     "message.proto",
-    &descriptor_table_message_2eproto_once, nullptr, 0, 12,
+    &descriptor_table_message_2eproto_once, nullptr, 0, 15,
     schemas, file_default_instances, TableStruct_message_2eproto::offsets,
     file_level_metadata_message_2eproto, file_level_enum_descriptors_message_2eproto,
     file_level_service_descriptors_message_2eproto,
@@ -1792,6 +1869,674 @@ void LoginChattingResponse::InternalSwap(LoginChattingResponse* other) {
 
 // ===================================================================
 
+class ChattingPeerServer::_Internal {
+ public:
+};
+
+ChattingPeerServer::ChattingPeerServer(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:message.ChattingPeerServer)
+}
+ChattingPeerServer::ChattingPeerServer(const ChattingPeerServer& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ChattingPeerServer* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.host_){}
+    , decltype(_impl_.port_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.host_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.host_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_host().empty()) {
+    _this->_impl_.host_.Set(from._internal_host(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.port_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.port_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_port().empty()) {
+    _this->_impl_.port_.Set(from._internal_port(), 
+      _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:message.ChattingPeerServer)
+}
+
+inline void ChattingPeerServer::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.host_){}
+    , decltype(_impl_.port_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.host_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.host_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.port_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.port_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+ChattingPeerServer::~ChattingPeerServer() {
+  // @@protoc_insertion_point(destructor:message.ChattingPeerServer)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void ChattingPeerServer::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.host_.Destroy();
+  _impl_.port_.Destroy();
+}
+
+void ChattingPeerServer::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void ChattingPeerServer::Clear() {
+// @@protoc_insertion_point(message_clear_start:message.ChattingPeerServer)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.host_.ClearToEmpty();
+  _impl_.port_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* ChattingPeerServer::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string host = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_host();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "message.ChattingPeerServer.host"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string port = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_port();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "message.ChattingPeerServer.port"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* ChattingPeerServer::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:message.ChattingPeerServer)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string host = 1;
+  if (!this->_internal_host().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_host().data(), static_cast<int>(this->_internal_host().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "message.ChattingPeerServer.host");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_host(), target);
+  }
+
+  // string port = 2;
+  if (!this->_internal_port().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_port().data(), static_cast<int>(this->_internal_port().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "message.ChattingPeerServer.port");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_port(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:message.ChattingPeerServer)
+  return target;
+}
+
+size_t ChattingPeerServer::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:message.ChattingPeerServer)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string host = 1;
+  if (!this->_internal_host().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_host());
+  }
+
+  // string port = 2;
+  if (!this->_internal_port().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_port());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ChattingPeerServer::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    ChattingPeerServer::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ChattingPeerServer::GetClassData() const { return &_class_data_; }
+
+
+void ChattingPeerServer::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ChattingPeerServer*>(&to_msg);
+  auto& from = static_cast<const ChattingPeerServer&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:message.ChattingPeerServer)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_host().empty()) {
+    _this->_internal_set_host(from._internal_host());
+  }
+  if (!from._internal_port().empty()) {
+    _this->_internal_set_port(from._internal_port());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ChattingPeerServer::CopyFrom(const ChattingPeerServer& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:message.ChattingPeerServer)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ChattingPeerServer::IsInitialized() const {
+  return true;
+}
+
+void ChattingPeerServer::InternalSwap(ChattingPeerServer* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.host_, lhs_arena,
+      &other->_impl_.host_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.port_, lhs_arena,
+      &other->_impl_.port_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ChattingPeerServer::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
+      file_level_metadata_message_2eproto[6]);
+}
+
+// ===================================================================
+
+class GetChattingSeverPeerListsRequest::_Internal {
+ public:
+};
+
+GetChattingSeverPeerListsRequest::GetChattingSeverPeerListsRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:message.GetChattingSeverPeerListsRequest)
+}
+GetChattingSeverPeerListsRequest::GetChattingSeverPeerListsRequest(const GetChattingSeverPeerListsRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  GetChattingSeverPeerListsRequest* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.cur_server_name_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.cur_server_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.cur_server_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_cur_server_name().empty()) {
+    _this->_impl_.cur_server_name_.Set(from._internal_cur_server_name(), 
+      _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:message.GetChattingSeverPeerListsRequest)
+}
+
+inline void GetChattingSeverPeerListsRequest::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.cur_server_name_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.cur_server_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.cur_server_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+GetChattingSeverPeerListsRequest::~GetChattingSeverPeerListsRequest() {
+  // @@protoc_insertion_point(destructor:message.GetChattingSeverPeerListsRequest)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void GetChattingSeverPeerListsRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.cur_server_name_.Destroy();
+}
+
+void GetChattingSeverPeerListsRequest::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void GetChattingSeverPeerListsRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:message.GetChattingSeverPeerListsRequest)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.cur_server_name_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* GetChattingSeverPeerListsRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string cur_server_name = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_cur_server_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "message.GetChattingSeverPeerListsRequest.cur_server_name"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* GetChattingSeverPeerListsRequest::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:message.GetChattingSeverPeerListsRequest)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string cur_server_name = 1;
+  if (!this->_internal_cur_server_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_cur_server_name().data(), static_cast<int>(this->_internal_cur_server_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "message.GetChattingSeverPeerListsRequest.cur_server_name");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_cur_server_name(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:message.GetChattingSeverPeerListsRequest)
+  return target;
+}
+
+size_t GetChattingSeverPeerListsRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:message.GetChattingSeverPeerListsRequest)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string cur_server_name = 1;
+  if (!this->_internal_cur_server_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_cur_server_name());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GetChattingSeverPeerListsRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    GetChattingSeverPeerListsRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetChattingSeverPeerListsRequest::GetClassData() const { return &_class_data_; }
+
+
+void GetChattingSeverPeerListsRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<GetChattingSeverPeerListsRequest*>(&to_msg);
+  auto& from = static_cast<const GetChattingSeverPeerListsRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:message.GetChattingSeverPeerListsRequest)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_cur_server_name().empty()) {
+    _this->_internal_set_cur_server_name(from._internal_cur_server_name());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GetChattingSeverPeerListsRequest::CopyFrom(const GetChattingSeverPeerListsRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:message.GetChattingSeverPeerListsRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GetChattingSeverPeerListsRequest::IsInitialized() const {
+  return true;
+}
+
+void GetChattingSeverPeerListsRequest::InternalSwap(GetChattingSeverPeerListsRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.cur_server_name_, lhs_arena,
+      &other->_impl_.cur_server_name_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GetChattingSeverPeerListsRequest::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
+      file_level_metadata_message_2eproto[7]);
+}
+
+// ===================================================================
+
+class PeerResponse::_Internal {
+ public:
+};
+
+PeerResponse::PeerResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:message.PeerResponse)
+}
+PeerResponse::PeerResponse(const PeerResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  PeerResponse* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.lists_){from._impl_.lists_}
+    , decltype(_impl_.error_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.error_ = from._impl_.error_;
+  // @@protoc_insertion_point(copy_constructor:message.PeerResponse)
+}
+
+inline void PeerResponse::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.lists_){arena}
+    , decltype(_impl_.error_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+PeerResponse::~PeerResponse() {
+  // @@protoc_insertion_point(destructor:message.PeerResponse)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void PeerResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.lists_.~RepeatedPtrField();
+}
+
+void PeerResponse::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void PeerResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:message.PeerResponse)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.lists_.Clear();
+  _impl_.error_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* PeerResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // int32 error = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.error_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .message.ChattingPeerServer lists = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_lists(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* PeerResponse::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:message.PeerResponse)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 error = 1;
+  if (this->_internal_error() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_error(), target);
+  }
+
+  // repeated .message.ChattingPeerServer lists = 2;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_lists_size()); i < n; i++) {
+    const auto& repfield = this->_internal_lists(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:message.PeerResponse)
+  return target;
+}
+
+size_t PeerResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:message.PeerResponse)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .message.ChattingPeerServer lists = 2;
+  total_size += 1UL * this->_internal_lists_size();
+  for (const auto& msg : this->_impl_.lists_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // int32 error = 1;
+  if (this->_internal_error() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_error());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData PeerResponse::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    PeerResponse::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*PeerResponse::GetClassData() const { return &_class_data_; }
+
+
+void PeerResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<PeerResponse*>(&to_msg);
+  auto& from = static_cast<const PeerResponse&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:message.PeerResponse)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  _this->_impl_.lists_.MergeFrom(from._impl_.lists_);
+  if (from._internal_error() != 0) {
+    _this->_internal_set_error(from._internal_error());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void PeerResponse::CopyFrom(const PeerResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:message.PeerResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PeerResponse::IsInitialized() const {
+  return true;
+}
+
+void PeerResponse::InternalSwap(PeerResponse* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _impl_.lists_.InternalSwap(&other->_impl_.lists_);
+  swap(_impl_.error_, other->_impl_.error_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata PeerResponse::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
+      file_level_metadata_message_2eproto[8]);
+}
+
+// ===================================================================
+
 class AddNewFriendRequest::_Internal {
  public:
 };
@@ -2100,7 +2845,7 @@ void AddNewFriendRequest::InternalSwap(AddNewFriendRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata AddNewFriendRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[6]);
+      file_level_metadata_message_2eproto[9]);
 }
 
 // ===================================================================
@@ -2335,7 +3080,7 @@ void AddNewFriendResponse::InternalSwap(AddNewFriendResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata AddNewFriendResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[7]);
+      file_level_metadata_message_2eproto[10]);
 }
 
 // ===================================================================
@@ -2546,7 +3291,7 @@ void AuthoriseRequest::InternalSwap(AuthoriseRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata AuthoriseRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[8]);
+      file_level_metadata_message_2eproto[11]);
 }
 
 // ===================================================================
@@ -2781,7 +3526,7 @@ void AuthoriseResponse::InternalSwap(AuthoriseResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata AuthoriseResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[9]);
+      file_level_metadata_message_2eproto[12]);
 }
 
 // ===================================================================
@@ -3044,7 +3789,7 @@ void SendChattingMsgRequest::InternalSwap(SendChattingMsgRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SendChattingMsgRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[10]);
+      file_level_metadata_message_2eproto[13]);
 }
 
 // ===================================================================
@@ -3279,7 +4024,7 @@ void SendChattingMsgResponse::InternalSwap(SendChattingMsgResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SendChattingMsgResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[11]);
+      file_level_metadata_message_2eproto[14]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -3308,6 +4053,18 @@ Arena::CreateMaybeMessage< ::message::LoginChattingServer >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::message::LoginChattingResponse*
 Arena::CreateMaybeMessage< ::message::LoginChattingResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::message::LoginChattingResponse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::message::ChattingPeerServer*
+Arena::CreateMaybeMessage< ::message::ChattingPeerServer >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::message::ChattingPeerServer >(arena);
+}
+template<> PROTOBUF_NOINLINE ::message::GetChattingSeverPeerListsRequest*
+Arena::CreateMaybeMessage< ::message::GetChattingSeverPeerListsRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::message::GetChattingSeverPeerListsRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::message::PeerResponse*
+Arena::CreateMaybeMessage< ::message::PeerResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::message::PeerResponse >(arena);
 }
 template<> PROTOBUF_NOINLINE ::message::AddNewFriendRequest*
 Arena::CreateMaybeMessage< ::message::AddNewFriendRequest >(Arena* arena) {
