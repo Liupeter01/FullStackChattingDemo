@@ -7,6 +7,7 @@ struct ServerConfig : public Singleton<ServerConfig> {
   friend class Singleton<ServerConfig>;
 
 public:
+          std::string ChattingServerName;
   unsigned short ChattingServerPort;
   std::size_t ChattingServerQueueSize;
 
@@ -32,6 +33,7 @@ private:
   }
 
   void loadChattingServiceInfo() {
+            ChattingServerName = m_ini["ChattingServer"]["server_name"].as<std::string>();
     ChattingServerPort = m_ini["ChattingServer"]["port"].as<unsigned short>();
     ChattingServerQueueSize =
         m_ini["ChattingServer"]["send_queue_size"].as<int>();
