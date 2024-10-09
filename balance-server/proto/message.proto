@@ -1,47 +1,133 @@
-syntax="proto3";
+syntax = "proto3";
 package message;
 
-service VerificationService{
-    rpc GetVerificationCode(GetVerificationRequest) returns (GetVerificationResponse){}
+/*prepared for verification service*/
+service VerificationService {
+  rpc GetVerificationCode(GetVerificationRequest)
+      returns (GetVerificationResponse) {}
 }
 
-service BalancerService{
-    //pass user's uuid parameter to the server, and returns available server address to user
-    rpc AddNewUserToServer(RegisterToBalancer) returns (GetAllocatedChattingServer){}
+message GetVerificationRequest { string email = 1; }
 
-    //user send SERVICE_LOGINSERVER request
-    rpc UserLoginToServer(LoginChattingServer) returns (LoginChattingResponse){}
+message GetVerificationResponse {
+  int32 error = 1;
+  string email = 2;
+  string message = 3;
 }
 
-message GetVerificationRequest{
-    string email = 1;
+/*prepared for balance service*/
+service BalancerService {
+  // pass user's uuid parameter to the server, and returns available server
+  // address to user
+  rpc AddNewUserToServer(RegisterToBalancer)
+      returns (GetAllocatedChattingServer) {}
+
+  // user send SERVICE_LOGINSERVER request
+  rpc UserLoginToServer(LoginChattingServer) returns (LoginChattingResponse) {}
+
+  // chatting server acquires other servers info through this service
+  rpc GetPeerServerInfo(GetChattingSeverPeerListsRequest)
+      returns (PeerResponse) {}
 }
 
-message GetVerificationResponse{
-    int32 error = 1;
-    string email = 2;
-    string message = 3;
+// register new uuid to balance and ask for chatting server allocation
+message RegisterToBalancer { int32 uuid = 1; }
+
+// get server host & port & token of one chatting server
+message GetAllocatedChattingServer {
+  int32 error = 1;
+  string host = 2;
+  string port = 3;
+  string token = 4;
 }
 
-//register new uuid to balance and ask for chatting server allocation
-message RegisterToBalancer{
-    int32 uuid = 1;
+// transfer uuid and token to balanceserver to check validation
+message LoginChattingServer {
+  int32 uuid = 1;
+  string token = 2;
 }
 
-//get server host & port & token of one chatting server
-message GetAllocatedChattingServer{
-    int32 error = 1;
-    string host = 2;
-    string port = 3;
-    string token = 4;
+message LoginChattingResponse { int32 error = 1; }
+
+message ChattingPeerServer {
+  string host = 1;
+  string port = 2;
 }
 
-//transfer uuid and token to balanceserver to check validation
-message LoginChattingServer{
-    int32 uuid = 1;
-    string token = 2;
+message GetChattingSeverPeerListsRequest {
+  // current server's name
+  string cur_server_name = 1;
 }
 
-message LoginChattingResponse{
-    int32 error = 1;
+// return a array of servers ip address through balancer services
+message PeerResponse {
+  int32 error = 1;
+  repeated ChattingPeerServer lists = 2;
+}
+
+/*prepared for distributed chatting service*/
+service DistributedChattingService {
+
+  // A send friend request message to another user B
+  rpc SendFriendRequest(AddNewFriendRequest) returns (AddNewFriendResponse) {}
+
+  // User B agreed with user A's friend adding request
+  rpc ConfirmFriendRequest(AuthoriseRequest) returns (AuthoriseResponse) {}
+
+  // Verify that B is still A's friend:
+  rpc FriendshipVerification(AuthoriseRequest) returns (AuthoriseResponse) {}
+
+  // transfer chatting message from user A to B
+  rpc NormalChattingMsg(SendChattingMsgRequest)
+      returns (SendChattingMsgResponse) {}
+}
+
+/*
+ * A send friend request message to another user B and
+ * A wait for Authorise message
+ * we still need src/dst_uuid to verify sender's' and receiver's' identiy
+ */
+message AddNewFriendRequest {
+  int32 src_uuid = 1;   // request from who
+  int32 dst_uuid = 2;   // target
+  string nick_name = 3; // my nick name
+  string req_msg = 4;   // deliver a request message
+}
+message AddNewFriendResponse {
+  int32 error = 1;
+  int32 src_uuid = 2; // request from who
+  int32 dst_uuid = 3; // target
+}
+
+/*
+ * 1. User B agreed with user A's friend adding request:
+ *         when another user B agreed, then send an Authorise message back
+ *        to notify A that B has already agreed the friend request
+ *
+ * 2. Verify that B is still A's friend:
+ *
+ * we still need src/dst_uuid to verify sender's' and receiver's' identiy
+ */
+message AuthoriseRequest {
+  int32 src_uuid = 1; // request from who
+  int32 dst_uuid = 2; // target
+}
+
+message AuthoriseResponse {
+  int32 error = 1;
+  int32 src_uuid = 2; // request from who
+  int32 dst_uuid = 3; // target
+}
+
+/*we still need src/dst_uuid to verify sender's' and receiver's' identiy*/
+message SendChattingMsgRequest {
+  int32 src_uuid = 1; // request from who
+  int32 dst_uuid = 2; // target
+  string message = 3; // send message
+}
+
+message SendChattingMsgResponse {
+  int32 error = 1;
+  int32 src_uuid = 2; // request from who
+  int32 dst_uuid = 3; // target
 }
