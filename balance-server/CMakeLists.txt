@@ -102,8 +102,14 @@ add_subdirectory(spdlog)
 add_subdirectory(hiredis)
 
 target_link_libraries(
-  LoadBalanceServer PUBLIC Boost::asio Boost::uuid grpc++ libprotobuf
-                           inicpp::inicpp spdlog::spdlog)
+  LoadBalanceServer
+  PUBLIC Boost::asio
+         Boost::uuid
+         grpc++
+         libprotobuf
+         inicpp::inicpp
+         spdlog::spdlog
+         hiredis::hiredis)
 
 target_compile_definitions(
   LoadBalanceServer PUBLIC -DCONFIG_HOME=\"${CMAKE_CURRENT_SOURCE_DIR}/\")
