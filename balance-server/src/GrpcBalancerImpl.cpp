@@ -4,6 +4,7 @@
 #include <config/ServerConfig.hpp>
 #include <grpc/GrpcBalancerImpl.hpp>
 #include <network/def.hpp>
+#include <redis/RedisManager.hpp>
 
 grpc::GrpcBalancerImpl::UserInfo::UserInfo(
     std::string &&tokens,
@@ -30,6 +31,9 @@ grpc::GrpcBalancerImpl::~GrpcBalancerImpl() {}
 
 const grpc::GrpcBalancerImpl::ChattingServerConfig &
 grpc::GrpcBalancerImpl::serverLoadBalancer() {
+  /*find ?? in redis, HGET*/
+  connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
+      raii;
   std::lock_guard<std::mutex> _lckg(server_mtx);
 
   /*remember the lowest load server in iterator*/
