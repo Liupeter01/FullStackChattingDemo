@@ -10,24 +10,36 @@
 #include <unordered_map>
 
 namespace grpc {
-          class GrpcDistributedChattingImpl final :public message::DistributedChattingService::Service {
-          public:
-                    GrpcDistributedChattingImpl();
-                    virtual ~GrpcDistributedChattingImpl();
+class GrpcDistributedChattingImpl final
+    : public message::DistributedChattingService::Service {
+public:
+  GrpcDistributedChattingImpl();
+  virtual ~GrpcDistributedChattingImpl();
 
-          public:
-                    // A send friend request message to another user B
-                    virtual ::grpc::Status SendFriendRequest(::grpc::ServerContext* context, const ::message::AddNewFriendRequest* request, ::message::AddNewFriendResponse* response);
-                    // User B agreed with user A's friend adding request
-                    virtual ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response);
-                    // Verify that B is still A's friend:
-                    virtual ::grpc::Status FriendshipVerification(::grpc::ServerContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response);
-                    // transfer chatting message from user A to B
-                    virtual ::grpc::Status NormalChattingMsg(::grpc::ServerContext* context, const ::message::SendChattingMsgRequest* request, ::message::SendChattingMsgResponse* response);
+public:
+  // A send friend request message to another user B
+  virtual ::grpc::Status
+  SendFriendRequest(::grpc::ServerContext *context,
+                    const ::message::AddNewFriendRequest *request,
+                    ::message::AddNewFriendResponse *response);
+  // User B agreed with user A's friend adding request
+  virtual ::grpc::Status
+  ConfirmFriendRequest(::grpc::ServerContext *context,
+                       const ::message::AuthoriseRequest *request,
+                       ::message::AuthoriseResponse *response);
+  // Verify that B is still A's friend:
+  virtual ::grpc::Status
+  FriendshipVerification(::grpc::ServerContext *context,
+                         const ::message::AuthoriseRequest *request,
+                         ::message::AuthoriseResponse *response);
+  // transfer chatting message from user A to B
+  virtual ::grpc::Status
+  NormalChattingMsg(::grpc::ServerContext *context,
+                    const ::message::SendChattingMsgRequest *request,
+                    ::message::SendChattingMsgResponse *response);
 
-          private:
-
-          };
-}
+private:
+};
+} // namespace grpc
 
 #endif //_GRPCDISRIBUTEDCHATTINGIMPL_
