@@ -111,9 +111,9 @@ void grpc::GrpcBalancerImpl::registerUserInfo(
 }
 
 ::grpc::Status grpc::GrpcBalancerImpl::GetPeerServerInfo(
-          ::grpc::ServerContext* context, 
-          const ::message::GetChattingSeverPeerListsRequest* request, 
-          ::message::PeerResponse* response) {
+    ::grpc::ServerContext *context,
+    const ::message::GetChattingSeverPeerListsRequest *request,
+    ::message::PeerResponse *response) {
 
   auto target = this->servers.find(request->cur_server_name());
 

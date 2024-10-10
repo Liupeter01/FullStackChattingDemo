@@ -24,13 +24,22 @@ public:
   GrpcBalancerImpl();
 
 public:
-          // pass user's uuid parameter to the server, and returns available server
-          // address to user
-          virtual ::grpc::Status AddNewUserToServer(::grpc::ServerContext* context, const ::message::RegisterToBalancer* request, ::message::GetAllocatedChattingServer* response);
-          // user send SERVICE_LOGINSERVER request
-          virtual ::grpc::Status UserLoginToServer(::grpc::ServerContext* context, const ::message::LoginChattingServer* request, ::message::LoginChattingResponse* response);
-          // chatting server acquires other servers info through this service
-          virtual ::grpc::Status GetPeerServerInfo(::grpc::ServerContext* context, const ::message::GetChattingSeverPeerListsRequest* request, ::message::PeerResponse* response);
+  // pass user's uuid parameter to the server, and returns available server
+  // address to user
+  virtual ::grpc::Status
+  AddNewUserToServer(::grpc::ServerContext *context,
+                     const ::message::RegisterToBalancer *request,
+                     ::message::GetAllocatedChattingServer *response);
+  // user send SERVICE_LOGINSERVER request
+  virtual ::grpc::Status
+  UserLoginToServer(::grpc::ServerContext *context,
+                    const ::message::LoginChattingServer *request,
+                    ::message::LoginChattingResponse *response);
+  // chatting server acquires other servers info through this service
+  virtual ::grpc::Status
+  GetPeerServerInfo(::grpc::ServerContext *context,
+                    const ::message::GetChattingSeverPeerListsRequest *request,
+                    ::message::PeerResponse *response);
 
   static std::string userTokenGenerator();
 
