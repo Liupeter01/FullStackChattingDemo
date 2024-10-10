@@ -20,6 +20,9 @@
 [submodule "balance-server/inifile"]
 	path = balance-server/inifile
 	url = https://github.com/Rookfighter/inifile-cpp.git
+[submodule "balance-server/hiredis"]
+	path = balance-server/hiredis
+	url = https://github.com/redis/hiredis.git
 
 [submodule "chatting-server/spdlog"]
 	path = chatting-server/spdlog
