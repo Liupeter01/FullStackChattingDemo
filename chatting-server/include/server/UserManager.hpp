@@ -1,6 +1,7 @@
 #pragma once
 #ifndef _USERMANAGER_HPP_
 #define _USERMANAGER_HPP_
+#include <string>
 #include <mutex>
 #include <optional>
 #include <singleton/singleton.hpp>
@@ -15,15 +16,15 @@ class UserManager : public Singleton<UserManager> {
 
 public:
   ~UserManager();
-  std::optional<std::shared_ptr<Session>> getSession(const std::size_t uuid);
-  void removeUsrSession(const std::size_t uuid);
-  void alterUserSession(const std::size_t uuid,
+  std::optional<std::shared_ptr<Session>> getSession(const std::string& uuid);
+  void removeUsrSession(const std::string& uuid);
+  void alterUserSession(const std::string& uuid,
                         std::shared_ptr<Session> session);
 
 private:
   std::mutex m_update_mtx;
   std::unordered_map<
-      /*uuid*/ std::size_t,
+      /*uuid*/ std::string,
       /*user belonged session*/ std::shared_ptr<Session>>
       m_uuid2Session;
 };
