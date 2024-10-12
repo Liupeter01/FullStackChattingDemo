@@ -84,7 +84,7 @@ file(GLOB_RECURSE header_file CONFIGURE_DEPENDS include/*.hpp  include/*.h)
 file(GLOB_RECURSE proto_file CONFIGURE_DEPENDS proto/*.proto)
 
 add_executable(ChattingServer  ${source_file} ${header_file} ${GENERATED_PROTOBUF_FILES})
-target_include_directories(ChattingServer PUBLIC include inifile/include/)
+target_include_directories(ChattingServer PUBLIC include inifile/include/ hiredis/include)
 
 #import boost 1.84.0 library
 FetchContent_Declare(
@@ -109,6 +109,7 @@ FetchContent_MakeAvailable(
 add_subdirectory(inifile)
 add_subdirectory(spdlog)
 add_subdirectory(jsoncpp)
+add_subdirectory(hiredis)
 
 target_link_libraries(ChattingServer PUBLIC 
         Boost::asio
@@ -118,6 +119,7 @@ target_link_libraries(ChattingServer PUBLIC
         libprotobuf
         inicpp::inicpp
         spdlog::spdlog
+		hiredis::hiredis
         jsoncpp_object
 )
 

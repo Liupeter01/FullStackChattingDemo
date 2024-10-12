@@ -33,3 +33,6 @@
 [submodule "chatting-server/jsoncpp"]
 	path = chatting-server/jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp.git
+[submodule "chatting-server/hiredis"]
+	path = chatting-server/hiredis
+	url = https://github.com/redis/hiredis.git
