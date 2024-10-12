@@ -31,7 +31,8 @@ public:
   bool checkError();
   bool checkAuth(std::string_view sv);
   bool setValue(const std::string &key, const std::string &value);
-  bool setValue2Hash(const std::string& key, const std::string& field, const std::string& value);
+  bool setValue2Hash(const std::string &key, const std::string &field,
+                     const std::string &value);
   bool leftPush(const std::string &key, const std::string &value);
   bool rightPush(const std::string &key, const std::string &value);
   bool delPair(const std::string &key);
@@ -40,7 +41,8 @@ public:
   std::optional<std::string> checkValue(const std::string &key);
   std::optional<std::string> leftPop(const std::string &key);
   std::optional<std::string> rightPop(const std::string &key);
-  std::optional<std::string> getValueFromHash(const std::string& key, const std::string& field);
+  std::optional<std::string> getValueFromHash(const std::string &key,
+                                              const std::string &field);
 
   std::optional<tools::RedisContextWrapper> operator->();
 

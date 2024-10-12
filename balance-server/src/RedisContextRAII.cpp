@@ -36,23 +36,26 @@ bool redis::RedisContext::setValue(const std::string &key,
   return false;
 }
 
-bool redis::RedisContext::setValue2Hash(const std::string& key, const std::string& field, const std::string& value)
-{
-          std::unique_ptr<RedisReply> m_replyDelegate = std::make_unique<RedisReply>();
-          auto status = m_replyDelegate->redisCommand(*this, std::string("HSET %s %s %s"),
-                    key.c_str(), field.c_str(), value.c_str());
+bool redis::RedisContext::setValue2Hash(const std::string &key,
+                                        const std::string &field,
+                                        const std::string &value) {
+  std::unique_ptr<RedisReply> m_replyDelegate = std::make_unique<RedisReply>();
+  auto status =
+      m_replyDelegate->redisCommand(*this, std::string("HSET %s %s %s"),
+                                    key.c_str(), field.c_str(), value.c_str());
 
-          if (status) {
-                    if (m_replyDelegate->getMessage().has_value() &&
-                              (m_replyDelegate->getMessage().value() == "ok" ||
-                                        m_replyDelegate->getMessage().value() == "OK")) {
+  if (status) {
+    if (m_replyDelegate->getMessage().has_value() &&
+        (m_replyDelegate->getMessage().value() == "ok" ||
+         m_replyDelegate->getMessage().value() == "OK")) {
 
-                              spdlog::info("Excute command [ HSET key = {0}, field = {1}, value = {2}] successfully!",
-                                        key.c_str(), field.c_str(), value.c_str());
-                              return true;
-                    }
-          }
-          return false;
+      spdlog::info("Excute command [ HSET key = {0}, field = {1}, value = {2}] "
+                   "successfully!",
+                   key.c_str(), field.c_str(), value.c_str());
+      return true;
+    }
+  }
+  return false;
 }
 
 bool redis::RedisContext::leftPush(const std::string &key,
@@ -172,21 +175,23 @@ redis::RedisContext::rightPop(const std::string &key) {
   return m_replyDelegate->getMessage();
 }
 
-std::optional<std::string> redis::RedisContext::getValueFromHash(const std::string& key, const std::string& field)
-{
-          std::unique_ptr<RedisReply> m_replyDelegate = std::make_unique<RedisReply>();
-          if (!m_replyDelegate->redisCommand(*this, std::string("HGET %s %s"),
-                    key.c_str(), field.c_str())) {
-                    return std::nullopt;
-          }
+std::optional<std::string>
+redis::RedisContext::getValueFromHash(const std::string &key,
+                                      const std::string &field) {
+  std::unique_ptr<RedisReply> m_replyDelegate = std::make_unique<RedisReply>();
+  if (!m_replyDelegate->redisCommand(*this, std::string("HGET %s %s"),
+                                     key.c_str(), field.c_str())) {
+    return std::nullopt;
+  }
 
-          if (m_replyDelegate->getType().has_value() &&
-                    m_replyDelegate->getType().value() == REDIS_REPLY_NIL) {
-                    return std::nullopt;
-          }
+  if (m_replyDelegate->getType().has_value() &&
+      m_replyDelegate->getType().value() == REDIS_REPLY_NIL) {
+    return std::nullopt;
+  }
 
-          spdlog::info("Excute command [ HGET key = {0}, field = {1} ] successfully!", key.c_str(), field.c_str());
-          return m_replyDelegate->getMessage();
+  spdlog::info("Excute command [ HGET key = {0}, field = {1} ] successfully!",
+               key.c_str(), field.c_str());
+  return m_replyDelegate->getMessage();
 }
 
 bool redis::RedisContext::checkError() {

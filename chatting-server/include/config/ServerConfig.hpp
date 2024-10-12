@@ -38,9 +38,9 @@ private:
   }
 
   void loadRedisInfo() {
-            Redis_port = m_ini["Redis"]["port"].as<unsigned short>();
-            Redis_ip_addr = m_ini["Redis"]["host"].as<std::string>();
-            Redis_passwd = m_ini["Redis"]["password"].as<std::string>();
+    Redis_port = m_ini["Redis"]["port"].as<unsigned short>();
+    Redis_ip_addr = m_ini["Redis"]["host"].as<std::string>();
+    Redis_passwd = m_ini["Redis"]["password"].as<std::string>();
   }
 
   void loadChattingServiceInfo() {

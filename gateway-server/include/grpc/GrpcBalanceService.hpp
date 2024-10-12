@@ -1,13 +1,13 @@
 #pragma once
 #ifndef GRPCBALANCESERVICE_HPP_
 #define GRPCBALANCESERVICE_HPP_
-#include <message/message.grpc.pb.h>
-#include <message/message.pb.h>
-#include <service/ConnectionPool.hpp>
+#include <grpc/BalanceServicePool.hpp>
 #include <grpcpp/client_context.h>
 #include <grpcpp/support/status.h>
-#include <grpc/BalanceServicePool.hpp>
+#include <message/message.grpc.pb.h>
+#include <message/message.pb.h>
 #include <network/def.hpp>
+#include <service/ConnectionPool.hpp>
 
 struct gRPCBalancerService {
   // pass user's uuid parameter to the server, and returns available server

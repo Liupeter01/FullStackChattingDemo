@@ -22,32 +22,30 @@ private:
 
 class RedisContextWrapper {
 public:
-          RedisContextWrapper(redisContext* ctx)
-                    : m_ctx(ctx, [](redisContext* ptr) { /*do nothing*/ }) {}
+  RedisContextWrapper(redisContext *ctx)
+      : m_ctx(ctx, [](redisContext *ptr) { /*do nothing*/ }) {}
 
-          redisContext* get() const { return m_ctx.get(); }
+  redisContext *get() const { return m_ctx.get(); }
 
-          operator redisContext* () const { return get(); }
+  operator redisContext *() const { return get(); }
 
 private:
-          std::shared_ptr<redisContext> m_ctx;
+  std::shared_ptr<redisContext> m_ctx;
 };
 
 template <typename _Ty> struct RedisRAIIDeletor {
-          void operator()(_Ty* ptr) {
-                    if (ptr == nullptr) {
-                              return;
-                    }
-                    if constexpr (std::is_same_v<std::decay_t<_Ty>, redisContext>) {
-                              redisFree(ptr);
-                    }
-                    else if constexpr (std::is_same_v<std::decay_t<_Ty>, redisReply>) {
-                              freeReplyObject(ptr);
-                    }
-                    else {
-                              delete ptr;
-                    }
-          }
+  void operator()(_Ty *ptr) {
+    if (ptr == nullptr) {
+      return;
+    }
+    if constexpr (std::is_same_v<std::decay_t<_Ty>, redisContext>) {
+      redisFree(ptr);
+    } else if constexpr (std::is_same_v<std::decay_t<_Ty>, redisReply>) {
+      freeReplyObject(ptr);
+    } else {
+      delete ptr;
+    }
+  }
 };
 
 template <typename _Ty>
