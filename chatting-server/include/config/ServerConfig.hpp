@@ -14,6 +14,10 @@ public:
   std::string BalanceServiceAddress;
   std::string BalanceServicePort;
 
+  std::string Redis_ip_addr;
+  unsigned short Redis_port;
+  std::string Redis_passwd;
+
   std::string MySQL_host;
   std::string MySQL_port;
   std::string MySQL_username;
@@ -30,6 +34,13 @@ private:
     loadChattingServiceInfo();
     loadBalanceServiceInfo();
     loadMySQLInfo();
+    loadRedisInfo();
+  }
+
+  void loadRedisInfo() {
+            Redis_port = m_ini["Redis"]["port"].as<unsigned short>();
+            Redis_ip_addr = m_ini["Redis"]["host"].as<std::string>();
+            Redis_passwd = m_ini["Redis"]["password"].as<std::string>();
   }
 
   void loadChattingServiceInfo() {
