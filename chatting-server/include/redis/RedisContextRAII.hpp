@@ -1,6 +1,7 @@
 #pragma once
 #ifndef _REDISCONTEXTRAII_HPP_
 #define _REDISCONTEXTRAII_HPP_
+#include <string>
 #include <string_view>
 #include <tools/tools.hpp>
 
