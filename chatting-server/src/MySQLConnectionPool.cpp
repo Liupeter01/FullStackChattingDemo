@@ -28,23 +28,20 @@ mysql::MySQLConnectionPool::MySQLConnectionPool(
         username, password, database, host, port, this)));
   }
 
-  // m_RRThread = std::thread([this]() {
-  //           while (!m_stop)
-  //           {
-  //                     roundRobinChecking(m_timeout);
+   m_RRThread = std::thread([this]() {
+             while (!m_stop){
+                       spdlog::info("[Chatting Server HeartBeat Check]: Timeout Setting {}s", m_timeout);
 
-  //                    /*suspend this thread by timeout setting*/
-  //                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-  //          }
-  // });
+                       roundRobinChecking();
+
+                      /*suspend this thread by timeout setting*/
+                      std::this_thread::sleep_for(std::chrono::seconds(m_timeout));
+            }
+   });
+   m_RRThread.detach();
 }
 
-mysql::MySQLConnectionPool::~MySQLConnectionPool() {
-  /*terminate thread*/
-  // if (m_RRThread.joinable()) {
-  //           m_RRThread.join();
-  // }
-}
+mysql::MySQLConnectionPool::~MySQLConnectionPool() {}
 
 void mysql::MySQLConnectionPool::registerSQLStatement() {
   m_sql.insert(std::pair(MySQLSelection::HEART_BEAT, fmt::format("SELECT 1")));
@@ -78,10 +75,8 @@ void mysql::MySQLConnectionPool::registerSQLStatement() {
       fmt::format("SELECT * FROM user_info WHERE {} = ?", std::string("uid"))));
 }
 
-void mysql::MySQLConnectionPool::roundRobinChecking(std::size_t timeout) {
-  std::unique_lock<std::mutex> _lckg(m_mtx);
-  m_cv.wait(_lckg, [this]() { return !m_stub_queue.empty() || m_stop; });
-
+void mysql::MySQLConnectionPool::roundRobinChecking() {
+          std::lock_guard<std::mutex> _lckg(m_RRMutex);
   if (m_stop) {
     return;
   }
