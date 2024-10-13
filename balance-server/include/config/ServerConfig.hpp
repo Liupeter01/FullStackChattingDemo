@@ -32,6 +32,7 @@ private:
     /*init config*/
     ChattingServerConfig.resize(0);
     m_ini.load(CONFIG_HOME "config.ini");
+    loadRedisInfo();
     loadBalanceServiceInfo();
     loadChattingServiceInfo();
   }
