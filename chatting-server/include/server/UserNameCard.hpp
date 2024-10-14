@@ -8,9 +8,9 @@ enum class Sex { Male, Female };
 
 /*record the critical info of the user*/
 struct UserNameCard {
-  UserNameCard(std::size_t uid, const std::string &avator_path, const std::string& nickname,
+  UserNameCard(std::size_t uuid, const std::string &avator_path, const std::string& nickname,
             const std::string& desc, Sex sex)
-      : m_sex(sex), m_uuid(uid), m_nickname(nickname), m_description(desc),
+      : m_sex(sex), m_uuid(uuid), m_nickname(nickname), m_description(desc),
         m_avatorPath(avator_path) {}
 
   Sex m_sex;
