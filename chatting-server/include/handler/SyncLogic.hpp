@@ -6,10 +6,15 @@
 #include <mutex>
 #include <network/def.hpp>
 #include <queue>
+#include <memory>
 #include <server/Session.hpp>
 #include <singleton/singleton.hpp>
 #include <thread>
+#include <optional>
 #include <unordered_map>
+
+/*declaration*/
+struct UserNameCard;
 
 class SyncLogic : public Singleton<SyncLogic> {
   friend class Singleton<SyncLogic>;
@@ -44,6 +49,20 @@ private:
                      NodePtr recv);
   void handlingLogout(ServiceType srv_type, std::shared_ptr<Session> session,
                       NodePtr recv);
+
+  /*
+  * get user's basic info(name, age, sex, ...) from redis
+  * 1. we are going to search for info inside redis first, if nothing found, then goto 2
+  * 2. searching for user info inside mysql
+  */
+  std::optional<std::unique_ptr<UserNameCard>> getUserBasicInfo(const std::string& key);
+
+public:
+          /*redis*/
+          static std::string redis_server_login;
+
+          /*store user base info in redis*/
+          static std::string user_prefix;
 
 private:
   std::atomic<bool> m_stop;
