@@ -15,8 +15,8 @@ enum class ServiceType : uint8_t {
   SERVICE_LOGINDISPATCH,
   SERVICE_LOGINSERVER,   // try to login into server
   SERVICE_LOGINRESPONSE, // login server response
-  SERVICE_RESERVE_2,     //
-  SERVICE_RESERVE_3,     //
+  SERVICE_SEARCHUSERNAME,     //client search another user's username
+  SERVICE_SEARCHUSERNAMERESPONSE,     //
   SERVICE_RESERVE_4,     //
   SERVICE_UNKNOWN        // unkown service
 };
@@ -34,7 +34,8 @@ enum class ServiceStatus : uint8_t {
   MYSQL_ACCOUNT_NOT_EXISTS,   // mysql account not exists
   LOGIN_INFO_ERROR,           // login info error
   LOGIN_UNSUCCESSFUL, // common login uncessfully reason, due to internel error
-  LOGIN_FOR_MULTIPLE_TIMES // this user have already logined!
+  LOGIN_FOR_MULTIPLE_TIMES, // this user have already logined!
+  SEARCHING_USERNAME_NOT_FOUND //client search another user's username not found
 };
 
 #define _DEF_HPP_
