@@ -58,6 +58,27 @@ bool redis::RedisContext::setValue2Hash(const std::string &key,
   return false;
 }
 
+bool redis::RedisContext::delValueFromHash(const std::string& key, const std::string& field)
+{
+          std::unique_ptr<RedisReply> m_replyDelegate = std::make_unique<RedisReply>();
+          auto status =
+                    m_replyDelegate->redisCommand(*this, std::string("HDEL %s %s"),
+                              key.c_str(), field.c_str());
+
+          if (status) {
+                    if (m_replyDelegate->getMessage().has_value() &&
+                              (m_replyDelegate->getMessage().value() == "ok" ||
+                                        m_replyDelegate->getMessage().value() == "OK")) {
+
+                              spdlog::info("Excute command [ HDEL key = {0}, field = {1}] "
+                                        "successfully!",
+                                        key.c_str(), field.c_str());
+                              return true;
+                    }
+          }
+          return false;
+}
+
 bool redis::RedisContext::leftPush(const std::string &key,
                                    const std::string &value) {
   std::unique_ptr<RedisReply> m_replyDelegate = std::make_unique<RedisReply>();
