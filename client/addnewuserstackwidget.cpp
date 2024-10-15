@@ -43,7 +43,7 @@ void AddNewUserStackWidget::addNewWidgetItem(std::unique_ptr<UserNameCard> info)
 
 void AddNewUserStackWidget::loadWidgetTest()
 {
-    std::unique_ptr<UserNameCard> info(std::make_unique<UserNameCard>(0, "4.png", "test_name","test_desc", Sex::Male));
+    std::unique_ptr<UserNameCard> info(std::make_unique<UserNameCard>(QString::number(0), "4.png", "test_name","test_desc", Sex::Male));
     /*transfer ownership*/
     addNewWidgetItem(std::move(info));
 }
