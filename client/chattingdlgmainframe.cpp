@@ -3,15 +3,20 @@
 #include "chattinghistorywidget.h"
 #include "loadingwaitdialog.h"
 #include "tools.h"
+#include "tcpnetworkconnection.h"
 #include "ui_chattingdlgmainframe.h"
 #include <QAction>
 #include <QFile>
 #include <QMouseEvent>
 #include <QPoint>
 #include <QRandomGenerator>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QtEndian>
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
-    : QDialog(parent), ui(new Ui::ChattingDlgMainFrame), m_curQLabel(nullptr),
+    : m_send_status(false)  /*wait for data status is false*/
+    , QDialog(parent), ui(new Ui::ChattingDlgMainFrame), m_curQLabel(nullptr),
       m_dlgMode(
           ChattingDlgMode::ChattingDlgChattingMode) /*chatting mode by default*/
 {
@@ -109,6 +114,8 @@ void ChattingDlgMainFrame::registerSignal() {
 
   connect(ui->contact_list, &ChattingContactList::signal_switch_addnewuser,
           this, &ChattingDlgMainFrame::switchNewUserPage);
+
+  connect(ui->search_list, &QListWidget::itemClicked, this, &ChattingDlgMainFrame::slot_list_item_clicked);
 }
 
 void ChattingDlgMainFrame::registerSearchEditAction() {
@@ -308,11 +315,11 @@ void ChattingDlgMainFrame::slot_search_text_changed() {
 }
 
 void ChattingDlgMainFrame::slot_load_more_record() {
-  LoadingWaitDialog *loadingInf(new LoadingWaitDialog(this));
+    m_loading = std::shared_ptr<LoadingWaitDialog>(new LoadingWaitDialog(this),[](LoadingWaitDialog* ){});
 
   /*do not block the execute flow*/
-  loadingInf->setModal(true);
-  loadingInf->show();
+    m_loading->setModal(true);
+    m_loading->show();
 
   /*load more data to the list*/
   qDebug() << "load more data to the list";
@@ -320,7 +327,8 @@ void ChattingDlgMainFrame::slot_load_more_record() {
   /*test*/
   addItemToChatListTest();
 
-  loadingInf->deleteLater();
+  m_loading->hide();
+  m_loading->deleteLater();
 }
 
 void ChattingDlgMainFrame::slot_display_chat_list() {
@@ -344,6 +352,67 @@ void ChattingDlgMainFrame::slot_display_contact_list() {
 
   /*after switch status, then switch window*/
   switchRelevantListWidget();
+}
+
+void ChattingDlgMainFrame::slot_list_item_clicked(QListWidgetItem *clicked_item)
+{
+    qDebug() << "item clicked! ";
+
+    /*get clicked customlized widget object*/
+    QWidget *widget = ui->search_list->itemWidget(clicked_item);
+    if (widget == nullptr) {
+        qDebug() << "invalid click item! ";
+        return;
+    }
+    auto item = reinterpret_cast<ListItemWidgetBase *>(widget);
+    if (item->getItemType() == ListItemType::Default) {
+        qDebug() << "[ListItemType::Default]:list item base class!";
+        return;
+
+    }
+    else if (item->getItemType() == ListItemType::SearchUserId){
+        qDebug() << "[ListItemType::SearchUserId]:generate add new usr window!";
+
+        /*waiting for server reaction*/
+        //if(m_send_status){
+        //    qDebug() << "[ListItemType::SearchUserId]:Still Waiting For Server Response!";
+        //    return;
+        //}
+        //waitForDataFromRemote(true);
+
+        /*get username info*/
+        QJsonObject json_obj;
+        json_obj["username"] = ui->search_user_edit->text();
+        QJsonDocument doc(json_obj);
+
+        /*it should be store as a temporary object, because send_buffer will modify it!*/
+        auto json_data = doc.toJson(QJsonDocument::Compact);
+
+        SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
+            static_cast<uint16_t>(ServiceType::SERVICE_SEARCHUSERNAME), json_data,
+            [](auto x) { return qToBigEndian(x); });
+
+        /*after connection to server, send TCP request*/
+        TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
+        return;
+
+        //m_Dlg = std::make_shared<AddUserNameCardDialog>(this);
+
+        /*using dynamic pointer cast Dialog->AddUserNameCardDialog*/
+        //auto add = std::dynamic_pointer_cast<AddUserNameCardDialog>(m_Dlg);
+
+        /*load image from "/static/ dir directly"*/
+        //add->setupUserInfo(std::make_unique<UserNameCard>(0, "4.png", "test_name",
+                                                          //"test_desc", Sex::Male));
+        //add->show();
+        //return;
+    }
+
+    /*close dialog & dealloc mem*/
+    //if (m_Dlg != nullptr) {
+    //    m_Dlg->hide();
+    //    m_Dlg = nullptr;
+    //}
 }
 
 ChattingDlgMainFrame::~ChattingDlgMainFrame() {
@@ -393,4 +462,19 @@ void ChattingDlgMainFrame::switchChattingPage() {
  */
 void ChattingDlgMainFrame::switchNewUserPage() {
   ui->stackedWidget->setCurrentWidget(ui->newuserpage);
+}
+
+  /*wait for remote server data*/
+void ChattingDlgMainFrame::waitForDataFromRemote(bool status){
+    /*is still in loading*/
+    if(status){
+        m_loading = std::shared_ptr<LoadingWaitDialog>(new LoadingWaitDialog(this),[](LoadingWaitDialog* ){});
+        m_loading->setModal(true);
+        m_loading->show();
+        m_send_status = status;
+    }
+    else{
+        m_loading->hide();
+        m_loading->deleteLater();
+    }
 }
