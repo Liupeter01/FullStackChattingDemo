@@ -1,14 +1,17 @@
 #include <boost/asio.hpp>
 #include <config/ServerConfig.hpp>
+#include <redis/RedisManager.hpp>
 #include <grpc/GrpcBalancerImpl.hpp>
 #include <thread>
 
 int main() {
+          [[maybe_unused]] auto& redis = redis::RedisConnectionPool::get_instance();
+
   std::string address =
       fmt::format("{}:{}", ServerConfig::get_instance()->BalanceServiceAddress,
                   ServerConfig::get_instance()->BalanceServicePort);
 
-  spdlog::info("balance server start running on {}", address);
+  spdlog::info("Balance RPC Server Started Running On {}", address);
 
   /*gRPC server*/
   grpc::ServerBuilder builder;

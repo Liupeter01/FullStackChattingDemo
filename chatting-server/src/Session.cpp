@@ -13,9 +13,9 @@ Session::Session(boost::asio::io_context &_ioc, AsyncServer *my_gate)
         return boost::asio::detail::socket_ops::network_to_host_short(x);
       })) /*init header buffer init*/
 {
-  /*generate uuid string*/
+  /*generate the session id*/
   boost::uuids::uuid uuid_gen = boost::uuids::random_generator()();
-  this->s_uuid = boost::uuids::to_string(uuid_gen);
+  this->s_session_id = boost::uuids::to_string(uuid_gen);
 }
 
 Session::~Session() {
@@ -35,6 +35,10 @@ void Session::startSession() {
   } catch (const std::exception &e) {
     spdlog::error("{}", e.what());
   }
+}
+
+void Session::setUUID(const std::string& uuid){
+          s_uuid = uuid;
 }
 
 void Session::closeSession() {
@@ -79,10 +83,10 @@ void Session::handle_write(std::shared_ptr<Session> session,
   try {
     /*error occured*/
     if (ec) {
-      session->s_gate->terminateConnection(session->s_uuid);
+      session->s_gate->terminateConnection(session->s_session_id);
       spdlog::warn(
-          "Client [UUID = {}] Body Error: Exit Anomaly, Error message {}",
-          session->s_uuid, ec.message());
+          "Client [Session = {}] Body Error: Exit Anomaly, Error message {}",
+          session->s_session_id, ec.message());
       return;
     }
     std::lock_guard<std::mutex> _lckg(m_mtx);
@@ -111,11 +115,11 @@ void Session::handle_header(std::shared_ptr<Session> session,
   try {
     /*error occured*/
     if (ec) {
-      session->s_gate->terminateConnection(session->s_uuid);
+      session->s_gate->terminateConnection(session->s_session_id);
       session->closeSession();
       spdlog::warn(
-          "Client [UUID = {}] Header Error: Exit Anomaly, Error message {}",
-          session->s_uuid, ec.message());
+          "Client [Session = {}] Header Error: Exit Anomaly, Error message {}",
+          session->s_session_id, ec.message());
       return;
     }
 
@@ -124,11 +128,11 @@ void Session::handle_header(std::shared_ptr<Session> session,
 
     /*current, we didn't get the full size of the header*/
     if (m_recv_buffer->check_header_remaining()) {
-      session->s_gate->terminateConnection(session->s_uuid);
+      session->s_gate->terminateConnection(session->s_session_id);
       session->closeSession();
-      spdlog::warn("Client [UUID = {}] Header Error: Exit Due To Transfer "
+      spdlog::warn("Client [Session = {}] Header Error: Exit Due To Transfer "
                    "Issue, Only {} Bytes Received!",
-                   session->s_uuid, bytes_transferred);
+                   session->s_session_id, bytes_transferred);
       return;
     }
 
@@ -138,40 +142,40 @@ void Session::handle_header(std::shared_ptr<Session> session,
      */
     std::optional<uint16_t> id = m_recv_buffer->get_id();
     if (!id.has_value()) {
-      session->s_gate->terminateConnection(session->s_uuid);
+      session->s_gate->terminateConnection(session->s_session_id);
       session->closeSession();
-      spdlog::warn("Client [UUID = {}] Header Error: Invalid ID!",
-                   session->s_uuid);
+      spdlog::warn("Client [Session = {}] Header Error: Invalid ID!",
+                   session->s_session_id);
       return;
     }
 
     uint16_t msg_id = id.value();
     if (msg_id >= static_cast<uint16_t>(ServiceType::SERVICE_UNKNOWN)) {
-      session->s_gate->terminateConnection(session->s_uuid);
+      session->s_gate->terminateConnection(session->s_session_id);
       session->closeSession();
       spdlog::warn(
-          "Client [UUID = {}] Header Error: Exit Due To Invalid Service ID {}!",
-          session->s_uuid, msg_id);
+          "Client [Session = {}] Header Error: Exit Due To Invalid Service ID {}!",
+          session->s_session_id, msg_id);
       return;
     }
 
     std::optional<uint16_t> length = m_recv_buffer->get_length();
     if (!length.has_value()) {
-      session->s_gate->terminateConnection(session->s_uuid);
+      session->s_gate->terminateConnection(session->s_session_id);
       session->closeSession();
-      spdlog::warn("Client [UUID = {}] Header Error: Invalid Length!",
-                   session->s_uuid);
+      spdlog::warn("Client [Session = {}] Header Error: Invalid Length!",
+                   session->s_session_id);
       return;
     }
 
     uint16_t msg_length = length.value();
 
     if (msg_length > MAX_LENGTH) {
-      session->s_gate->terminateConnection(session->s_uuid);
+      session->s_gate->terminateConnection(session->s_session_id);
       session->closeSession();
-      spdlog::warn("Client [UUID = {}] Header Error: Exit Due To Invalid Data "
+      spdlog::warn("Client [Session = {}] Header Error: Exit Due To Invalid Data "
                    "Length, {} Bytes Received!",
-                   session->s_uuid, msg_length);
+                   session->s_session_id, msg_length);
       return;
     }
 
@@ -192,10 +196,10 @@ void Session::handle_msgbody(std::shared_ptr<Session> session,
   try {
     /*error occured*/
     if (ec) {
-      session->s_gate->terminateConnection(session->s_uuid);
+      session->s_gate->terminateConnection(session->s_session_id);
       spdlog::warn(
-          "Client [UUID = {}] Body Error: Exit Anomaly, Error message {}",
-          session->s_uuid, ec.message());
+          "Client [Session = {}] Body Error: Exit Anomaly, Error message {}",
+          session->s_session_id, ec.message());
       return;
     }
 
@@ -204,10 +208,10 @@ void Session::handle_msgbody(std::shared_ptr<Session> session,
 
     /*data is not fully received*/
     if (m_recv_buffer->check_body_remaining()) {
-      session->s_gate->terminateConnection(session->s_uuid);
+      session->s_gate->terminateConnection(session->s_session_id);
       spdlog::warn(
-          "Client [UUID = {}] Body Error: Exit Anomaly, Not Fully Recevied",
-          session->s_uuid);
+          "Client [Session = {}] Body Error: Exit Anomaly, Not Fully Recevied",
+          session->s_session_id);
       return;
     }
 

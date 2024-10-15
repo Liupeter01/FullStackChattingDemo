@@ -18,6 +18,11 @@ struct ServerConfig : public Singleton<ServerConfig> {
 
 public:
   ~ServerConfig() = default;
+
+  std::string Redis_ip_addr;
+  unsigned short Redis_port;
+  std::string Redis_passwd;
+
   std::string BalanceServiceAddress;
   std::string BalanceServicePort;
   std::vector<ChattingServer> ChattingServerConfig;
@@ -27,8 +32,15 @@ private:
     /*init config*/
     ChattingServerConfig.resize(0);
     m_ini.load(CONFIG_HOME "config.ini");
+    loadRedisInfo();
     loadBalanceServiceInfo();
     loadChattingServiceInfo();
+  }
+
+  void loadRedisInfo() {
+    Redis_port = m_ini["Redis"]["port"].as<unsigned short>();
+    Redis_ip_addr = m_ini["Redis"]["host"].as<std::string>();
+    Redis_passwd = m_ini["Redis"]["password"].as<std::string>();
   }
 
   void loadBalanceServiceInfo() {

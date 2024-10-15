@@ -19,7 +19,7 @@ public:
   void startAccept();
 
 private:
-  void terminateConnection(const std::string &uuid);
+  void terminateConnection(const std::string & session_id);
   void handleAccept(std::shared_ptr<Session> session,
                     boost::system::error_code ec);
 
@@ -38,13 +38,6 @@ private:
       /*unique_string*/ std::string,
       /*connected session*/ std::shared_ptr<Session>>
       m_sessions;
-
-  /*the user who is authorized by loginserver command*/
-  std::unordered_map<
-      /*uuid*/ std::string_view,
-      /*unique_string*/ std::size_t>
-      m_authusers;
-  /*uid*/
 };
 
 #endif

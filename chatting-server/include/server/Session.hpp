@@ -29,6 +29,7 @@ public:
 public:
   void startSession();
   void closeSession();
+  void setUUID(const std::string& uuid);
   void sendMessage(ServiceType srv_type, const std::string &message);
 
 private:
@@ -47,8 +48,11 @@ private:
 private:
   bool s_closed = false;
 
-  /*store unique uuid for each connection*/
+  /*store unique user id(uuid)*/
   std::string s_uuid;
+
+  /*store unique session id*/
+  std::string s_session_id;
 
   /*user's socket*/
   boost::asio::ip::tcp::socket s_socket;

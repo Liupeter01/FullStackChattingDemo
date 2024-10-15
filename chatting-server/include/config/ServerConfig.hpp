@@ -7,11 +7,17 @@ struct ServerConfig : public Singleton<ServerConfig> {
   friend class Singleton<ServerConfig>;
 
 public:
+  std::string ChattingServerName;
+  std::string ChattingServerHost;
   unsigned short ChattingServerPort;
   std::size_t ChattingServerQueueSize;
 
   std::string BalanceServiceAddress;
   std::string BalanceServicePort;
+
+  std::string Redis_ip_addr;
+  unsigned short Redis_port;
+  std::string Redis_passwd;
 
   std::string MySQL_host;
   std::string MySQL_port;
@@ -29,9 +35,21 @@ private:
     loadChattingServiceInfo();
     loadBalanceServiceInfo();
     loadMySQLInfo();
+    loadRedisInfo();
+  }
+
+  void loadRedisInfo() {
+    Redis_port = m_ini["Redis"]["port"].as<unsigned short>();
+    Redis_ip_addr = m_ini["Redis"]["host"].as<std::string>();
+    Redis_passwd = m_ini["Redis"]["password"].as<std::string>();
   }
 
   void loadChattingServiceInfo() {
+    ChattingServerName =
+        m_ini["ChattingServer"]["server_name"].as<std::string>();
+    ChattingServerHost =
+              m_ini["ChattingServer"]["host"].as<std::string>();
+
     ChattingServerPort = m_ini["ChattingServer"]["port"].as<unsigned short>();
     ChattingServerQueueSize =
         m_ini["ChattingServer"]["send_queue_size"].as<int>();
