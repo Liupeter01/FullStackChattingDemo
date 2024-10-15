@@ -232,7 +232,7 @@ std::optional<std::unique_ptr<UserNameCard>> SyncLogic::getUserBasicInfo(const s
                     reader.parse(info_str.value(), root);
 
                     return  std::make_unique<UserNameCard>(
-                              tools::string_to_value<std::size_t>(root["uuid"].asString()).value(),
+                              root["uuid"].asString(),
                               root["avator"].asString(),
                               root["nickname"].asString(),
                               root["description"].asString(),
