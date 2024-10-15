@@ -10,7 +10,10 @@
 #include <QUrl>
 #include <QtEndian>
 #include <functional>
+#include <optional>
 #include <singleton.hpp>
+
+struct UserNameCard;
 
 class TCPNetworkConnection
     : public QObject,
@@ -36,9 +39,6 @@ private:
   void registerCallback();
   void registerErrorHandling();
 
-private:
-  bool checkJsonForm(const QJsonObject &json);
-
 private slots:
   void slot_establish_long_connnection();
 
@@ -53,6 +53,12 @@ signals:
 
   /*if login success, then switch to chatting dialog*/
   void signal_switch_chatting_dialog();
+
+  /*
+   * client sent search username request to server
+   * server return result back to client
+   */
+  void signal_search_username(std::optional<std::shared_ptr<UserNameCard>>, ServiceStatus status);
 
 private:
   /*establish tcp socket with server*/

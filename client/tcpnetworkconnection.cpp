@@ -1,5 +1,6 @@
 #include "tcpnetworkconnection.h"
 #include "useraccountmanager.hpp"
+#include "UserNameCard.h"
 #include <QDataStream>
 #include <QDebug>
 #include <QJsonDocument>
@@ -101,40 +102,67 @@ void TCPNetworkConnection::registerErrorHandling() {
       });
 }
 
-bool TCPNetworkConnection::checkJsonForm(const QJsonObject &json) {
-  if (!json.contains("error")) {
-    qDebug() << "Json Parse Error!";
-    emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
-    return false;
-  }
-  if (json["error"].toInt() !=
-      static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
-    qDebug() << "Login Server Error!";
-    emit signal_login_failed(static_cast<ServiceStatus>(json["error"].toInt()));
-    return false;
-  }
-  return true;
-}
-
 void TCPNetworkConnection::registerCallback() {
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
       ServiceType::SERVICE_LOGINRESPONSE, [this](QJsonObject &&json) {
         /*error occured!*/
-        if (!checkJsonForm(json)) {
-          return;
-        }
+            if (!json.contains("error")) {
+                qDebug() << "Json Parse Error!";
+                emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
+                return;
+            }
+            if (json["error"].toInt() !=
+                static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
+                qDebug() << "Login Server Error!";
+                emit signal_login_failed(static_cast<ServiceStatus>(json["error"].toInt()));
+                return;
+            }
+
         emit signal_switch_chatting_dialog();
       }));
 
+  /*Client search username and server return result back*/
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
-      ServiceType::SERVICE_RESERVE_2, [this](QJsonObject &&json) {
+      ServiceType::SERVICE_SEARCHUSERNAMERESPONSE, [this](QJsonObject &&json) {
+          /*error occured!*/
+          if (!json.contains("error")) {
+              qDebug() << "Json Parse Error!";
 
+              emit signal_search_username(
+                  std::nullopt,
+                  ServiceStatus::JSONPARSE_ERROR
+              );
+              return;
+          }
+          else if (json["error"].toInt() !=
+              static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
+              qDebug() << "Login Server Error!";
+
+              emit signal_search_username(
+                  std::nullopt,
+                  static_cast<ServiceStatus>(json["error"].toInt())
+              );
+              return;
+          }
+          else{
+              auto uuid = json["uuid"].toString();
+              auto nickname = json["nickname"].toString();
+              auto avator = json["avator"].toString();
+              auto description = json["description"].toString();
+              auto sex = static_cast<Sex>(json["sex"].toInt());
+
+              qDebug() << "Retrieve Data From Server of uuid = " << uuid << ":"
+                       << "\nnickname = " << nickname
+                       << "\avator = " << avator
+                       << "\ndescription = " << description << '\n';
+
+              emit signal_search_username(
+                  std::make_shared<UserNameCard>(uuid, avator, nickname, description, sex),
+                  ServiceStatus::SERVICE_SUCCESS
+              );
+          }
       }));
 
-  m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
-      ServiceType::SERVICE_RESERVE_3, [this](QJsonObject &&json) {
-
-      }));
 
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
       ServiceType::SERVICE_RESERVE_4, [this](QJsonObject &&json) {
@@ -151,6 +179,7 @@ void TCPNetworkConnection::slot_establish_long_connnection() {
            << "\ntoken = " << UserAccountManager::get_instance()->get_token()
            << '\n';
 
+  /*the successful or unsuccessful signal is going to generate in signal<->slot*/
   m_socket.connectToHost(
       UserAccountManager::get_instance()->get_host(),
       UserAccountManager::get_instance()->get_port().toUShort());
