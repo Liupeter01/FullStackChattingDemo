@@ -222,7 +222,7 @@ void LoginInterface::slot_connection_status(bool status) {
 
     /*it should be store as a temporary object, because send_buffer will modify
      * it!*/
-    auto json_data = json_doc.toJson();
+    auto json_data = json_doc.toJson(QJsonDocument::Compact);
 
     SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
         static_cast<uint16_t>(ServiceType::SERVICE_LOGINSERVER), json_data,
