@@ -31,28 +31,55 @@ grpc::GrpcBalancerImpl::~GrpcBalancerImpl() {}
 
 const grpc::GrpcBalancerImpl::ChattingServerConfig &
 grpc::GrpcBalancerImpl::serverLoadBalancer() {
-  /*find ?? in redis, HGET*/
-  connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
-      raii;
-  std::lock_guard<std::mutex> _lckg(server_mtx);
+          std::lock_guard<std::mutex> _lckg(server_mtx);
 
-  /*remember the lowest load server in iterator*/
-  decltype(servers)::const_iterator min = servers.begin();
-  for (auto ib = servers.begin(); ib != servers.end(); ib++) {
-    if (ib->second._connections < min->second._connections) {
-      min = ib;
-    }
-  }
-  return min->second;
+          /*remember the lowest load server in iterator*/
+          decltype(servers)::iterator min_server = servers.begin();
+
+          connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext> raii;
+
+          /*find key = login and field = server_name in redis, HGET*/
+          std::optional<std::string> counter = raii->get()->getValueFromHash(redis_server_login, min_server->first);
+
+          /*
+           * if redis doesn't have this key&field in DB, then set the max value
+           * or retrieve the counter number from Mem DB
+           */
+          min_server->second._connections = !counter.has_value() ? INT_MAX : std::stoi(counter.value());
+
+          /*for loop all the servers(including peer server)*/
+          for (auto server = servers.begin(); server != servers.end(); ++server) {
+
+                    /*ignore current */
+                    if (server->first != min_server->first) {
+                              std::optional<std::string> counter = raii->get()->getValueFromHash(redis_server_login, min_server->first);
+                              
+                              /* 
+                               * if redis doesn't have this key&field in DB, then set the max value
+                               * or retrieve the counter number from Mem DB
+                               */
+                              server->second._connections = !counter.has_value() ? INT_MAX : std::stoi(counter.value());
+
+                              if (server->second._connections < min_server->second._connections) {
+                                        min_server = server;
+                              }
+                    }
+          }
+          return min_server->second;
 }
 
-std::optional<std::string_view>
+std::optional<std::string>
 grpc::GrpcBalancerImpl::getUserToken(std::size_t uuid) {
-  auto target = users.find(uuid);
-  if (target == users.end()) {
-    return std::nullopt;
-  }
-  return target->second->m_tokens;
+
+          connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext> raii;
+
+          /*find key = token_predix + uuid in redis, GET*/
+          std::optional<std::string> counter = raii->get()->checkValue(token_prefix + std::to_string(uuid));
+
+          if (!counter.has_value()) {
+                    return std::nullopt;
+          }
+          return counter.value();
 }
 
 ServiceStatus
@@ -70,8 +97,10 @@ grpc::GrpcBalancerImpl::verifyUserToken(std::size_t uuid,
 void grpc::GrpcBalancerImpl::registerUserInfo(
     std::size_t uuid, std::string &&tokens,
     const grpc::GrpcBalancerImpl::ChattingServerConfig &server) {
-  std::lock_guard<std::mutex> _lckg(token_mtx);
-  users[uuid] = std::make_shared<UserInfo>(std::move(tokens), server);
+          connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext> raii;
+
+          /*find key = token_predix + uuid in redis, GET*/
+          if (!raii->get()->setValue(token_prefix + std::to_string(uuid), tokens)) {}
 }
 
 ::grpc::Status grpc::GrpcBalancerImpl::AddNewUserToServer(
@@ -80,26 +109,25 @@ void grpc::GrpcBalancerImpl::registerUserInfo(
     ::message::GetAllocatedChattingServer *response) {
 
   auto uuid = request->uuid();
-  std::optional<std::string_view> exists = getUserToken(uuid);
+  std::optional<std::string> exists = getUserToken(uuid);
+
+  /*get the lowest load server*/
+  auto target = serverLoadBalancer();
+  response->set_error(
+            static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
+  response->set_host(target._host);
+  response->set_port(target._port);
 
   /*check if it is registered?*/
   if (!exists.has_value()) {
-    /*get the lowest load server*/
-    auto target = serverLoadBalancer();
 
     /*generate a user token and store it into the structure first*/
     std::string token = userTokenGenerator();
-
-    response->set_host(target._host);
-    response->set_port(target._port);
     response->set_token(token);
-    response->set_error(
-        static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
-
     registerUserInfo(uuid, std::move(token), target);
-  } else {
-    response->set_error(
-        static_cast<std::size_t>(ServiceStatus::LOGIN_FOR_MULTIPLE_TIMES));
+  }
+  else {
+            response->set_token(exists.value());
   }
   return grpc::Status::OK;
 }

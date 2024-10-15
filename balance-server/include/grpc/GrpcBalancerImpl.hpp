@@ -6,7 +6,6 @@
 #include <mutex>
 #include <network/def.hpp>
 #include <optional>
-#include <string_view>
 #include <unordered_map>
 
 namespace grpc {
@@ -30,11 +29,13 @@ public:
   AddNewUserToServer(::grpc::ServerContext *context,
                      const ::message::RegisterToBalancer *request,
                      ::message::GetAllocatedChattingServer *response);
+
   // user send SERVICE_LOGINSERVER request
   virtual ::grpc::Status
   UserLoginToServer(::grpc::ServerContext *context,
                     const ::message::LoginChattingServer *request,
                     ::message::LoginChattingResponse *response);
+
   // chatting server acquires other servers info through this service
   virtual ::grpc::Status
   GetPeerServerInfo(::grpc::ServerContext *context,
@@ -48,10 +49,18 @@ private:
   void
   registerUserInfo(std::size_t uuid, std::string &&tokens,
                    const grpc::GrpcBalancerImpl::ChattingServerConfig &server);
-  std::optional<std::string_view> getUserToken(std::size_t uuid);
+
+  /*get user token from Redis*/
+  std::optional<std::string> getUserToken(std::size_t uuid);
   ServiceStatus verifyUserToken(std::size_t uuid, const std::string &tokens);
 
 private:
+          /*redis*/
+          const std::string redis_server_login = "redis_server";
+          
+          /*user token predix*/
+          const std::string token_prefix = "user_token_";
+
   struct UserInfo {
     UserInfo(std::string &&tokens,
              const grpc::GrpcBalancerImpl::ChattingServerConfig &config);
@@ -65,16 +74,10 @@ private:
   };
 
   std::mutex server_mtx;
-  std::mutex token_mtx;
   std::unordered_map<
       /*server name*/ std::string,
       /*server info*/ ChattingServerConfig>
       servers;
-
-  std::unordered_map<
-      /*uuid*/ std::size_t,
-      /*user token and belonged server*/ std::shared_ptr<UserInfo>>
-      users;
 };
 } // namespace grpc
 #endif
