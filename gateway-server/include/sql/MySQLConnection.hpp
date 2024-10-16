@@ -26,7 +26,8 @@ enum class MySQLSelection : uint8_t {
   UPDATE_UID_COUNTER, // add up to uid accounter
   UPDATE_USER_PASSWD, // update user password
   USER_LOGIN_CHECK,   // check login username & password
-  USER_UUID_CHECK     // check account uuid in DB
+  USER_UUID_CHECK,     // check account uuid in DB
+  USER_PROFILE                //check account user profile
 };
 
 class MySQLConnection {
