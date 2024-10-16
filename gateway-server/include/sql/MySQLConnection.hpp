@@ -26,8 +26,8 @@ enum class MySQLSelection : uint8_t {
   UPDATE_UID_COUNTER, // add up to uid accounter
   UPDATE_USER_PASSWD, // update user password
   USER_LOGIN_CHECK,   // check login username & password
-  USER_UUID_CHECK,     // check account uuid in DB
-  USER_PROFILE                //check account user profile
+  USER_UUID_CHECK,    // check account uuid in DB
+  USER_PROFILE        // check account user profile
 };
 
 class MySQLConnection {
@@ -45,7 +45,7 @@ public:
 
 public:
   /*insert new user, call MySQLSelection::CREATE_NEW_USER*/
-          std::optional<std::size_t> registerNewUser(MySQLRequestStruct&& request);
+  std::optional<std::size_t> registerNewUser(MySQLRequestStruct &&request);
   bool alterUserPassword(MySQLRequestStruct &&request);
 
   /*login username & password check*/

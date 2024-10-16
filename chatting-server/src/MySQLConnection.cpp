@@ -95,33 +95,32 @@ bool mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
 }
 
 /*get user profile*/
-std::optional< std::unique_ptr<UserNameCard>> mysql::MySQLConnection::getUserProfile(std::size_t uuid){
-          /*check uuid status*/
-          if (!checkUUID(uuid)) {
-                    return std::nullopt;
-          }
-          auto res = executeCommand(MySQLSelection::USER_PROFILE, uuid);
-          if (!res.has_value()) {
-                    return std::nullopt;
-          }
+std::optional<std::unique_ptr<UserNameCard>>
+mysql::MySQLConnection::getUserProfile(std::size_t uuid) {
+  /*check uuid status*/
+  if (!checkUUID(uuid)) {
+    return std::nullopt;
+  }
+  auto res = executeCommand(MySQLSelection::USER_PROFILE, uuid);
+  if (!res.has_value()) {
+    return std::nullopt;
+  }
 
-          boost::mysql::results result = res.value();
-          boost::mysql::row_view row = *result.rows().begin();
-          return std::make_unique<UserNameCard>(
-                    std::to_string(row.at(0).as_int64()),
-                    row.at(1).as_string(),
-                    row.at(2).as_string(),
-                    row.at(3).as_string(),
-                    static_cast<Sex>(row.at(4).as_int64())
-          );
+  boost::mysql::results result = res.value();
+  boost::mysql::row_view row = *result.rows().begin();
+  return std::make_unique<UserNameCard>(
+      std::to_string(row.at(0).as_int64()), row.at(1).as_string(),
+      row.at(2).as_string(), row.at(3).as_string(),
+      static_cast<Sex>(row.at(4).as_int64()));
 }
 
 bool mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request) {
   /*check is there anyone who use this username before*/
   if (!checkAccountAvailability(request.m_username, request.m_email)) {
-            [[maybe_unused]] auto res = executeCommand(
-                      MySQLSelection::CREATE_NEW_USER, request.m_username, request.m_password, request.m_email);
-            return true;
+    [[maybe_unused]] auto res =
+        executeCommand(MySQLSelection::CREATE_NEW_USER, request.m_username,
+                       request.m_password, request.m_email);
+    return true;
   }
   return false;
 }

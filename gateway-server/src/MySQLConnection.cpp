@@ -94,17 +94,20 @@ bool mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
   return result.rows().size();
 }
 
-std::optional<std::size_t> mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request) {
+std::optional<std::size_t>
+mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request) {
   /*check is there anyone who use this username before*/
   if (!checkAccountAvailability(request.m_username, request.m_email)) {
-            return std::nullopt;
+    return std::nullopt;
   }
-  [[maybe_unused]] auto res = executeCommand(
-            MySQLSelection::CREATE_NEW_USER, request.m_username, request.m_password, request.m_email);
+  [[maybe_unused]] auto res =
+      executeCommand(MySQLSelection::CREATE_NEW_USER, request.m_username,
+                     request.m_password, request.m_email);
 
-  res = executeCommand(MySQLSelection::FIND_EXISTING_USER, request.m_username, request.m_email);
+  res = executeCommand(MySQLSelection::FIND_EXISTING_USER, request.m_username,
+                       request.m_email);
   if (!res.has_value()) {
-            return std::nullopt;
+    return std::nullopt;
   }
   boost::mysql::results result = res.value();
   boost::mysql::row_view row = *result.rows().begin();
