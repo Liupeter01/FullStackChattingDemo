@@ -7,7 +7,11 @@
 #include <chrono>
 #include <map>
 #include <optional>
+#include <server/UserNameCard.hpp>
 #include <string_view>
+
+/*delcaration*/
+struct UserNameCard;
 
 struct MySQLRequestStruct {
   std::string_view m_username;
@@ -26,7 +30,8 @@ enum class MySQLSelection : uint8_t {
   UPDATE_UID_COUNTER, // add up to uid accounter
   UPDATE_USER_PASSWD, // update user password
   USER_LOGIN_CHECK,   // check login username & password
-  USER_UUID_CHECK     // check account uuid in DB
+  USER_UUID_CHECK,     // check account uuid in DB
+  USER_PROFILE                //check account user profile
 };
 
 class MySQLConnection {
@@ -43,7 +48,11 @@ public:
   ~MySQLConnection();
 
 public:
-  bool registerNewUser(MySQLRequestStruct &&request, std::size_t &uuid);
+          /*get user profile*/
+          std::optional< std::unique_ptr<UserNameCard>> getUserProfile(std::size_t uuid);
+
+  /*insert new user, call MySQLSelection::CREATE_NEW_USER*/
+  bool registerNewUser(MySQLRequestStruct &&request);
   bool alterUserPassword(MySQLRequestStruct &&request);
 
   /*login username & password check*/
@@ -68,12 +77,6 @@ private:
 
   /*send heart packet to mysql to prevent from disconnecting*/
   bool sendHeartBeat();
-
-  /*get new uid for user registeration*/
-  std::optional<std::size_t> allocateNewUid();
-
-  /*insert new user, call MySQLSelection::CREATE_NEW_USER*/
-  bool insertNewUser(MySQLRequestStruct &&request, std::size_t &uuid);
 
 private:
   std::shared_ptr<MySQLConnectionPool> m_delegator;

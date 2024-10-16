@@ -47,32 +47,30 @@ void mysql::MySQLConnectionPool::registerSQLStatement() {
   m_sql.insert(std::pair(MySQLSelection::HEART_BEAT, fmt::format("SELECT 1")));
   m_sql.insert(
       std::pair(MySQLSelection::FIND_EXISTING_USER,
-                fmt::format("SELECT * FROM user_info WHERE {} = ? AND {} = ?",
+                fmt::format("SELECT * FROM Authentication WHERE {} = ? AND {} = ?",
                             std::string("username"), std::string("email"))));
 
   m_sql.insert(std::pair(
       MySQLSelection::CREATE_NEW_USER,
-      fmt::format("INSERT INTO user_info ({},{},{},{}) VALUES (? ,? ,? ,?)",
-                  std::string("username"), std::string("password"),
-                  std::string("uid"), std::string("email"))));
+      fmt::format("INSERT INTO Authentication ({},{},{}) VALUES (? ,? ,? )",
+                  std::string("username"), std::string("password"),std::string("email"))));
 
-  m_sql.insert(std::pair(MySQLSelection::ACQUIRE_NEW_UID,
-                         fmt::format("SELECT uid FROM chatting.uid_gen")));
-  m_sql.insert(std::pair(MySQLSelection::UPDATE_UID_COUNTER,
-                         fmt::format("UPDATE uid_gen SET uid = uid + 1")));
   m_sql.insert(std::pair(
       MySQLSelection::UPDATE_USER_PASSWD,
-      fmt::format("UPDATE user_info SET {} = ? WHERE {} = ? AND {} = ?",
+      fmt::format("UPDATE Authentication SET {} = ? WHERE {} = ? AND {} = ?",
                   std::string("password"), std::string("username"),
                   std::string("email"))));
   m_sql.insert(
       std::pair(MySQLSelection::USER_LOGIN_CHECK,
-                fmt::format("SELECT uid FROM user_info WHERE {} = ? AND {} = ?",
+                fmt::format("SELECT * FROM Authentication WHERE {} = ? AND {} = ?",
                             std::string("username"), std::string("password"))));
 
   m_sql.insert(std::pair(
       MySQLSelection::USER_UUID_CHECK,
-      fmt::format("SELECT * FROM user_info WHERE {} = ?", std::string("uid"))));
+      fmt::format("SELECT * FROM Authentication WHERE {} = ?", std::string("uuid"))));
+
+  m_sql.insert(std::pair(MySQLSelection::USER_PROFILE,
+            fmt::format("SELECT * FROM UserProfile WHERE {} = ?", std::string("uuid"))));
 }
 
 void mysql::MySQLConnectionPool::roundRobinChecking() {
