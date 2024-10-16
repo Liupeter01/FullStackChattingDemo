@@ -43,7 +43,8 @@ public:
   ~MySQLConnection();
 
 public:
-  bool registerNewUser(MySQLRequestStruct &&request, std::size_t &uuid);
+  /*insert new user, call MySQLSelection::CREATE_NEW_USER*/
+          std::optional<std::size_t> registerNewUser(MySQLRequestStruct&& request);
   bool alterUserPassword(MySQLRequestStruct &&request);
 
   /*login username & password check*/
@@ -68,12 +69,6 @@ private:
 
   /*send heart packet to mysql to prevent from disconnecting*/
   bool sendHeartBeat();
-
-  /*get new uid for user registeration*/
-  std::optional<std::size_t> allocateNewUid();
-
-  /*insert new user, call MySQLSelection::CREATE_NEW_USER*/
-  bool insertNewUser(MySQLRequestStruct &&request, std::size_t &uuid);
 
 private:
   std::shared_ptr<MySQLConnectionPool> m_delegator;

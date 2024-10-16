@@ -70,22 +70,6 @@ mysql::MySQLConnection::executeCommand(MySQLSelection select, Args &&...args) {
   }
 }
 
-std::optional<std::size_t> mysql::MySQLConnection::allocateNewUid() {
-  /*get uid number from database*/
-  auto uid = executeCommand(MySQLSelection::ACQUIRE_NEW_UID);
-  [[maybe_unused]] auto update =
-      executeCommand(MySQLSelection::UPDATE_UID_COUNTER);
-
-  if (!uid.has_value()) {
-    return std::nullopt;
-  }
-
-  /*return uid number*/
-  boost::mysql::results result = uid.value();
-  boost::mysql::row_view row = *result.rows().begin();
-  return static_cast<std::size_t>(row.at(0).as_int64());
-}
-
 std::optional<std::size_t>
 mysql::MySQLConnection::checkAccountLogin(std::string_view username,
                                           std::string_view password) {
@@ -95,8 +79,7 @@ mysql::MySQLConnection::checkAccountLogin(std::string_view username,
     return std::nullopt;
   }
   boost::mysql::results result = res.value();
-  boost::mysql::row_view row = *result.rows().begin();
-  return static_cast<std::size_t>(row.at(0).as_int64());
+  return result.rows().size();
 }
 
 bool mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
@@ -111,29 +94,21 @@ bool mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
   return result.rows().size();
 }
 
-bool mysql::MySQLConnection::insertNewUser(MySQLRequestStruct &&request,
-                                           std::size_t &uuid) {
-  std::optional<std::size_t> uid = allocateNewUid();
-  if (!uid.has_value()) {
-    return false;
-  }
-
-  /*return back to the client!*/
-  uuid = uid.value();
-
-  [[maybe_unused]] auto res = executeCommand(
-      MySQLSelection::CREATE_NEW_USER, request.m_username, request.m_password,
-      std::to_string(uid.value()), request.m_email);
-  return true;
-}
-
-bool mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request,
-                                             std::size_t &uuid) {
+std::optional<std::size_t> mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request) {
   /*check is there anyone who use this username before*/
   if (!checkAccountAvailability(request.m_username, request.m_email)) {
-    return insertNewUser(std::forward<MySQLRequestStruct>(request), uuid);
+            return std::nullopt;
   }
-  return false;
+  [[maybe_unused]] auto res = executeCommand(
+            MySQLSelection::CREATE_NEW_USER, request.m_username, request.m_password, request.m_email);
+
+  res = executeCommand(MySQLSelection::FIND_EXISTING_USER, request.m_username, request.m_email);
+  if (!res.has_value()) {
+            return std::nullopt;
+  }
+  boost::mysql::results result = res.value();
+  boost::mysql::row_view row = *result.rows().begin();
+  return row.at(0).as_int64();
 }
 
 bool mysql::MySQLConnection::alterUserPassword(MySQLRequestStruct &&request) {
