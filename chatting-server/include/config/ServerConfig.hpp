@@ -7,8 +7,10 @@ struct ServerConfig : public Singleton<ServerConfig> {
   friend class Singleton<ServerConfig>;
 
 public:
-  std::string ChattingServerName;
-  std::string ChattingServerHost;
+          std::string GrpcServerName;
+          std::string GrpcServerHost;
+          unsigned short GrpcServerPort;
+
   unsigned short ChattingServerPort;
   std::size_t ChattingServerQueueSize;
 
@@ -33,6 +35,7 @@ private:
     /*init config*/
     m_ini.load(CONFIG_HOME "config.ini");
     loadChattingServiceInfo();
+    loadGrpcServerInfo();
     loadBalanceServiceInfo();
     loadMySQLInfo();
     loadRedisInfo();
@@ -44,12 +47,14 @@ private:
     Redis_passwd = m_ini["Redis"]["password"].as<std::string>();
   }
 
-  void loadChattingServiceInfo() {
-    ChattingServerName =
-        m_ini["ChattingServer"]["server_name"].as<std::string>();
-    ChattingServerHost =
-              m_ini["ChattingServer"]["host"].as<std::string>();
+  void loadGrpcServerInfo() {
+            GrpcServerName =
+                      m_ini["gRPCServer"]["server_name"].as<std::string>();
+            GrpcServerHost = m_ini["gRPCServer"]["host"].as<std::string>();
+          GrpcServerPort = m_ini["gRPCServer"]["port"].as<unsigned short>();
+  }
 
+  void loadChattingServiceInfo() {
     ChattingServerPort = m_ini["ChattingServer"]["port"].as<unsigned short>();
     ChattingServerQueueSize =
         m_ini["ChattingServer"]["send_queue_size"].as<int>();

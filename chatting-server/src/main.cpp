@@ -22,13 +22,13 @@ int main() {
             [[maybe_unused]] auto& distribute =
                       stubpool::DistributedChattingServicePool::get_instance();
 
+            /*gRPC server*/
             std::string address =
-                      fmt::format("{}:{}", ServerConfig::get_instance()->ChattingServerHost,
-                                ServerConfig::get_instance()->ChattingServerPort);
+                      fmt::format("{}:{}", ServerConfig::get_instance()->GrpcServerHost,
+                                ServerConfig::get_instance()->GrpcServerPort);
 
             spdlog::info("Current Chatting RPC Server Started Running On {}", address);
 
-            /*gRPC server*/
             grpc::ServerBuilder builder;
             grpc::GrpcDistributedChattingImpl impl;
 
@@ -60,7 +60,7 @@ int main() {
     /*set current server connection counter value(0) to hash by using HSET*/ 
     connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext> raii;
     raii->get()->setValue2Hash(redis_server_login,
-              ServerConfig::get_instance()->ChattingServerName, std::to_string(0));
+              ServerConfig::get_instance()->GrpcServerName, std::to_string(0));
     
 
     /*create chatting server*/
@@ -82,7 +82,7 @@ int main() {
     * Delete current chatting server connection counter by using HDEL
     */
     raii->get()->delValueFromHash(redis_server_login,
-              ServerConfig::get_instance()->ChattingServerName);
+              ServerConfig::get_instance()->GrpcServerName);
 
   } catch (const std::exception &e) {
     spdlog::error("{}", e.what());
