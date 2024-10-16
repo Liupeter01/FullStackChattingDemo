@@ -395,24 +395,7 @@ void ChattingDlgMainFrame::slot_list_item_clicked(QListWidgetItem *clicked_item)
         /*after connection to server, send TCP request*/
         TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
         return;
-
-        //m_Dlg = std::make_shared<AddUserNameCardDialog>(this);
-
-        /*using dynamic pointer cast Dialog->AddUserNameCardDialog*/
-        //auto add = std::dynamic_pointer_cast<AddUserNameCardDialog>(m_Dlg);
-
-        /*load image from "/static/ dir directly"*/
-        //add->setupUserInfo(std::make_unique<UserNameCard>(0, "4.png", "test_name",
-                                                          //"test_desc", Sex::Male));
-        //add->show();
-        //return;
     }
-
-    /*close dialog & dealloc mem*/
-    //if (m_Dlg != nullptr) {
-    //    m_Dlg->hide();
-    //    m_Dlg = nullptr;
-    //}
 }
 
 ChattingDlgMainFrame::~ChattingDlgMainFrame() {
