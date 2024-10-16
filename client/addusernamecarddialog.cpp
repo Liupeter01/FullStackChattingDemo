@@ -16,6 +16,18 @@ AddUserNameCardDialog::AddUserNameCardDialog(QWidget *parent)
 
 AddUserNameCardDialog::~AddUserNameCardDialog() { delete ui; }
 
+void AddUserNameCardDialog::setDialogInvalid(bool status)
+{
+    if(status){
+        ui->invalid->hide();
+        ui->valid->show();
+    }
+    else{
+        ui->valid->hide();
+        ui->invalid->show();
+    }
+}
+
 void AddUserNameCardDialog::setupUserInfo(std::unique_ptr<UserNameCard> info) {
   m_info = std::move(info);
   ui->user_name->setText(m_info->m_nickname);

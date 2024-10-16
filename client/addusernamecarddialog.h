@@ -17,6 +17,15 @@ public:
   explicit AddUserNameCardDialog(QWidget *parent = nullptr);
   virtual ~AddUserNameCardDialog();
 
+public:
+  /*
+   * show invalid window or valid
+   * valid = when signal_username_search returns a correct result
+   * invalid = oppsite from valid
+   */
+    void setDialogInvalid(bool status);
+
+    /*set usernamecard*/
   void setupUserInfo(std::unique_ptr<UserNameCard> info);
 
 private slots:
