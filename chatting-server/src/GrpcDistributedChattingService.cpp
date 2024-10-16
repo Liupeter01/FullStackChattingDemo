@@ -5,7 +5,7 @@ gRPCDistributedChattingService::gRPCDistributedChattingService() {
   /*pass current server name as a parameter to the balance server, and returns
    * all peers*/
   auto response = gRPCBalancerService::getPeerServerLists(
-      ServerConfig::get_instance()->ChattingServerName);
+      ServerConfig::get_instance()->GrpcServerName);
 
   if (response.error() !=
       static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
