@@ -188,91 +188,28 @@ verification server using verification-server/config.json to store parameters
    # bind 127.0.0.1 ::1              # listens on loopback IPv4 and IPv6
    # bind * -::*                     # like the default, all available interfaces
    # bind 127.0.0.1 -::1
-   
-   # By default protected mode is enabled. You should disable it only if
-   # you are sure you want clients from other hosts to connect to Redis
-   # even if no authentication is configured.
    protected-mode no
-   
-   # Accept connections on the specified port, default is 6379 (IANA #815344).
-   # If port 0 is specified Redis will not listen on a TCP socket.
    port 6379
-   
-   # TCP listen() backlog.
    tcp-backlog 511
-   
-   # Close the connection after a client is idle for N seconds (0 to disable)
    timeout 0
-   
-   # TCP keepalive.
-   # If non-zero, use SO_KEEPALIVE to send TCP ACKs to clients in absence
-   # of communication. This is useful for two reasons:
-   # 1) Detect dead peers.
-   # 2) Force network equipment in the middle to consider the connection to be
-   #    alive.
    tcp-keepalive 300
-   
-   ################################# GENERAL #####################################
-   # By default Redis does not run as a daemon. Use 'yes' if you need it.
-   # Note that Redis will write a pid file in /var/run/redis.pid when daemonized.
-   # When Redis is supervised by upstart or systemd, this parameter has no impact.
    daemonize no
    pidfile /var/run/redis_6379.pid
    loglevel notice
    logfile ""
-   
-   # Set the number of databases. The default database is DB 0, you can select
-   # a different one on a per-connection basis using SELECT <dbid> where
-   # dbid is a number between 0 and 'databases'-1
    databases 16
-   
    always-show-logo no
    set-proc-title yes
-   
-   # When changing the process title, Redis uses the following template to construct
-   # the modified title.
-   # Template variables are specified in curly brackets. The following variables are
-   # supported:
-   # {title}           Name of process as executed if parent, or type of child process.
-   # {listen-addr}     Bind address or '*' followed by TCP or TLS port listening on, or
-   #                   Unix socket if only that's available.
-   # {server-mode}     Special mode, i.e. "[sentinel]" or "[cluster]".
-   # {port}            TCP port listening on, or 0.
-   # {tls-port}        TLS port listening on, or 0.
-   # {unixsocket}      Unix domain socket listening on, or "".
-   # {config-file}     Name of configuration file used.
    proc-title-template "{title} {listen-addr} {server-mode}"
    locale-collate ""
    stop-writes-on-bgsave-error yes
    rdbcompression yes
    rdbchecksum yes
-   
-   # The filename where to dump the DB
    dbfilename dump.rdb
    rdb-del-sync-files no
    dir ./
-   
-   ################################# REPLICATION #################################
-   # If the master is password protected (using the "requirepass" configuration
-   # directive below) it is possible to tell the replica to authenticate before
-   # starting the replication synchronization process, otherwise the master will
-   # refuse the replica request.
-   #
-   # masterauth <master-password>
-   #
-   # However this is not enough if you are using Redis ACLs (for Redis version
-   # 6 or greater), and the default user is not capable of running the PSYNC
-   # command and/or other commands needed for replication. In this case it's
-   # better to configure a special user to use with replication, and specify the
-   # masteruser configuration as such:
-   #
-   # masteruser <username>
-   #
-   # When masteruser is specified, the replica will authenticate against its
-   # master using the new AUTH form: AUTH <username> <password>.
+   #password
    requirepass 123456
-   
-   
    replica-serve-stale-data yes
    replica-read-only yes
    repl-diskless-sync yes
@@ -294,33 +231,7 @@ verification server using verification-server/config.json to store parameters
    appendonly no
    appendfilename "appendonly.aof"
    appenddirname "appendonlydir"
-   
-   # The fsync() call tells the Operating System to actually write data on disk
-   # instead of waiting for more data in the output buffer. Some OS will really flush
-   # data on disk, some other OS will just try to do it ASAP.
-   #
-   # Redis supports three different modes:
-   #
-   # no: don't fsync, just let the OS flush the data when it wants. Faster.
-   # always: fsync after every write to the append only log. Slow, Safest.
-   # everysec: fsync only one time every second. Compromise.
-   #
-   # The default is "everysec", as that's usually the right compromise between
-   # speed and data safety. It's up to you to understand if you can relax this to
-   # "no" that will let the operating system flush the output buffer when
-   # it wants, for better performances (but if you can live with the idea of
-   # some data loss consider the default persistence mode that's snapshotting),
-   # or on the contrary, use "always" that's very slow but a bit safer than
-   # everysec.
-   #
-   # More details please check the following article:
-   # http://antirez.com/post/redis-persistence-demystified.html
-   #
-   # If unsure, use "everysec".
-   # appendfsync always
    appendfsync everysec
-   # appendfsync no
-   
    no-appendfsync-on-rewrite no
    auto-aof-rewrite-percentage 100
    auto-aof-rewrite-min-size 64mb
@@ -451,21 +362,25 @@ verification server using verification-server/config.json to store parameters
    You could choose DataBase tools to create database and table
    
    ```sql
-   #database's name should match config.ini database name!
    CREATE DATABASE chatting;
    
-   CREATE TABLE chatting.user_info(
-   	username varchar(255) not null,
-   	password varchar(255) not null,
-       uid integer not null,
-       email varchar(255) not null
+   -- Create Authentication Table
+   CREATE TABLE chatting.Authentication (
+       uuid INT AUTO_INCREMENT PRIMARY KEY,
+       username VARCHAR(50) NOT NULL UNIQUE,
+       password VARCHAR(255) NOT NULL,
+       email VARCHAR(100) UNIQUE
    );
    
-   CREATE TABLE chatting.uid_gen(
-       uid integer not null
+   -- Create UserProfile Table
+   CREATE TABLE chatting.UserProfile (
+       uuid INT PRIMARY KEY,
+       avatar VARCHAR(255),
+       nickname VARCHAR(50),
+       description TEXT,
+       sex BOOL,
+       FOREIGN KEY (uuid) REFERENCES Authentication(uuid) ON DELETE CASCADE
    );
-   
-   INSERT INTO chatting.uid_gen(uid) VALUE(0);
    ```
 
 
