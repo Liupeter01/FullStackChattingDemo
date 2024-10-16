@@ -245,21 +245,36 @@ std::optional<std::unique_ptr<UserNameCard>> SyncLogic::getUserBasicInfo(const s
                     /*search it in mysql*/
                     connection::ConnectionRAII<mysql::MySQLConnectionPool, mysql::MySQLConnection>mysql;
 
-                    /*user info not found!*/
-                    std::size_t uuid = tools::string_to_value<std::size_t>(key).value();
-                    if (!mysql->get()->checkUUID(uuid)) {
+                    auto uuid_op = tools::string_to_value<std::size_t>(key);
+
+                    if (!uuid_op.has_value()) {
+                              spdlog::error("Casting string typed key to std::size_t!");
+                              return std::nullopt;
+                    }
+
+                    std::size_t uuid = uuid_op.value();
+                    auto profile_op = mysql->get()->getUserProfile(uuid);
+
+                    /*when user info not found!*/
+                    if (!profile_op.has_value()) {
                               spdlog::error("[UUID = {}] No User Account Found!", uuid);
                               return std::nullopt;
                     }
 
-                    //redis_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
-                    //redis_root["uuid"] = std::to_string(uuid);
-                    //redis_root["sex"] = static_cast<uint8_t>(info->m_sex);
-                    //redis_root["avator"] = info->m_avatorPath;
-                    //redis_root["nickname"] = info->m_nickname;
-                    //redis_root["description"] = info->m_description;
+                    std::unique_ptr<UserNameCard> info = std::move(profile_op.value());
 
-                    raii->get()->setValue(user_prefix + key, redis_root.toStyledString());
+                    redis_root["uuid"] = info->m_uuid;
+                    redis_root["sex"] = static_cast<uint8_t>(info->m_sex);
+                    redis_root["avator"] = info->m_avatorPath;
+                    redis_root["nickname"] = info->m_nickname;
+                    redis_root["description"] = info->m_description;
+
+                    /*write data into redis as cache*/
+                    if (!raii->get()->setValue(user_prefix + key, redis_root.toStyledString())) {
+                              spdlog::error("[UUID = {}] Write Data To Redis Failed!", uuid);
+                              return std::nullopt;
+                    }
+                    return info;
           }
           return std::nullopt;
 }
