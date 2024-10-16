@@ -4,13 +4,13 @@
 #include <json/json.h>
 #include <json/reader.h>
 #include <json/value.h>
+#include <redis/RedisManager.hpp>
 #include <server/AsyncServer.hpp>
+#include <server/UserManager.hpp>
+#include <server/UserNameCard.hpp>
 #include <spdlog/spdlog.h>
 #include <sql/MySQLConnectionPool.hpp>
 #include <tools/tools.hpp>
-#include <server/UserManager.hpp>
-#include <server/UserNameCard.hpp>
-#include <redis/RedisManager.hpp>
 
 /*redis*/
 std::string SyncLogic::redis_server_login = "redis_server";
@@ -94,7 +94,7 @@ void SyncLogic::execute(pair &&node) {
 
 void SyncLogic::handlingLogin(ServiceType srv_type,
                               std::shared_ptr<Session> session, NodePtr recv) {
-  Json::Value src_root;  /*store json from client*/
+  Json::Value src_root;   /*store json from client*/
   Json::Value redis_root; /*write into body*/
   Json::Reader reader;
 
@@ -153,115 +153,119 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
   }
 
   /*
-  * get user's basic info(name, age, sex, ...) from redis
-  * 1. we are going to search for info inside redis first, if nothing found, then goto 2
-  * 2. searching for user info inside mysql
-  */
-  std::optional<std::shared_ptr<UserNameCard>> info_str = getUserBasicInfo(std::to_string(uuid));
+   * get user's basic info(name, age, sex, ...) from redis
+   * 1. we are going to search for info inside redis first, if nothing found,
+   * then goto 2
+   * 2. searching for user info inside mysql
+   */
+  std::optional<std::shared_ptr<UserNameCard>> info_str =
+      getUserBasicInfo(std::to_string(uuid));
   if (!info_str.has_value()) {
-            spdlog::error("[UUID = {}] Can not find a single user in MySQL and Redis", uuid);
-            generateErrorMessage("No User Account Found",
-                      ServiceType::SERVICE_LOGINRESPONSE,
-                      ServiceStatus::LOGIN_INFO_ERROR, session
-            );
-            return;
-  }
-  else
-  {
-            /*bind uuid with a session*/
-            session->setUUID(uuid_str);
+    spdlog::error("[UUID = {}] Can not find a single user in MySQL and Redis",
+                  uuid);
+    generateErrorMessage("No User Account Found",
+                         ServiceType::SERVICE_LOGINRESPONSE,
+                         ServiceStatus::LOGIN_INFO_ERROR, session);
+    return;
+  } else {
+    /*bind uuid with a session*/
+    session->setUUID(uuid_str);
 
-            /* add user uuid and session as a pair and store it inside usermanager */
-            UserManager::get_instance()->alterUserSession(uuid_str, session);
+    /* add user uuid and session as a pair and store it inside usermanager */
+    UserManager::get_instance()->alterUserSession(uuid_str, session);
 
-            /*returning info to client*/
-            std::shared_ptr<UserNameCard> info = info_str.value();
-            redis_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
-            redis_root["uuid"] = std::to_string(uuid);
-            redis_root["sex"] = static_cast<uint8_t>(info->m_sex);
-            redis_root["avator"] = info->m_avatorPath;
-            redis_root["nickname"] = info->m_nickname;
-            redis_root["description"] = info->m_description;
+    /*returning info to client*/
+    std::shared_ptr<UserNameCard> info = info_str.value();
+    redis_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
+    redis_root["uuid"] = std::to_string(uuid);
+    redis_root["sex"] = static_cast<uint8_t>(info->m_sex);
+    redis_root["avator"] = info->m_avatorPath;
+    redis_root["nickname"] = info->m_nickname;
+    redis_root["description"] = info->m_description;
 
-            /*
-            * add user connection counter for current server
-            * 1. HGET not exist: Current Chatting server didn't setting up connection counter
-            * 2. HGET exist: Increment by 1
-            */
-            connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext> raii;
+    /*
+     * add user connection counter for current server
+     * 1. HGET not exist: Current Chatting server didn't setting up connection
+     * counter
+     * 2. HGET exist: Increment by 1
+     */
+    connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
+        raii;
 
-            /*try to acquire value from redis*/
-            std::optional<std::string> counter = raii->get()->getValueFromHash(redis_server_login,
-                      ServerConfig::get_instance()->ChattingServerName);
+    /*try to acquire value from redis*/
+    std::optional<std::string> counter = raii->get()->getValueFromHash(
+        redis_server_login, ServerConfig::get_instance()->ChattingServerName);
 
-            std::size_t new_number(0);
+    std::size_t new_number(0);
 
-            /* redis has this value then read it from redis*/
-            if (counter.has_value()) { 
-                      new_number = tools::string_to_value<std::size_t>(counter.value()).value();
-            }
+    /* redis has this value then read it from redis*/
+    if (counter.has_value()) {
+      new_number = tools::string_to_value<std::size_t>(counter.value()).value();
+    }
 
-            /*incerment and set value to hash by using HSET*/
-            raii->get()->setValue2Hash(redis_server_login,
-                      ServerConfig::get_instance()->ChattingServerName, std::to_string(++new_number));
+    /*incerment and set value to hash by using HSET*/
+    raii->get()->setValue2Hash(redis_server_login,
+                               ServerConfig::get_instance()->ChattingServerName,
+                               std::to_string(++new_number));
 
-            session->sendMessage(ServiceType::SERVICE_LOGINRESPONSE,
-                      redis_root.toStyledString());
+    session->sendMessage(ServiceType::SERVICE_LOGINRESPONSE,
+                         redis_root.toStyledString());
   }
 }
 
 void SyncLogic::handlingLogout(ServiceType srv_type,
-                               std::shared_ptr<Session> session, NodePtr recv) {}
+                               std::shared_ptr<Session> session, NodePtr recv) {
+}
 
 /*get user's basic info(name, age, sex, ...) from redis*/
-std::optional<std::unique_ptr<UserNameCard>> SyncLogic::getUserBasicInfo(const std::string& key)
-{
-          connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext> raii;
+std::optional<std::unique_ptr<UserNameCard>>
+SyncLogic::getUserBasicInfo(const std::string &key) {
+  connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
+      raii;
 
-          /*
-          * Search For Info Cache in Redis
-          * find key = user_prefix  + uuid in redis, GET
-          */
-          std::optional<std::string> info_str = raii->get()->checkValue(user_prefix + key);
+  /*
+   * Search For Info Cache in Redis
+   * find key = user_prefix  + uuid in redis, GET
+   */
+  std::optional<std::string> info_str =
+      raii->get()->checkValue(user_prefix + key);
 
-          /*we could find it in Redis directly*/
-          if (info_str.has_value()) {
-                    /*parse cache data inside Redis*/
-                    Json::Reader reader;
-                    Json::Value root;
-                    reader.parse(info_str.value(), root);
+  /*we could find it in Redis directly*/
+  if (info_str.has_value()) {
+    /*parse cache data inside Redis*/
+    Json::Reader reader;
+    Json::Value root;
+    reader.parse(info_str.value(), root);
 
-                    return  std::make_unique<UserNameCard>(
-                              root["uuid"].asString(),
-                              root["avator"].asString(),
-                              root["nickname"].asString(),
-                              root["description"].asString(),
-                              static_cast<Sex>(root["sex"].asInt64())
-                    );
-          }
-          else { 
-                    Json::Value redis_root;
+    return std::make_unique<UserNameCard>(
+        root["uuid"].asString(), root["avator"].asString(),
+        root["nickname"].asString(), root["description"].asString(),
+        static_cast<Sex>(root["sex"].asInt64()));
+  } else {
+    Json::Value redis_root;
 
-                    /*search it in mysql*/
-                    connection::ConnectionRAII<mysql::MySQLConnectionPool, mysql::MySQLConnection>mysql;
+    /*search it in mysql*/
+    connection::ConnectionRAII<mysql::MySQLConnectionPool,
+                               mysql::MySQLConnection>
+        mysql;
 
-                    /*user info not found!*/
-                    std::size_t uuid = tools::string_to_value<std::size_t>(key).value();
-                    if (!mysql->get()->checkUUID(uuid)) {
-                              spdlog::error("[UUID = {}] No User Account Found!", uuid);
-                              return std::nullopt;
-                    }
+    /*user info not found!*/
+    std::size_t uuid = tools::string_to_value<std::size_t>(key).value();
+    if (!mysql->get()->checkUUID(uuid)) {
+      spdlog::error("[UUID = {}] No User Account Found!", uuid);
+      return std::nullopt;
+    }
 
-                    //redis_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
-                    //redis_root["uuid"] = std::to_string(uuid);
-                    //redis_root["sex"] = static_cast<uint8_t>(info->m_sex);
-                    //redis_root["avator"] = info->m_avatorPath;
-                    //redis_root["nickname"] = info->m_nickname;
-                    //redis_root["description"] = info->m_description;
+    // redis_root["error"] =
+    // static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS); redis_root["uuid"]
+    // = std::to_string(uuid); redis_root["sex"] =
+    // static_cast<uint8_t>(info->m_sex); redis_root["avator"] =
+    // info->m_avatorPath; redis_root["nickname"] = info->m_nickname;
+    // redis_root["description"] = info->m_description;
 
-                    raii->get()->setValue(user_prefix + key, redis_root.toStyledString());
-          }
-          return std::nullopt;
+    raii->get()->setValue(user_prefix + key, redis_root.toStyledString());
+  }
+  return std::nullopt;
 }
 
 void SyncLogic::shutdown() {

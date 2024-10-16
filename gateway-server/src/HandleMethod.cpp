@@ -149,7 +149,8 @@ void HandleMethod::registerPostCallBacks() {
           return false;
         }
 
-        send_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
+        send_root["error"] =
+            static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
         send_root["username"] = username;
         send_root["password"] = password;
         send_root["email"] = email;
@@ -329,8 +330,8 @@ void HandleMethod::registerPostCallBacks() {
 
         if (response.error() !=
             static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
-                  spdlog::error("[client {}] try login server failed!, error code {}",
-                            std::to_string(uuid), response.error());
+          spdlog::error("[client {}] try login server failed!, error code {}",
+                        std::to_string(uuid), response.error());
         }
 
         send_root["uuid"] = std::to_string(uuid);
