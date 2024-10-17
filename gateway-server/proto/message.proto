@@ -25,9 +25,14 @@ service BalancerService {
   // user send SERVICE_LOGINSERVER request
   rpc UserLoginToServer(LoginChattingServer) returns (LoginChattingResponse) {}
 
+        // register current grpc server which belongs to chattingserver to balance server
+      rpc RegisterChattingGrpcServer(GrpcChattingServerRegRequest ) returns (GrpcChattingServerResponse){}
+
   // chatting server acquires other servers info through this service
-  rpc GetPeerServerInfo(GetChattingSeverPeerListsRequest)
-      returns (PeerResponse) {}
+    rpc GetPeerChattingServerInfo(PeerListsRequest) returns (PeerResponse) {}
+
+      // chatting server acquires other chatting servers' grpc connection info
+      rpc GetPeerGrpcServerInfo(PeerListsRequest)   returns (PeerResponse) {}
 }
 
 // register new uuid to balance and ask for chatting server allocation
@@ -49,19 +54,94 @@ message LoginChattingServer {
 
 message LoginChattingResponse { int32 error = 1; }
 
-message ChattingPeerServer {
-  string name = 1;
-  string host = 2;
-  string port = 3;
+message ServerInfo{
+            string name = 1;
+            string host = 2;
+            string port = 3;
 }
 
-message GetChattingSeverPeerListsRequest {
-  // current server's name
-  string cur_server_name = 1;
+message PeerListsRequest{
+            // current server's name
+  string cur_server = 1;
 }
 
 // return a array of servers ip address through balancer services
 message PeerResponse {
   int32 error = 1;
-  repeated ChattingPeerServer lists = 2;
+  repeated ServerInfo lists = 2;
+}
+
+message GrpcChattingServerRegRequest {
+          ServerInfo info= 1;
+}
+
+message GrpcChattingServerResponse{
+            int32 error = 1;
+}
+
+/*prepared for distributed chatting service*/
+service DistributedChattingService {
+
+  // A send friend request message to another user B
+  rpc SendFriendRequest(AddNewFriendRequest) returns (AddNewFriendResponse) {}
+
+  // User B agreed with user A's friend adding request
+  rpc ConfirmFriendRequest(AuthoriseRequest) returns (AuthoriseResponse) {}
+
+  // Verify that B is still A's friend:
+  rpc FriendshipVerification(AuthoriseRequest) returns (AuthoriseResponse) {}
+
+  // transfer chatting message from user A to B
+  rpc NormalChattingMsg(SendChattingMsgRequest)
+      returns (SendChattingMsgResponse) {}
+}
+
+/*
+ * A send friend request message to another user B and
+ * A wait for Authorise message
+ * we still need src/dst_uuid to verify sender's' and receiver's' identiy
+ */
+message AddNewFriendRequest {
+  int32 src_uuid = 1;   // request from who
+  int32 dst_uuid = 2;   // target
+  string nick_name = 3; // my nick name
+  string req_msg = 4;   // deliver a request message
+}
+message AddNewFriendResponse {
+  int32 error = 1;
+  int32 src_uuid = 2; // request from who
+  int32 dst_uuid = 3; // target
+}
+
+/*
+ * 1. User B agreed with user A's friend adding request:
+ *         when another user B agreed, then send an Authorise message back
+ *        to notify A that B has already agreed the friend request
+ *
+ * 2. Verify that B is still A's friend:
+ *
+ * we still need src/dst_uuid to verify sender's' and receiver's' identiy
+ */
+message AuthoriseRequest {
+  int32 src_uuid = 1; // request from who
+  int32 dst_uuid = 2; // target
+}
+
+message AuthoriseResponse {
+  int32 error = 1;
+  int32 src_uuid = 2; // request from who
+  int32 dst_uuid = 3; // target
+}
+
+/*we still need src/dst_uuid to verify sender's' and receiver's' identiy*/
+message SendChattingMsgRequest {
+  int32 src_uuid = 1; // request from who
+  int32 dst_uuid = 2; // target
+  string message = 3; // send message
+}
+
+message SendChattingMsgResponse {
+  int32 error = 1;
+  int32 src_uuid = 2; // request from who
+  int32 dst_uuid = 3; // target
 }
