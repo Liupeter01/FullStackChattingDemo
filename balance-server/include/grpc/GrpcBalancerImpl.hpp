@@ -2,6 +2,7 @@
 #ifndef _GRPCBALANCERIMPL_HPP_
 #define _GRPCBALANCERIMPL_HPP_
 #include <grpcpp/grpcpp.h>
+#include <memory>
 #include <message/message.grpc.pb.h>
 #include <mutex>
 #include <network/def.hpp>
@@ -13,10 +14,22 @@ class GrpcBalancerImpl final : public message::BalancerService::Service {
 
 public:
   struct ChattingServerConfig {
+    ChattingServerConfig(const std::string &host, const std::string &port,
+                         const std::string &name)
+        : _connections(0), _host(host), _port(port), _name(name) {}
     std::string _host;
     std::string _port;
     std::string _name;
     std::size_t _connections = 0; /*add init*/
+  };
+
+  struct GRPCServerConfig {
+    GRPCServerConfig(const std::string &host, const std::string &port,
+                     const std::string &name)
+        : _host(host), _port(port), _name(name) {}
+    std::string _host;
+    std::string _port;
+    std::string _name;
   };
 
   ~GrpcBalancerImpl();
@@ -38,28 +51,37 @@ public:
 
   // chatting server acquires other servers info through this service
   virtual ::grpc::Status
-  GetPeerServerInfo(::grpc::ServerContext *context,
-                    const ::message::GetChattingSeverPeerListsRequest *request,
-                    ::message::PeerResponse *response);
+  GetPeerChattingServerInfo(::grpc::ServerContext *context,
+                            const ::message::PeerListsRequest *request,
+                            ::message::PeerResponse *response);
+
+  virtual ::grpc::Status
+  GetPeerGrpcServerInfo(::grpc::ServerContext *context,
+                        const ::message::PeerListsRequest *request,
+                        ::message::PeerResponse *response);
+
+  virtual ::grpc::Status RegisterChattingGrpcServer(
+      ::grpc::ServerContext *context,
+      const ::message::GrpcChattingServerRegRequest *request,
+      ::message::GrpcChattingServerResponse *response);
 
   static std::string userTokenGenerator();
 
 private:
-  const grpc::GrpcBalancerImpl::ChattingServerConfig &serverLoadBalancer();
-  void
-  registerUserInfo(std::size_t uuid, std::string &&tokens,
-                   const grpc::GrpcBalancerImpl::ChattingServerConfig &server);
+  std::shared_ptr<grpc::GrpcBalancerImpl::ChattingServerConfig>
+  serverLoadBalancer();
+  void registerUserInfo(std::size_t uuid, std::string &&tokens);
 
   /*get user token from Redis*/
   std::optional<std::string> getUserToken(std::size_t uuid);
   ServiceStatus verifyUserToken(std::size_t uuid, const std::string &tokens);
 
 private:
-          /*redis*/
-          const std::string redis_server_login = "redis_server";
-          
-          /*user token predix*/
-          const std::string token_prefix = "user_token_";
+  /*redis*/
+  const std::string redis_server_login = "redis_server";
+
+  /*user token predix*/
+  const std::string token_prefix = "user_token_";
 
   struct UserInfo {
     UserInfo(std::string &&tokens,
@@ -73,11 +95,17 @@ private:
     std::string_view m_port;
   };
 
-  std::mutex server_mtx;
+  std::mutex grpc_mtx;
   std::unordered_map<
       /*server name*/ std::string,
-      /*server info*/ ChattingServerConfig>
-      servers;
+      /*server info*/ std::unique_ptr<GRPCServerConfig>>
+      grpc_servers;
+
+  std::mutex chatting_mtx;
+  std::unordered_map<
+      /*server name*/ std::string,
+      /*server info*/ std::unique_ptr<ChattingServerConfig>>
+      chatting_servers;
 };
 } // namespace grpc
 #endif
