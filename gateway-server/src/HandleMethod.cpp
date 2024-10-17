@@ -320,7 +320,7 @@ void HandleMethod::registerPostCallBacks() {
           return false;
         }
 
-        std::size_t &uuid = res.value();
+        std::size_t uuid = res.value();
 
         /*
          *pass user's uuid parameter to the server, and returns available server
