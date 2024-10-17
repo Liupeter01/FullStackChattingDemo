@@ -72,6 +72,9 @@ extern GrpcChattingServerRegRequestDefaultTypeInternal _GrpcChattingServerRegReq
 class GrpcChattingServerResponse;
 struct GrpcChattingServerResponseDefaultTypeInternal;
 extern GrpcChattingServerResponseDefaultTypeInternal _GrpcChattingServerResponse_default_instance_;
+class GrpcChattingServerShutdownRequest;
+struct GrpcChattingServerShutdownRequestDefaultTypeInternal;
+extern GrpcChattingServerShutdownRequestDefaultTypeInternal _GrpcChattingServerShutdownRequest_default_instance_;
 class LoginChattingResponse;
 struct LoginChattingResponseDefaultTypeInternal;
 extern LoginChattingResponseDefaultTypeInternal _LoginChattingResponse_default_instance_;
@@ -107,6 +110,7 @@ template<> ::message::GetVerificationRequest* Arena::CreateMaybeMessage<::messag
 template<> ::message::GetVerificationResponse* Arena::CreateMaybeMessage<::message::GetVerificationResponse>(Arena*);
 template<> ::message::GrpcChattingServerRegRequest* Arena::CreateMaybeMessage<::message::GrpcChattingServerRegRequest>(Arena*);
 template<> ::message::GrpcChattingServerResponse* Arena::CreateMaybeMessage<::message::GrpcChattingServerResponse>(Arena*);
+template<> ::message::GrpcChattingServerShutdownRequest* Arena::CreateMaybeMessage<::message::GrpcChattingServerShutdownRequest>(Arena*);
 template<> ::message::LoginChattingResponse* Arena::CreateMaybeMessage<::message::LoginChattingResponse>(Arena*);
 template<> ::message::LoginChattingServer* Arena::CreateMaybeMessage<::message::LoginChattingServer>(Arena*);
 template<> ::message::PeerListsRequest* Arena::CreateMaybeMessage<::message::PeerListsRequest>(Arena*);
@@ -1772,6 +1776,159 @@ class GrpcChattingServerRegRequest final :
 };
 // -------------------------------------------------------------------
 
+class GrpcChattingServerShutdownRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:message.GrpcChattingServerShutdownRequest) */ {
+ public:
+  inline GrpcChattingServerShutdownRequest() : GrpcChattingServerShutdownRequest(nullptr) {}
+  ~GrpcChattingServerShutdownRequest() override;
+  explicit PROTOBUF_CONSTEXPR GrpcChattingServerShutdownRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GrpcChattingServerShutdownRequest(const GrpcChattingServerShutdownRequest& from);
+  GrpcChattingServerShutdownRequest(GrpcChattingServerShutdownRequest&& from) noexcept
+    : GrpcChattingServerShutdownRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline GrpcChattingServerShutdownRequest& operator=(const GrpcChattingServerShutdownRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GrpcChattingServerShutdownRequest& operator=(GrpcChattingServerShutdownRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GrpcChattingServerShutdownRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GrpcChattingServerShutdownRequest* internal_default_instance() {
+    return reinterpret_cast<const GrpcChattingServerShutdownRequest*>(
+               &_GrpcChattingServerShutdownRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(GrpcChattingServerShutdownRequest& a, GrpcChattingServerShutdownRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GrpcChattingServerShutdownRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GrpcChattingServerShutdownRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GrpcChattingServerShutdownRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GrpcChattingServerShutdownRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GrpcChattingServerShutdownRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const GrpcChattingServerShutdownRequest& from) {
+    GrpcChattingServerShutdownRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GrpcChattingServerShutdownRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "message.GrpcChattingServerShutdownRequest";
+  }
+  protected:
+  explicit GrpcChattingServerShutdownRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kCurServerFieldNumber = 1,
+  };
+  // string cur_server = 1;
+  void clear_cur_server();
+  const std::string& cur_server() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_cur_server(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_cur_server();
+  PROTOBUF_NODISCARD std::string* release_cur_server();
+  void set_allocated_cur_server(std::string* cur_server);
+  private:
+  const std::string& _internal_cur_server() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_cur_server(const std::string& value);
+  std::string* _internal_mutable_cur_server();
+  public:
+
+  // @@protoc_insertion_point(class_scope:message.GrpcChattingServerShutdownRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr cur_server_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_message_2eproto;
+};
+// -------------------------------------------------------------------
+
 class GrpcChattingServerResponse final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:message.GrpcChattingServerResponse) */ {
  public:
@@ -1820,7 +1977,7 @@ class GrpcChattingServerResponse final :
                &_GrpcChattingServerResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(GrpcChattingServerResponse& a, GrpcChattingServerResponse& b) {
     a.Swap(&b);
@@ -1968,7 +2125,7 @@ class AddNewFriendRequest final :
                &_AddNewFriendRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(AddNewFriendRequest& a, AddNewFriendRequest& b) {
     a.Swap(&b);
@@ -2159,7 +2316,7 @@ class AddNewFriendResponse final :
                &_AddNewFriendResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(AddNewFriendResponse& a, AddNewFriendResponse& b) {
     a.Swap(&b);
@@ -2329,7 +2486,7 @@ class AuthoriseRequest final :
                &_AuthoriseRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(AuthoriseRequest& a, AuthoriseRequest& b) {
     a.Swap(&b);
@@ -2488,7 +2645,7 @@ class AuthoriseResponse final :
                &_AuthoriseResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(AuthoriseResponse& a, AuthoriseResponse& b) {
     a.Swap(&b);
@@ -2658,7 +2815,7 @@ class SendChattingMsgRequest final :
                &_SendChattingMsgRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(SendChattingMsgRequest& a, SendChattingMsgRequest& b) {
     a.Swap(&b);
@@ -2833,7 +2990,7 @@ class SendChattingMsgResponse final :
                &_SendChattingMsgResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    17;
 
   friend void swap(SendChattingMsgResponse& a, SendChattingMsgResponse& b) {
     a.Swap(&b);
@@ -3802,6 +3959,60 @@ inline void GrpcChattingServerRegRequest::set_allocated_info(::message::ServerIn
 
 // -------------------------------------------------------------------
 
+// GrpcChattingServerShutdownRequest
+
+// string cur_server = 1;
+inline void GrpcChattingServerShutdownRequest::clear_cur_server() {
+  _impl_.cur_server_.ClearToEmpty();
+}
+inline const std::string& GrpcChattingServerShutdownRequest::cur_server() const {
+  // @@protoc_insertion_point(field_get:message.GrpcChattingServerShutdownRequest.cur_server)
+  return _internal_cur_server();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void GrpcChattingServerShutdownRequest::set_cur_server(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.cur_server_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:message.GrpcChattingServerShutdownRequest.cur_server)
+}
+inline std::string* GrpcChattingServerShutdownRequest::mutable_cur_server() {
+  std::string* _s = _internal_mutable_cur_server();
+  // @@protoc_insertion_point(field_mutable:message.GrpcChattingServerShutdownRequest.cur_server)
+  return _s;
+}
+inline const std::string& GrpcChattingServerShutdownRequest::_internal_cur_server() const {
+  return _impl_.cur_server_.Get();
+}
+inline void GrpcChattingServerShutdownRequest::_internal_set_cur_server(const std::string& value) {
+  
+  _impl_.cur_server_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GrpcChattingServerShutdownRequest::_internal_mutable_cur_server() {
+  
+  return _impl_.cur_server_.Mutable(GetArenaForAllocation());
+}
+inline std::string* GrpcChattingServerShutdownRequest::release_cur_server() {
+  // @@protoc_insertion_point(field_release:message.GrpcChattingServerShutdownRequest.cur_server)
+  return _impl_.cur_server_.Release();
+}
+inline void GrpcChattingServerShutdownRequest::set_allocated_cur_server(std::string* cur_server) {
+  if (cur_server != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.cur_server_.SetAllocated(cur_server, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.cur_server_.IsDefault()) {
+    _impl_.cur_server_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:message.GrpcChattingServerShutdownRequest.cur_server)
+}
+
+// -------------------------------------------------------------------
+
 // GrpcChattingServerResponse
 
 // int32 error = 1;
@@ -4301,6 +4512,8 @@ inline void SendChattingMsgResponse::set_dst_uuid(int32_t value) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

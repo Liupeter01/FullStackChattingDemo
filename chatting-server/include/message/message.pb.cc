@@ -160,6 +160,19 @@ struct GrpcChattingServerRegRequestDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GrpcChattingServerRegRequestDefaultTypeInternal _GrpcChattingServerRegRequest_default_instance_;
+PROTOBUF_CONSTEXPR GrpcChattingServerShutdownRequest::GrpcChattingServerShutdownRequest(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.cur_server_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct GrpcChattingServerShutdownRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GrpcChattingServerShutdownRequestDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GrpcChattingServerShutdownRequestDefaultTypeInternal() {}
+  union {
+    GrpcChattingServerShutdownRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GrpcChattingServerShutdownRequestDefaultTypeInternal _GrpcChattingServerShutdownRequest_default_instance_;
 PROTOBUF_CONSTEXPR GrpcChattingServerResponse::GrpcChattingServerResponse(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.error_)*/0
@@ -264,7 +277,7 @@ struct SendChattingMsgResponseDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SendChattingMsgResponseDefaultTypeInternal _SendChattingMsgResponse_default_instance_;
 }  // namespace message
-static ::_pb::Metadata file_level_metadata_message_2eproto[17];
+static ::_pb::Metadata file_level_metadata_message_2eproto[18];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_message_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_message_2eproto = nullptr;
 
@@ -349,6 +362,13 @@ const uint32_t TableStruct_message_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::message::GrpcChattingServerRegRequest, _impl_.info_),
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::message::GrpcChattingServerShutdownRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::message::GrpcChattingServerShutdownRequest, _impl_.cur_server_),
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::message::GrpcChattingServerResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -421,13 +441,14 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 57, -1, -1, sizeof(::message::PeerListsRequest)},
   { 64, -1, -1, sizeof(::message::PeerResponse)},
   { 72, -1, -1, sizeof(::message::GrpcChattingServerRegRequest)},
-  { 79, -1, -1, sizeof(::message::GrpcChattingServerResponse)},
-  { 86, -1, -1, sizeof(::message::AddNewFriendRequest)},
-  { 96, -1, -1, sizeof(::message::AddNewFriendResponse)},
-  { 105, -1, -1, sizeof(::message::AuthoriseRequest)},
-  { 113, -1, -1, sizeof(::message::AuthoriseResponse)},
-  { 122, -1, -1, sizeof(::message::SendChattingMsgRequest)},
-  { 131, -1, -1, sizeof(::message::SendChattingMsgResponse)},
+  { 79, -1, -1, sizeof(::message::GrpcChattingServerShutdownRequest)},
+  { 86, -1, -1, sizeof(::message::GrpcChattingServerResponse)},
+  { 93, -1, -1, sizeof(::message::AddNewFriendRequest)},
+  { 103, -1, -1, sizeof(::message::AddNewFriendResponse)},
+  { 112, -1, -1, sizeof(::message::AuthoriseRequest)},
+  { 120, -1, -1, sizeof(::message::AuthoriseResponse)},
+  { 129, -1, -1, sizeof(::message::SendChattingMsgRequest)},
+  { 138, -1, -1, sizeof(::message::SendChattingMsgResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -441,6 +462,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::message::_PeerListsRequest_default_instance_._instance,
   &::message::_PeerResponse_default_instance_._instance,
   &::message::_GrpcChattingServerRegRequest_default_instance_._instance,
+  &::message::_GrpcChattingServerShutdownRequest_default_instance_._instance,
   &::message::_GrpcChattingServerResponse_default_instance_._instance,
   &::message::_AddNewFriendRequest_default_instance_._instance,
   &::message::_AddNewFriendResponse_default_instance_._instance,
@@ -465,49 +487,54 @@ const char descriptor_table_protodef_message_2eproto[] PROTOBUF_SECTION_VARIABLE
   "erver\030\001 \001(\t\"A\n\014PeerResponse\022\r\n\005error\030\001 \001"
   "(\005\022\"\n\005lists\030\002 \003(\0132\023.message.ServerInfo\"A"
   "\n\034GrpcChattingServerRegRequest\022!\n\004info\030\001"
-  " \001(\0132\023.message.ServerInfo\"+\n\032GrpcChattin"
-  "gServerResponse\022\r\n\005error\030\001 \001(\005\"]\n\023AddNew"
-  "FriendRequest\022\020\n\010src_uuid\030\001 \001(\005\022\020\n\010dst_u"
-  "uid\030\002 \001(\005\022\021\n\tnick_name\030\003 \001(\t\022\017\n\007req_msg\030"
-  "\004 \001(\t\"I\n\024AddNewFriendResponse\022\r\n\005error\030\001"
-  " \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst_uuid\030\003 \001(\005"
-  "\"6\n\020AuthoriseRequest\022\020\n\010src_uuid\030\001 \001(\005\022\020"
-  "\n\010dst_uuid\030\002 \001(\005\"F\n\021AuthoriseResponse\022\r\n"
-  "\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst_uu"
-  "id\030\003 \001(\005\"M\n\026SendChattingMsgRequest\022\020\n\010sr"
-  "c_uuid\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001(\005\022\017\n\007messag"
-  "e\030\003 \001(\t\"L\n\027SendChattingMsgResponse\022\r\n\005er"
-  "ror\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst_uuid\030"
-  "\003 \001(\0052q\n\023VerificationService\022Z\n\023GetVerif"
-  "icationCode\022\037.message.GetVerificationReq"
-  "uest\032 .message.GetVerificationResponse\"\000"
-  "2\312\003\n\017BalancerService\022X\n\022AddNewUserToServ"
-  "er\022\033.message.RegisterToBalancer\032#.messag"
-  "e.GetAllocatedChattingServer\"\000\022S\n\021UserLo"
-  "ginToServer\022\034.message.LoginChattingServe"
-  "r\032\036.message.LoginChattingResponse\"\000\022j\n\032R"
-  "egisterChattingGrpcServer\022%.message.Grpc"
-  "ChattingServerRegRequest\032#.message.GrpcC"
-  "hattingServerResponse\"\000\022O\n\031GetPeerChatti"
-  "ngServerInfo\022\031.message.PeerListsRequest\032"
-  "\025.message.PeerResponse\"\000\022K\n\025GetPeerGrpcS"
-  "erverInfo\022\031.message.PeerListsRequest\032\025.m"
-  "essage.PeerResponse\"\0002\356\002\n\032DistributedCha"
-  "ttingService\022R\n\021SendFriendRequest\022\034.mess"
-  "age.AddNewFriendRequest\032\035.message.AddNew"
-  "FriendResponse\"\000\022O\n\024ConfirmFriendRequest"
-  "\022\031.message.AuthoriseRequest\032\032.message.Au"
-  "thoriseResponse\"\000\022Q\n\026FriendshipVerificat"
-  "ion\022\031.message.AuthoriseRequest\032\032.message"
-  ".AuthoriseResponse\"\000\022X\n\021NormalChattingMs"
-  "g\022\037.message.SendChattingMsgRequest\032 .mes"
-  "sage.SendChattingMsgResponse\"\000b\006proto3"
+  " \001(\0132\023.message.ServerInfo\"7\n!GrpcChattin"
+  "gServerShutdownRequest\022\022\n\ncur_server\030\001 \001"
+  "(\t\"+\n\032GrpcChattingServerResponse\022\r\n\005erro"
+  "r\030\001 \001(\005\"]\n\023AddNewFriendRequest\022\020\n\010src_uu"
+  "id\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001(\005\022\021\n\tnick_name\030"
+  "\003 \001(\t\022\017\n\007req_msg\030\004 \001(\t\"I\n\024AddNewFriendRe"
+  "sponse\022\r\n\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022"
+  "\020\n\010dst_uuid\030\003 \001(\005\"6\n\020AuthoriseRequest\022\020\n"
+  "\010src_uuid\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001(\005\"F\n\021Aut"
+  "horiseResponse\022\r\n\005error\030\001 \001(\005\022\020\n\010src_uui"
+  "d\030\002 \001(\005\022\020\n\010dst_uuid\030\003 \001(\005\"M\n\026SendChattin"
+  "gMsgRequest\022\020\n\010src_uuid\030\001 \001(\005\022\020\n\010dst_uui"
+  "d\030\002 \001(\005\022\017\n\007message\030\003 \001(\t\"L\n\027SendChatting"
+  "MsgResponse\022\r\n\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002"
+  " \001(\005\022\020\n\010dst_uuid\030\003 \001(\0052q\n\023VerificationSe"
+  "rvice\022Z\n\023GetVerificationCode\022\037.message.G"
+  "etVerificationRequest\032 .message.GetVerif"
+  "icationResponse\"\0002\267\004\n\017BalancerService\022X\n"
+  "\022AddNewUserToServer\022\033.message.RegisterTo"
+  "Balancer\032#.message.GetAllocatedChattingS"
+  "erver\"\000\022S\n\021UserLoginToServer\022\034.message.L"
+  "oginChattingServer\032\036.message.LoginChatti"
+  "ngResponse\"\000\022j\n\032RegisterChattingGrpcServ"
+  "er\022%.message.GrpcChattingServerRegReques"
+  "t\032#.message.GrpcChattingServerResponse\"\000"
+  "\022k\n\026ChattingServerShutDown\022*.message.Grp"
+  "cChattingServerShutdownRequest\032#.message"
+  ".GrpcChattingServerResponse\"\000\022O\n\031GetPeer"
+  "ChattingServerInfo\022\031.message.PeerListsRe"
+  "quest\032\025.message.PeerResponse\"\000\022K\n\025GetPee"
+  "rGrpcServerInfo\022\031.message.PeerListsReque"
+  "st\032\025.message.PeerResponse\"\0002\356\002\n\032Distribu"
+  "tedChattingService\022R\n\021SendFriendRequest\022"
+  "\034.message.AddNewFriendRequest\032\035.message."
+  "AddNewFriendResponse\"\000\022O\n\024ConfirmFriendR"
+  "equest\022\031.message.AuthoriseRequest\032\032.mess"
+  "age.AuthoriseResponse\"\000\022Q\n\026FriendshipVer"
+  "ification\022\031.message.AuthoriseRequest\032\032.m"
+  "essage.AuthoriseResponse\"\000\022X\n\021NormalChat"
+  "tingMsg\022\037.message.SendChattingMsgRequest"
+  "\032 .message.SendChattingMsgResponse\"\000b\006pr"
+  "oto3"
   ;
 static ::_pbi::once_flag descriptor_table_message_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_message_2eproto = {
-    false, false, 2038, descriptor_table_protodef_message_2eproto,
+    false, false, 2204, descriptor_table_protodef_message_2eproto,
     "message.proto",
-    &descriptor_table_message_2eproto_once, nullptr, 0, 17,
+    &descriptor_table_message_2eproto_once, nullptr, 0, 18,
     schemas, file_default_instances, TableStruct_message_2eproto::offsets,
     file_level_metadata_message_2eproto, file_level_enum_descriptors_message_2eproto,
     file_level_service_descriptors_message_2eproto,
@@ -2832,6 +2859,209 @@ void GrpcChattingServerRegRequest::InternalSwap(GrpcChattingServerRegRequest* ot
 
 // ===================================================================
 
+class GrpcChattingServerShutdownRequest::_Internal {
+ public:
+};
+
+GrpcChattingServerShutdownRequest::GrpcChattingServerShutdownRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:message.GrpcChattingServerShutdownRequest)
+}
+GrpcChattingServerShutdownRequest::GrpcChattingServerShutdownRequest(const GrpcChattingServerShutdownRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  GrpcChattingServerShutdownRequest* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.cur_server_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.cur_server_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.cur_server_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_cur_server().empty()) {
+    _this->_impl_.cur_server_.Set(from._internal_cur_server(), 
+      _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:message.GrpcChattingServerShutdownRequest)
+}
+
+inline void GrpcChattingServerShutdownRequest::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.cur_server_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.cur_server_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.cur_server_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+GrpcChattingServerShutdownRequest::~GrpcChattingServerShutdownRequest() {
+  // @@protoc_insertion_point(destructor:message.GrpcChattingServerShutdownRequest)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void GrpcChattingServerShutdownRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.cur_server_.Destroy();
+}
+
+void GrpcChattingServerShutdownRequest::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void GrpcChattingServerShutdownRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:message.GrpcChattingServerShutdownRequest)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.cur_server_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* GrpcChattingServerShutdownRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string cur_server = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_cur_server();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "message.GrpcChattingServerShutdownRequest.cur_server"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* GrpcChattingServerShutdownRequest::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:message.GrpcChattingServerShutdownRequest)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string cur_server = 1;
+  if (!this->_internal_cur_server().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_cur_server().data(), static_cast<int>(this->_internal_cur_server().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "message.GrpcChattingServerShutdownRequest.cur_server");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_cur_server(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:message.GrpcChattingServerShutdownRequest)
+  return target;
+}
+
+size_t GrpcChattingServerShutdownRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:message.GrpcChattingServerShutdownRequest)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string cur_server = 1;
+  if (!this->_internal_cur_server().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_cur_server());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GrpcChattingServerShutdownRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    GrpcChattingServerShutdownRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GrpcChattingServerShutdownRequest::GetClassData() const { return &_class_data_; }
+
+
+void GrpcChattingServerShutdownRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<GrpcChattingServerShutdownRequest*>(&to_msg);
+  auto& from = static_cast<const GrpcChattingServerShutdownRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:message.GrpcChattingServerShutdownRequest)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_cur_server().empty()) {
+    _this->_internal_set_cur_server(from._internal_cur_server());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GrpcChattingServerShutdownRequest::CopyFrom(const GrpcChattingServerShutdownRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:message.GrpcChattingServerShutdownRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GrpcChattingServerShutdownRequest::IsInitialized() const {
+  return true;
+}
+
+void GrpcChattingServerShutdownRequest::InternalSwap(GrpcChattingServerShutdownRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.cur_server_, lhs_arena,
+      &other->_impl_.cur_server_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GrpcChattingServerShutdownRequest::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
+      file_level_metadata_message_2eproto[10]);
+}
+
+// ===================================================================
+
 class GrpcChattingServerResponse::_Internal {
  public:
 };
@@ -3005,7 +3235,7 @@ void GrpcChattingServerResponse::InternalSwap(GrpcChattingServerResponse* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata GrpcChattingServerResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[10]);
+      file_level_metadata_message_2eproto[11]);
 }
 
 // ===================================================================
@@ -3318,7 +3548,7 @@ void AddNewFriendRequest::InternalSwap(AddNewFriendRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata AddNewFriendRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[11]);
+      file_level_metadata_message_2eproto[12]);
 }
 
 // ===================================================================
@@ -3553,7 +3783,7 @@ void AddNewFriendResponse::InternalSwap(AddNewFriendResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata AddNewFriendResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[12]);
+      file_level_metadata_message_2eproto[13]);
 }
 
 // ===================================================================
@@ -3764,7 +3994,7 @@ void AuthoriseRequest::InternalSwap(AuthoriseRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata AuthoriseRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[13]);
+      file_level_metadata_message_2eproto[14]);
 }
 
 // ===================================================================
@@ -3999,7 +4229,7 @@ void AuthoriseResponse::InternalSwap(AuthoriseResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata AuthoriseResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[14]);
+      file_level_metadata_message_2eproto[15]);
 }
 
 // ===================================================================
@@ -4262,7 +4492,7 @@ void SendChattingMsgRequest::InternalSwap(SendChattingMsgRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SendChattingMsgRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[15]);
+      file_level_metadata_message_2eproto[16]);
 }
 
 // ===================================================================
@@ -4497,7 +4727,7 @@ void SendChattingMsgResponse::InternalSwap(SendChattingMsgResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SendChattingMsgResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_message_2eproto_getter, &descriptor_table_message_2eproto_once,
-      file_level_metadata_message_2eproto[16]);
+      file_level_metadata_message_2eproto[17]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -4542,6 +4772,10 @@ Arena::CreateMaybeMessage< ::message::PeerResponse >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::message::GrpcChattingServerRegRequest*
 Arena::CreateMaybeMessage< ::message::GrpcChattingServerRegRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::message::GrpcChattingServerRegRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::message::GrpcChattingServerShutdownRequest*
+Arena::CreateMaybeMessage< ::message::GrpcChattingServerShutdownRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::message::GrpcChattingServerShutdownRequest >(arena);
 }
 template<> PROTOBUF_NOINLINE ::message::GrpcChattingServerResponse*
 Arena::CreateMaybeMessage< ::message::GrpcChattingServerResponse >(Arena* arena) {

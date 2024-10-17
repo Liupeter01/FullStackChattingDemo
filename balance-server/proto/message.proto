@@ -30,6 +30,10 @@ service BalancerService {
   rpc RegisterChattingGrpcServer(GrpcChattingServerRegRequest)
       returns (GrpcChattingServerResponse) {}
 
+      // when chatting server shutdown delete its existance in balance server
+        rpc ChattingServerShutDown(GrpcChattingServerShutdownRequest)
+      returns (GrpcChattingServerResponse) {}
+
   // chatting server acquires other servers info through this service
   rpc GetPeerChattingServerInfo(PeerListsRequest) returns (PeerResponse) {}
 
@@ -74,7 +78,7 @@ message PeerResponse {
 }
 
 message GrpcChattingServerRegRequest { ServerInfo info = 1; }
-
+message GrpcChattingServerShutdownRequest { string cur_server = 1; }
 message GrpcChattingServerResponse { int32 error = 1; }
 
 /*prepared for distributed chatting service*/
