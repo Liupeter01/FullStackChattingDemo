@@ -4,7 +4,7 @@
 gRPCDistributedChattingService::gRPCDistributedChattingService() {
   /*pass current server name as a parameter to the balance server, and returns
    * all peers*/
-  auto response = gRPCBalancerService::getPeerServerLists(
+  auto response = gRPCBalancerService::getPeerChattingServerLists(
       ServerConfig::get_instance()->GrpcServerName);
 
   if (response.error() !=
@@ -22,7 +22,7 @@ gRPCDistributedChattingService::gRPCDistributedChattingService() {
    * according to host and port*/
   std::for_each(
       peer_servers.begin(), peer_servers.end(),
-      [this](const message::ChattingPeerServer &server) {
+      [this](const message::ServerInfo &server) {
         m_pools.insert(
             std::pair<
                 std::string,
