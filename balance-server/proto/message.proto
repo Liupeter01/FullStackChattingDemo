@@ -25,9 +25,14 @@ service BalancerService {
   // user send SERVICE_LOGINSERVER request
   rpc UserLoginToServer(LoginChattingServer) returns (LoginChattingResponse) {}
 
+        // register current grpc server which belongs to chattingserver to balance server
+      rpc RegisterChattingGrpcServer(GrpcChattingServerRegRequest ) returns (GrpcChattingServerResponse){}
+
   // chatting server acquires other servers info through this service
-  rpc GetPeerServerInfo(GetChattingSeverPeerListsRequest)
-      returns (PeerResponse) {}
+    rpc GetPeerChattingServerInfo(PeerListsRequest) returns (PeerResponse) {}
+
+      // chatting server acquires other chatting servers' grpc connection info
+      rpc GetPeerGrpcServerInfo(PeerListsRequest)   returns (PeerResponse) {}
 }
 
 // register new uuid to balance and ask for chatting server allocation
@@ -49,21 +54,29 @@ message LoginChattingServer {
 
 message LoginChattingResponse { int32 error = 1; }
 
-message ChattingPeerServer {
-  string name = 1;
-  string host = 2;
-  string port = 3;
+message ServerInfo{
+            string name = 1;
+            string host = 2;
+            string port = 3;
 }
 
-message GetChattingSeverPeerListsRequest {
-  // current server's name
-  string cur_server_name = 1;
+message PeerListsRequest{
+            // current server's name
+  string cur_server = 1;
 }
 
 // return a array of servers ip address through balancer services
 message PeerResponse {
   int32 error = 1;
-  repeated ChattingPeerServer lists = 2;
+  repeated ServerInfo lists = 2;
+}
+
+message GrpcChattingServerRegRequest {
+          ServerInfo info= 1;
+}
+
+message GrpcChattingServerResponse{
+            int32 error = 1;
 }
 
 /*prepared for distributed chatting service*/
