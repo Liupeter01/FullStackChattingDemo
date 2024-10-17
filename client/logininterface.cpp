@@ -101,7 +101,7 @@ void LoginInterface::regisrerCallBackFunctions() {
         Tools::setWidgetAttribute(this->ui->status_label_3,
                                   QString("Login Success!"), true);
 
-        UserAccountManager::get_instance()->set_uuid(json["uuid"].toInt());
+        UserAccountManager::get_instance()->set_uuid(json["uuid"].toString());
         UserAccountManager::get_instance()->set_host(json["host"].toString());
         UserAccountManager::get_instance()->set_port(json["port"].toString());
         UserAccountManager::get_instance()->set_token(json["token"].toString());
@@ -214,8 +214,7 @@ void LoginInterface::slot_connection_status(bool status) {
                               true);
 
     QJsonObject json_obj;
-    json_obj["uuid"] =
-        QString::number(UserAccountManager::get_instance()->get_uuid());
+    json_obj["uuid"] = UserAccountManager::get_instance()->get_uuid();
     json_obj["token"] = UserAccountManager::get_instance()->get_token();
 
     QJsonDocument json_doc(json_obj);
