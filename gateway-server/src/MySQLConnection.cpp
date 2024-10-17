@@ -97,7 +97,7 @@ bool mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
 std::optional<std::size_t>
 mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request) {
   /*check is there anyone who use this username before*/
-  if (!checkAccountAvailability(request.m_username, request.m_email)) {
+  if (checkAccountAvailability(request.m_username, request.m_email)) {
     return std::nullopt;
   }
   [[maybe_unused]] auto res =
