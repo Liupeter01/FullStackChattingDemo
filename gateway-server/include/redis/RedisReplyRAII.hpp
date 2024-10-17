@@ -1,8 +1,8 @@
 #pragma once
 #ifndef _REDISREPLYRAII_HPP_
 #define _REDISREPLYRAII_HPP_
-#include <redis/RedisContextRAII.hpp>
 #include <tools/tools.hpp>
+#include <redis/RedisContextRAII.hpp>
 
 namespace redis {
 class RedisReply {
@@ -22,13 +22,15 @@ public:
     m_redisReply.reset(reinterpret_cast<redisReply *>(
         ::redisCommand(context.m_redisContext.get(), command.c_str(),
                        std::forward<Args>(args)...)));
-    return checkError();
+    return  isSuccessful();
   }
+public:
+          std::optional<long long> getInterger() const;
+          std::optional<int> getType() const;
+          std::optional<std::string> getMessage() const;
 
-  bool checkError();
-  std::optional<long long> getInterger() const;
-  std::optional<int> getType() const;
-  std::optional<std::string> getMessage() const;
+private:
+  bool isSuccessful() const;
 
 private:
   tools::RedisSmartPtr<redisReply> m_redisReply;

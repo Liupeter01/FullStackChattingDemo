@@ -25,13 +25,9 @@ bool redis::RedisContext::setValue(const std::string &key,
   auto status = m_replyDelegate->redisCommand(*this, std::string("SET %s %s"),
                                               key.c_str(), value.c_str());
   if (status) {
-    if (m_replyDelegate->getMessage().has_value() &&
-        (m_replyDelegate->getMessage().value() == "ok" ||
-         m_replyDelegate->getMessage().value() == "OK")) {
       spdlog::info("Excute command [ SET key = {0}, value = {1}] successfully!",
                    key.c_str(), value.c_str());
       return true;
-    }
   }
   return false;
 }
@@ -45,15 +41,10 @@ bool redis::RedisContext::setValue2Hash(const std::string &key,
                                     key.c_str(), field.c_str(), value.c_str());
 
   if (status) {
-    if (m_replyDelegate->getMessage().has_value() &&
-        (m_replyDelegate->getMessage().value() == "ok" ||
-         m_replyDelegate->getMessage().value() == "OK")) {
-
-      spdlog::info("Excute command [ HSET key = {0}, field = {1}, value = {2}] "
-                   "successfully!",
-                   key.c_str(), field.c_str(), value.c_str());
-      return true;
-    }
+            spdlog::info("Excute command [ HSET key = {0}, field = {1}, value = {2}] "
+                      "successfully!",
+                      key.c_str(), field.c_str(), value.c_str());
+            return true;
   }
   return false;
 }
@@ -66,16 +57,12 @@ bool redis::RedisContext::delValueFromHash(const std::string& key, const std::st
                               key.c_str(), field.c_str());
 
           if (status) {
-                    if (m_replyDelegate->getMessage().has_value() &&
-                              (m_replyDelegate->getMessage().value() == "ok" ||
-                                        m_replyDelegate->getMessage().value() == "OK")) {
-
-                              spdlog::info("Excute command [ HDEL key = {0}, field = {1}] "
-                                        "successfully!",
-                                        key.c_str(), field.c_str());
-                              return true;
-                    }
+                    spdlog::info("Excute command [ HDEL key = {0}, field = {1}] "
+                              "successfully!",
+                              key.c_str(), field.c_str());
+                    return true;
           }
+          spdlog::error("The command did not execute successfully");
           return false;
 }
 
@@ -85,15 +72,10 @@ bool redis::RedisContext::leftPush(const std::string &key,
   auto status = m_replyDelegate->redisCommand(*this, std::string("LPUSH %s %s"),
                                               key.c_str(), value.c_str());
   if (status) {
-    if (m_replyDelegate->getType().has_value() &&
-        m_replyDelegate->getType().value() == REDIS_REPLY_INTEGER &&
-        m_replyDelegate->getInterger().has_value() &&
-        m_replyDelegate->getInterger().value() > 0) {
       spdlog::info(
           "Excute command  [ LPUSH key = {0}, value = {1}]  successfully!",
           key.c_str(), value.c_str());
       return true;
-    }
   }
   return false;
 }
@@ -104,15 +86,10 @@ bool redis::RedisContext::rightPush(const std::string &key,
   auto status = m_replyDelegate->redisCommand(*this, std::string("RPUSH %s %s"),
                                               key.c_str(), value.c_str());
   if (status) {
-    if (m_replyDelegate->getType().has_value() &&
-        m_replyDelegate->getType().value() == REDIS_REPLY_INTEGER &&
-        m_replyDelegate->getInterger().has_value() &&
-        m_replyDelegate->getInterger().value() > 0) {
       spdlog::info(
           "Excute command  [ RPUSH key = {0}, value = {1}]  successfully!",
           key.c_str(), value.c_str());
       return true;
-    }
   }
   return false;
 }
@@ -122,11 +99,8 @@ bool redis::RedisContext::delPair(const std::string &key) {
   auto status =
       m_replyDelegate->redisCommand(*this, std::string("DEL %s"), key.c_str());
   if (status) {
-    if (m_replyDelegate->getType().has_value() &&
-        m_replyDelegate->getType().value() == REDIS_REPLY_INTEGER) {
       spdlog::info("Excute command [ DEL key = {} ]successfully!", key.c_str());
       return true;
-    }
   }
   return false;
 }
@@ -136,14 +110,9 @@ bool redis::RedisContext::existKey(const std::string &key) {
   auto status = m_replyDelegate->redisCommand(*this, std::string("exists %s"),
                                               key.c_str());
   if (status) {
-    if (m_replyDelegate->getType().has_value() &&
-        m_replyDelegate->getType().value() == REDIS_REPLY_INTEGER &&
-        m_replyDelegate->getInterger().has_value() &&
-        !m_replyDelegate->getInterger().value()) {
       spdlog::info("Excute command [ exists key = {}] successfully!",
                    key.c_str());
       return true;
-    }
   }
   return false;
 }
