@@ -261,7 +261,8 @@ class BalancerService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginChattingResponse>> PrepareAsyncUserLoginToServer(::grpc::ClientContext* context, const ::message::LoginChattingServer& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginChattingResponse>>(PrepareAsyncUserLoginToServerRaw(context, request, cq));
     }
-    // register current grpc server which belongs to chattingserver to balance server
+    // register current grpc server which belongs to chattingserver to balance
+    // server
     virtual ::grpc::Status RegisterChattingGrpcServer(::grpc::ClientContext* context, const ::message::GrpcChattingServerRegRequest& request, ::message::GrpcChattingServerResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::GrpcChattingServerResponse>> AsyncRegisterChattingGrpcServer(::grpc::ClientContext* context, const ::message::GrpcChattingServerRegRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::GrpcChattingServerResponse>>(AsyncRegisterChattingGrpcServerRaw(context, request, cq));
@@ -295,7 +296,8 @@ class BalancerService final {
       // user send SERVICE_LOGINSERVER request
       virtual void UserLoginToServer(::grpc::ClientContext* context, const ::message::LoginChattingServer* request, ::message::LoginChattingResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void UserLoginToServer(::grpc::ClientContext* context, const ::message::LoginChattingServer* request, ::message::LoginChattingResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      // register current grpc server which belongs to chattingserver to balance server
+      // register current grpc server which belongs to chattingserver to balance
+      // server
       virtual void RegisterChattingGrpcServer(::grpc::ClientContext* context, const ::message::GrpcChattingServerRegRequest* request, ::message::GrpcChattingServerResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void RegisterChattingGrpcServer(::grpc::ClientContext* context, const ::message::GrpcChattingServerRegRequest* request, ::message::GrpcChattingServerResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // chatting server acquires other servers info through this service
@@ -409,7 +411,8 @@ class BalancerService final {
     virtual ::grpc::Status AddNewUserToServer(::grpc::ServerContext* context, const ::message::RegisterToBalancer* request, ::message::GetAllocatedChattingServer* response);
     // user send SERVICE_LOGINSERVER request
     virtual ::grpc::Status UserLoginToServer(::grpc::ServerContext* context, const ::message::LoginChattingServer* request, ::message::LoginChattingResponse* response);
-    // register current grpc server which belongs to chattingserver to balance server
+    // register current grpc server which belongs to chattingserver to balance
+    // server
     virtual ::grpc::Status RegisterChattingGrpcServer(::grpc::ServerContext* context, const ::message::GrpcChattingServerRegRequest* request, ::message::GrpcChattingServerResponse* response);
     // chatting server acquires other servers info through this service
     virtual ::grpc::Status GetPeerChattingServerInfo(::grpc::ServerContext* context, const ::message::PeerListsRequest* request, ::message::PeerResponse* response);
