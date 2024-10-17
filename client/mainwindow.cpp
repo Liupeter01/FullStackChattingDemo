@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
   switchingToLoginDialog();
 
   //Just For Testing
-  emit TCPNetworkConnection::get_instance() -> signal_switch_chatting_dialog();
+  //emit TCPNetworkConnection::get_instance() -> signal_switch_chatting_dialog();
 }
 
 MainWindow::~MainWindow() { delete ui; }
