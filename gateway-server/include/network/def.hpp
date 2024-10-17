@@ -26,6 +26,7 @@ enum class ServiceStatus : uint8_t {
           JSONPARSE_ERROR,            // json parsing error
           NETWORK_ERROR,              // network failed
           GRPC_ERROR,                 // grpc error
+          GRPC_SERVER_NOT_EXISTS,       //GRPC server not exist
           CHATTING_SERVER_NOT_EXISTS, // chatting server not exist
           REDIS_UNKOWN_ERROR,         // redis server error code
           REDIS_CPATCHA_NOT_FOUND,    // redis no cpatcha
