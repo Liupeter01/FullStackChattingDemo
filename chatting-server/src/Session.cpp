@@ -60,11 +60,11 @@ void Session::sendMessage(ServiceType srv_type, const std::string &message) {
 
     m_send_queue.push(std::make_unique<Send>(
         static_cast<uint16_t>(srv_type), temporary, [](auto x) {
-          return boost::asio::detail::socket_ops::network_to_host_short(x);
+          return boost::asio::detail::socket_ops::host_to_network_short(x);
         }));
 
     /*currently, there is no task inside queue*/
-    if (m_send_queue.empty()) {
+    if (!m_send_queue.empty()) {
       auto &front = m_send_queue.front();
       boost::asio::async_write(s_socket,
                                boost::asio::buffer(front->get_header_base(),
