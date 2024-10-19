@@ -6,7 +6,7 @@
 #include <QJsonDocument>
 
 TCPNetworkConnection::TCPNetworkConnection()
-    : m_buffer([](auto x) { return qToLittleEndian(x); }) {
+    : m_buffer([](auto x) { return qFromBigEndian(x); }) {
   /*callbacks should be registered at first(before signal)*/
   registerCallback();
 
@@ -42,54 +42,86 @@ void TCPNetworkConnection::registerSocketSignal() {
 
   /*receive data from server*/
   connect(&m_socket, &QTcpSocket::readyRead, [this]() {
-    QByteArray array = m_socket.readAll();
+      while (m_socket.bytesAvailable() > 0) {
+          QByteArray array = m_socket.readAll();  // Read all available data
 
-    /*make sure header is full*/
-    if (m_buffer.check_header_remaining()) {
-      [[maybe_unused]] auto res = m_buffer.insert_header(array);
-      return;
-    }
+          /*
+           * Ensure the received data is large enough to include the header
+           * if no enough data, then continue waiting
+           */
+          while(array.size() >= m_buffer.get_header_length()){
 
-    /*insert body until it meets the requirement of the length*/
-    if (!m_buffer.insert_body(array)) {
-      return;
-    }
+              // Check if we are still receiving the header
+              if (m_buffer.check_header_remaining()) {
 
-    /*record them temporarily*/
-    m_received._id = m_buffer.get_id().value();
-    m_received._length = m_buffer.get_length().value();
-    m_received._msg = m_buffer.get_msg_body().value();
+                  /*
+               * Take the necessary portion from the array for the header
+               * Insert the header data into the buffer
+               */
+                  m_buffer._buffer = array.left(m_buffer.get_header_length());
+                  m_buffer.update_pointer_pos(m_buffer.get_header_length());
 
-    qDebug() << "msg_id = " << m_received._id
-             << "msg_length = " << m_received._length
-             << "msg_data = " << m_received._msg;
+                  m_received._id = m_buffer.get_id().value();
+                  m_received._length = m_buffer.get_length().value();
 
-    /*erase current packet(include header and body)*/
-    m_buffer.clear();
+                  // Clear the header part from the array
+                  array.remove(0, m_buffer.get_header_length());
+              }
 
-    /*parse it as json*/
-    QJsonDocument json_obj = QJsonDocument::fromJson(m_received._msg);
-    if (json_obj.isNull()) { // converting failed
-      // journal log system
-      qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
-      emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
-      return;
-    }
+              if(array.size() < m_received._length){
+                  return;
+              }
 
-    if (!json_obj.isObject()) {
-      // journal log system
-      qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
-      emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
-      return;
-    }
+              // If we have remaining data in array, treat it as body
+              if (m_buffer.check_body_remaining()) {
 
-    /*to prevent app crash due to callback is not exists*/
-    try {
-      m_callbacks[static_cast<ServiceType>(m_received._id)](
-          std::move(json_obj.object()));
-    } catch (const std::exception &e) {
-      qDebug() << e.what();
-    }
+                  std::memcpy(m_buffer.get_body_base(), array.data(), m_received._length);
+
+                  m_buffer.update_pointer_pos(m_received._length);
+
+                  /*
+                   * Clear the body part from the array
+                   * Maybe there are some other data inside
+                   */
+                  array.remove(0, m_received._length);
+              }
+          }
+
+          // Now, both the header and body are fully received
+          m_received._msg = m_buffer.get_msg_body().value();
+
+          // Debug output to show the received message
+          qDebug() << "msg_id = " << m_received._id << "\n"
+                   << "msg_length = " << m_received._length << "\n"
+                   << "msg_data = " << m_received._msg << "\n";
+
+          // Clear the buffer for the next message
+          m_buffer.clear();
+
+          /*parse it as json*/
+          QJsonDocument json_obj = QJsonDocument::fromJson(m_received._msg);
+          if (json_obj.isNull()) { // converting failed
+              // journal log system
+              qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
+              emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
+              return;
+          }
+
+          if (!json_obj.isObject()) {
+              // journal log system
+              qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
+              emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
+              return;
+          }
+
+          /*to prevent app crash due to callback is not exists*/
+          try {
+              m_callbacks[static_cast<ServiceType>(m_received._id)](
+                  std::move(json_obj.object()));
+          } catch (const std::exception &e) {
+              qDebug() << e.what();
+          }
+          }
   });
 }
 
