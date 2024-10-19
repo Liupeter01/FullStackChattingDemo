@@ -33,7 +33,7 @@ public:
   bool setValue(const std::string &key, const std::string &value);
   bool setValue2Hash(const std::string &key, const std::string &field,
                      const std::string &value);
-  bool delValueFromHash(const std::string& key, const std::string& field);
+  bool delValueFromHash(const std::string &key, const std::string &field);
   bool leftPush(const std::string &key, const std::string &value);
   bool rightPush(const std::string &key, const std::string &value);
   bool delPair(const std::string &key);
