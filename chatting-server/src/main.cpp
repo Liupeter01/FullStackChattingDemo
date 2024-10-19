@@ -6,6 +6,7 @@
 #include <redis/RedisManager.hpp>
 #include <sql/MySQLConnectionPool.hpp>
 #include <grpc/BalanceServicePool.hpp>
+#include <grpc/GrpcBalanceService.hpp>
 #include <grpc/DistributedChattingServicePool.hpp>
 #include <grpc/GrpcDistributedChattingImpl.hpp>
 
@@ -42,6 +43,21 @@ int main() {
             std::thread grpc_server_thread([&server]() {
                       server->Wait();
                       });
+
+            /*register grpc server to balance-server lists*/
+            auto response = gRPCBalancerService::registerGrpcServer(
+                      ServerConfig::get_instance()->GrpcServerName,
+                      ServerConfig::get_instance()->GrpcServerHost,
+                      std::to_string(ServerConfig::get_instance()->GrpcServerPort)
+            );
+
+            if (response.error() !=
+                      static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
+                      spdlog::error("[{}] Try register GRPC Server Failed!, "
+                                "error code {}",
+                                ServerConfig::get_instance()->GrpcServerName, response.error());
+                      std::abort();
+            }
 
     /*setting up signal*/
     boost::asio::io_context ioc;
@@ -83,6 +99,22 @@ int main() {
     */
     raii->get()->delValueFromHash(redis_server_login,
               ServerConfig::get_instance()->GrpcServerName);
+
+    /*
+    * Chatting Server Shutdown
+    * Delete current grpc server from balance-server grpc lists
+    */
+    response = gRPCBalancerService::chattingServerShutdown(
+              ServerConfig::get_instance()->GrpcServerName
+    );
+
+    if (response.error() !=
+              static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
+              spdlog::error("[{}] Try Remove Current GRPC Server From Lists Failed!, "
+                        "error code {}",
+                        ServerConfig::get_instance()->GrpcServerName, response.error());
+              std::abort();
+    }
 
   } catch (const std::exception &e) {
     spdlog::error("{}", e.what());
