@@ -37,9 +37,7 @@ void Session::startSession() {
   }
 }
 
-void Session::setUUID(const std::string& uuid){
-          s_uuid = uuid;
-}
+void Session::setUUID(const std::string &uuid) { s_uuid = uuid; }
 
 void Session::closeSession() {
   s_closed = true;
@@ -153,9 +151,9 @@ void Session::handle_header(std::shared_ptr<Session> session,
     if (msg_id >= static_cast<uint16_t>(ServiceType::SERVICE_UNKNOWN)) {
       session->s_gate->terminateConnection(session->s_session_id);
       session->closeSession();
-      spdlog::warn(
-          "Client [Session = {}] Header Error: Exit Due To Invalid Service ID {}!",
-          session->s_session_id, msg_id);
+      spdlog::warn("Client [Session = {}] Header Error: Exit Due To Invalid "
+                   "Service ID {}!",
+                   session->s_session_id, msg_id);
       return;
     }
 
@@ -173,9 +171,10 @@ void Session::handle_header(std::shared_ptr<Session> session,
     if (msg_length > MAX_LENGTH) {
       session->s_gate->terminateConnection(session->s_session_id);
       session->closeSession();
-      spdlog::warn("Client [Session = {}] Header Error: Exit Due To Invalid Data "
-                   "Length, {} Bytes Received!",
-                   session->s_session_id, msg_length);
+      spdlog::warn(
+          "Client [Session = {}] Header Error: Exit Due To Invalid Data "
+          "Length, {} Bytes Received!",
+          session->s_session_id, msg_length);
       return;
     }
 

@@ -51,54 +51,52 @@ void SyncLogic::commit(pair recv_node) {
  * counter
  * 2. HGET exist: Increment by 1
  */
-void SyncLogic::incrementConnection()
-{
-          connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
-                    raii;
+void SyncLogic::incrementConnection() {
+  connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
+      raii;
 
-          /*try to acquire value from redis*/
-          std::optional<std::string> counter = raii->get()->getValueFromHash(
-                    redis_server_login, ServerConfig::get_instance()->GrpcServerName);
+  /*try to acquire value from redis*/
+  std::optional<std::string> counter = raii->get()->getValueFromHash(
+      redis_server_login, ServerConfig::get_instance()->GrpcServerName);
 
-          std::size_t new_number(0);
+  std::size_t new_number(0);
 
-          /* redis has this value then read it from redis*/
-          if (counter.has_value()) {
-                    new_number = tools::string_to_value<std::size_t>(counter.value()).value();
-          }
+  /* redis has this value then read it from redis*/
+  if (counter.has_value()) {
+    new_number = tools::string_to_value<std::size_t>(counter.value()).value();
+  }
 
-          /*incerment and set value to hash by using HSET*/
-          raii->get()->setValue2Hash(redis_server_login,
-                    ServerConfig::get_instance()->GrpcServerName,
-                    std::to_string(++new_number));
+  /*incerment and set value to hash by using HSET*/
+  raii->get()->setValue2Hash(redis_server_login,
+                             ServerConfig::get_instance()->GrpcServerName,
+                             std::to_string(++new_number));
 }
 
 /*
-*  sub user connection counter for current server
-* 1. HGET not exist: Current Chatting server didn't setting up connection
-* counter
-* 2. HGET exist: Decrement by 1
-*/
-void SyncLogic::decrementConnection()
-{
-          connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
-                    raii;
+ *  sub user connection counter for current server
+ * 1. HGET not exist: Current Chatting server didn't setting up connection
+ * counter
+ * 2. HGET exist: Decrement by 1
+ */
+void SyncLogic::decrementConnection() {
+  connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
+      raii;
 
-          /*try to acquire value from redis*/
-          std::optional<std::string> counter = raii->get()->getValueFromHash(
-                    redis_server_login, ServerConfig::get_instance()->GrpcServerName);
+  /*try to acquire value from redis*/
+  std::optional<std::string> counter = raii->get()->getValueFromHash(
+      redis_server_login, ServerConfig::get_instance()->GrpcServerName);
 
-          std::size_t new_number(0);
+  std::size_t new_number(0);
 
-          /* redis has this value then read it from redis*/
-          if (counter.has_value()) {
-                    new_number = tools::string_to_value<std::size_t>(counter.value()).value();
-          }
+  /* redis has this value then read it from redis*/
+  if (counter.has_value()) {
+    new_number = tools::string_to_value<std::size_t>(counter.value()).value();
+  }
 
-          /*decerment and set value to hash by using HSET*/
-          raii->get()->setValue2Hash(redis_server_login,
-                    ServerConfig::get_instance()->GrpcServerName,
-                    std::to_string(--new_number));
+  /*decerment and set value to hash by using HSET*/
+  raii->get()->setValue2Hash(redis_server_login,
+                             ServerConfig::get_instance()->GrpcServerName,
+                             std::to_string(--new_number));
 }
 
 void SyncLogic::generateErrorMessage(const std::string &log, ServiceType type,
@@ -244,11 +242,11 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
                          redis_root.toStyledString());
 
     /*
-* add user connection counter for current server
-* 1. HGET not exist: Current Chatting server didn't setting up connection
-* counter
-* 2. HGET exist: Increment by 1
-*/
+     * add user connection counter for current server
+     * 1. HGET not exist: Current Chatting server didn't setting up connection
+     * counter
+     * 2. HGET exist: Increment by 1
+     */
     incrementConnection();
   }
 }
@@ -256,13 +254,13 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
 void SyncLogic::handlingLogout(ServiceType srv_type,
                                std::shared_ptr<Session> session, NodePtr recv) {
 
-          /*
-          * sub user connection counter for current server
-          * 1. HGET not exist: Current Chatting server didn't setting up connection
-          * counter
-          * 2. HGET exist: Decrement by 1
-          */
-          decrementConnection();
+  /*
+   * sub user connection counter for current server
+   * 1. HGET not exist: Current Chatting server didn't setting up connection
+   * counter
+   * 2. HGET exist: Decrement by 1
+   */
+  decrementConnection();
 }
 
 /*get user's basic info(name, age, sex, ...) from redis*/

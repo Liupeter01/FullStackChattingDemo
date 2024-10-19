@@ -7,9 +7,9 @@ struct ServerConfig : public Singleton<ServerConfig> {
   friend class Singleton<ServerConfig>;
 
 public:
-          std::string GrpcServerName;
-          std::string GrpcServerHost;
-          unsigned short GrpcServerPort;
+  std::string GrpcServerName;
+  std::string GrpcServerHost;
+  unsigned short GrpcServerPort;
 
   unsigned short ChattingServerPort;
   std::size_t ChattingServerQueueSize;
@@ -48,10 +48,9 @@ private:
   }
 
   void loadGrpcServerInfo() {
-            GrpcServerName =
-                      m_ini["gRPCServer"]["server_name"].as<std::string>();
-            GrpcServerHost = m_ini["gRPCServer"]["host"].as<std::string>();
-          GrpcServerPort = m_ini["gRPCServer"]["port"].as<unsigned short>();
+    GrpcServerName = m_ini["gRPCServer"]["server_name"].as<std::string>();
+    GrpcServerHost = m_ini["gRPCServer"]["host"].as<std::string>();
+    GrpcServerPort = m_ini["gRPCServer"]["port"].as<unsigned short>();
   }
 
   void loadChattingServiceInfo() {

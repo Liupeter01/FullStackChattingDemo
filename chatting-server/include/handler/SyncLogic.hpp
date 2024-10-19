@@ -3,14 +3,14 @@
 #define _SYNCLOGIC_HPP_
 #include <atomic>
 #include <condition_variable>
+#include <memory>
 #include <mutex>
 #include <network/def.hpp>
+#include <optional>
 #include <queue>
-#include <memory>
 #include <server/Session.hpp>
 #include <singleton/singleton.hpp>
 #include <thread>
-#include <optional>
 #include <unordered_map>
 
 /*declaration*/
@@ -54,18 +54,20 @@ private:
                       NodePtr recv);
 
   /*
-  * get user's basic info(name, age, sex, ...) from redis
-  * 1. we are going to search for info inside redis first, if nothing found, then goto 2
-  * 2. searching for user info inside mysql
-  */
-  std::optional<std::unique_ptr<UserNameCard>> getUserBasicInfo(const std::string& key);
+   * get user's basic info(name, age, sex, ...) from redis
+   * 1. we are going to search for info inside redis first, if nothing found,
+   * then goto 2
+   * 2. searching for user info inside mysql
+   */
+  std::optional<std::unique_ptr<UserNameCard>>
+  getUserBasicInfo(const std::string &key);
 
 public:
-          /*redis*/
-          static std::string redis_server_login;
+  /*redis*/
+  static std::string redis_server_login;
 
-          /*store user base info in redis*/
-          static std::string user_prefix;
+  /*store user base info in redis*/
+  static std::string user_prefix;
 
 private:
   std::atomic<bool> m_stop;
