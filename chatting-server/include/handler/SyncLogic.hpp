@@ -44,6 +44,9 @@ private:
   void generateErrorMessage(const std::string &log, ServiceType type,
                             ServiceStatus status, SessionPtr conn);
 
+  void incrementConnection();
+  void decrementConnection();
+
   /*Execute Operations*/
   void handlingLogin(ServiceType srv_type, std::shared_ptr<Session> session,
                      NodePtr recv);
