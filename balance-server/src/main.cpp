@@ -1,11 +1,11 @@
 #include <boost/asio.hpp>
 #include <config/ServerConfig.hpp>
-#include <redis/RedisManager.hpp>
 #include <grpc/GrpcBalancerImpl.hpp>
+#include <redis/RedisManager.hpp>
 #include <thread>
 
 int main() {
-          [[maybe_unused]] auto& redis = redis::RedisConnectionPool::get_instance();
+  [[maybe_unused]] auto &redis = redis::RedisConnectionPool::get_instance();
 
   std::string address =
       fmt::format("{}:{}", ServerConfig::get_instance()->BalanceServiceAddress,

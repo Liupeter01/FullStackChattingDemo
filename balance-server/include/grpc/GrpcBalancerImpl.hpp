@@ -51,24 +51,24 @@ public:
 
   // chatting server acquires other servers info through this service
   virtual ::grpc::Status
-            GetPeerChattingServerInfo(::grpc::ServerContext* context,
-                      const ::message::PeerListsRequest* request,
-                      ::message::PeerResponse* response);
+  GetPeerChattingServerInfo(::grpc::ServerContext *context,
+                            const ::message::PeerListsRequest *request,
+                            ::message::PeerResponse *response);
 
   virtual ::grpc::Status
-            GetPeerGrpcServerInfo(::grpc::ServerContext* context,
-                      const ::message::PeerListsRequest* request,
-                      ::message::PeerResponse* response);
+  GetPeerGrpcServerInfo(::grpc::ServerContext *context,
+                        const ::message::PeerListsRequest *request,
+                        ::message::PeerResponse *response);
 
   virtual ::grpc::Status RegisterChattingGrpcServer(
-            ::grpc::ServerContext* context,
-            const ::message::GrpcChattingServerRegRequest* request,
-            ::message::GrpcChattingServerResponse* response);
+      ::grpc::ServerContext *context,
+      const ::message::GrpcChattingServerRegRequest *request,
+      ::message::GrpcChattingServerResponse *response);
 
   virtual ::grpc::Status grpc::GrpcBalancerImpl::ChattingServerShutDown(
-            ::grpc::ServerContext* context,
-            const ::message::GrpcChattingServerShutdownRequest* request,
-            ::message::GrpcChattingServerResponse* response);
+      ::grpc::ServerContext *context,
+      const ::message::GrpcChattingServerShutdownRequest *request,
+      ::message::GrpcChattingServerResponse *response);
 
   static std::string userTokenGenerator();
 

@@ -237,38 +237,39 @@ void grpc::GrpcBalancerImpl::registerUserInfo(std::size_t uuid,
 }
 
 ::grpc::Status grpc::GrpcBalancerImpl::ChattingServerShutDown(
-          ::grpc::ServerContext* context,
-          const ::message::GrpcChattingServerShutdownRequest* request,
-          ::message::GrpcChattingServerResponse* response)
-{
-          /*is both operation success or not*/
-          bool status = true;
+    ::grpc::ServerContext *context,
+    const ::message::GrpcChattingServerShutdownRequest *request,
+    ::message::GrpcChattingServerResponse *response) {
+  /*is both operation success or not*/
+  bool status = true;
 
-          {
-                    std::lock_guard<std::mutex> _lckg(this->grpc_mtx);
-                    auto target = this->grpc_servers.find(request->cur_server());
-                    if (target == this->grpc_servers.end()) {
-                              status = false;
-                              spdlog::warn("[Balance Server]: GRPC Peer Server {} Remove Failed", request->cur_server());
-                    }
-                    else{
-                              this->grpc_servers.erase(target);
-                    }
-          }
-          {
-                    std::lock_guard<std::mutex> _lckg(this->chatting_mtx);
-                    auto target = this->chatting_servers.find(request->cur_server());
-                    if (target == this->chatting_servers.end()) {
-                              status = false;
-                              spdlog::warn("[Balance Server]: GRPC Peer Server {} Remove Failed", request->cur_server());
-                    }
-                    else {
-                              this->chatting_servers.erase(target);
-                    }
-          }
+  {
+    std::lock_guard<std::mutex> _lckg(this->grpc_mtx);
+    auto target = this->grpc_servers.find(request->cur_server());
+    if (target == this->grpc_servers.end()) {
+      status = false;
+      spdlog::warn("[Balance Server]: GRPC Peer Server {} Remove Failed",
+                   request->cur_server());
+    } else {
+      this->grpc_servers.erase(target);
+    }
+  }
+  {
+    std::lock_guard<std::mutex> _lckg(this->chatting_mtx);
+    auto target = this->chatting_servers.find(request->cur_server());
+    if (target == this->chatting_servers.end()) {
+      status = false;
+      spdlog::warn("[Balance Server]: GRPC Peer Server {} Remove Failed",
+                   request->cur_server());
+    } else {
+      this->chatting_servers.erase(target);
+    }
+  }
 
-          response->set_error(static_cast<std::size_t>(status ? ServiceStatus::SERVICE_SUCCESS : ServiceStatus::GRPC_SERVER_NOT_EXISTS));
-          return grpc::Status::OK;
+  response->set_error(
+      static_cast<std::size_t>(status ? ServiceStatus::SERVICE_SUCCESS
+                                      : ServiceStatus::GRPC_SERVER_NOT_EXISTS));
+  return grpc::Status::OK;
 }
 
 std::string grpc::GrpcBalancerImpl::userTokenGenerator() {
