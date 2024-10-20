@@ -178,26 +178,44 @@ void TCPNetworkConnection::registerCallback() {
           }
           else{
               auto uuid = json["uuid"].toString();
+              auto username = json["username"].toString();
               auto nickname = json["nickname"].toString();
               auto avator = json["avator"].toString();
               auto description = json["description"].toString();
               auto sex = static_cast<Sex>(json["sex"].toInt());
 
               qDebug() << "Retrieve Data From Server of uuid = " << uuid << ":"
-                       << "\nnickname = " << nickname
-                       << "\avator = " << avator
-                       << "\ndescription = " << description << '\n';
+                       << "username = " << username << '\n'
+                       << "nickname = " << nickname << '\n'
+                       << "avator = " << avator << '\n'
+                       << "description = " << description << '\n';
 
               emit signal_search_username(
-                  std::make_shared<UserNameCard>(uuid, avator, nickname, description, sex),
+                  std::make_shared<UserNameCard>(uuid, avator, username, nickname, description, sex),
                   ServiceStatus::SERVICE_SUCCESS
               );
           }
       }));
 
 
+   /*Client send friend request to other*/
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
-      ServiceType::SERVICE_RESERVE_4, [this](QJsonObject &&json) {
+      ServiceType::SERVICE_FRIENDREQUESTRESPONSE, [this](QJsonObject &&json) {
+          /*error occured!*/
+          if (!json.contains("error")) {
+              qDebug() << "Json Parse Error!";
+
+              //emit
+              return;
+          }
+          else if (json["error"].toInt() != static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
+              qDebug() << "Friend Request Send Failed!";
+
+              //emit
+              return;
+          }
+
+            qDebug() << "Friend Request Send Successfully!";
 
       }));
 }
