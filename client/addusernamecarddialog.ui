@@ -117,7 +117,7 @@
             </size>
            </property>
            <property name="text">
-            <string>FFriend Searching Error</string>
+            <string>Friend Searching Error</string>
            </property>
           </widget>
          </item>
