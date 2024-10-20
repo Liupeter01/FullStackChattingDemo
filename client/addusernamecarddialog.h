@@ -4,14 +4,18 @@
 /*store user info*/
 #include "UserNameCard.h"
 #include <QDialog>
-#include <memory>
 
 namespace Ui {
 class AddUserNameCardDialog;
 }
 
+/* forward declartion */
+class AddUserRequestDialog;
+
 class AddUserNameCardDialog : public QDialog {
   Q_OBJECT
+
+    friend class AddUserRequestDialog;
 
 public:
   explicit AddUserNameCardDialog(QWidget *parent = nullptr);
@@ -30,10 +34,13 @@ public:
 
 private slots:
   void on_add_friend_button_clicked();
+    void on_close_clicked();
 
 private:
-  void setWindowsStatus();
+  /*register signal*/
   void registerSignal();
+
+  void setWindowsStatus();
 
 private:
   Ui::AddUserNameCardDialog *ui;

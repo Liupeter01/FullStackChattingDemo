@@ -1,6 +1,6 @@
-#include "addusernamecarddialog.h"
-#include "adduserrequestdialog.h"
 #include "tools.h"
+#include "adduserrequestdialog.h"
+#include "addusernamecarddialog.h"
 #include "ui_addusernamecarddialog.h"
 
 AddUserNameCardDialog::AddUserNameCardDialog(QWidget *parent)
@@ -50,7 +50,7 @@ void AddUserNameCardDialog::setWindowsStatus() {
 void AddUserNameCardDialog::registerSignal() {}
 
 void AddUserNameCardDialog::on_add_friend_button_clicked() {
-  qDebug() << "Add friend button clicked!";
+  qDebug() << "[Valid Mode]: Add friend button clicked!";
 
   /*hide current AddUserNameCardDialog*/
   this->hide();
@@ -60,3 +60,12 @@ void AddUserNameCardDialog::on_add_friend_button_clicked() {
   dialog->setModal(true);
   dialog->show();
 }
+
+void AddUserNameCardDialog::on_close_clicked()
+{
+    qDebug() << "[Invalid Mode]: Add friend button clicked!";
+
+    /*hide current AddUserNameCardDialog*/
+    this->hide();
+}
+
