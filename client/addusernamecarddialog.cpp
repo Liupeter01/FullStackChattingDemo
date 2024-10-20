@@ -1,6 +1,6 @@
-#include "tools.h"
-#include "adduserrequestdialog.h"
 #include "addusernamecarddialog.h"
+#include "adduserrequestdialog.h"
+#include "tools.h"
 #include "ui_addusernamecarddialog.h"
 
 AddUserNameCardDialog::AddUserNameCardDialog(QWidget *parent)
@@ -16,16 +16,14 @@ AddUserNameCardDialog::AddUserNameCardDialog(QWidget *parent)
 
 AddUserNameCardDialog::~AddUserNameCardDialog() { delete ui; }
 
-void AddUserNameCardDialog::setDialogInvalid(bool status)
-{
-    if(status){
-        ui->invalid->hide();
-        ui->valid->show();
-    }
-    else{
-        ui->valid->hide();
-        ui->invalid->show();
-    }
+void AddUserNameCardDialog::setDialogInvalid(bool status) {
+  if (status) {
+    ui->invalid->hide();
+    ui->valid->show();
+  } else {
+    ui->valid->hide();
+    ui->invalid->show();
+  }
 }
 
 void AddUserNameCardDialog::setupUserInfo(std::unique_ptr<UserNameCard> info) {
@@ -61,11 +59,9 @@ void AddUserNameCardDialog::on_add_friend_button_clicked() {
   dialog->show();
 }
 
-void AddUserNameCardDialog::on_close_clicked()
-{
-    qDebug() << "[Invalid Mode]: Add friend button clicked!";
+void AddUserNameCardDialog::on_close_clicked() {
+  qDebug() << "[Invalid Mode]: Add friend button clicked!";
 
-    /*hide current AddUserNameCardDialog*/
-    this->hide();
+  /*hide current AddUserNameCardDialog*/
+  this->hide();
 }
-

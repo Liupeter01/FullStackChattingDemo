@@ -1,13 +1,13 @@
-#include "def.hpp"
-#include <QListWidgetItem>
-#include "addnewuserwidget.h"
 #include "mainframesearchlists.h"
+#include "addnewuserwidget.h"
+#include "def.hpp"
 #include "tcpnetworkconnection.h"
+#include <QListWidgetItem>
 
 MainFrameSearchLists::MainFrameSearchLists(QWidget *parent)
     : MainFrameShowLists(parent) {
-    /*register signal*/
-    registerSignal();
+  /*register signal*/
+  registerSignal();
 
   /*add a startup widget inside the list*/
   addNewUserWidget();
@@ -18,62 +18,57 @@ MainFrameSearchLists::MainFrameSearchLists(QWidget *parent)
 
 MainFrameSearchLists::~MainFrameSearchLists() {}
 
-void MainFrameSearchLists::registerSignal()
-{
-    /*connect to TCP mgr signal_search_username response*/
-    connect(TCPNetworkConnection::get_instance().get(), &TCPNetworkConnection::signal_search_username, this, &MainFrameSearchLists::slot_search_username);
+void MainFrameSearchLists::registerSignal() {
+  /*connect to TCP mgr signal_search_username response*/
+  connect(TCPNetworkConnection::get_instance().get(),
+          &TCPNetworkConnection::signal_search_username, this,
+          &MainFrameSearchLists::slot_search_username);
 }
 
-void MainFrameSearchLists::slot_search_username(std::optional<std::shared_ptr<UserNameCard>> info, ServiceStatus status)
-{
+void MainFrameSearchLists::slot_search_username(
+    std::optional<std::shared_ptr<UserNameCard>> info, ServiceStatus status) {
+  /*
+   * we received response from server
+   * so that we could stop the waiting dialog
+   */
+  emit signal_waiting_for_data(false);
+
+  /*create a AddUserNameCardDialog*/
+  m_Dlg = std::make_shared<AddUserNameCardDialog>(this);
+
+  /*using dynamic pointer cast Dialog->AddUserNameCardDialog*/
+  auto dialog = std::dynamic_pointer_cast<AddUserNameCardDialog>(m_Dlg);
+
+  /*search username error*/
+  if (!info.has_value() || status != ServiceStatus::SERVICE_SUCCESS) {
     /*
-     * we received response from server
-     * so that we could stop the waiting dialog
+     * show invalid window or valid
+     * valid = when signal_username_search returns a correct result
+     * invalid = oppsite from valid
      */
-    emit signal_waiting_for_data(false);
+    dialog->setDialogInvalid(false);
+    dialog->show();
+    return;
+  } else {
+    auto wrapper = info.value();
 
-    /*create a AddUserNameCardDialog*/
-    m_Dlg = std::make_shared<AddUserNameCardDialog>(this);
+    /*
+     * show invalid window or valid
+     * valid = when signal_username_search returns a correct result
+     * invalid = oppsite from valid
+     */
+    dialog->setDialogInvalid(true);
 
-    /*using dynamic pointer cast Dialog->AddUserNameCardDialog*/
-    auto dialog = std::dynamic_pointer_cast<AddUserNameCardDialog>(m_Dlg);
+    /*
+     * Transfer data to AddUserNameCardDialog
+     * load image from "/static/ dir directly"
+     */
+    dialog->setupUserInfo(std::make_unique<UserNameCard>(
+        wrapper->m_uuid, wrapper->m_avatorPath, wrapper->m_username,
+        wrapper->m_nickname, wrapper->m_description, wrapper->m_sex));
 
-    /*search username error*/
-    if(!info.has_value() || status != ServiceStatus::SERVICE_SUCCESS){
-        /*
-         * show invalid window or valid
-         * valid = when signal_username_search returns a correct result
-         * invalid = oppsite from valid
-         */
-        dialog->setDialogInvalid(false);
-        dialog->show();
-        return;
-    }
-    else{
-        auto wrapper = info.value();
-
-        /*
-         * show invalid window or valid
-         * valid = when signal_username_search returns a correct result
-         * invalid = oppsite from valid
-         */
-        dialog->setDialogInvalid(true);
-
-        /*
-         * Transfer data to AddUserNameCardDialog
-         * load image from "/static/ dir directly"
-         */
-        dialog->setupUserInfo(std::make_unique<UserNameCard>(
-            wrapper->m_uuid,
-            wrapper->m_avatorPath,
-            wrapper->m_username,
-            wrapper->m_nickname,
-            wrapper->m_description,
-            wrapper->m_sex
-        ));
-
-        dialog->show();
-    }
+    dialog->show();
+  }
 }
 
 void MainFrameSearchLists::addNewUserWidget() {

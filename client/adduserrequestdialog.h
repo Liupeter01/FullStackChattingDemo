@@ -1,15 +1,15 @@
 #ifndef ADDUSERREQUESTDIALOG_H
 #define ADDUSERREQUESTDIALOG_H
 
-#include <map>
-#include <vector>
-#include <memory>
 #include <QDialog>
 #include <QString>
+#include <map>
+#include <memory>
+#include <vector>
 /*store user info*/
 #include "UserNameCard.h"
-#include "usertagwidget.h"
 #include "onceclickableqlabel.h"
+#include "usertagwidget.h"
 
 namespace Ui {
 class AddUserRequestDialog;

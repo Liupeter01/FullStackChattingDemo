@@ -2,21 +2,22 @@
 #include "chattingcontactlist.h"
 #include "chattinghistorywidget.h"
 #include "loadingwaitdialog.h"
-#include "tools.h"
 #include "tcpnetworkconnection.h"
+#include "tools.h"
 #include "ui_chattingdlgmainframe.h"
 #include <QAction>
 #include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMouseEvent>
 #include <QPoint>
 #include <QRandomGenerator>
-#include <QJsonObject>
-#include <QJsonDocument>
 #include <QtEndian>
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
-    : m_send_status(false)  /*wait for data status is false*/
-    , QDialog(parent), ui(new Ui::ChattingDlgMainFrame), m_curQLabel(nullptr),
+    : m_send_status(false) /*wait for data status is false*/
+      ,
+      QDialog(parent), ui(new Ui::ChattingDlgMainFrame), m_curQLabel(nullptr),
       m_dlgMode(
           ChattingDlgMode::ChattingDlgChattingMode) /*chatting mode by default*/
 {
@@ -116,10 +117,12 @@ void ChattingDlgMainFrame::registerSignal() {
           this, &ChattingDlgMainFrame::switchNewUserPage);
 
   /*connect signal<->slot when item was clicked in the QListWidget*/
-  connect(ui->search_list, &QListWidget::itemClicked, this, &ChattingDlgMainFrame::slot_list_item_clicked);
+  connect(ui->search_list, &QListWidget::itemClicked, this,
+          &ChattingDlgMainFrame::slot_list_item_clicked);
 
   /*connect signal<->slot when slot_search_username was triggered*/
-  connect(ui->search_list, &MainFrameSearchLists::signal_waiting_for_data, this, &ChattingDlgMainFrame::slot_waiting_for_data);
+  connect(ui->search_list, &MainFrameSearchLists::signal_waiting_for_data, this,
+          &ChattingDlgMainFrame::slot_waiting_for_data);
 }
 
 void ChattingDlgMainFrame::registerSearchEditAction() {
@@ -319,11 +322,12 @@ void ChattingDlgMainFrame::slot_search_text_changed() {
 }
 
 void ChattingDlgMainFrame::slot_load_more_record() {
-    m_loading = std::shared_ptr<LoadingWaitDialog>(new LoadingWaitDialog(this),[](LoadingWaitDialog* ){});
+  m_loading = std::shared_ptr<LoadingWaitDialog>(new LoadingWaitDialog(this),
+                                                 [](LoadingWaitDialog *) {});
 
   /*do not block the execute flow*/
-    m_loading->setModal(true);
-    m_loading->show();
+  m_loading->setModal(true);
+  m_loading->show();
 
   /*load more data to the list*/
   qDebug() << "load more data to the list";
@@ -358,50 +362,51 @@ void ChattingDlgMainFrame::slot_display_contact_list() {
   switchRelevantListWidget();
 }
 
-void ChattingDlgMainFrame::slot_list_item_clicked(QListWidgetItem *clicked_item)
-{
-    qDebug() << "item clicked! ";
+void ChattingDlgMainFrame::slot_list_item_clicked(
+    QListWidgetItem *clicked_item) {
+  qDebug() << "item clicked! ";
 
-    /*get clicked customlized widget object*/
-    QWidget *widget = ui->search_list->itemWidget(clicked_item);
-    if (widget == nullptr) {
-        qDebug() << "invalid click item! ";
-        return;
-    }
-    auto item = reinterpret_cast<ListItemWidgetBase *>(widget);
-    if (item->getItemType() == ListItemType::Default) {
-        qDebug() << "[ListItemType::Default]:list item base class!";
-        return;
+  /*get clicked customlized widget object*/
+  QWidget *widget = ui->search_list->itemWidget(clicked_item);
+  if (widget == nullptr) {
+    qDebug() << "invalid click item! ";
+    return;
+  }
+  auto item = reinterpret_cast<ListItemWidgetBase *>(widget);
+  if (item->getItemType() == ListItemType::Default) {
+    qDebug() << "[ListItemType::Default]:list item base class!";
+    return;
 
-    }
-    else if (item->getItemType() == ListItemType::SearchUserId){
-        qDebug() << "[ListItemType::SearchUserId]:generate add new usr window!";
+  } else if (item->getItemType() == ListItemType::SearchUserId) {
+    qDebug() << "[ListItemType::SearchUserId]:generate add new usr window!";
 
-        /*get username info*/
-        QJsonObject json_obj;
-        json_obj["username"] = ui->search_user_edit->text();
-        QJsonDocument doc(json_obj);
+    /*get username info*/
+    QJsonObject json_obj;
+    json_obj["username"] = ui->search_user_edit->text();
+    QJsonDocument doc(json_obj);
 
-        /*it should be store as a temporary object, because send_buffer will modify it!*/
-        auto json_data = doc.toJson(QJsonDocument::Compact);
+    /*it should be store as a temporary object, because send_buffer will modify
+     * it!*/
+    auto json_data = doc.toJson(QJsonDocument::Compact);
 
-        SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
-            static_cast<uint16_t>(ServiceType::SERVICE_SEARCHUSERNAME), json_data,
-            [](auto x) { return qToBigEndian(x); });
+    SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
+        static_cast<uint16_t>(ServiceType::SERVICE_SEARCHUSERNAME), json_data,
+        [](auto x) { return qToBigEndian(x); });
 
-        /*after connection to server, send TCP request*/
-        TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
+    /*after connection to server, send TCP request*/
+    TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
 
-        /*
-         * waiting for server reaction
-         * 1.Send username verification request to server: chattingdlgmainframe -> chattingserver
-         * 2.Server responses to client's mainframesearchlist framework: chattingserver -> mainframesearchlist
-         * 3.Framework send a cancel waiting signal to chattingdlgmaingframs: mainframesearchlist -> chattingdlgmainframe
-         * 4.Cancel waiting: slot_waiting_for_data(false);
-         */
-        qDebug() << "[ListItemType::SearchUserId]:Waiting For Server Response!";
-        waitForDataFromRemote(true);
-    }
+    /*
+     * waiting for server reaction
+     * 1.Send username verification request to server: chattingdlgmainframe ->
+     * chattingserver 2.Server responses to client's mainframesearchlist
+     * framework: chattingserver -> mainframesearchlist 3.Framework send a
+     * cancel waiting signal to chattingdlgmaingframs: mainframesearchlist ->
+     * chattingdlgmainframe 4.Cancel waiting: slot_waiting_for_data(false);
+     */
+    qDebug() << "[ListItemType::SearchUserId]:Waiting For Server Response!";
+    waitForDataFromRemote(true);
+  }
 }
 
 ChattingDlgMainFrame::~ChattingDlgMainFrame() {
@@ -453,22 +458,21 @@ void ChattingDlgMainFrame::switchNewUserPage() {
   ui->stackedWidget->setCurrentWidget(ui->newuserpage);
 }
 
-  /*wait for remote server data*/
-void ChattingDlgMainFrame::waitForDataFromRemote(bool status){
-    /*is still in loading*/
-    if(status){
-        m_loading = std::shared_ptr<LoadingWaitDialog>(new LoadingWaitDialog(this),[](LoadingWaitDialog* ){});
-        m_loading->setModal(true);
-        m_loading->show();
-        m_send_status = status;
-    }
-    else{
-        m_loading->hide();
-        m_loading->deleteLater();
-    }
+/*wait for remote server data*/
+void ChattingDlgMainFrame::waitForDataFromRemote(bool status) {
+  /*is still in loading*/
+  if (status) {
+    m_loading = std::shared_ptr<LoadingWaitDialog>(new LoadingWaitDialog(this),
+                                                   [](LoadingWaitDialog *) {});
+    m_loading->setModal(true);
+    m_loading->show();
+    m_send_status = status;
+  } else {
+    m_loading->hide();
+    m_loading->deleteLater();
+  }
 }
 
-void ChattingDlgMainFrame::slot_waiting_for_data(bool status)
-{
-    waitForDataFromRemote(status);
+void ChattingDlgMainFrame::slot_waiting_for_data(bool status) {
+  waitForDataFromRemote(status);
 }

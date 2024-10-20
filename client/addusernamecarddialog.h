@@ -15,7 +15,7 @@ class AddUserRequestDialog;
 class AddUserNameCardDialog : public QDialog {
   Q_OBJECT
 
-    friend class AddUserRequestDialog;
+  friend class AddUserRequestDialog;
 
 public:
   explicit AddUserNameCardDialog(QWidget *parent = nullptr);
@@ -27,14 +27,14 @@ public:
    * valid = when signal_username_search returns a correct result
    * invalid = oppsite from valid
    */
-    void setDialogInvalid(bool status);
+  void setDialogInvalid(bool status);
 
-    /*set usernamecard*/
+  /*set usernamecard*/
   void setupUserInfo(std::unique_ptr<UserNameCard> info);
 
 private slots:
   void on_add_friend_button_clicked();
-    void on_close_clicked();
+  void on_close_clicked();
 
 private:
   /*register signal*/

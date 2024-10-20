@@ -1,11 +1,11 @@
 #ifndef MAINFRAMESEARCHLISTS_H
 #define MAINFRAMESEARCHLISTS_H
 
-#include "def.hpp"
-#include <optional>
-#include <memory>
 #include "addusernamecarddialog.h"
+#include "def.hpp"
 #include "mainframeshowlists.h"
+#include <memory>
+#include <optional>
 
 // forward declearation
 class QListWidgetItem;
@@ -19,14 +19,15 @@ public:
 
 signals:
   /*
-    * waiting for data from remote server
-    * status = true: activate
-    * status = false: deactivate
-    */
-   void signal_waiting_for_data(bool status);
+   * waiting for data from remote server
+   * status = true: activate
+   * status = false: deactivate
+   */
+  void signal_waiting_for_data(bool status);
 
 private slots:
-    void slot_search_username(std::optional<std::shared_ptr<UserNameCard>> info, ServiceStatus status);
+  void slot_search_username(std::optional<std::shared_ptr<UserNameCard>> info,
+                            ServiceStatus status);
 
 private:
   /*register signal*/

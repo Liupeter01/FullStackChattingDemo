@@ -1,9 +1,9 @@
 #ifndef ADDUSERNAMECARDWIDGET_H
 #define ADDUSERNAMECARDWIDGET_H
 
+#include "UserNameCard.h"
 #include <QFrame>
 #include <memory>
-#include "UserNameCard.h"
 
 namespace Ui {
 class AddUserNameCardWidget;
@@ -17,7 +17,7 @@ public:
   virtual ~AddUserNameCardWidget();
 
 public:
-  //void setFriendAvator(const QPixmap &pic);
+  // void setFriendAvator(const QPixmap &pic);
   void setNameCardInfo(std::unique_ptr<UserNameCard> info);
 
   static const QSize getImageSize();
@@ -40,7 +40,6 @@ signals:
   void signal_add_friend();
 
 private slots:
-
 
 private:
   Ui::AddUserNameCardWidget *ui;

@@ -1,6 +1,6 @@
 #include "tcpnetworkconnection.h"
-#include "useraccountmanager.hpp"
 #include "UserNameCard.h"
+#include "useraccountmanager.hpp"
 #include <QDataStream>
 #include <QDebug>
 #include <QJsonDocument>
@@ -42,86 +42,87 @@ void TCPNetworkConnection::registerSocketSignal() {
 
   /*receive data from server*/
   connect(&m_socket, &QTcpSocket::readyRead, [this]() {
-      while (m_socket.bytesAvailable() > 0) {
-          QByteArray array = m_socket.readAll();  // Read all available data
+    while (m_socket.bytesAvailable() > 0) {
+      QByteArray array = m_socket.readAll(); // Read all available data
+
+      /*
+       * Ensure the received data is large enough to include the header
+       * if no enough data, then continue waiting
+       */
+      while (array.size() >= m_buffer.get_header_length()) {
+
+        // Check if we are still receiving the header
+        if (m_buffer.check_header_remaining()) {
 
           /*
-           * Ensure the received data is large enough to include the header
-           * if no enough data, then continue waiting
+           * Take the necessary portion from the array for the header
+           * Insert the header data into the buffer
            */
-          while(array.size() >= m_buffer.get_header_length()){
+          m_buffer._buffer = array.left(m_buffer.get_header_length());
+          m_buffer.update_pointer_pos(m_buffer.get_header_length());
 
-              // Check if we are still receiving the header
-              if (m_buffer.check_header_remaining()) {
+          m_received._id = m_buffer.get_id().value();
+          m_received._length = m_buffer.get_length().value();
 
-                  /*
-               * Take the necessary portion from the array for the header
-               * Insert the header data into the buffer
-               */
-                  m_buffer._buffer = array.left(m_buffer.get_header_length());
-                  m_buffer.update_pointer_pos(m_buffer.get_header_length());
+          // Clear the header part from the array
+          array.remove(0, m_buffer.get_header_length());
+        }
 
-                  m_received._id = m_buffer.get_id().value();
-                  m_received._length = m_buffer.get_length().value();
+        if (array.size() < m_received._length) {
+          return;
+        }
 
-                  // Clear the header part from the array
-                  array.remove(0, m_buffer.get_header_length());
-              }
+        // If we have remaining data in array, treat it as body
+        if (m_buffer.check_body_remaining()) {
 
-              if(array.size() < m_received._length){
-                  return;
-              }
+          std::memcpy(m_buffer.get_body_base(), array.data(),
+                      m_received._length);
 
-              // If we have remaining data in array, treat it as body
-              if (m_buffer.check_body_remaining()) {
+          m_buffer.update_pointer_pos(m_received._length);
 
-                  std::memcpy(m_buffer.get_body_base(), array.data(), m_received._length);
+          /*
+           * Clear the body part from the array
+           * Maybe there are some other data inside
+           */
+          array.remove(0, m_received._length);
+        }
+      }
 
-                  m_buffer.update_pointer_pos(m_received._length);
+      // Now, both the header and body are fully received
+      m_received._msg = m_buffer.get_msg_body().value();
 
-                  /*
-                   * Clear the body part from the array
-                   * Maybe there are some other data inside
-                   */
-                  array.remove(0, m_received._length);
-              }
-          }
+      // Debug output to show the received message
+      qDebug() << "msg_id = " << m_received._id << "\n"
+               << "msg_length = " << m_received._length << "\n"
+               << "msg_data = " << m_received._msg << "\n";
 
-          // Now, both the header and body are fully received
-          m_received._msg = m_buffer.get_msg_body().value();
+      // Clear the buffer for the next message
+      m_buffer.clear();
 
-          // Debug output to show the received message
-          qDebug() << "msg_id = " << m_received._id << "\n"
-                   << "msg_length = " << m_received._length << "\n"
-                   << "msg_data = " << m_received._msg << "\n";
+      /*parse it as json*/
+      QJsonDocument json_obj = QJsonDocument::fromJson(m_received._msg);
+      if (json_obj.isNull()) { // converting failed
+        // journal log system
+        qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
+        emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
+        return;
+      }
 
-          // Clear the buffer for the next message
-          m_buffer.clear();
+      if (!json_obj.isObject()) {
+        // journal log system
+        qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
+        emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
+        return;
+      }
 
-          /*parse it as json*/
-          QJsonDocument json_obj = QJsonDocument::fromJson(m_received._msg);
-          if (json_obj.isNull()) { // converting failed
-              // journal log system
-              qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
-              emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
-              return;
-          }
-
-          if (!json_obj.isObject()) {
-              // journal log system
-              qDebug() << __FILE__ << "[FATAL ERROR]: json object is null!\n";
-              emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
-              return;
-          }
-
-          /*to prevent app crash due to callback is not exists*/
-          try {
-              m_callbacks[static_cast<ServiceType>(m_received._id)](
-                  std::move(json_obj.object()));
-          } catch (const std::exception &e) {
-              qDebug() << e.what();
-          }
-          }
+      /*to prevent app crash due to callback is not exists*/
+      try {
+        m_callbacks[static_cast<ServiceType>(m_received._id)](
+            std::move(json_obj.object()));
+      } catch (const std::exception &e) {
+        qDebug() << e.what();
+      }
+    }
   });
 }
 
@@ -138,17 +139,18 @@ void TCPNetworkConnection::registerCallback() {
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
       ServiceType::SERVICE_LOGINRESPONSE, [this](QJsonObject &&json) {
         /*error occured!*/
-            if (!json.contains("error")) {
-                qDebug() << "Json Parse Error!";
-                emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
-                return;
-            }
-            if (json["error"].toInt() !=
-                static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
-                qDebug() << "Login Server Error!";
-                emit signal_login_failed(static_cast<ServiceStatus>(json["error"].toInt()));
-                return;
-            }
+        if (!json.contains("error")) {
+          qDebug() << "Json Parse Error!";
+          emit signal_login_failed(ServiceStatus::JSONPARSE_ERROR);
+          return;
+        }
+        if (json["error"].toInt() !=
+            static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
+          qDebug() << "Login Server Error!";
+          emit signal_login_failed(
+              static_cast<ServiceStatus>(json["error"].toInt()));
+          return;
+        }
 
         emit signal_switch_chatting_dialog();
       }));
@@ -156,67 +158,59 @@ void TCPNetworkConnection::registerCallback() {
   /*Client search username and server return result back*/
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
       ServiceType::SERVICE_SEARCHUSERNAMERESPONSE, [this](QJsonObject &&json) {
-          /*error occured!*/
-          if (!json.contains("error")) {
-              qDebug() << "Json Parse Error!";
+        /*error occured!*/
+        if (!json.contains("error")) {
+          qDebug() << "Json Parse Error!";
 
-              emit signal_search_username(
-                  std::nullopt,
-                  ServiceStatus::JSONPARSE_ERROR
-              );
-              return;
-          }
-          else if (json["error"].toInt() !=
-              static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
-              qDebug() << "Login Server Error!";
+          emit signal_search_username(std::nullopt,
+                                      ServiceStatus::JSONPARSE_ERROR);
+          return;
+        } else if (json["error"].toInt() !=
+                   static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
+          qDebug() << "Login Server Error!";
 
-              emit signal_search_username(
-                  std::nullopt,
-                  static_cast<ServiceStatus>(json["error"].toInt())
-              );
-              return;
-          }
-          else{
-              auto uuid = json["uuid"].toString();
-              auto username = json["username"].toString();
-              auto nickname = json["nickname"].toString();
-              auto avator = json["avator"].toString();
-              auto description = json["description"].toString();
-              auto sex = static_cast<Sex>(json["sex"].toInt());
+          emit signal_search_username(
+              std::nullopt, static_cast<ServiceStatus>(json["error"].toInt()));
+          return;
+        } else {
+          auto uuid = json["uuid"].toString();
+          auto username = json["username"].toString();
+          auto nickname = json["nickname"].toString();
+          auto avator = json["avator"].toString();
+          auto description = json["description"].toString();
+          auto sex = static_cast<Sex>(json["sex"].toInt());
 
-              qDebug() << "Retrieve Data From Server of uuid = " << uuid << ":"
-                       << "username = " << username << '\n'
-                       << "nickname = " << nickname << '\n'
-                       << "avator = " << avator << '\n'
-                       << "description = " << description << '\n';
+          qDebug() << "Retrieve Data From Server of uuid = " << uuid << ":"
+                   << "username = " << username << '\n'
+                   << "nickname = " << nickname << '\n'
+                   << "avator = " << avator << '\n'
+                   << "description = " << description << '\n';
 
-              emit signal_search_username(
-                  std::make_shared<UserNameCard>(uuid, avator, username, nickname, description, sex),
-                  ServiceStatus::SERVICE_SUCCESS
-              );
-          }
+          emit signal_search_username(
+              std::make_shared<UserNameCard>(uuid, avator, username, nickname,
+                                             description, sex),
+              ServiceStatus::SERVICE_SUCCESS);
+        }
       }));
 
-
-   /*Client send friend request to other*/
+  /*Client send friend request to other*/
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
       ServiceType::SERVICE_FRIENDREQUESTRESPONSE, [this](QJsonObject &&json) {
-          /*error occured!*/
-          if (!json.contains("error")) {
-              qDebug() << "Json Parse Error!";
+        /*error occured!*/
+        if (!json.contains("error")) {
+          qDebug() << "Json Parse Error!";
 
-              //emit
-              return;
-          }
-          else if (json["error"].toInt() != static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
-              qDebug() << "Friend Request Send Failed!";
+          // emit
+          return;
+        } else if (json["error"].toInt() !=
+                   static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
+          qDebug() << "Friend Request Send Failed!";
 
-              //emit
-              return;
-          }
+          // emit
+          return;
+        }
 
-            qDebug() << "Friend Request Send Successfully!";
-
+        qDebug() << "Friend Request Send Successfully!";
       }));
 }
 
@@ -229,7 +223,8 @@ void TCPNetworkConnection::slot_establish_long_connnection() {
            << "\ntoken = " << UserAccountManager::get_instance()->get_token()
            << '\n';
 
-  /*the successful or unsuccessful signal is going to generate in signal<->slot*/
+  /*the successful or unsuccessful signal is going to generate in
+   * signal<->slot*/
   m_socket.connectToHost(
       UserAccountManager::get_instance()->get_host(),
       UserAccountManager::get_instance()->get_port().toUShort());

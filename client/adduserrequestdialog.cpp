@@ -1,15 +1,15 @@
 #include "adduserrequestdialog.h"
 #include "addusernamecarddialog.h"
 #include "onceclickableqlabel.h"
+#include "tcpnetworkconnection.h"
 #include "tools.h"
 #include "ui_adduserrequestdialog.h"
 #include <QDebug>
-#include <QScrollBar>
-#include <QJsonObject>
 #include <QJsonDocument>
-#include "tcpnetworkconnection.h"
-#include <useraccountmanager.hpp>
+#include <QJsonObject>
+#include <QScrollBar>
 #include <algorithm>
+#include <useraccountmanager.hpp>
 
 AddUserRequestDialog::AddUserRequestDialog(QWidget *parent)
     : QDialog(parent), ui(new Ui::AddUserRequestDialog),
@@ -39,7 +39,8 @@ AddUserRequestDialog::AddUserRequestDialog(QWidget *parent)
    * transfer UserNameCard structure to current class
    * We need to send request by using this stucture
    */
-  this->m_info = std::move(reinterpret_cast<AddUserNameCardDialog*>(parent)->m_info);
+  this->m_info =
+      std::move(reinterpret_cast<AddUserNameCardDialog *>(parent)->m_info);
 
   /*load image for usertag widget*/
   Tools::loadImgResources({"unselect_tag.png"},
@@ -279,47 +280,49 @@ void AddUserRequestDialog::loadtestFunction() {
 }
 
 void AddUserRequestDialog::on_confirm_button_clicked() {
-    qDebug() << "[AddUserRequestDialog::on_confirm_button_clicked]: User Confirm To Send Request\n";
+  qDebug() << "[AddUserRequestDialog::on_confirm_button_clicked]: User Confirm "
+              "To Send Request\n";
 
-    /*get friends nickname*/
-    auto nickname = ui->nick_name_edit->text();
-    if(nickname.isEmpty()){
-        nickname = ui->nick_name_edit->placeholderText();
-    }
+  /*get friends nickname*/
+  auto nickname = ui->nick_name_edit->text();
+  if (nickname.isEmpty()) {
+    nickname = ui->nick_name_edit->placeholderText();
+  }
 
-    /*get the request msg sent to target user*/
-    auto req_msg =ui->request_msg_edit->text();
-    if(req_msg.isEmpty()){
-        req_msg = ui->request_msg_edit->placeholderText();
-    }
+  /*get the request msg sent to target user*/
+  auto req_msg = ui->request_msg_edit->text();
+  if (req_msg.isEmpty()) {
+    req_msg = ui->request_msg_edit->placeholderText();
+  }
 
+  /*generate json*/
+  QJsonObject obj;
+  obj["src_uuid"] = UserAccountManager::get_instance()->get_uuid(); // my uuid
+  obj["dst_uuid"] = m_info->m_uuid; // target uuid
+  obj["message"] = req_msg;
+  obj["nickname"] = nickname;
 
-    /*generate json*/
-    QJsonObject obj;
-    obj["src_uuid"] = UserAccountManager::get_instance()->get_uuid();   //my uuid
-    obj["dst_uuid"] = m_info->m_uuid;   //target uuid
-    obj["message"] = req_msg;
-    obj["nickname"] = nickname;
+  QJsonDocument doc(obj);
 
-    QJsonDocument doc(obj);
+  /*it should be store as a temporary object, because send_buffer will modify
+   * it!*/
+  auto json_data = doc.toJson(QJsonDocument::Compact);
 
-    /*it should be store as a temporary object, because send_buffer will modify it!*/
-    auto json_data = doc.toJson(QJsonDocument::Compact);
+  SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
+      static_cast<uint16_t>(ServiceType::SERVICE_FRIENDREQUEST_SRC), json_data,
+      [](auto x) { return qToBigEndian(x); });
 
-    SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
-        static_cast<uint16_t>(ServiceType::SERVICE_FRIENDREQUEST_SRC), json_data,
-        [](auto x) { return qToBigEndian(x); });
+  /*after connection to server, send TCP request*/
+  TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
 
-    /*after connection to server, send TCP request*/
-    TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
-
-    closeDialog();
+  closeDialog();
 }
 
 void AddUserRequestDialog::on_cancel_button_clicked() {
-    qDebug() << "[AddUserRequestDialog::on_cancel_button_clicked]: User Cancel Request\n";
+  qDebug() << "[AddUserRequestDialog::on_cancel_button_clicked]: User Cancel "
+              "Request\n";
 
-    closeDialog();
+  closeDialog();
 }
 
 void AddUserRequestDialog::slot_show_more_label() {}

@@ -58,7 +58,8 @@ signals:
    * client sent search username request to server
    * server return result back to client
    */
-  void signal_search_username(std::optional<std::shared_ptr<UserNameCard>>, ServiceStatus status);
+  void signal_search_username(std::optional<std::shared_ptr<UserNameCard>>,
+                              ServiceStatus status);
 
 private:
   /*establish tcp socket with server*/

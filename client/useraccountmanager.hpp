@@ -12,7 +12,7 @@ public:
   void set_host(const QString &_host) { m_info.host = _host; }
   void set_port(const QString &_port) { m_info.port = _port; }
   void set_token(const QString &_token) { m_info.token = _token; }
-  void set_uuid(const QString & _uuid) { m_info.uuid = _uuid; }
+  void set_uuid(const QString &_uuid) { m_info.uuid = _uuid; }
 
   const QString &get_host() const { return m_info.host; }
   const QString &get_port() const { return m_info.port; }
