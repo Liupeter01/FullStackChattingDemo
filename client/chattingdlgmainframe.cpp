@@ -115,7 +115,11 @@ void ChattingDlgMainFrame::registerSignal() {
   connect(ui->contact_list, &ChattingContactList::signal_switch_addnewuser,
           this, &ChattingDlgMainFrame::switchNewUserPage);
 
+  /*connect signal<->slot when item was clicked in the QListWidget*/
   connect(ui->search_list, &QListWidget::itemClicked, this, &ChattingDlgMainFrame::slot_list_item_clicked);
+
+  /*connect signal<->slot when slot_search_username was triggered*/
+  connect(ui->search_list, &MainFrameSearchLists::signal_waiting_for_data, this, &ChattingDlgMainFrame::slot_waiting_for_data);
 }
 
 void ChattingDlgMainFrame::registerSearchEditAction() {
@@ -373,13 +377,6 @@ void ChattingDlgMainFrame::slot_list_item_clicked(QListWidgetItem *clicked_item)
     else if (item->getItemType() == ListItemType::SearchUserId){
         qDebug() << "[ListItemType::SearchUserId]:generate add new usr window!";
 
-        /*waiting for server reaction*/
-        //if(m_send_status){
-        //    qDebug() << "[ListItemType::SearchUserId]:Still Waiting For Server Response!";
-        //    return;
-        //}
-        //waitForDataFromRemote(true);
-
         /*get username info*/
         QJsonObject json_obj;
         json_obj["username"] = ui->search_user_edit->text();
@@ -394,7 +391,16 @@ void ChattingDlgMainFrame::slot_list_item_clicked(QListWidgetItem *clicked_item)
 
         /*after connection to server, send TCP request*/
         TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
-        return;
+
+        /*
+         * waiting for server reaction
+         * 1.Send username verification request to server: chattingdlgmainframe -> chattingserver
+         * 2.Server responses to client's mainframesearchlist framework: chattingserver -> mainframesearchlist
+         * 3.Framework send a cancel waiting signal to chattingdlgmaingframs: mainframesearchlist -> chattingdlgmainframe
+         * 4.Cancel waiting: slot_waiting_for_data(false);
+         */
+        qDebug() << "[ListItemType::SearchUserId]:Waiting For Server Response!";
+        waitForDataFromRemote(true);
     }
 }
 
@@ -460,4 +466,9 @@ void ChattingDlgMainFrame::waitForDataFromRemote(bool status){
         m_loading->hide();
         m_loading->deleteLater();
     }
+}
+
+void ChattingDlgMainFrame::slot_waiting_for_data(bool status)
+{
+    waitForDataFromRemote(status);
 }

@@ -65,6 +65,13 @@ private:
   void waitForDataFromRemote(bool status);
 
 private slots:
+   /*
+    * waiting for data from remote server
+    * status = true: activate
+    * status = false: deactivate
+    */
+    void slot_waiting_for_data(bool status);
+
   /*search text changed*/
   void slot_search_text_changed();
 
