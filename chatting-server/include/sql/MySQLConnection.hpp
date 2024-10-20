@@ -31,9 +31,9 @@ enum class MySQLSelection : uint8_t {
   UPDATE_USER_PASSWD, // update user password
   USER_LOGIN_CHECK,   // check login username & password
   USER_UUID_CHECK,    // check account uuid in DB
-  USER_PROFILE,        // check account user profile
-  GET_USER_UUID,     //get uuid by username
-  USER_FRIEND_REQUEST      //User A send friend request to B
+  USER_PROFILE,       // check account user profile
+  GET_USER_UUID,      // get uuid by username
+  USER_FRIEND_REQUEST // User A send friend request to B
 };
 
 class MySQLConnection {
@@ -54,7 +54,9 @@ public:
   std::optional<std::unique_ptr<UserNameCard>> getUserProfile(std::size_t uuid);
 
   /*create user friend request MySQLSelection::USER_FRIEND_REQUEST*/
-  bool createFriendRequest(const std::size_t src_uuid, const std::size_t dst_uuid, std::string_view nickname, std::string_view message);
+  bool createFriendRequest(const std::size_t src_uuid,
+                           const std::size_t dst_uuid,
+                           std::string_view nickname, std::string_view message);
 
   /*insert new user, call MySQLSelection::CREATE_NEW_USER*/
   bool registerNewUser(MySQLRequestStruct &&request);

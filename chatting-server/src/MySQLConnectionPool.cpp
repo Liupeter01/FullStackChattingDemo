@@ -76,19 +76,19 @@ void mysql::MySQLConnectionPool::registerSQLStatement() {
                          fmt::format("SELECT * FROM UserProfile WHERE {} = ?",
                                      std::string("uuid"))));
 
-  m_sql.insert(std::pair(MySQLSelection::GET_USER_UUID,
-            fmt::format("SELECT uuid FROM Authentication WHERE {} = ?",
-                      std::string("username"))));
+  m_sql.insert(
+      std::pair(MySQLSelection::GET_USER_UUID,
+                fmt::format("SELECT uuid FROM Authentication WHERE {} = ?",
+                            std::string("username"))));
 
-  m_sql.insert(std::pair(MySQLSelection::USER_FRIEND_REQUEST, 
-            fmt::format("INSERT INTO FriendRequest ({},{},{},{},{}) VALUES (?, ?, ?, ?, ?)"
-                      " ON DUPLICATE KEY UPDATE src_uuid = src_uuid, dst_uuid = dst_uuid",
-                    std::string("src_uuid"), 
-                      std::string("dst_uuid"), 
-                      std::string("nickname"),
-                      std::string("message"),
-                      std::string("status")
-            )));
+  m_sql.insert(std::pair(
+      MySQLSelection::USER_FRIEND_REQUEST,
+      fmt::format(
+          "INSERT INTO FriendRequest ({},{},{},{},{}) VALUES (?, ?, ?, ?, ?)"
+          " ON DUPLICATE KEY UPDATE src_uuid = src_uuid, dst_uuid = dst_uuid",
+          std::string("src_uuid"), std::string("dst_uuid"),
+          std::string("nickname"), std::string("message"),
+          std::string("status"))));
 }
 
 void mysql::MySQLConnectionPool::roundRobinChecking() {
