@@ -1,15 +1,22 @@
 #ifndef ADDUSERREQUESTDIALOG_H
 #define ADDUSERREQUESTDIALOG_H
 
-#include "onceclickableqlabel.h"
-#include "usertagwidget.h"
-#include <QDialog>
-#include <QString>
 #include <map>
 #include <vector>
+#include <memory>
+#include <QDialog>
+#include <QString>
+/*store user info*/
+#include "UserNameCard.h"
+#include "usertagwidget.h"
+#include "onceclickableqlabel.h"
 
 namespace Ui {
 class AddUserRequestDialog;
+}
+
+namespace Ui {
+class AddUserNameCardDialog;
 }
 
 class AddUserRequestDialog : public QDialog {
@@ -111,6 +118,9 @@ private:
   /*labels that are going to be added to textedit widget*/
   std::vector<QString> m_selected_key;
   std::map<QString, std::shared_ptr<UserTagWidget>> m_selected_label;
+
+  /*store user info, data comes from addusernamecard class*/
+  std::unique_ptr<UserNameCard> m_info;
 
   /*update existing ui display*/
 };
