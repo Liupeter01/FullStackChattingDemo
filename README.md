@@ -381,6 +381,18 @@ verification server using verification-server/config.json to store parameters
        sex BOOL,
        FOREIGN KEY (uuid) REFERENCES Authentication(uuid) ON DELETE CASCADE
    );
+   
+   -- Create Friend Request Table
+   CREATE TABLE chatting.FriendRequest(
+       id INT AUTO_INCREMENT PRIMARY KEY,
+   	src_uuid INT NOT NULL,
+       dst_uuid INT NOT NULL,
+       nickname VARCHAR(255),
+       message VARCHAR(255),
+       status BOOL,	-- request status
+       FOREIGN KEY (src_uuid) REFERENCES Authentication(uuid) ON DELETE CASCADE,
+       FOREIGN KEY (dst_uuid) REFERENCES Authentication(uuid) ON DELETE CASCADE
+   );
    ```
 
 
