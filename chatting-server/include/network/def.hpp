@@ -19,10 +19,9 @@ enum class ServiceType : uint8_t {
   SERVICE_LOGOUTRESPONSE,         // logout server response
   SERVICE_SEARCHUSERNAME,         // client search another user's username
   SERVICE_SEARCHUSERNAMERESPONSE, //
-  SERVICE_FRIENDREQUEST_SRC, // the person who started to send friend request to
-                             // other
-  SERVICE_FRIENDREQUEST_DST, // the person who is going to receive friend
-                             // request
+  SERVICE_FRIENDREQUESTSENDER, // the person who started to send friend request to other
+          SERVICE_FRIENDREINCOMINGREQUEST, //the person who is going to receive friend request
+  SERVICE_FRIENDREQUESTCONFIRM, // the person who is going to confirm a friend request
   SERVICE_FRIENDREQUESTRESPONSE,
   SERVICE_UNKNOWN // unkown service
 };
@@ -43,12 +42,11 @@ enum class ServiceStatus : uint8_t {
   LOGIN_INFO_ERROR,           // login info error
   LOGIN_UNSUCCESSFUL, // common login uncessfully reason, due to internel error
   LOGIN_FOR_MULTIPLE_TIMES, // this user have already logined!
-  LOGOUT_UNSUCCESSFUL,      // common logout uncessfully reason, due to internel
-                            // error
-  SEARCHING_USERNAME_NOT_FOUND, // client search another user's username not
-                                // found
+  LOGOUT_UNSUCCESSFUL,      // common logout uncessfully reason, due to internel error
+  SEARCHING_USERNAME_NOT_FOUND, // client search another user's username not found
   FRIENDING_YOURSELF,           // user should not friending itself
-  FRIENDING_ERROR               // friending error
+  FRIENDING_ERROR ,                        // friending error
+  FRIENDING_TARGET_USER_NOT_FOUND       //target user not found
 };
 
 #define _DEF_HPP_
