@@ -44,14 +44,32 @@ private:
   void generateErrorMessage(const std::string &log, ServiceType type,
                             ServiceStatus status, SessionPtr conn);
 
+  /*client enter current server*/
   void incrementConnection();
   void decrementConnection();
+
+  /*store this user belonged server into redis*/
+  bool tagCurrentUser(const std::string& uuid);
+
+  /*delete user belonged server in redis*/
+  bool untagCurrentUser(const std::string& uuid);
 
   /*Execute Operations*/
   void handlingLogin(ServiceType srv_type, std::shared_ptr<Session> session,
                      NodePtr recv);
   void handlingLogout(ServiceType srv_type, std::shared_ptr<Session> session,
                       NodePtr recv);
+
+  void handlingUserSearch(ServiceType srv_type, std::shared_ptr<Session> session,
+            NodePtr recv);
+
+  /*the person who init friend request*/
+  void handlingFriendRequestCreator(ServiceType srv_type, std::shared_ptr<Session> session,
+            NodePtr recv);
+
+  /*the person who receive friend request are going to confirm it*/
+  void handlingFriendRequestConfirm(ServiceType srv_type, std::shared_ptr<Session> session,
+            NodePtr recv);
 
   /*
    * get user's basic info(name, age, sex, ...) from redis
@@ -68,6 +86,9 @@ public:
 
   /*store user base info in redis*/
   static std::string user_prefix;
+
+  /*store the server name that this user belongs to*/
+  static std::string server_prefix;
 
 private:
   std::atomic<bool> m_stop;
