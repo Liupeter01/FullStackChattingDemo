@@ -65,7 +65,7 @@ public:
       const ::message::GrpcChattingServerRegRequest *request,
       ::message::GrpcChattingServerResponse *response);
 
-  virtual ::grpc::Status grpc::GrpcBalancerImpl::ChattingServerShutDown(
+  virtual ::grpc::Status ChattingServerShutDown(
       ::grpc::ServerContext *context,
       const ::message::GrpcChattingServerShutdownRequest *request,
       ::message::GrpcChattingServerResponse *response);
