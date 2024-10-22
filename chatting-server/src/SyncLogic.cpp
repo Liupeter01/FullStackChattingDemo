@@ -513,8 +513,7 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
     dst_root["dst_uuid"] = dst_uuid;
     dst_root["nickname"] = nickname;
     dst_root["message"] = msg;
-    dst_root["error"] =
-        static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS);
+    dst_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
 
     /*propagate the message to dst user*/
     session_op.value()->sendMessage(
