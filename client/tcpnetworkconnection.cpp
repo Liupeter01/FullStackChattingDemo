@@ -1,5 +1,6 @@
 #include "tcpnetworkconnection.h"
 #include "UserNameCard.h"
+#include "UserFriendRequest.hpp"
 #include "useraccountmanager.hpp"
 #include <QDataStream>
 #include <QDebug>
@@ -199,18 +200,49 @@ void TCPNetworkConnection::registerCallback() {
         /*error occured!*/
         if (!json.contains("error")) {
           qDebug() << "Json Parse Error!";
-
           // emit
           return;
+
         } else if (json["error"].toInt() !=
                    static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
           qDebug() << "Friend Request Send Failed!";
-
           // emit
           return;
         }
 
         qDebug() << "Friend Request Send Successfully!";
+
+        json["error"].toString();
+        json["src_uuid"].toString();
+        json["dst_uuid"].toString();
+      }));
+
+  /*the person who is going to receive friend request*/
+  m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
+      ServiceType::SERVICE_FRIENDREINCOMINGREQUEST, [this](QJsonObject &&json) {
+          /*error occured!*/
+          if (!json.contains("error")) {
+              qDebug() << "Json Parse Error!";
+
+              // emit
+              return;
+          } else if (json["error"].toInt() !=
+                     static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
+              qDebug() << "Receive Friend Request Send Failed!";
+
+              // emit
+              return;
+          }
+
+          qDebug() << "Receive Friend Request Send Successfully!";
+
+          QString src = json["src_uuid"].toString();
+          QString dst = json["dst_uuid"].toString();
+          QString nickname = json["nickname"].toString();
+          QString req_msg = json["message"].toString();
+
+          auto request =std::make_unique<UserFriendRequest>(src,dst,nickname,req_msg);
+
       }));
 }
 
