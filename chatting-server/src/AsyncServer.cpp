@@ -1,7 +1,7 @@
 #include <server/AsyncServer.hpp>
+#include <server/UserManager.hpp>
 #include <service/IOServicePool.hpp>
 #include <spdlog/spdlog.h>
-#include <server/UserManager.hpp>
 
 AsyncServer::AsyncServer(boost::asio::io_context &_ioc, unsigned short port)
     : m_ioc(_ioc),
@@ -34,24 +34,25 @@ void AsyncServer::handleAccept(std::shared_ptr<Session> session,
     std::lock_guard<std::mutex> _lckg(m_mtx);
     m_sessions.insert(std::make_pair(session->s_session_id, session));
   } else {
-    spdlog::info("[Session = {}]Chatting Server Accept failed", session->s_session_id);
+    spdlog::info("[Session = {}]Chatting Server Accept failed",
+                 session->s_session_id);
     this->terminateConnection(session->s_session_id);
   }
   this->startAccept();
 }
 
-void AsyncServer::terminateConnection(const std::string& session_id) {
-          std::lock_guard<std::mutex> _lckg(m_mtx);
-          auto session = this->m_sessions.find(session_id);
+void AsyncServer::terminateConnection(const std::string &session_id) {
+  std::lock_guard<std::mutex> _lckg(m_mtx);
+  auto session = this->m_sessions.find(session_id);
 
-          /*we found nothing*/
-          if (session == this->m_sessions.end()) {
-                    spdlog::warn("[Session = {}] Session ID Not Found!", session_id);
-                    return;
-          }
-          
-          /*remove the bind of uuid and session inside UserManager*/
-          UserManager::get_instance()->removeUsrSession(session->second->s_uuid);
-          session->second->closeSession();                //close socket connection
-          this->m_sessions.erase(session);                  //erase it from map
+  /*we found nothing*/
+  if (session == this->m_sessions.end()) {
+    spdlog::warn("[Session = {}] Session ID Not Found!", session_id);
+    return;
+  }
+
+  /*remove the bind of uuid and session inside UserManager*/
+  UserManager::get_instance()->removeUsrSession(session->second->s_uuid);
+  session->second->closeSession(); // close socket connection
+  this->m_sessions.erase(session); // erase it from map
 }

@@ -54,26 +54,6 @@ struct gRPCBalancerService {
     }
     return response;
   }
-
-  static message::PeerResponse getPeerServerLists(const std::string &cur_name) {
-    grpc::ClientContext context;
-    message::GetChattingSeverPeerListsRequest request;
-    message::PeerResponse response;
-
-    request.set_cur_server_name(cur_name);
-
-    connection::ConnectionRAII<stubpool::BalancerServicePool,
-                               message::BalancerService::Stub>
-        raii;
-
-    grpc::Status status =
-        raii->get()->GetPeerServerInfo(&context, request, &response);
-
-    if (!status.ok()) {
-      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
-    }
-    return response;
-  }
 };
 
 #endif // BALANCE

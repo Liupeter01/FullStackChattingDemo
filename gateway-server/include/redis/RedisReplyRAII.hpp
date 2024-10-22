@@ -22,13 +22,16 @@ public:
     m_redisReply.reset(reinterpret_cast<redisReply *>(
         ::redisCommand(context.m_redisContext.get(), command.c_str(),
                        std::forward<Args>(args)...)));
-    return checkError();
+    return isSuccessful();
   }
 
-  bool checkError();
+public:
   std::optional<long long> getInterger() const;
   std::optional<int> getType() const;
   std::optional<std::string> getMessage() const;
+
+private:
+  bool isSuccessful() const;
 
 private:
   tools::RedisSmartPtr<redisReply> m_redisReply;

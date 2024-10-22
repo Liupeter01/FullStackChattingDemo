@@ -1,10 +1,12 @@
 #include "mainframesearchlists.h"
 #include "addnewuserwidget.h"
+#include "def.hpp"
+#include "tcpnetworkconnection.h"
 #include <QListWidgetItem>
 
 MainFrameSearchLists::MainFrameSearchLists(QWidget *parent)
     : MainFrameShowLists(parent) {
-  /*regsiter signal slot*/
+  /*register signal*/
   registerSignal();
 
   /*add a startup widget inside the list*/
@@ -17,9 +19,56 @@ MainFrameSearchLists::MainFrameSearchLists(QWidget *parent)
 MainFrameSearchLists::~MainFrameSearchLists() {}
 
 void MainFrameSearchLists::registerSignal() {
-  /*when user click searched item, the emit itemClicked signal*/
-  connect(this, &QListWidget::itemClicked, this,
-          &MainFrameSearchLists::slot_item_clicked);
+  /*connect to TCP mgr signal_search_username response*/
+  connect(TCPNetworkConnection::get_instance().get(),
+          &TCPNetworkConnection::signal_search_username, this,
+          &MainFrameSearchLists::slot_search_username);
+}
+
+void MainFrameSearchLists::slot_search_username(
+    std::optional<std::shared_ptr<UserNameCard>> info, ServiceStatus status) {
+  /*
+   * we received response from server
+   * so that we could stop the waiting dialog
+   */
+  emit signal_waiting_for_data(false);
+
+  /*create a AddUserNameCardDialog*/
+  m_Dlg = std::make_shared<AddUserNameCardDialog>(this);
+
+  /*using dynamic pointer cast Dialog->AddUserNameCardDialog*/
+  auto dialog = std::dynamic_pointer_cast<AddUserNameCardDialog>(m_Dlg);
+
+  /*search username error*/
+  if (!info.has_value() || status != ServiceStatus::SERVICE_SUCCESS) {
+    /*
+     * show invalid window or valid
+     * valid = when signal_username_search returns a correct result
+     * invalid = oppsite from valid
+     */
+    dialog->setDialogInvalid(false);
+    dialog->show();
+    return;
+  } else {
+    auto wrapper = info.value();
+
+    /*
+     * show invalid window or valid
+     * valid = when signal_username_search returns a correct result
+     * invalid = oppsite from valid
+     */
+    dialog->setDialogInvalid(true);
+
+    /*
+     * Transfer data to AddUserNameCardDialog
+     * load image from "/static/ dir directly"
+     */
+    dialog->setupUserInfo(std::make_unique<UserNameCard>(
+        wrapper->m_uuid, wrapper->m_avatorPath, wrapper->m_username,
+        wrapper->m_nickname, wrapper->m_description, wrapper->m_sex));
+
+    dialog->show();
+  }
 }
 
 void MainFrameSearchLists::addNewUserWidget() {
@@ -39,43 +88,4 @@ void MainFrameSearchLists::addStyleSheet() {
   this->setStyleSheet("#search_list::item::hover{background-color:rgb(206,207,"
                       "208);border:none;outline:none}");
   this->setStyleSheet("#search_list::focus{black;border:none;outline:none}");
-}
-
-void MainFrameSearchLists::closeDialog() {
-  if (m_Dlg != nullptr) {
-    m_Dlg->hide();
-    m_Dlg = nullptr;
-  }
-}
-
-void MainFrameSearchLists::slot_item_clicked(QListWidgetItem *clicked_item) {
-  qDebug() << "item clicked! ";
-
-  /*get clicked customlized widget object*/
-  QWidget *widget = this->itemWidget(clicked_item);
-  if (widget == nullptr) {
-    qDebug() << "invalid click item! ";
-    return;
-  }
-  auto item = reinterpret_cast<ListItemWidgetBase *>(widget);
-  if (item->getItemType() == ListItemType::Default) {
-    qDebug() << "[ListItemType::Default]:list item base class!";
-    return;
-  } else if (item->getItemType() == ListItemType::SearchUserId) {
-    qDebug() << "[ListItemType::AddNewusr]:generate add new usr window!";
-
-    m_Dlg = std::make_shared<AddUserNameCardDialog>(this);
-
-    /*using dynamic pointer cast Dialog->AddUserNameCardDialog*/
-    auto add = std::dynamic_pointer_cast<AddUserNameCardDialog>(m_Dlg);
-
-    /*load image from "/static/ dir directly"*/
-    add->setupUserInfo(std::make_unique<UserNameCard>(0, "4.png", "test_name",
-                                                      "test_desc", Sex::Male));
-    add->show();
-    return;
-  }
-
-  /*close dialog & dealloc mem*/
-  closeDialog();
 }

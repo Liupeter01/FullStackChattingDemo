@@ -101,7 +101,7 @@ void LoginInterface::regisrerCallBackFunctions() {
         Tools::setWidgetAttribute(this->ui->status_label_3,
                                   QString("Login Success!"), true);
 
-        UserAccountManager::get_instance()->set_uuid(json["uuid"].toInt());
+        UserAccountManager::get_instance()->set_uuid(json["uuid"].toString());
         UserAccountManager::get_instance()->set_host(json["host"].toString());
         UserAccountManager::get_instance()->set_port(json["port"].toString());
         UserAccountManager::get_instance()->set_token(json["token"].toString());
@@ -214,15 +214,14 @@ void LoginInterface::slot_connection_status(bool status) {
                               true);
 
     QJsonObject json_obj;
-    json_obj["uuid"] =
-        QString::number(UserAccountManager::get_instance()->get_uuid());
+    json_obj["uuid"] = UserAccountManager::get_instance()->get_uuid();
     json_obj["token"] = UserAccountManager::get_instance()->get_token();
 
     QJsonDocument json_doc(json_obj);
 
     /*it should be store as a temporary object, because send_buffer will modify
      * it!*/
-    auto json_data = json_doc.toJson();
+    auto json_data = json_doc.toJson(QJsonDocument::Compact);
 
     SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
         static_cast<uint16_t>(ServiceType::SERVICE_LOGINSERVER), json_data,

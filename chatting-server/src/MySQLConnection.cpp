@@ -70,22 +70,6 @@ mysql::MySQLConnection::executeCommand(MySQLSelection select, Args &&...args) {
   }
 }
 
-std::optional<std::size_t> mysql::MySQLConnection::allocateNewUid() {
-  /*get uid number from database*/
-  auto uid = executeCommand(MySQLSelection::ACQUIRE_NEW_UID);
-  [[maybe_unused]] auto update =
-      executeCommand(MySQLSelection::UPDATE_UID_COUNTER);
-
-  if (!uid.has_value()) {
-    return std::nullopt;
-  }
-
-  /*return uid number*/
-  boost::mysql::results result = uid.value();
-  boost::mysql::row_view row = *result.rows().begin();
-  return static_cast<std::size_t>(row.at(0).as_int64());
-}
-
 std::optional<std::size_t>
 mysql::MySQLConnection::checkAccountLogin(std::string_view username,
                                           std::string_view password) {
@@ -95,8 +79,7 @@ mysql::MySQLConnection::checkAccountLogin(std::string_view username,
     return std::nullopt;
   }
   boost::mysql::results result = res.value();
-  boost::mysql::row_view row = *result.rows().begin();
-  return static_cast<std::size_t>(row.at(0).as_int64());
+  return result.rows().size();
 }
 
 bool mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
@@ -111,27 +94,53 @@ bool mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
   return result.rows().size();
 }
 
-bool mysql::MySQLConnection::insertNewUser(MySQLRequestStruct &&request,
-                                           std::size_t &uuid) {
-  std::optional<std::size_t> uid = allocateNewUid();
-  if (!uid.has_value()) {
+/*get user profile*/
+std::optional<std::unique_ptr<UserNameCard>>
+mysql::MySQLConnection::getUserProfile(std::size_t uuid) {
+  /*get user name by uuid*/
+  std::optional<std::string> usr_op = getUsernameByUUID(uuid);
+  if (!usr_op.has_value()) {
+    return std::nullopt;
+  }
+
+  /*get other user profile*/
+  auto res = executeCommand(MySQLSelection::USER_PROFILE, uuid);
+  if (!res.has_value()) {
+    return std::nullopt;
+  }
+
+  boost::mysql::results result = res.value();
+  boost::mysql::row_view row = *result.rows().begin();
+  return std::make_unique<UserNameCard>(
+      std::to_string(row.at(0).as_int64()), row.at(1).as_string(),
+      usr_op.value(), row.at(2).as_string(), row.at(3).as_string(),
+      static_cast<Sex>(row.at(4).as_int64()));
+}
+
+bool mysql::MySQLConnection::createFriendRequest(const std::size_t src_uuid,
+                                                 const std::size_t dst_uuid,
+                                                 std::string_view nickname,
+                                                 std::string_view message) {
+  if (src_uuid == dst_uuid) {
     return false;
   }
 
-  /*return back to the client!*/
-  uuid = uid.value();
-
-  [[maybe_unused]] auto res = executeCommand(
-      MySQLSelection::CREATE_NEW_USER, request.m_username, request.m_password,
-      std::to_string(uid.value()), request.m_email);
-  return true;
+  // check both uuid, are they all valid?
+  if (checkUUID(src_uuid) && checkUUID(dst_uuid)) {
+    return executeCommand(MySQLSelection::USER_FRIEND_REQUEST, src_uuid,
+                          dst_uuid, nickname, message, std::to_string(0))
+        .has_value();
+  }
+  return false;
 }
 
-bool mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request,
-                                             std::size_t &uuid) {
+bool mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request) {
   /*check is there anyone who use this username before*/
   if (!checkAccountAvailability(request.m_username, request.m_email)) {
-    return insertNewUser(std::forward<MySQLRequestStruct>(request), uuid);
+    [[maybe_unused]] auto res =
+        executeCommand(MySQLSelection::CREATE_NEW_USER, request.m_username,
+                       request.m_password, request.m_email);
+    return true;
   }
   return false;
 }
@@ -157,7 +166,7 @@ bool mysql::MySQLConnection::checkTimeout(
   return true;
 }
 
-bool mysql::MySQLConnection::checkUUID(std::size_t &uuid) {
+bool mysql::MySQLConnection::checkUUID(std::size_t uuid) {
   auto res = executeCommand(MySQLSelection::USER_UUID_CHECK, uuid);
   if (!res.has_value()) {
     return false;
@@ -165,6 +174,25 @@ bool mysql::MySQLConnection::checkUUID(std::size_t &uuid) {
 
   boost::mysql::results result = res.value();
   return result.rows().size();
+}
+
+std::optional<std::size_t>
+mysql::MySQLConnection::getUUIDByUsername(std::string_view username) {
+  auto res = executeCommand(MySQLSelection::GET_USER_UUID, username);
+  if (!res.has_value()) {
+    return std::nullopt;
+  }
+
+  return (*res.value().rows().begin()).at(0).as_int64();
+}
+
+std::optional<std::string>
+mysql::MySQLConnection::getUsernameByUUID(std::size_t uuid) {
+  auto res = executeCommand(MySQLSelection::USER_UUID_CHECK, uuid);
+  if (!res.has_value()) {
+    return std::nullopt;
+  }
+  return (*res.value().rows().begin()).at(1).as_string();
 }
 
 bool mysql::MySQLConnection::sendHeartBeat() {

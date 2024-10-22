@@ -5,10 +5,13 @@
 #include <QIcon>
 #include <QLabel>
 #include <QVector>
+#include <atomic>
 #include <memory>
 
 class SideBarWidget;
 class QMouseEvent;
+class QListWidgetItem;
+class LoadingWaitDialog;
 
 namespace Ui {
 class ChattingDlgMainFrame;
@@ -58,7 +61,17 @@ private:
   /* switch to new user page by using stackedWidget */
   void switchNewUserPage();
 
+  /*wait for remote server data*/
+  void waitForDataFromRemote(bool status);
+
 private slots:
+  /*
+   * waiting for data from remote server
+   * status = true: activate
+   * status = false: deactivate
+   */
+  void slot_waiting_for_data(bool status);
+
   /*search text changed*/
   void slot_search_text_changed();
 
@@ -67,6 +80,13 @@ private slots:
   /*when side bar button activated, then display relevant info on show_list*/
   void slot_display_chat_list();
   void slot_display_contact_list();
+
+  /*
+   * user click the item shown in the ListWidget
+   * ListItemType::Default
+   * When User Start To Searching User ID: ListItemType::SearchUserId
+   */
+  void slot_list_item_clicked(QListWidgetItem *clicked_item);
 
 private:
   /*reserve for search line edit*/
@@ -80,6 +100,15 @@ private:
 
   /*cur qlabel*/
   SideBarWidget *m_curQLabel;
+
+  /*close status dialog*/
+  std::shared_ptr<QDialog> m_Dlg;
+
+  /*wait for remote server data status*/
+  std::atomic<bool> m_send_status;
+
+  /*LoadingWaitDialog*/
+  std::shared_ptr<LoadingWaitDialog> m_loading;
 
   enum class ChattingDlgMode {
     ChattingDlgChattingMode,  // show multiple user chatting dialog

@@ -137,15 +137,13 @@ void HandleMethod::registerPostCallBacks() {
         request.m_password = password;
         request.m_email = email;
 
-        /*get required uuid, and return it back to user!*/
-        std::size_t uuid;
-
         /*MYSQL(start to create a new user)*/
         connection::ConnectionRAII<mysql::MySQLConnectionPool,
                                    mysql::MySQLConnection>
             mysql;
 
-        if (!mysql->get()->registerNewUser(std::move(request), uuid)) {
+        auto uuid_op = mysql->get()->registerNewUser(std::move(request));
+        if (!uuid_op.has_value()) {
           generateErrorMessage("MYSQL user register error",
                                ServiceStatus::MYSQL_INTERNAL_ERROR, conn);
           return false;
@@ -156,7 +154,9 @@ void HandleMethod::registerPostCallBacks() {
         send_root["username"] = username;
         send_root["password"] = password;
         send_root["email"] = email;
-        send_root["uuid"] = std::to_string(uuid);
+
+        /*get required uuid, and return it back to user!*/
+        send_root["uuid"] = std::to_string(uuid_op.value());
 
         boost::beast::ostream(conn->http_response.body())
             << send_root.toStyledString();
@@ -320,7 +320,7 @@ void HandleMethod::registerPostCallBacks() {
           return false;
         }
 
-        std::size_t &uuid = res.value();
+        std::size_t uuid = res.value();
 
         /*
          *pass user's uuid parameter to the server, and returns available server
@@ -330,8 +330,8 @@ void HandleMethod::registerPostCallBacks() {
 
         if (response.error() !=
             static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
-                  spdlog::error("[client {}] try login server failed!, error code {}",
-                            std::to_string(uuid), response.error());
+          spdlog::error("[client {}] try login server failed!, error code {}",
+                        std::to_string(uuid), response.error());
         }
 
         send_root["uuid"] = std::to_string(uuid);

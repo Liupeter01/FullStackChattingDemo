@@ -16,6 +16,16 @@ AddUserNameCardDialog::AddUserNameCardDialog(QWidget *parent)
 
 AddUserNameCardDialog::~AddUserNameCardDialog() { delete ui; }
 
+void AddUserNameCardDialog::setDialogInvalid(bool status) {
+  if (status) {
+    ui->invalid->hide();
+    ui->valid->show();
+  } else {
+    ui->valid->hide();
+    ui->invalid->show();
+  }
+}
+
 void AddUserNameCardDialog::setupUserInfo(std::unique_ptr<UserNameCard> info) {
   m_info = std::move(info);
   ui->user_name->setText(m_info->m_nickname);
@@ -38,7 +48,7 @@ void AddUserNameCardDialog::setWindowsStatus() {
 void AddUserNameCardDialog::registerSignal() {}
 
 void AddUserNameCardDialog::on_add_friend_button_clicked() {
-  qDebug() << "Add friend button clicked!";
+  qDebug() << "[Valid Mode]: Add friend button clicked!";
 
   /*hide current AddUserNameCardDialog*/
   this->hide();
@@ -47,4 +57,11 @@ void AddUserNameCardDialog::on_add_friend_button_clicked() {
   AddUserRequestDialog *dialog(new AddUserRequestDialog(this));
   dialog->setModal(true);
   dialog->show();
+}
+
+void AddUserNameCardDialog::on_close_clicked() {
+  qDebug() << "[Invalid Mode]: Add friend button clicked!";
+
+  /*hide current AddUserNameCardDialog*/
+  this->hide();
 }

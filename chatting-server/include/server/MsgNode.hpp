@@ -207,27 +207,6 @@ public:
   RecvNode(Callable &&Network2Host) noexcept
       : m_convertor(std::move(Network2Host)), MsgHeader<Container>() {}
 
-  bool insert_header(const Container &data) {
-    this->_buffer.append(data);
-
-    /*increment current pointer*/
-    auto length = data.size();
-    this->update_pointer_pos(length);
-
-    /*header is complete or not*/
-    return this->get_length().has_value();
-  }
-
-  bool insert_body(const Container &data) {
-    this->_buffer.append(data);
-
-    /*increment current pointer*/
-    auto length = data.size();
-    this->update_pointer_pos(length);
-
-    return this->get_msg_body().has_value();
-  }
-
   virtual std::optional<uint16_t> get_id() {
     if (this->check_header_remaining()) { /*not OK*/
       return std::nullopt;

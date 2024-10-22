@@ -19,7 +19,7 @@ public:
   void startAccept();
 
 private:
-  void terminateConnection(const std::string & session_id);
+  void terminateConnection(const std::string &session_id);
   void handleAccept(std::shared_ptr<Session> session,
                     boost::system::error_code ec);
 

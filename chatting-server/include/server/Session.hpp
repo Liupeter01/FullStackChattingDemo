@@ -29,7 +29,7 @@ public:
 public:
   void startSession();
   void closeSession();
-  void setUUID(const std::string& uuid);
+  void setUUID(const std::string &uuid);
   void sendMessage(ServiceType srv_type, const std::string &message);
 
 private:
