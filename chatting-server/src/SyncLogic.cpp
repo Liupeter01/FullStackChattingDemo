@@ -1,5 +1,6 @@
 #include <config/ServerConfig.hpp>
 #include <grpc/GrpcBalanceService.hpp>
+#include <grpc/GrpcDistributedChattingService.hpp>
 #include <handler/SyncLogic.hpp>
 #include <json/json.h>
 #include <json/reader.h>
@@ -9,7 +10,6 @@
 #include <server/UserManager.hpp>
 #include <server/UserNameCard.hpp>
 #include <spdlog/spdlog.h>
-#include <grpc/GrpcDistributedChattingService.hpp>
 #include <sql/MySQLConnectionPool.hpp>
 #include <tools/tools.hpp>
 
@@ -33,50 +33,53 @@ SyncLogic::SyncLogic() : m_stop(false) {
 SyncLogic::~SyncLogic() { shutdown(); }
 
 void SyncLogic::registerCallbacks() {
-          /*
-          * ServiceType::SERVICE_LOGINSERVER
-          * Handling Login Request
-          */
+  /*
+   * ServiceType::SERVICE_LOGINSERVER
+   * Handling Login Request
+   */
   m_callbacks.insert(std::pair<ServiceType, CallbackFunc>(
       ServiceType::SERVICE_LOGINSERVER,
       std::bind(&SyncLogic::handlingLogin, this, std::placeholders::_1,
                 std::placeholders::_2, std::placeholders::_3)));
 
   /*
-* ServiceType::SERVICE_LOGOUTSERVER
-* Handling Logout Request
-*/
+   * ServiceType::SERVICE_LOGOUTSERVER
+   * Handling Logout Request
+   */
   m_callbacks.insert(std::pair<ServiceType, CallbackFunc>(
-            ServiceType::SERVICE_LOGOUTSERVER,
-            std::bind(&SyncLogic::handlingLogout, this, std::placeholders::_1,
-                      std::placeholders::_2, std::placeholders::_3)));
+      ServiceType::SERVICE_LOGOUTSERVER,
+      std::bind(&SyncLogic::handlingLogout, this, std::placeholders::_1,
+                std::placeholders::_2, std::placeholders::_3)));
 
   /*
-* ServiceType::SERVICE_SEARCHUSERNAME
-* Handling User Search Username
-*/
+   * ServiceType::SERVICE_SEARCHUSERNAME
+   * Handling User Search Username
+   */
   m_callbacks.insert(std::pair<ServiceType, CallbackFunc>(
-            ServiceType::SERVICE_SEARCHUSERNAME,
-            std::bind(&SyncLogic::handlingUserSearch, this, std::placeholders::_1,
-                      std::placeholders::_2, std::placeholders::_3)));
-
-            /*
-          * ServiceType::FRIENDREQUEST_SRC
-          * Handling the person who added other(dst) as a friend
-          */
-  m_callbacks.insert(std::pair<ServiceType, CallbackFunc>(
-            ServiceType::SERVICE_FRIENDREQUESTSENDER,
-            std::bind(&SyncLogic::handlingFriendRequestCreator, this, std::placeholders::_1,
-                      std::placeholders::_2, std::placeholders::_3)));
+      ServiceType::SERVICE_SEARCHUSERNAME,
+      std::bind(&SyncLogic::handlingUserSearch, this, std::placeholders::_1,
+                std::placeholders::_2, std::placeholders::_3)));
 
   /*
-* ServiceType::FRIENDREQUEST_DST
-* Handling the person was being added response to the person who init this action
-*/
+   * ServiceType::FRIENDREQUEST_SRC
+   * Handling the person who added other(dst) as a friend
+   */
   m_callbacks.insert(std::pair<ServiceType, CallbackFunc>(
-            ServiceType::SERVICE_FRIENDREQUESTCONFIRM,
-            std::bind(&SyncLogic::handlingFriendRequestConfirm, this, std::placeholders::_1,
-                      std::placeholders::_2, std::placeholders::_3)));
+      ServiceType::SERVICE_FRIENDREQUESTSENDER,
+      std::bind(&SyncLogic::handlingFriendRequestCreator, this,
+                std::placeholders::_1, std::placeholders::_2,
+                std::placeholders::_3)));
+
+  /*
+   * ServiceType::FRIENDREQUEST_DST
+   * Handling the person was being added response to the person who init this
+   * action
+   */
+  m_callbacks.insert(std::pair<ServiceType, CallbackFunc>(
+      ServiceType::SERVICE_FRIENDREQUESTCONFIRM,
+      std::bind(&SyncLogic::handlingFriendRequestConfirm, this,
+                std::placeholders::_1, std::placeholders::_2,
+                std::placeholders::_3)));
 }
 
 void SyncLogic::commit(pair recv_node) {
@@ -143,14 +146,17 @@ void SyncLogic::decrementConnection() {
                              std::to_string(--new_number));
 }
 
-bool SyncLogic::tagCurrentUser(const std::string& uuid){
-          connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext> raii;
-          return raii->get()->setValue(server_prefix + uuid, ServerConfig::get_instance()->GrpcServerHost);
+bool SyncLogic::tagCurrentUser(const std::string &uuid) {
+  connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
+      raii;
+  return raii->get()->setValue(server_prefix + uuid,
+                               ServerConfig::get_instance()->GrpcServerHost);
 }
 
-bool SyncLogic::untagCurrentUser(const std::string& uuid){
-          connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext> raii;
-          return raii->get()->delPair(server_prefix + uuid);
+bool SyncLogic::untagCurrentUser(const std::string &uuid) {
+  connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
+      raii;
+  return raii->get()->delPair(server_prefix + uuid);
 }
 
 void SyncLogic::generateErrorMessage(const std::string &log, ServiceType type,
@@ -219,7 +225,7 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
   if (!reader.parse(body.value(), src_root)) {
     generateErrorMessage("Failed to parse json data",
                          ServiceType::SERVICE_LOGINRESPONSE,
-              ServiceStatus::JSONPARSE_ERROR, session);
+                         ServiceStatus::JSONPARSE_ERROR, session);
     return;
   }
 
@@ -251,7 +257,8 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
 
   if (response.error() !=
       static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS)) {
-            spdlog::error("[UUID = {}] Trying to login to ChattingServer Failed!", uuid);
+    spdlog::error("[UUID = {}] Trying to login to ChattingServer Failed!",
+                  uuid);
     generateErrorMessage("Internel Server Error",
                          ServiceType::SERVICE_LOGINRESPONSE,
                          ServiceStatus::LOGIN_UNSUCCESSFUL, session);
@@ -264,9 +271,11 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
    * then goto 2
    * 2. searching for user info inside mysql
    */
-  std::optional<std::shared_ptr<UserNameCard>> info_str = getUserBasicInfo(std::to_string(uuid));
+  std::optional<std::shared_ptr<UserNameCard>> info_str =
+      getUserBasicInfo(std::to_string(uuid));
   if (!info_str.has_value()) {
-    spdlog::error("[UUID = {}] Can not find a single user in MySQL and Redis", uuid);
+    spdlog::error("[UUID = {}] Can not find a single user in MySQL and Redis",
+                  uuid);
     generateErrorMessage("No User Account Found",
                          ServiceType::SERVICE_LOGINRESPONSE,
                          ServiceStatus::LOGIN_INFO_ERROR, session);
@@ -302,7 +311,8 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
 
     /*store this user belonged server into redis*/
     if (!tagCurrentUser(std::to_string(uuid))) {
-              spdlog::warn("[UUID = {}] Bind Current User To Current Server {}", uuid, ServerConfig::get_instance()->GrpcServerName);
+      spdlog::warn("[UUID = {}] Bind Current User To Current Server {}", uuid,
+                   ServerConfig::get_instance()->GrpcServerName);
     }
   }
 }
@@ -320,243 +330,270 @@ void SyncLogic::handlingLogout(ServiceType srv_type,
 
   /*delete user belonged server in redis*/
   if (!untagCurrentUser(session->s_uuid)) {
-            spdlog::warn("[UUID = {}] Unbind Current User From Current Server {}", session->s_uuid, ServerConfig::get_instance()->GrpcServerName);
+    spdlog::warn("[UUID = {}] Unbind Current User From Current Server {}",
+                 session->s_uuid, ServerConfig::get_instance()->GrpcServerName);
   }
 }
 
-void  SyncLogic::handlingUserSearch(ServiceType srv_type, std::shared_ptr<Session> session, NodePtr recv)
-{
-          Json::Value src_root;   /*store json from client*/
-          Json::Value dst_root;
-          Json::Reader reader;
+void SyncLogic::handlingUserSearch(ServiceType srv_type,
+                                   std::shared_ptr<Session> session,
+                                   NodePtr recv) {
+  Json::Value src_root; /*store json from client*/
+  Json::Value dst_root;
+  Json::Reader reader;
 
-          std::optional<std::string> body = recv->get_msg_body();
-          /*recv message error*/
-          if (!body.has_value()) {
-                    generateErrorMessage("Failed to parse json data",
-                              ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
-                              ServiceStatus::JSONPARSE_ERROR, session);
-                    return;
-          }
+  std::optional<std::string> body = recv->get_msg_body();
+  /*recv message error*/
+  if (!body.has_value()) {
+    generateErrorMessage("Failed to parse json data",
+                         ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
+                         ServiceStatus::JSONPARSE_ERROR, session);
+    return;
+  }
 
-          /*parse error*/
-          if (!reader.parse(body.value(), src_root)) {
-                    generateErrorMessage("Failed to parse json data",
-                              ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
-                              ServiceStatus::JSONPARSE_ERROR, session);
-                    return;
-          }
+  /*parse error*/
+  if (!reader.parse(body.value(), src_root)) {
+    generateErrorMessage("Failed to parse json data",
+                         ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
+                         ServiceStatus::JSONPARSE_ERROR, session);
+    return;
+  }
 
-          /*parsing failed*/
-          if (!src_root.isMember("username")) {
-                    generateErrorMessage("Failed to parse json data",
-                              ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
-                              ServiceStatus::LOGIN_UNSUCCESSFUL, session);
-                    return;
-          }
+  /*parsing failed*/
+  if (!src_root.isMember("username")) {
+    generateErrorMessage("Failed to parse json data",
+                         ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
+                         ServiceStatus::LOGIN_UNSUCCESSFUL, session);
+    return;
+  }
 
-          std::string username = src_root["username"].asString();
-          spdlog::info("[User UUID = {}] Searching For User {} ",session->s_uuid, username);
+  std::string username = src_root["username"].asString();
+  spdlog::info("[User UUID = {}] Searching For User {} ", session->s_uuid,
+               username);
 
-          /*search username in mysql to get uuid*/
-          connection::ConnectionRAII<mysql::MySQLConnectionPool,
-                    mysql::MySQLConnection>
-                    mysql;
+  /*search username in mysql to get uuid*/
+  connection::ConnectionRAII<mysql::MySQLConnectionPool, mysql::MySQLConnection>
+      mysql;
 
-          std::optional<std::size_t> uuid_op = mysql->get()->getUUIDByUsername(username);
+  std::optional<std::size_t> uuid_op =
+      mysql->get()->getUUIDByUsername(username);
 
-          if (!uuid_op.has_value()) {
-                    spdlog::warn("[Username = {}] Can not find a single user in MySQL and Redis",username);
-                    generateErrorMessage("No Username Found In DB",
-                              ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
-                              ServiceStatus::SEARCHING_USERNAME_NOT_FOUND, session);
-                    return;
-          }
+  if (!uuid_op.has_value()) {
+    spdlog::warn(
+        "[Username = {}] Can not find a single user in MySQL and Redis",
+        username);
+    generateErrorMessage("No Username Found In DB",
+                         ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
+                         ServiceStatus::SEARCHING_USERNAME_NOT_FOUND, session);
+    return;
+  }
 
-          std::optional<std::unique_ptr<UserNameCard>> card_op = getUserBasicInfo(std::to_string(uuid_op.value()));
-          /*when user info not found!*/
-          if (!card_op.has_value()) {
-                    spdlog::warn("[UUID = {}] No User Profile Found!", uuid_op.value());
-                    generateErrorMessage("No User Account Found",
-                              ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
-                              ServiceStatus::SEARCHING_USERNAME_NOT_FOUND, session);
-                    return;
-          }
-          else {
-                    std::unique_ptr<UserNameCard> info = std::move(card_op.value());
-                    dst_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
-                    dst_root["uuid"] = info->m_uuid;
-                    dst_root["sex"] = static_cast<uint8_t>(info->m_sex);
-                    dst_root["avator"] = info->m_avatorPath;
-                    dst_root["username"] = info->m_username;
-                    dst_root["nickname"] = info->m_nickname;
-                    dst_root["description"] = info->m_description;
-          }
-          session->sendMessage(ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
-                    dst_root.toStyledString());
+  std::optional<std::unique_ptr<UserNameCard>> card_op =
+      getUserBasicInfo(std::to_string(uuid_op.value()));
+  /*when user info not found!*/
+  if (!card_op.has_value()) {
+    spdlog::warn("[UUID = {}] No User Profile Found!", uuid_op.value());
+    generateErrorMessage("No User Account Found",
+                         ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
+                         ServiceStatus::SEARCHING_USERNAME_NOT_FOUND, session);
+    return;
+  } else {
+    std::unique_ptr<UserNameCard> info = std::move(card_op.value());
+    dst_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
+    dst_root["uuid"] = info->m_uuid;
+    dst_root["sex"] = static_cast<uint8_t>(info->m_sex);
+    dst_root["avator"] = info->m_avatorPath;
+    dst_root["username"] = info->m_username;
+    dst_root["nickname"] = info->m_nickname;
+    dst_root["description"] = info->m_description;
+  }
+  session->sendMessage(ServiceType::SERVICE_SEARCHUSERNAMERESPONSE,
+                       dst_root.toStyledString());
 }
 
 /*the person who init friend request*/
-void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type, std::shared_ptr<Session> session,
-          NodePtr recv){
-          Json::Value src_root;   /*store json from client*/
-          Json::Value dst_root;   /*send it to dst user*/
-          Json::Value result_root;  /*send processing result back to src user*/
-          Json::Reader reader;
+void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
+                                             std::shared_ptr<Session> session,
+                                             NodePtr recv) {
+  Json::Value src_root;    /*store json from client*/
+  Json::Value dst_root;    /*send it to dst user*/
+  Json::Value result_root; /*send processing result back to src user*/
+  Json::Reader reader;
 
-          std::optional<std::string> body = recv->get_msg_body();
-          /*recv message error*/
-          if (!body.has_value()) {
-                    generateErrorMessage("Failed to parse json data",
-                              ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
-                              ServiceStatus::JSONPARSE_ERROR, session);
-                    return;
-          }
+  std::optional<std::string> body = recv->get_msg_body();
+  /*recv message error*/
+  if (!body.has_value()) {
+    generateErrorMessage("Failed to parse json data",
+                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceStatus::JSONPARSE_ERROR, session);
+    return;
+  }
 
-          /*parse error*/
-          if (!reader.parse(body.value(), src_root)) {
-                    generateErrorMessage("Failed to parse json data",
-                              ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
-                              ServiceStatus::JSONPARSE_ERROR, session);
-                    return;
-          }
+  /*parse error*/
+  if (!reader.parse(body.value(), src_root)) {
+    generateErrorMessage("Failed to parse json data",
+                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceStatus::JSONPARSE_ERROR, session);
+    return;
+  }
 
-          auto src_uuid = src_root["src_uuid"].asString();   //my uuid
-          auto dst_uuid = src_root["dst_uuid"].asString();   //target uuid
-          auto msg = src_root["message"].asString();
-          auto nickname = src_root["nickname"].asString();
+  auto src_uuid = src_root["src_uuid"].asString(); // my uuid
+  auto dst_uuid = src_root["dst_uuid"].asString(); // target uuid
+  auto msg = src_root["message"].asString();
+  auto nickname = src_root["nickname"].asString();
 
-          if (src_uuid == dst_uuid) {
-                    generateErrorMessage("Do Not Add yourself as a friend",
-                              ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
-                              ServiceStatus::FRIENDING_YOURSELF, session);
+  if (src_uuid == dst_uuid) {
+    generateErrorMessage("Do Not Add yourself as a friend",
+                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceStatus::FRIENDING_YOURSELF, session);
 
-                    spdlog::warn("[{}]: Receive UUID = {} Friending itself!", ServerConfig::get_instance()->GrpcServerName, src_uuid);
-                    return;
-          }
+    spdlog::warn("[{}]: Receive UUID = {} Friending itself!",
+                 ServerConfig::get_instance()->GrpcServerName, src_uuid);
+    return;
+  }
 
-          spdlog::info("[{}]: Receive UUID = {}'s Friend Request to UUID = {}", ServerConfig::get_instance()->GrpcServerName, src_uuid, dst_uuid);
+  spdlog::info("[{}]: Receive UUID = {}'s Friend Request to UUID = {}",
+               ServerConfig::get_instance()->GrpcServerName, src_uuid,
+               dst_uuid);
 
-          auto src_uuid_op = tools::string_to_value<std::size_t>(src_uuid);
-          auto dst_uuid_op = tools::string_to_value<std::size_t>(dst_uuid);
+  auto src_uuid_op = tools::string_to_value<std::size_t>(src_uuid);
+  auto dst_uuid_op = tools::string_to_value<std::size_t>(dst_uuid);
 
-          if (!src_uuid_op.has_value() || !dst_uuid_op.has_value()) {
-                    spdlog::error("Casting string typed key to std::size_t!");
-                    return;
-          }
+  if (!src_uuid_op.has_value() || !dst_uuid_op.has_value()) {
+    spdlog::error("Casting string typed key to std::size_t!");
+    return;
+  }
 
-          /*insert friend request info into mysql db*/
-          connection::ConnectionRAII<mysql::MySQLConnectionPool, mysql::MySQLConnection> mysql;
-          if (!mysql->get()->createFriendRequest(src_uuid_op.value(), dst_uuid_op.value(), nickname, msg)) {
-                    generateErrorMessage(" Insert Friend Request Failed",
-                              ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
-                              ServiceStatus::FRIENDING_ERROR, session);
+  /*insert friend request info into mysql db*/
+  connection::ConnectionRAII<mysql::MySQLConnectionPool, mysql::MySQLConnection>
+      mysql;
+  if (!mysql->get()->createFriendRequest(src_uuid_op.value(),
+                                         dst_uuid_op.value(), nickname, msg)) {
+    generateErrorMessage(" Insert Friend Request Failed",
+                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceStatus::FRIENDING_ERROR, session);
 
-                    spdlog::warn("[{} UUID = {}]:  Insert Friend Request Failed", ServerConfig::get_instance()->GrpcServerName, src_uuid);
-                    return;
-          }
+    spdlog::warn("[{} UUID = {}]:  Insert Friend Request Failed",
+                 ServerConfig::get_instance()->GrpcServerName, src_uuid);
+    return;
+  }
 
-          spdlog::info("[{} UUID = {}]:  Insert Friend Request Successful", ServerConfig::get_instance()->GrpcServerName, src_uuid);
+  spdlog::info("[{} UUID = {}]:  Insert Friend Request Successful",
+               ServerConfig::get_instance()->GrpcServerName, src_uuid);
 
-          /*
-           * Search For User Belonged Server Cache in Redis
-           * find key = server_prefix + dst_uuid in redis, GET
-           */
-          connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext> raii;
-          std::optional<std::string> server_op = raii->get()->checkValue(server_prefix + dst_uuid);
+  /*
+   * Search For User Belonged Server Cache in Redis
+   * find key = server_prefix + dst_uuid in redis, GET
+   */
+  connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
+      raii;
+  std::optional<std::string> server_op =
+      raii->get()->checkValue(server_prefix + dst_uuid);
 
-          /*we cannot find it in Redis directly*/
-          if (!server_op.has_value()) {
-                    generateErrorMessage("User Not Found In Any Server",
-                              ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
-                              ServiceStatus::FRIENDING_ERROR, session);
-                    return;
-          }
+  /*we cannot find it in Redis directly*/
+  if (!server_op.has_value()) {
+    generateErrorMessage("User Not Found In Any Server",
+                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceStatus::FRIENDING_ERROR, session);
+    return;
+  }
 
-          /*Is target user(dst_uuid) and current user(src_uuid) on the same server*/
-          if (server_op.value() == ServerConfig::get_instance()->GrpcServerName) {
-                    /*try to find this target user on current chatting-server*/
-                    auto session_op = UserManager::get_instance()->getSession(dst_uuid);
-                    if (!session_op.has_value()) {
-                              generateErrorMessage("Target User's Session Not Found",
-                                        ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
-                                        ServiceStatus::FRIENDING_TARGET_USER_NOT_FOUND, session);
-                              return;
-                    }
-                    dst_root["src_uuid"] = src_uuid;
-                    dst_root["dst_uuid"] = dst_uuid;
-                    dst_root["nickname"] = nickname;
-                    dst_root["message"] = msg;
-                    dst_root["error"] = static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS);
+  /*Is target user(dst_uuid) and current user(src_uuid) on the same server*/
+  if (server_op.value() == ServerConfig::get_instance()->GrpcServerName) {
+    /*try to find this target user on current chatting-server*/
+    auto session_op = UserManager::get_instance()->getSession(dst_uuid);
+    if (!session_op.has_value()) {
+      generateErrorMessage("Target User's Session Not Found",
+                           ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                           ServiceStatus::FRIENDING_TARGET_USER_NOT_FOUND,
+                           session);
+      return;
+    }
+    dst_root["src_uuid"] = src_uuid;
+    dst_root["dst_uuid"] = dst_uuid;
+    dst_root["nickname"] = nickname;
+    dst_root["message"] = msg;
+    dst_root["error"] =
+        static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS);
 
-                    /*propagate the message to dst user*/
-                    session_op.value()->sendMessage(ServiceType::SERVICE_FRIENDREINCOMINGREQUEST,
-                              dst_root.toStyledString());
+    /*propagate the message to dst user*/
+    session_op.value()->sendMessage(
+        ServiceType::SERVICE_FRIENDREINCOMINGREQUEST,
+        dst_root.toStyledString());
 
-                    result_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
-          }
-          else {
-                    /*
-                     * ----------------------------------GRPC REQUEST------------------------------------
-                     * dst_uuid and src_uuid are not on the same server 
-                     * 1. We have to get current user info(src_uuid) on current server
-                     * 2. Pass current user info to other chatting-server by using grpc protocol
-                     */
-                    std::optional<std::shared_ptr<UserNameCard>> info_str = getUserBasicInfo(src_uuid);
-                    if (!info_str.has_value()) {
-                              generateErrorMessage("Current UserProfile Load Error!",
-                                        ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
-                                        ServiceStatus::FRIENDING_ERROR, session);
-                              return;
-                    }
+    result_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
+  } else {
+    /*
+     * ----------------------------------GRPC
+     * REQUEST------------------------------------ dst_uuid and src_uuid are not
+     * on the same server
+     * 1. We have to get current user info(src_uuid) on current server
+     * 2. Pass current user info to other chatting-server by using grpc protocol
+     */
+    std::optional<std::shared_ptr<UserNameCard>> info_str =
+        getUserBasicInfo(src_uuid);
+    if (!info_str.has_value()) {
+      generateErrorMessage("Current UserProfile Load Error!",
+                           ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                           ServiceStatus::FRIENDING_ERROR, session);
+      return;
+    }
 
-                    message::AddNewFriendRequest grpc_request;
-                    grpc_request.set_src_uuid(src_uuid_op.value());
-                    grpc_request.set_dst_uuid(dst_uuid_op.value());
-                    grpc_request.set_nick_name(nickname);
-                    grpc_request.set_req_msg(msg);
+    message::AddNewFriendRequest grpc_request;
+    grpc_request.set_src_uuid(src_uuid_op.value());
+    grpc_request.set_dst_uuid(dst_uuid_op.value());
+    grpc_request.set_nick_name(nickname);
+    grpc_request.set_req_msg(msg);
 
-                    auto response = gRPCDistributedChattingService::get_instance()->sendFriendRequest(server_op.value(), grpc_request);
-                    if (response.error() != static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS)) {
-                              spdlog::warn("[GRPC {} Service]: UUID = {} Send Request To GRPC {} Service Failed!", ServerConfig::get_instance()->GrpcServerName, src_uuid, server_op.value());
-                              generateErrorMessage("Internel Server Error",
-                                        ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
-                                        ServiceStatus::FRIENDING_ERROR, session);
-                              return;
-                    }
+    auto response =
+        gRPCDistributedChattingService::get_instance()->sendFriendRequest(
+            server_op.value(), grpc_request);
+    if (response.error() !=
+        static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS)) {
+      spdlog::warn("[GRPC {} Service]: UUID = {} Send Request To GRPC {} "
+                   "Service Failed!",
+                   ServerConfig::get_instance()->GrpcServerName, src_uuid,
+                   server_op.value());
+      generateErrorMessage("Internel Server Error",
+                           ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                           ServiceStatus::FRIENDING_ERROR, session);
+      return;
+    }
 
-                    result_root["error"] = response.error();
-          }
+    result_root["error"] = response.error();
+  }
 
-          /*send service result back to request sender*/
-          result_root["src_uuid"] = src_uuid;
-          result_root["dst_uuid"] = dst_uuid;
-          session->sendMessage(ServiceType::SERVICE_FRIENDREQUESTRESPONSE, result_root.toStyledString());
+  /*send service result back to request sender*/
+  result_root["src_uuid"] = src_uuid;
+  result_root["dst_uuid"] = dst_uuid;
+  session->sendMessage(ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                       result_root.toStyledString());
 }
 
 /*the person who receive friend request are going to confirm it*/
-void SyncLogic::handlingFriendRequestConfirm(ServiceType srv_type, std::shared_ptr<Session> session,
-          NodePtr recv){
-          Json::Value src_root;   /*store json from client*/
-          Json::Value redis_root; /*write into body*/
-          Json::Reader reader;
+void SyncLogic::handlingFriendRequestConfirm(ServiceType srv_type,
+                                             std::shared_ptr<Session> session,
+                                             NodePtr recv) {
+  Json::Value src_root;   /*store json from client*/
+  Json::Value redis_root; /*write into body*/
+  Json::Reader reader;
 
-          std::optional<std::string> body = recv->get_msg_body();
-          /*recv message error*/
-          if (!body.has_value()) {
-                    generateErrorMessage("Failed to parse json data",
-                              ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
-                              ServiceStatus::JSONPARSE_ERROR, session);
-                    return;
-          }
+  std::optional<std::string> body = recv->get_msg_body();
+  /*recv message error*/
+  if (!body.has_value()) {
+    generateErrorMessage("Failed to parse json data",
+                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceStatus::JSONPARSE_ERROR, session);
+    return;
+  }
 
-          /*parse error*/
-          if (!reader.parse(body.value(), src_root)) {
-                    generateErrorMessage("Failed to parse json data",
-                              ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
-                              ServiceStatus::JSONPARSE_ERROR, session);
-                    return;
-          }
+  /*parse error*/
+  if (!reader.parse(body.value(), src_root)) {
+    generateErrorMessage("Failed to parse json data",
+                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceStatus::JSONPARSE_ERROR, session);
+    return;
+  }
 }
 
 /*get user's basic info(name, age, sex, ...) from redis*/
@@ -580,12 +617,11 @@ SyncLogic::getUserBasicInfo(const std::string &key) {
     reader.parse(info_str.value(), root);
 
     return std::make_unique<UserNameCard>(
-              root["uuid"].asString(), root["avator"].asString(),
-              root["username"].asString(), root["nickname"].asString(), root["description"].asString(),
-              static_cast<Sex>(root["sex"].asInt64()));
-  } 
-  else 
-  {
+        root["uuid"].asString(), root["avator"].asString(),
+        root["username"].asString(), root["nickname"].asString(),
+        root["description"].asString(),
+        static_cast<Sex>(root["sex"].asInt64()));
+  } else {
     Json::Value redis_root;
 
     /*search it in mysql*/

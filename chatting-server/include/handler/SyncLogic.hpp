@@ -49,10 +49,10 @@ private:
   void decrementConnection();
 
   /*store this user belonged server into redis*/
-  bool tagCurrentUser(const std::string& uuid);
+  bool tagCurrentUser(const std::string &uuid);
 
   /*delete user belonged server in redis*/
-  bool untagCurrentUser(const std::string& uuid);
+  bool untagCurrentUser(const std::string &uuid);
 
   /*Execute Operations*/
   void handlingLogin(ServiceType srv_type, std::shared_ptr<Session> session,
@@ -60,16 +60,18 @@ private:
   void handlingLogout(ServiceType srv_type, std::shared_ptr<Session> session,
                       NodePtr recv);
 
-  void handlingUserSearch(ServiceType srv_type, std::shared_ptr<Session> session,
-            NodePtr recv);
+  void handlingUserSearch(ServiceType srv_type,
+                          std::shared_ptr<Session> session, NodePtr recv);
 
   /*the person who init friend request*/
-  void handlingFriendRequestCreator(ServiceType srv_type, std::shared_ptr<Session> session,
-            NodePtr recv);
+  void handlingFriendRequestCreator(ServiceType srv_type,
+                                    std::shared_ptr<Session> session,
+                                    NodePtr recv);
 
   /*the person who receive friend request are going to confirm it*/
-  void handlingFriendRequestConfirm(ServiceType srv_type, std::shared_ptr<Session> session,
-            NodePtr recv);
+  void handlingFriendRequestConfirm(ServiceType srv_type,
+                                    std::shared_ptr<Session> session,
+                                    NodePtr recv);
 
   /*
    * get user's basic info(name, age, sex, ...) from redis
