@@ -1,119 +1,75 @@
 # FullStackChattingDemo
-## Description
+## 0x00 Description
 
-FullStackChattingDemo using C++17 standard
+FullStackChattingDemo is a real-time chat application built using C++17, Boost and gRPC, featuring a distributed TCP server architecture. 
 
-## Client
+1. For Client development, we are using basic QT6 framework to build the end-user teminal. 
 
-### Libraries
+2. For Server development, we are using a mixed of C++ and Nodejs. We are mainly using boost-1.84(beast asio uuid mysql), grpc-1.50.2, hiredis, jsoncpp, ada(url parsing), spdlog, boringssl libraries.
 
-using QT6(Q::Widgets Qt::Network)
-
-### Main page
-
-![](./assets/client_main.png)
-
-### Register page
-
-![](./assets/register_empty.png)
-
-![](./assets/register_with_text.png)
-
-![](./assets/after_reg.png)
-
-### Chatting Main Dialog
-
-<img src="./assets/client_interface_1.png" alt="client_interface_1" style="zoom:100%;" />
-
-### Search and add new contact
-
-![image-20241008180452143](./assets/client_interface_4.png)
-
-![image-20241001102111981](./assets/client_interface_2.png)
-
-### Contact Page
-
-![client_interface_3](./assets/client_interface_3.png)
-
-
-
-## **Servers**
-
-### Libraries
-
-**The libraries we use**
-
-boost-1.84  (beast asio uuid mysql), grpc-1.50.2, hiredis, jsoncpp, ada(url parsing), spdlog
-
-**For Linux/MacOS users, it's strongly recommend to install boost-1.84 in your system!!**
-
-grpc-1.50.2 will be downloaded automatically, and we will use boringssl instead of openssl
-
-**For Windows users, fetch content will download all of those for you**
-
-
-
-### Server List
-
-1. gateway-server(accept user's registration & login & forgot password requests)
-
-   **/get_test(GET method)**: system functionality test.
-
-   <img src="./assets/server.png" style="zoom:67%;" />
-
-   **/get_verification(POST method)**
-
-   User sends get CPATCHA request to server. server using GRPC protocol to communicate with NodeJS server and generate and store uuid in Redis DB.
-
-   **/post_registration(POST method)**
-
-   User post registration request to server. server store info into DB.
-
-   **/check_accountexists(POST method)**
-
-   user post there account name and email request to server, server has to return the existance of the account
-
-   **/reset_password(POST method)**
-
-    after the procedure of check_accountexists, the user has to input new password and passing the password correctness checking. the request will be send to the server and store into DB.
-
-   **/trylogin_server(POST method)**
-
-   user pass username & password to server, and server validating those parameters in DB and allocate a chattingserver through balance-server
-
-   ~~**/getavator(POST method)**~~
-
-   ~~Currently not support~~
+   **we are going to use boringssl instead of openssl for gRPC framework**
 
    
 
-2. balance-server(loading balance)
+## 0x01 **All Servers in this project**
 
-3. chatting-server
+### Captcha-server
 
-4. captcha-server
+Captcha-server imported `ioredis`, `grpc-js`, `pproto-loader`, `nodemailer`, `uuidv4` libraries to the project. 
 
-   **imported libraries**
+### Balance-server
 
-   import ioredis, grpc-js proto-loader, nodemailer, uuidv4 libraries to the project
+### Chatting-server
+
+1. User Login`(SERVICE_LOGINSERVER)`
+
+2. ~~User Logout`SERVICE_LOGOUTSERVER`~~
+
+3. User Search For Peers`(SERVICE_SEARCHUSERNAME)`
+
+4. User Who Initiated Friend Request `(SERVICE_FRIENDREQUESTSENDER)`
+
+5. User Who Received Friend Request`(SERVICE_FRIENDREQUESTCONFIRM)`
 
    
 
-   **Sending verification code to server**
+### Gateway-server
+
+All services are using HTTP short connections, users are going to create a POST method to the gateway-server and gateway-server is going to respond to the client requests accordingly.
+
+1. `/get_verification`
+
+   User sends a email address to gateway-server and request to get a Email verification code(CPATCHA) request to server. server using **gRPC** protocol to communicate with NodeJS server(`captcha-server`) and create an unique **uuid** for the user. The **uuid** is going to store in a **Redis** memory database with a timeout setting, user should register the new account within the valid time or request for a new one instead.
 
    
 
-   <img src="./assets/verification.png" style="zoom: 50%;" />
+2. `/post_registration`
 
+   After request for a **valid CPATCHA**, user could trigger registration confirm button to post registration request to the server. Server will whether this user's identity is collision with any other user inside the system, if no collision found the info will be stored inside database. ~~however, SQL injection protection mechanism is still not available yet!~~
 
+   
 
-​									<img src="./assets/result.png" style="zoom:50%;" />
+3. `/check_accountexists`
 
+   After account registration, when user demands to change his/her password, we have to verifiy the account existance.
 
+   
 
-## Requirements
+4. `/reset_password`
 
-The project is self-contained almost all dependencies on both Windows and Linux/Unix-like systems.
+   After executing `/check_accountexists` process, then user could enter his/her new password info, and client terminal could send the new password info to the the server. server will do the similiar process in `/post_registration` and alter the existing data inside the database.
+
+   
+
+5. `/trylogin_server`
+
+   please be careful, `trylogin_server` **could not login into** the real server directly. **It's a server relay!**
+
+   The identification is similiar to `/check_accountexists` authenication process. The `gateway-server` will communicate with `balance-server` for the address of `chatting-server` by using **gRPC**, and `chatting-server` will do load-balancing and return the lowest load server info back. However, The user connection status **will not** maintained and managed by `gateway-server` and `gateway-server` doesn't care about this either, client will receive the real address of `chatting-server` and connecting to it by itself. ~~however, SQL injection protection mechanism is still not available yet!~~
+
+   
+
+## 0x02 Requirements
 
 ### Main Server(C++)
 
@@ -397,7 +353,7 @@ verification server using verification-server/config.json to store parameters
 
 
 
-## Developer Quick Start
+## 0x03 Developer Quick Start
 
 ### Platform Support
 Windows, Linux, MacOS(Intel & Apple Silicon M)
@@ -426,6 +382,10 @@ git clone https://github.com/Liupeter01/FullStackChattingDemo
    ```
 
 ### Compile GatewayServer/BalanceServer/Chattingserver
+
+grpc-1.50.2 will be downloaded automatically, and we will use boringssl instead of openssl
+
+**For Windows users, fetch content will download all of those for you**
 
 1. For Linux/Windows
 
@@ -479,7 +439,7 @@ git clone https://github.com/Liupeter01/FullStackChattingDemo
 
 
 
-### Error Handling
+## 0x04 Error handling
 
 1. SyntaxError: Unexpected token  in JSON at position 0
    ```bash
@@ -563,3 +523,43 @@ git clone https://github.com/Liupeter01/FullStackChattingDemo
    you have to start the main server first and then open nodejs service
 
    
+
+## 0x05 Showcases
+
+### Client
+
+1. Main page
+
+![](./assets/client_main.png)
+
+2. Register page
+
+![](./assets/register_empty.png)
+
+![](./assets/register_with_text.png)
+
+![](./assets/after_reg.png)
+
+3. Chatting Main Dialog
+
+<img src="./assets/client_interface_1.png" alt="client_interface_1" style="zoom: 67%;" />
+
+4. Search and add new contact
+
+<img src="./assets/client_interface_4.png" alt="image-20241008180452143" style="zoom:67%;" />
+
+<img src="./assets/client_interface_2.png" alt="image-20241001102111981" style="zoom:67%;" />
+
+5. Contact Page
+
+<img src="./assets/client_interface_3.png" alt="client_interface_3" style="zoom:67%;" />
+
+
+
+### Captcha-server
+
+1. Sending verification code to the user
+
+<img src="./assets/verification.png" style="zoom: 67%;" />
+
+<img src="./assets/result.png" style="zoom:67%;" />
