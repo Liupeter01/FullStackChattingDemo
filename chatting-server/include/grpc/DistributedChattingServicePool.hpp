@@ -22,6 +22,8 @@ class DistributedChattingServicePoolImpl
           typename message::DistributedChattingService::Stub> {
   friend class DistributedChattingServicePool;
   friend class Singleton<DistributedChattingServicePoolImpl>;
+
+protected:
   DistributedChattingServicePoolImpl()
       : connection::ConnectionPool<self, data_type>() { /*empty*/ }
 
