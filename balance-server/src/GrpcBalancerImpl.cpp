@@ -12,18 +12,7 @@ grpc::GrpcBalancerImpl::UserInfo::UserInfo(
     : m_tokens(std::move(tokens)), m_host(config._host), m_port(config._port) {}
 
 grpc::GrpcBalancerImpl::GrpcBalancerImpl() {
-  spdlog::info("Loading {} ChattingServer Configrations",
-               ServerConfig::get_instance()->ChattingServerConfig.size());
-  for (const auto &server :
-       ServerConfig::get_instance()->ChattingServerConfig) {
-    spdlog::info("[Loading {}]: {}:{}", server._name, server._host,
-                 server._port);
-    std::unique_ptr<ChattingServerConfig> config =
-        std::make_unique<ChattingServerConfig>(server._host, server._port,
-                                               server._name);
-
-    chatting_servers[server._name] = std::move(config);
-  }
+          spdlog::info("[Balance Server]: Start to receive Chatting Grpc Server Configrations");
 }
 
 grpc::GrpcBalancerImpl::~GrpcBalancerImpl() {}
@@ -154,57 +143,84 @@ void grpc::GrpcBalancerImpl::registerUserInfo(std::size_t uuid,
     ::grpc::ServerContext *context, const ::message::PeerListsRequest *request,
     ::message::PeerResponse *response) {
 
-  std::lock_guard<std::mutex> _lckg(this->chatting_mtx);
-  auto target = this->chatting_servers.find(request->cur_server());
+              {
+                        std::lock_guard<std::mutex> _lckg(this->chatting_mtx);
+                        auto target = this->chatting_servers.find(request->cur_server());
 
-  /*we didn't find cur_server in unordered_map*/
-  if (target == this->chatting_servers.end()) {
-    response->set_error(
-        static_cast<std::size_t>(ServiceStatus::CHATTING_SERVER_NOT_EXISTS));
-  } else {
-    std::for_each(
-        chatting_servers.begin(), chatting_servers.end(),
-        [&request, &response](decltype(*chatting_servers.begin()) &peer) {
-          if (peer.first != request->cur_server()) {
-            auto new_peer = response->add_lists();
-            new_peer->set_name(peer.second->_name);
-            new_peer->set_host(peer.second->_host);
-            new_peer->set_port(peer.second->_port);
-          }
-        });
+                        /*we found it in the structure*/
+                        if (target != this->chatting_servers.end()) {
+                                  std::for_each(
+                                            chatting_servers.begin(), chatting_servers.end(),
+                                            [&request, &response](decltype(*chatting_servers.begin())& peer) {
+                                                      if (peer.first != request->cur_server()) {
+                                                                auto new_peer = response->add_lists();
+                                                                new_peer->set_name(peer.second->_name);
+                                                                new_peer->set_host(peer.second->_host);
+                                                                new_peer->set_port(peer.second->_port);
+                                                      }
+                                            });
+                        }
+                        response->set_error(static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
+                        return grpc::Status::OK;
+              }
 
-    response->set_error(
-        static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
-  }
-  return grpc::Status::OK;
+          /*we didn't find cur_server in unordered_map*/
+              response->set_error(static_cast<std::size_t>(ServiceStatus::CHATTING_SERVER_NOT_EXISTS));
+              return grpc::Status::OK;
 }
 
 ::grpc::Status grpc::GrpcBalancerImpl::GetPeerGrpcServerInfo(
     ::grpc::ServerContext *context, const ::message::PeerListsRequest *request,
     ::message::PeerResponse *response) {
 
-  std::lock_guard<std::mutex> _lckg(this->grpc_mtx);
+  {
+            std::lock_guard<std::mutex> _lckg(this->grpc_mtx);
+            auto target = this->grpc_servers.find(request->cur_server());
 
-  auto target = this->grpc_servers.find(request->cur_server());
-  /*we didn't find cur_server in unordered_map*/
-  if (target == this->grpc_servers.end()) {
-    response->set_error(
-        static_cast<std::size_t>(ServiceStatus::GRPC_SERVER_NOT_EXISTS));
-  } else {
-    std::for_each(grpc_servers.begin(), grpc_servers.end(),
-                  [&request, &response](decltype(*grpc_servers.begin()) &peer) {
-                    if (peer.first != request->cur_server()) {
-                      auto new_peer = response->add_lists();
-                      new_peer->set_name(peer.second->_name);
-                      new_peer->set_host(peer.second->_host);
-                      new_peer->set_port(peer.second->_port);
-                    }
-                  });
-
-    response->set_error(
-        static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
+            /*we found it it mapping structure*/
+            if (target != this->grpc_servers.end()) {
+                      std::for_each(grpc_servers.begin(), grpc_servers.end(),
+                                [&request, &response](decltype(*grpc_servers.begin())& peer) {
+                                          if (peer.first != request->cur_server()) {
+                                                    auto new_peer = response->add_lists();
+                                                    new_peer->set_name(peer.second->_name);
+                                                    new_peer->set_host(peer.second->_host);
+                                                    new_peer->set_port(peer.second->_port);
+                                          }
+                                });
+            }
+            response->set_error(static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
+            return grpc::Status::OK;
   }
+
+  /*we didn't find cur_server in unordered_map*/
+  response->set_error(static_cast<std::size_t>(ServiceStatus::GRPC_SERVER_NOT_EXISTS));
   return grpc::Status::OK;
+}
+
+::grpc::Status grpc::GrpcBalancerImpl::RegisterChattingServerInstance(
+          ::grpc::ServerContext* context, const::message::GrpcChattingServerRegRequest* request, 
+          ::message::GrpcChattingServerResponse* response)
+{
+          {
+                    std::lock_guard<std::mutex> _lckg(this->chatting_mtx);
+                    auto target = this->chatting_servers.find(request->info().name());
+                    if (target == this->chatting_servers.end()) {
+                              auto chatting_peer = std::make_unique<grpc::GrpcBalancerImpl::ChattingServerConfig>(
+                                        request->info().host(), request->info().port(), request->info().name());
+
+                              this->chatting_servers.insert(
+                                        std::pair<std::string, std::unique_ptr<grpc::GrpcBalancerImpl::ChattingServerConfig>>(
+                                                  request->info().name(), std::move(chatting_peer)));
+
+                              response->set_error(
+                                        static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
+                    }
+                    return grpc::Status::OK;
+          }
+          /*server has already exists*/
+          response->set_error(static_cast<std::size_t>(ServiceStatus::CHATTING_SERVER_ALREADY_EXISTS));
+          return grpc::Status::OK;
 }
 
 ::grpc::Status grpc::GrpcBalancerImpl::RegisterChattingGrpcServer(
@@ -212,27 +228,27 @@ void grpc::GrpcBalancerImpl::registerUserInfo(std::size_t uuid,
     const ::message::GrpcChattingServerRegRequest *request,
     ::message::GrpcChattingServerResponse *response) {
 
-  std::lock_guard<std::mutex> _lckg(this->grpc_mtx);
+              {
+                        std::lock_guard<std::mutex> _lckg(this->grpc_mtx);
+                        auto target = this->grpc_servers.find(request->info().name());
 
-  auto target = this->grpc_servers.find(request->info().name());
+                        /*we didn't find this grpc server's name in balancer-server so its alright*/
+                        if (target == this->grpc_servers.end()) {
+                                  auto grpc_peer = std::make_unique<grpc::GrpcBalancerImpl::GRPCServerConfig>(
+                                            request->info().host(), request->info().port(), request->info().name());
 
-  /*we didn't find this grpc server's name in balancer-server so its alright*/
-  if (target == this->grpc_servers.end()) {
-    auto grpc_peer = std::make_unique<grpc::GrpcBalancerImpl::GRPCServerConfig>(
-        request->info().host(), request->info().port(), request->info().name());
+                                  this->grpc_servers.insert(
+                                            std::pair<std::string, std::unique_ptr<GRPCServerConfig>>(
+                                                      request->info().name(), std::move(grpc_peer)));
 
-    this->grpc_servers.insert(
-        std::pair<std::string, std::unique_ptr<GRPCServerConfig>>(
-            request->info().name(), std::move(grpc_peer)));
+                                  response->set_error(
+                                            static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
+                        }
+                        return grpc::Status::OK;
+              }
 
-    response->set_error(
-        static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS));
-
-  } else {
-    /*server has already exists*/
-    response->set_error(
-        static_cast<std::size_t>(ServiceStatus::GRPC_SERVER_ALREADY_EXISTS));
-  }
+  /*server has already exists*/
+  response->set_error(static_cast<std::size_t>(ServiceStatus::GRPC_SERVER_ALREADY_EXISTS));
   return grpc::Status::OK;
 }
 
