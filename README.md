@@ -71,75 +71,20 @@ All services are using HTTP short connections, users are going to create a POST 
 
 ## 0x02 Requirements
 
-### Main Server(C++)
+### Basic Infrastructures
 
-main server using config.ini to store parameters
+**It's strongly suggested to use docker to build up those services ^_^**
 
-```ini
-[GateServer]
-port = 8080
-[VerificationServer]
-host=127.0.0.1
-port = 65500
-[MySQL]
-username=root
-password=123456
-database=chatting
-host=localhost
-port=3307
-timeout=60          #timeoutsetting seconds
-[Redis]
-host=127.0.0.1
-port=16379
-password=123456
-[BalanceService]
-host=127.0.0.1
-port=8000
-```
+**If you intended to pass a host directory, please use absolute path.**
 
-### Verification Server(Nodejs)
+1. Redis Memory Database
 
-verification server using verification-server/config.json to store parameters
-
-```json
-{
-      "email": {
-                "host": "please set to your email host name",
-                "port": "please set to your email port",
-                "username": "please set to your email address",
-                "password": "please use your own authorized code"
-      },
-      "mysql": {
-                "host": "127.0.0.1",
-                "port": 3307,
-                "password": 123456
-      },
-      "redis": {
-                "host": "127.0.0.1",
-                "port": 16379,
-                "password": 123456
-      }
-}
-```
-
-### Redis Server
-
-1. Create a volume on host machine
+   Create a local volume on host machine and editing configration files. **Please don't forget to change your password.**
 
    ```bash
    #if you are using windows, please download WSL2
    mkdir -p /path/to/redis/{conf,data} 
-   ```
-
-2. Download Redis configuration file
-
-   ```bash
-   vim /path/to/redis/conf/redis.conf	#write config file(you could use other editing tools!)
-   ```
-
-3. Configuration file setting
-
-   ```ini
+   cat > /path/to/redis/conf/redis.conf <<EOF
    # bind 192.168.1.100 10.0.0.1     # listens on two specific IPv4 addresses
    # bind 127.0.0.1 ::1              # listens on loopback IPv4 and IPv6
    # bind * -::*                     # like the default, all available interfaces
@@ -164,8 +109,9 @@ verification server using verification-server/config.json to store parameters
    dbfilename dump.rdb
    rdb-del-sync-files no
    dir ./
-   #password
+   #---------------------------password--------------------------------------------
    requirepass 123456
+   #---------------------------------------------------------------------------------
    replica-serve-stale-data yes
    replica-read-only yes
    repl-diskless-sync yes
@@ -219,54 +165,39 @@ verification server using verification-server/config.json to store parameters
    aof-rewrite-incremental-fsync yes
    rdb-save-incremental-fsync yes
    jemalloc-bg-thread yes
-   
-4. Create Redis container
+   EOF
+   ```
+
+   Creating a `Redis` container and execute following commands.
 
    ```bash
-   #Pull the official docker image from Docker hub
-   	docker pull redis:7.2.4
-   	
-   #create container
+   docker pull redis:7.2.4		#Pull the official docker image from Docker hub
    docker run \
-   --restart always \
-   -p 16379:6379 --name redis \
-   --privileged=true \
-   -v /path/to/redis/conf/redis.conf:/etc/redis/redis.conf \
-   -v /path/to/redis/data:/data:rw \
-   -d redis:7.2.4 redis-server /etc/redis/redis.conf \
-   --appendonly yes
+       --restart always \
+       -p 16379:6379 --name redis \
+       --privileged=true \
+       -v /path/to/redis/conf/redis.conf:/etc/redis/redis.conf \
+       -v /path/to/redis/data:/data:rw \
+       -d redis:7.2.4 redis-server /etc/redis/redis.conf \
+       --appendonly yes
    ```
 
-5. Entering Redis container
+   Entering `Redis` container and access to command line `redis-cli`.
 
    ```bash
-   #entering redis
-   	docker exec -it redis bash
-   	
-   # login redis db
-   	redis-cli
+   docker exec -it redis bash	 #entering redis
+   redis-cli									 	 #login redis db
    ```
 
+2. MySQL Database
 
-### MySQL Server
-
-1. Create a volume on host machine
+   Create a local volume on host machine and editing configration files. **Please don't forget to change your password.**
 
    ```bash
    #if you are using windows, please download WSL2
    mkdir -p /path/to/mysql/{conf,data} 
-   ```
-
-2. Create a configuration file(my.cnf)
-
-   ```bash
    touch /path/to/mysql/conf/my.cnf	#create
-   vim /path/to/mysql/conf/my.cnf		#write config file(you could use other editing tools!)
-   ```
-
-3. Configuration file setting
-
-   ```ini
+   cat > /path/to/redis/conf/redis.conf <<EOF
    [mysqld]
    default-authentication-plugin=mysql_native_password
    skip-host-cache
@@ -283,40 +214,30 @@ verification server using verification-server/config.json to store parameters
    socket=/var/run/mysqld/mysqld.sock
    default-character-set=utf8
    !includedir /etc/mysql/conf.d/
+   EOF
    ```
-   
-4. Create MySQL container
 
-   **If you intended to pass a host directory, please use absolute path.**
+   Creating a `MySQL` container and execute following commands.
 
    ```bash
-   #Pull the official docker image from Docker hub
-   	docker pull mysql:8.0
-   	
-   #Start a mysql server instance
-   	 docker run --restart=on-failure:3 -d \
-   	-v /path/to/mysql/conf:/etc/mysql/conf.d \
+   docker pull mysql:8.0		#Pull the official docker image from Docker hub
+   docker run --restart=on-failure:3 -d \
+       -v /path/to/mysql/conf:/etc/mysql/conf.d \
        -v /path/to/mysql/data:/var/lib/mysql \
-   	-e MYSQL_ROOT_PASSWORD="your_password" \
-   	-p 3307:3306 --name "your_container_name" \
+       -e MYSQL_ROOT_PASSWORD="your_password" \
+       -p 3307:3306 --name "your_container_name" \
        mysql:8.0
    ```
 
-5. Entering mysql and login DB
+   Entering `MySQL` container and access to `mysql` command line.
 
    ```bash
-   #entering mysql
-   	docker exec -it "your_container_name" bash
-   	
-   # login mysql db ( -u: root by default, -p password)
-   	mysql -uroot -p"your_password" 
+   docker exec -it "your_container_name" bash		#entering mysql
+   mysql -uroot -p"your_password"                #login mysql db ( -u: root by default, -p password)
    ```
 
+   Initialise `MySQL` database with following `SQL` commands to create DB and table schemas.
 
-6. **DataBase Has to be created, before starting the main server!!!**
-
-   You could choose DataBase tools to create database and table
-   
    ```sql
    CREATE DATABASE chatting;
    
@@ -352,6 +273,109 @@ verification server using verification-server/config.json to store parameters
    ```
 
 
+
+
+
+​	
+
+### Servers' Configurations
+
+Most of those basic configurations are using *.ini file, except `Captcha-server`.
+
+1. Captcha-server**(config.json)**
+
+   ```bash
+   {
+         "email": {
+                   "host": "please set to your email host name",
+                   "port": "please set to your email port",
+                   "username": "please set to your email address",
+                   "password": "please use your own authorized code"
+         },
+         "mysql": {
+                   "host": "127.0.0.1",
+                   "port": 3307,
+                   "password": 123456
+         },
+         "redis": {
+                   "host": "127.0.0.1",
+                   "port": 16379,
+                   "password": 123456
+         }
+   }
+   ```
+
+   
+
+2. Gateway-server**(config.ini)**
+
+   ```ini
+   [GateServer]
+   port = 8080
+   [VerificationServer]
+   host=127.0.0.1
+   port = 65500
+   [MySQL]
+   username=root
+   password=123456
+   database=chatting
+   host=localhost
+   port=3307
+   #timeoutsetting(s) for heart pulse
+   timeout=60 
+   [Redis]
+   host=127.0.0.1
+   port=16379
+   password=123456
+   [BalanceService]
+   host=127.0.0.1
+   port=59900
+   ```
+
+   
+
+3. Balance-server**(config.ini)**
+
+   ```ini
+   [BalanceService]
+   host=127.0.0.1
+   port=59900
+   [Redis]
+   host=127.0.0.1
+   port=16379
+   password=123456
+   ```
+
+   
+
+4. Chatting-server**(config.ini)**
+
+   ```ini
+   [BalanceService]
+   host=127.0.0.1
+   port=59900
+   [gRPCServer]
+   server_name=ChattingServer0
+   host=127.0.0.1
+   port=64400
+   [ChattingServer]
+   port=60000
+   send_queue_size=1000
+   [Redis]
+   host=127.0.0.1
+   port=16379
+   password=123456
+   [MySQL]
+   username=root
+   password=123456
+   database=chatting
+   host=localhost
+   port=3307
+   #timeoutsetting(s) for heart pulse
+   timeout=60
+   ```
+
+   
 
 ## 0x03 Developer Quick Start
 
