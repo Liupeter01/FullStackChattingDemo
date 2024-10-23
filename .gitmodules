@@ -1,0 +1,15 @@
+[submodule "balance-server"]
+	path = balance-server
+	url = https://github.com/Liupeter01/balance-server
+[submodule "gateway-server"]
+	path = gateway-server
+	url = https://github.com/Liupeter01/gateway-server
+[submodule "chatting-server"]
+	path = chatting-server
+	url = https://github.com/Liupeter01/chatting-server
+[submodule "captcha-server"]
+	path = captcha-server
+	url = https://github.com/Liupeter01/captcha-server
+[submodule "chatting-client"]
+	path = chatting-client
+	url = https://github.com/Liupeter01/chatting-client
