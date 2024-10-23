@@ -23,6 +23,12 @@ int main() {
     [[maybe_unused]] auto &distribute =
         stubpool::DistributedChattingServicePool::get_instance();
 
+    /*chatting server port and grpc server port should not be same!!*/
+    if (ServerConfig::get_instance()->GrpcServerPort == ServerConfig::get_instance()->ChattingServerPort) {
+              spdlog::error("[Chatting Service {}] :Chatting Server's Port Should Be Different Comparing to GRPC Server!", ServerConfig::get_instance()->GrpcServerName);
+              std::abort();
+    }
+
     /*gRPC server*/
     std::string address =
         fmt::format("{}:{}", ServerConfig::get_instance()->GrpcServerHost,
@@ -42,15 +48,29 @@ int main() {
     /*execute grpc server in another thread*/
     std::thread grpc_server_thread([&server]() { server->Wait(); });
 
+    auto response = gRPCBalancerService::registerChattingServerInstance(
+              ServerConfig::get_instance()->GrpcServerName,
+              ServerConfig::get_instance()->GrpcServerHost,
+              std::to_string(ServerConfig::get_instance()->ChattingServerPort));
+
+    if (response.error() !=
+              static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
+              spdlog::error("[Chatting Service {}] Balance-Server Not Available! Try register Chatting Server Instance Failed!, "
+                        "error code {}",
+                        ServerConfig::get_instance()->GrpcServerName,
+                        response.error());
+              std::abort();
+    }
+
     /*register grpc server to balance-server lists*/
-    auto response = gRPCBalancerService::registerGrpcServer(
+    response = gRPCBalancerService::registerGrpcServer(
         ServerConfig::get_instance()->GrpcServerName,
         ServerConfig::get_instance()->GrpcServerHost,
         std::to_string(ServerConfig::get_instance()->GrpcServerPort));
 
     if (response.error() !=
         static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
-      spdlog::error("[{}] Try register GRPC Server Failed!, "
+      spdlog::error("[Chatting Service {}] Balance-Server Not Available! Try register GRPC Server Failed!, "
                     "error code {}",
                     ServerConfig::get_instance()->GrpcServerName,
                     response.error());
