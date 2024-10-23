@@ -9,9 +9,10 @@ FullStackChattingDemo is a real-time chat application built using C++17, Boost a
 
    **we are going to use boringssl instead of openssl for gRPC framework**
 
-   
 
-## 0x01 **All Servers in this project**
+
+
+## 0x01 All Servers in this project
 
 ### Captcha-server
 
