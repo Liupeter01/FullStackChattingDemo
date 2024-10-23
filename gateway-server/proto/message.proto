@@ -25,6 +25,9 @@ service BalancerService {
   // user send SERVICE_LOGINSERVER request
   rpc UserLoginToServer(LoginChattingServer) returns (LoginChattingResponse) {}
 
+        //register current chatting server to balance server
+      rpc RegisterChattingServerInstance(GrpcChattingServerRegRequest) returns (GrpcChattingServerResponse) {}
+
   // register current grpc server which belongs to chattingserver to balance
   // server
   rpc RegisterChattingGrpcServer(GrpcChattingServerRegRequest)
