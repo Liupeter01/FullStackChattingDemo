@@ -387,54 +387,28 @@ Windows, Linux, MacOS(Intel & Apple Silicon M)
 
 ```bash
 git clone https://github.com/Liupeter01/FullStackChattingDemo
+git submodule update --init --recursive
 ```
 
-### Compile Client
+### Compile and build FullStackChattingDemo
 
-1. For Windows
+Those are submodules building tutorial links.
 
-   ```bash
-   #please import client dir to qt creator
-   ```
+[Gateway-server](https://github.com/Liupeter01/gateway-server/blob/main/README.md)
 
-2. For MacOS/Linux
+[Balance-server](https://github.com/Liupeter01/balance-server/blob/main/README.md)
 
-   ```bash
-   #It might take a long time to download dependency libraies!!!!
-   cd FullStackChattingDemo/client
-   cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
-   cmake --build build --parallel [x]
-   ```
+[Chatting-server](https://github.com/Liupeter01/chatting-server/blob/main/README.md)
 
-### Compile GatewayServer/BalanceServer/Chattingserver
+[Captcha-server](https://github.com/Liupeter01/captcha-server/blob/main/README.md)
 
-grpc-1.50.2 will be downloaded automatically, and we will use boringssl instead of openssl
-
-**For Windows users, fetch content will download all of those for you**
-
-1. For Linux/Windows
-
-   ```bash
-   cd FullStackChattingDemo/server
-   git submodule update --init
-   cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
-   cmake --build build --parallel [x]
-   ```
-
-2. For MacOS
-
-   ```bash
-   cd FullStackChattingDemo/server
-   git submodule update --init
-   cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=/usr/local/include
-   cmake --build build --parallel [x]
-   ```
+[Chatting-client](https://github.com/Liupeter01/chatting-client/blob/main/README.md)
 
 
 
 ### How to Execute
 
-1. Activate Redis and MySQL service
+1. Activate Redis and MySQL service first
 
    **IMPORTANT: you have to start those services first!!**
 
@@ -442,24 +416,30 @@ grpc-1.50.2 will be downloaded automatically, and we will use boringssl instead 
 
 2. Execute Servers' program
 
-   ```bash
-   ./balance-server/build/BalanceServer
-   ./gateway-server/build/GatewayServer
-   ./chatting-server/build/ChattingServer
-   ```
-
-3. Execute captcha-server(Nodejs)
+   **Gateway-server should be started after Captcha-server!**
 
    ```bash
    cd captcha-server
    npm install
-   node index.js  # you could use nodemon
+   # you could use nodemon
+   node index.js
    ```
 
-4. Execute Client
+   
+
+   Then start gateway-server
 
    ```bash
-   ./client/build/ChattingClient
+   ./gateway-server/build/GatewayServer
+   ```
+   
+   
+   
+   **Chatting-server should be started after Balance-server!**
+   
+   ```bash
+   ./balance-server/build/BalanceServer
+   ./chatting-server/build/ChattingServer
    ```
 
 
