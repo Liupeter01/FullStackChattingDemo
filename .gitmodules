@@ -1,9 +1,6 @@
 [submodule "gateway-server/jsoncpp"]
 	path = gateway-server/jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp.git
-[submodule "gateway-server/ada"]
-	path = gateway-server/ada
-	url = https://github.com/ada-url/ada.git
 [submodule "gateway-server/inifile"]
 	path = gateway-server/inifile
 	url = https://github.com/Rookfighter/inifile-cpp.git

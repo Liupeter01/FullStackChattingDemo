@@ -1,9 +1,6 @@
 [submodule "jsoncpp"]
 	path = jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp.git
-[submodule "ada"]
-	path = ada
-	url = https://github.com/ada-url/ada.git
 [submodule "inifile"]
 	path = inifile
 	url = https://github.com/Rookfighter/inifile-cpp.git

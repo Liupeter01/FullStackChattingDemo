@@ -71,7 +71,7 @@ endif()
 
 project(
   GatewayServer
-  VERSION 1.0.2
+  VERSION 2.0.1
   LANGUAGES CXX)
 
 file(GLOB_RECURSE source_file CONFIGURE_DEPENDS src/*.cpp src/*.cc src/*.c)
@@ -97,7 +97,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(boost gRPC)
 
-add_subdirectory(ada)
+#add_subdirectory(ada)
 add_subdirectory(jsoncpp)
 add_subdirectory(inifile)
 add_subdirectory(hiredis)
@@ -109,7 +109,8 @@ target_link_libraries(
          Boost::beast
          Boost::uuid
          Boost::mysql
-         ada-singleheader-lib
+         Boost::url
+        # ada-singleheader-lib
          jsoncpp_object
          grpc++
          libprotobuf

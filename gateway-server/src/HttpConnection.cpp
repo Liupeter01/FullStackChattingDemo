@@ -1,4 +1,5 @@
-#include <ada.h>
+//#include <ada.h>
+#include <boost/url.hpp>
 #include <handler/HandleMethod.hpp>
 #include <http/HttpConnection.hpp>
 #include <spdlog/spdlog.h>
@@ -86,17 +87,19 @@ void HTTPConnection::write_response() {
 void HTTPConnection::handle_get_request(
     std::shared_ptr<HTTPConnection> extended_lifetime) {
   /*store url info /path?username=me&password=passwd*/
-  this->http_url_info = http_request.target();
+ // Store URL info
+          this->http_url_info = http_request.target();
 
-  std::size_t pos = this->http_url_info.find_first_of('?');
-  std::string_view url_path = this->http_url_info.substr(0, pos);
-  std::string_view url_param = this->http_url_info.substr(pos + 1);
+          // Parse the URL
+          boost::urls::url_view url_view(this->http_url_info);
+          std::string_view url_path = url_view.encoded_path();
+          std::string_view url_param = url_view.query();
 
   spdlog::info("url_path = {0}, url_param = {1}", url_path, url_param);
 
-  ada::url_search_params parameters(url_param);
-  for (const auto &param : parameters) {
-    this->http_params.emplace(param.first, param.second);
+  // Use Boost.URL to parse the query parameters
+  for (const auto& param : url_view.params()) {
+            this->http_params.emplace(param.key, param.value);
   }
 
   /*fix bug: because url_path is a std::string_view so when using .data method
