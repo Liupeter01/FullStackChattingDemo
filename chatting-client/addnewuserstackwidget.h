@@ -11,6 +11,7 @@ class AddNewUserStackWidget;
 /*declare*/
 class AddUserNameCardWidget;
 struct UserNameCard;
+struct UserFriendRequest;
 
 class AddNewUserStackWidget : public QWidget {
   Q_OBJECT
@@ -21,15 +22,15 @@ public:
 
 public:
   /*add new user widget to list*/
-  void addNewWidgetItem(std::unique_ptr<UserNameCard> info);
+  void addNewWidgetItem(std::shared_ptr<UserFriendRequest> info);
 
 private:
-  /*test function*/
-  void loadWidgetTest();
+  void registerSignal();
 
 signals:
 
 private slots:
+    void slot_incoming_friend_request(std::optional<std::shared_ptr<UserFriendRequest>> info);
 
 private:
   Ui::AddNewUserStackWidget *ui;

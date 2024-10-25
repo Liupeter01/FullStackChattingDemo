@@ -1,5 +1,5 @@
 #include "addnewuserstackwidget.h"
-#include "UserNameCard.h"
+#include "tcpnetworkconnection.h"
 #include "addusernamecardwidget.h"
 #include "ui_addnewuserstackwidget.h"
 #include <QListWidgetItem>
@@ -8,19 +8,18 @@ AddNewUserStackWidget::AddNewUserStackWidget(QWidget *parent)
     : QWidget(parent), ui(new Ui::AddNewUserStackWidget) {
   ui->setupUi(this);
 
-  /*test function*/
-  loadWidgetTest();
+  /*signal<->slot*/
+  registerSignal();
 }
 
 AddNewUserStackWidget::~AddNewUserStackWidget() { delete ui; }
 
-void AddNewUserStackWidget::addNewWidgetItem(
-    std::unique_ptr<UserNameCard> info) {
+void AddNewUserStackWidget::addNewWidgetItem(std::shared_ptr<UserFriendRequest> info) {
   /*allocate memory*/
   AddUserNameCardWidget *namecard = new AddUserNameCardWidget;
 
   /*transfer ownership*/
-  namecard->setNameCardInfo(std::move(info));
+  namecard->setNameCardInfo(info);
 
   /*create item for Qlistwidget*/
   QListWidgetItem *item = new QListWidgetItem;
@@ -36,10 +35,16 @@ void AddNewUserStackWidget::addNewWidgetItem(
   // TODO
 }
 
-void AddNewUserStackWidget::loadWidgetTest() {
-  std::unique_ptr<UserNameCard> info(
-      std::make_unique<UserNameCard>(QString::number(0), "4.png", "test_name",
-                                     "test_name", "test_desc", Sex::Male));
-  /*transfer ownership*/
-  addNewWidgetItem(std::move(info));
+void AddNewUserStackWidget::registerSignal()
+{
+    connect(TCPNetworkConnection::get_instance().get(), &TCPNetworkConnection::signal_incoming_friend_request, this, &AddNewUserStackWidget::slot_incoming_friend_request);
 }
+
+void AddNewUserStackWidget::slot_incoming_friend_request(std::optional<std::shared_ptr<UserFriendRequest>> info)
+{
+    if(info.has_value()){
+        addNewWidgetItem(info.value());
+        return;
+    }
+}
+
