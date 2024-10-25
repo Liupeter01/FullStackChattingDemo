@@ -194,24 +194,46 @@ void TCPNetworkConnection::registerCallback() {
         }
       }));
 
-  /*Client send friend request to other*/
+  /*the person who started to send friend request to other*/
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
-      ServiceType::SERVICE_FRIENDREQUESTRESPONSE, [this](QJsonObject &&json) {
+      ServiceType::SERVICE_FRIENDSENDERRESPONSE, [this](QJsonObject &&json) {
         /*error occured!*/
         if (!json.contains("error")) {
           qDebug() << "Json Parse Error!";
-          // emit
+          emit signal_sender_response(false);
           return;
 
         } else if (json["error"].toInt() !=
                    static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
-          qDebug() << "Friend Request Send Failed!";
-          // emit
+          qDebug() << "Friend Request Send Failed! Because Of Error Code = " << json["error"].toInt() << '\n';
+           emit signal_sender_response(false);
           return;
         }
 
         qDebug() << "Friend Request Send Successfully!";
+        emit signal_sender_response(true);
       }));
+
+  /*the person who is going to confirm a friend request*/
+  m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
+      ServiceType::SERVICE_FRIENDCONFIRMRESPONSE, [this](QJsonObject &&json) {
+          /*error occured!*/
+          if (!json.contains("error")) {
+              qDebug() << "Json Parse Error!";
+              emit signal_confirm_response(false);
+              return;
+
+          } else if (json["error"].toInt() !=
+                     static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
+              qDebug() << "Friend Request Send Failed! Because Of Error Code = " << json["error"].toInt() << '\n';
+              emit signal_confirm_response(false);
+              return;
+          }
+
+          qDebug() << "Friend Request Send Successfully!";
+          emit signal_confirm_response(true);
+      }));
+
 
   /*the person who is going to receive friend request*/
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
@@ -219,26 +241,31 @@ void TCPNetworkConnection::registerCallback() {
         /*error occured!*/
         if (!json.contains("error")) {
           qDebug() << "Json Parse Error!";
-
-          // emit
+            emit signal_incoming_friend_request(std::nullopt);
           return;
+
         } else if (json["error"].toInt() !=
                    static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
           qDebug() << "Receive Friend Request Send Failed!";
 
-          // emit
+          emit signal_incoming_friend_request(std::nullopt);
           return;
         }
 
         qDebug() << "Receive Friend Request Send Successfully!";
 
-        QString src = json["src_uuid"].toString();
-        QString dst = json["dst_uuid"].toString();
-        QString nickname = json["nickname"].toString();
-        QString req_msg = json["message"].toString();
+        auto request =std::make_shared<UserFriendRequest>(
+            json["src_uuid"].toString(),
+            json["dst_uuid"].toString(),
+            json["src_nickname"].toString(),
+            json["src_message"].toString(),
+            json["src_avator"].toString(),
+            json["src_username"].toString(),
+            json["src_desc"].toString(),
+            static_cast<Sex>(json["src_sex"].toInt())
+        );
 
-        auto request =
-            std::make_unique<UserFriendRequest>(src, dst, nickname, req_msg);
+        emit signal_incoming_friend_request(request);
       }));
 }
 

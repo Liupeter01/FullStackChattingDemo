@@ -14,6 +14,7 @@
 #include <singleton.hpp>
 
 struct UserNameCard;
+struct UserFriendRequest;
 
 class TCPNetworkConnection
     : public QObject,
@@ -60,6 +61,15 @@ signals:
    */
   void signal_search_username(std::optional<std::shared_ptr<UserNameCard>>,
                               ServiceStatus status);
+
+  /* client who is going to receive new friend request*/
+  void signal_incoming_friend_request(std::optional<std::shared_ptr<UserFriendRequest>> info);
+
+  /*client who inited request will receive response from here*/
+  void signal_sender_response(bool status);
+
+  /*client who is going to confirm request will receive status from here*/
+  void signal_confirm_response(bool status);
 
 private:
   /*establish tcp socket with server*/
