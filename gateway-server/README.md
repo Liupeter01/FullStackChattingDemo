@@ -240,13 +240,10 @@ All services are using HTTP short connections, users are going to create a POST 
 
 
 
-
-
-​	
-
 ### Servers' Configurations
 
 ```ini
+#config.ini
 [GateServer]
 port = 8080
 [VerificationServer]
@@ -276,48 +273,62 @@ port=59900
 ### Platform Support
 Windows, Linux, MacOS(Intel & Apple Silicon M)
 
-### Download Gateway-server
-
-```bash
-git clone https://github.com/Liupeter01/gateway-server --depth 1
-```
-
-### Compile GatewayServer
+### Compile From Source Code
 
 grpc-1.50.2 will be downloaded automatically, and we will use boringssl instead of openssl
 
 **For Windows users, fetch content will download all of those for you**
 
-1. For Linux/Windows
+1. Download From Github
 
    ```bash
+   git clone https://github.com/Liupeter01/gateway-server --depth 1
+   ```
+
+2. Build From Source
+
+   ```bash
+   ###########################For Linux/Windows User################################
    cd FullStackChattingDemo/gateway-server
    git submodule update --init
    cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
    cmake --build build --parallel [x]
-   ```
-
-2. For MacOS
-
-   ```bash
+   
+   ###################################For MacOS###################################
    cd FullStackChattingDemo/gateway-server
    git submodule update --init
    cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=/usr/local/include
    cmake --build build --parallel [x]
    ```
 
+3. Execute Server From Executable File
 
-
-### How to Execute
-
-1. Activate Redis and MySQL service
-
-   **IMPORTANT: you have to start those services first!!**
-
-   
-
-2. Execute Servers' program
+   **Please Activate Redis and MySQL service First!**
 
    ```bash
-   ./gateway-server/build/GatewayServer
+   ./build/GatewayServer
    ```
+
+
+
+### Docker
+
+1. Download From GitHub
+
+   ```bash
+   git clone https://github.com/Liupeter01/gateway-server --depth 1
+   ```
+
+2. Execute Docker Build Command
+
+   ```b
+   docker build -t gateway-server-container .
+   ```
+
+3. Execute Docker Run To Start Server
+
+   ```bash
+   docker run -P -v /path/to/gateway/conf/config.ini:/app/config.ini gateway-server-container ./build/GatewayServer
+   ```
+
+   
