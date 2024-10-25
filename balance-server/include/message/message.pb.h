@@ -2200,8 +2200,12 @@ class AddNewFriendRequest final :
   enum : int {
     kNickNameFieldNumber = 3,
     kReqMsgFieldNumber = 4,
+    kAvatorPathFieldNumber = 5,
+    kUsernameFieldNumber = 6,
+    kDescriptionFieldNumber = 7,
     kSrcUuidFieldNumber = 1,
     kDstUuidFieldNumber = 2,
+    kSexFieldNumber = 8,
   };
   // string nick_name = 3;
   void clear_nick_name();
@@ -2231,6 +2235,48 @@ class AddNewFriendRequest final :
   std::string* _internal_mutable_req_msg();
   public:
 
+  // string avator_path = 5;
+  void clear_avator_path();
+  const std::string& avator_path() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_avator_path(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_avator_path();
+  PROTOBUF_NODISCARD std::string* release_avator_path();
+  void set_allocated_avator_path(std::string* avator_path);
+  private:
+  const std::string& _internal_avator_path() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_avator_path(const std::string& value);
+  std::string* _internal_mutable_avator_path();
+  public:
+
+  // string username = 6;
+  void clear_username();
+  const std::string& username() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_username(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_username();
+  PROTOBUF_NODISCARD std::string* release_username();
+  void set_allocated_username(std::string* username);
+  private:
+  const std::string& _internal_username() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_username(const std::string& value);
+  std::string* _internal_mutable_username();
+  public:
+
+  // string description = 7;
+  void clear_description();
+  const std::string& description() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_description(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_description();
+  PROTOBUF_NODISCARD std::string* release_description();
+  void set_allocated_description(std::string* description);
+  private:
+  const std::string& _internal_description() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_description(const std::string& value);
+  std::string* _internal_mutable_description();
+  public:
+
   // int32 src_uuid = 1;
   void clear_src_uuid();
   int32_t src_uuid() const;
@@ -2249,6 +2295,15 @@ class AddNewFriendRequest final :
   void _internal_set_dst_uuid(int32_t value);
   public:
 
+  // int32 sex = 8;
+  void clear_sex();
+  int32_t sex() const;
+  void set_sex(int32_t value);
+  private:
+  int32_t _internal_sex() const;
+  void _internal_set_sex(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:message.AddNewFriendRequest)
  private:
   class _Internal;
@@ -2259,8 +2314,12 @@ class AddNewFriendRequest final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr nick_name_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr req_msg_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr avator_path_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
     int32_t src_uuid_;
     int32_t dst_uuid_;
+    int32_t sex_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4177,6 +4236,176 @@ inline void AddNewFriendRequest::set_allocated_req_msg(std::string* req_msg) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:message.AddNewFriendRequest.req_msg)
+}
+
+// string avator_path = 5;
+inline void AddNewFriendRequest::clear_avator_path() {
+  _impl_.avator_path_.ClearToEmpty();
+}
+inline const std::string& AddNewFriendRequest::avator_path() const {
+  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.avator_path)
+  return _internal_avator_path();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void AddNewFriendRequest::set_avator_path(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.avator_path_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.avator_path)
+}
+inline std::string* AddNewFriendRequest::mutable_avator_path() {
+  std::string* _s = _internal_mutable_avator_path();
+  // @@protoc_insertion_point(field_mutable:message.AddNewFriendRequest.avator_path)
+  return _s;
+}
+inline const std::string& AddNewFriendRequest::_internal_avator_path() const {
+  return _impl_.avator_path_.Get();
+}
+inline void AddNewFriendRequest::_internal_set_avator_path(const std::string& value) {
+  
+  _impl_.avator_path_.Set(value, GetArenaForAllocation());
+}
+inline std::string* AddNewFriendRequest::_internal_mutable_avator_path() {
+  
+  return _impl_.avator_path_.Mutable(GetArenaForAllocation());
+}
+inline std::string* AddNewFriendRequest::release_avator_path() {
+  // @@protoc_insertion_point(field_release:message.AddNewFriendRequest.avator_path)
+  return _impl_.avator_path_.Release();
+}
+inline void AddNewFriendRequest::set_allocated_avator_path(std::string* avator_path) {
+  if (avator_path != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.avator_path_.SetAllocated(avator_path, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.avator_path_.IsDefault()) {
+    _impl_.avator_path_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:message.AddNewFriendRequest.avator_path)
+}
+
+// string username = 6;
+inline void AddNewFriendRequest::clear_username() {
+  _impl_.username_.ClearToEmpty();
+}
+inline const std::string& AddNewFriendRequest::username() const {
+  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.username)
+  return _internal_username();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void AddNewFriendRequest::set_username(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.username_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.username)
+}
+inline std::string* AddNewFriendRequest::mutable_username() {
+  std::string* _s = _internal_mutable_username();
+  // @@protoc_insertion_point(field_mutable:message.AddNewFriendRequest.username)
+  return _s;
+}
+inline const std::string& AddNewFriendRequest::_internal_username() const {
+  return _impl_.username_.Get();
+}
+inline void AddNewFriendRequest::_internal_set_username(const std::string& value) {
+  
+  _impl_.username_.Set(value, GetArenaForAllocation());
+}
+inline std::string* AddNewFriendRequest::_internal_mutable_username() {
+  
+  return _impl_.username_.Mutable(GetArenaForAllocation());
+}
+inline std::string* AddNewFriendRequest::release_username() {
+  // @@protoc_insertion_point(field_release:message.AddNewFriendRequest.username)
+  return _impl_.username_.Release();
+}
+inline void AddNewFriendRequest::set_allocated_username(std::string* username) {
+  if (username != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.username_.SetAllocated(username, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.username_.IsDefault()) {
+    _impl_.username_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:message.AddNewFriendRequest.username)
+}
+
+// string description = 7;
+inline void AddNewFriendRequest::clear_description() {
+  _impl_.description_.ClearToEmpty();
+}
+inline const std::string& AddNewFriendRequest::description() const {
+  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.description)
+  return _internal_description();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void AddNewFriendRequest::set_description(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.description_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.description)
+}
+inline std::string* AddNewFriendRequest::mutable_description() {
+  std::string* _s = _internal_mutable_description();
+  // @@protoc_insertion_point(field_mutable:message.AddNewFriendRequest.description)
+  return _s;
+}
+inline const std::string& AddNewFriendRequest::_internal_description() const {
+  return _impl_.description_.Get();
+}
+inline void AddNewFriendRequest::_internal_set_description(const std::string& value) {
+  
+  _impl_.description_.Set(value, GetArenaForAllocation());
+}
+inline std::string* AddNewFriendRequest::_internal_mutable_description() {
+  
+  return _impl_.description_.Mutable(GetArenaForAllocation());
+}
+inline std::string* AddNewFriendRequest::release_description() {
+  // @@protoc_insertion_point(field_release:message.AddNewFriendRequest.description)
+  return _impl_.description_.Release();
+}
+inline void AddNewFriendRequest::set_allocated_description(std::string* description) {
+  if (description != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.description_.SetAllocated(description, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.description_.IsDefault()) {
+    _impl_.description_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:message.AddNewFriendRequest.description)
+}
+
+// int32 sex = 8;
+inline void AddNewFriendRequest::clear_sex() {
+  _impl_.sex_ = 0;
+}
+inline int32_t AddNewFriendRequest::_internal_sex() const {
+  return _impl_.sex_;
+}
+inline int32_t AddNewFriendRequest::sex() const {
+  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.sex)
+  return _internal_sex();
+}
+inline void AddNewFriendRequest::_internal_set_sex(int32_t value) {
+  
+  _impl_.sex_ = value;
+}
+inline void AddNewFriendRequest::set_sex(int32_t value) {
+  _internal_set_sex(value);
+  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.sex)
 }
 
 // -------------------------------------------------------------------

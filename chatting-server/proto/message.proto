@@ -109,8 +109,12 @@ service DistributedChattingService {
 message AddNewFriendRequest {
   int32 src_uuid = 1;   // request from who
   int32 dst_uuid = 2;   // target
-  string nick_name = 3; // my nick name
-  string req_msg = 4;   // deliver a request message
+  string nick_name = 3; // src nick name
+  string req_msg = 4;   // request message that src wants to deliver
+  string avator_path = 5;     //src avator path
+  string username = 6;        //src username
+  string description = 7;     //src description
+  int32 sex = 8;
 }
 message AddNewFriendResponse {
   int32 error = 1;

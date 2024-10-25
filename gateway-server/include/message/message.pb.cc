@@ -190,8 +190,12 @@ PROTOBUF_CONSTEXPR AddNewFriendRequest::AddNewFriendRequest(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.nick_name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.req_msg_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.avator_path_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.username_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.description_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.src_uuid_)*/0
   , /*decltype(_impl_.dst_uuid_)*/0
+  , /*decltype(_impl_.sex_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct AddNewFriendRequestDefaultTypeInternal {
   PROTOBUF_CONSTEXPR AddNewFriendRequestDefaultTypeInternal()
@@ -385,6 +389,10 @@ const uint32_t TableStruct_message_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   PROTOBUF_FIELD_OFFSET(::message::AddNewFriendRequest, _impl_.dst_uuid_),
   PROTOBUF_FIELD_OFFSET(::message::AddNewFriendRequest, _impl_.nick_name_),
   PROTOBUF_FIELD_OFFSET(::message::AddNewFriendRequest, _impl_.req_msg_),
+  PROTOBUF_FIELD_OFFSET(::message::AddNewFriendRequest, _impl_.avator_path_),
+  PROTOBUF_FIELD_OFFSET(::message::AddNewFriendRequest, _impl_.username_),
+  PROTOBUF_FIELD_OFFSET(::message::AddNewFriendRequest, _impl_.description_),
+  PROTOBUF_FIELD_OFFSET(::message::AddNewFriendRequest, _impl_.sex_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::message::AddNewFriendResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -444,11 +452,11 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 79, -1, -1, sizeof(::message::GrpcChattingServerShutdownRequest)},
   { 86, -1, -1, sizeof(::message::GrpcChattingServerResponse)},
   { 93, -1, -1, sizeof(::message::AddNewFriendRequest)},
-  { 103, -1, -1, sizeof(::message::AddNewFriendResponse)},
-  { 112, -1, -1, sizeof(::message::AuthoriseRequest)},
-  { 120, -1, -1, sizeof(::message::AuthoriseResponse)},
-  { 129, -1, -1, sizeof(::message::SendChattingMsgRequest)},
-  { 138, -1, -1, sizeof(::message::SendChattingMsgResponse)},
+  { 107, -1, -1, sizeof(::message::AddNewFriendResponse)},
+  { 116, -1, -1, sizeof(::message::AuthoriseRequest)},
+  { 124, -1, -1, sizeof(::message::AuthoriseResponse)},
+  { 133, -1, -1, sizeof(::message::SendChattingMsgRequest)},
+  { 142, -1, -1, sizeof(::message::SendChattingMsgResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -490,51 +498,53 @@ const char descriptor_table_protodef_message_2eproto[] PROTOBUF_SECTION_VARIABLE
   " \001(\0132\023.message.ServerInfo\"7\n!GrpcChattin"
   "gServerShutdownRequest\022\022\n\ncur_server\030\001 \001"
   "(\t\"+\n\032GrpcChattingServerResponse\022\r\n\005erro"
-  "r\030\001 \001(\005\"]\n\023AddNewFriendRequest\022\020\n\010src_uu"
-  "id\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001(\005\022\021\n\tnick_name\030"
-  "\003 \001(\t\022\017\n\007req_msg\030\004 \001(\t\"I\n\024AddNewFriendRe"
-  "sponse\022\r\n\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022"
-  "\020\n\010dst_uuid\030\003 \001(\005\"6\n\020AuthoriseRequest\022\020\n"
-  "\010src_uuid\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001(\005\"F\n\021Aut"
-  "horiseResponse\022\r\n\005error\030\001 \001(\005\022\020\n\010src_uui"
-  "d\030\002 \001(\005\022\020\n\010dst_uuid\030\003 \001(\005\"M\n\026SendChattin"
-  "gMsgRequest\022\020\n\010src_uuid\030\001 \001(\005\022\020\n\010dst_uui"
-  "d\030\002 \001(\005\022\017\n\007message\030\003 \001(\t\"L\n\027SendChatting"
-  "MsgResponse\022\r\n\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002"
-  " \001(\005\022\020\n\010dst_uuid\030\003 \001(\0052q\n\023VerificationSe"
-  "rvice\022Z\n\023GetVerificationCode\022\037.message.G"
-  "etVerificationRequest\032 .message.GetVerif"
-  "icationResponse\"\0002\247\005\n\017BalancerService\022X\n"
-  "\022AddNewUserToServer\022\033.message.RegisterTo"
-  "Balancer\032#.message.GetAllocatedChattingS"
-  "erver\"\000\022S\n\021UserLoginToServer\022\034.message.L"
-  "oginChattingServer\032\036.message.LoginChatti"
-  "ngResponse\"\000\022n\n\036RegisterChattingServerIn"
-  "stance\022%.message.GrpcChattingServerRegRe"
-  "quest\032#.message.GrpcChattingServerRespon"
-  "se\"\000\022j\n\032RegisterChattingGrpcServer\022%.mes"
-  "sage.GrpcChattingServerRegRequest\032#.mess"
-  "age.GrpcChattingServerResponse\"\000\022k\n\026Chat"
-  "tingServerShutDown\022*.message.GrpcChattin"
-  "gServerShutdownRequest\032#.message.GrpcCha"
-  "ttingServerResponse\"\000\022O\n\031GetPeerChatting"
-  "ServerInfo\022\031.message.PeerListsRequest\032\025."
-  "message.PeerResponse\"\000\022K\n\025GetPeerGrpcSer"
-  "verInfo\022\031.message.PeerListsRequest\032\025.mes"
-  "sage.PeerResponse\"\0002\356\002\n\032DistributedChatt"
-  "ingService\022R\n\021SendFriendRequest\022\034.messag"
-  "e.AddNewFriendRequest\032\035.message.AddNewFr"
-  "iendResponse\"\000\022O\n\024ConfirmFriendRequest\022\031"
-  ".message.AuthoriseRequest\032\032.message.Auth"
-  "oriseResponse\"\000\022Q\n\026FriendshipVerificatio"
-  "n\022\031.message.AuthoriseRequest\032\032.message.A"
-  "uthoriseResponse\"\000\022X\n\021NormalChattingMsg\022"
-  "\037.message.SendChattingMsgRequest\032 .messa"
-  "ge.SendChattingMsgResponse\"\000b\006proto3"
+  "r\030\001 \001(\005\"\246\001\n\023AddNewFriendRequest\022\020\n\010src_u"
+  "uid\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001(\005\022\021\n\tnick_name"
+  "\030\003 \001(\t\022\017\n\007req_msg\030\004 \001(\t\022\023\n\013avator_path\030\005"
+  " \001(\t\022\020\n\010username\030\006 \001(\t\022\023\n\013description\030\007 "
+  "\001(\t\022\013\n\003sex\030\010 \001(\005\"I\n\024AddNewFriendResponse"
+  "\022\r\n\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020\n\010dst"
+  "_uuid\030\003 \001(\005\"6\n\020AuthoriseRequest\022\020\n\010src_u"
+  "uid\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001(\005\"F\n\021Authorise"
+  "Response\022\r\n\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001("
+  "\005\022\020\n\010dst_uuid\030\003 \001(\005\"M\n\026SendChattingMsgRe"
+  "quest\022\020\n\010src_uuid\030\001 \001(\005\022\020\n\010dst_uuid\030\002 \001("
+  "\005\022\017\n\007message\030\003 \001(\t\"L\n\027SendChattingMsgRes"
+  "ponse\022\r\n\005error\030\001 \001(\005\022\020\n\010src_uuid\030\002 \001(\005\022\020"
+  "\n\010dst_uuid\030\003 \001(\0052q\n\023VerificationService\022"
+  "Z\n\023GetVerificationCode\022\037.message.GetVeri"
+  "ficationRequest\032 .message.GetVerificatio"
+  "nResponse\"\0002\247\005\n\017BalancerService\022X\n\022AddNe"
+  "wUserToServer\022\033.message.RegisterToBalanc"
+  "er\032#.message.GetAllocatedChattingServer\""
+  "\000\022S\n\021UserLoginToServer\022\034.message.LoginCh"
+  "attingServer\032\036.message.LoginChattingResp"
+  "onse\"\000\022n\n\036RegisterChattingServerInstance"
+  "\022%.message.GrpcChattingServerRegRequest\032"
+  "#.message.GrpcChattingServerResponse\"\000\022j"
+  "\n\032RegisterChattingGrpcServer\022%.message.G"
+  "rpcChattingServerRegRequest\032#.message.Gr"
+  "pcChattingServerResponse\"\000\022k\n\026ChattingSe"
+  "rverShutDown\022*.message.GrpcChattingServe"
+  "rShutdownRequest\032#.message.GrpcChattingS"
+  "erverResponse\"\000\022O\n\031GetPeerChattingServer"
+  "Info\022\031.message.PeerListsRequest\032\025.messag"
+  "e.PeerResponse\"\000\022K\n\025GetPeerGrpcServerInf"
+  "o\022\031.message.PeerListsRequest\032\025.message.P"
+  "eerResponse\"\0002\356\002\n\032DistributedChattingSer"
+  "vice\022R\n\021SendFriendRequest\022\034.message.AddN"
+  "ewFriendRequest\032\035.message.AddNewFriendRe"
+  "sponse\"\000\022O\n\024ConfirmFriendRequest\022\031.messa"
+  "ge.AuthoriseRequest\032\032.message.AuthoriseR"
+  "esponse\"\000\022Q\n\026FriendshipVerification\022\031.me"
+  "ssage.AuthoriseRequest\032\032.message.Authori"
+  "seResponse\"\000\022X\n\021NormalChattingMsg\022\037.mess"
+  "age.SendChattingMsgRequest\032 .message.Sen"
+  "dChattingMsgResponse\"\000b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_message_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_message_2eproto = {
-    false, false, 2316, descriptor_table_protodef_message_2eproto,
+    false, false, 2390, descriptor_table_protodef_message_2eproto,
     "message.proto",
     &descriptor_table_message_2eproto_once, nullptr, 0, 18,
     schemas, file_default_instances, TableStruct_message_2eproto::offsets,
@@ -3258,8 +3268,12 @@ AddNewFriendRequest::AddNewFriendRequest(const AddNewFriendRequest& from)
   new (&_impl_) Impl_{
       decltype(_impl_.nick_name_){}
     , decltype(_impl_.req_msg_){}
+    , decltype(_impl_.avator_path_){}
+    , decltype(_impl_.username_){}
+    , decltype(_impl_.description_){}
     , decltype(_impl_.src_uuid_){}
     , decltype(_impl_.dst_uuid_){}
+    , decltype(_impl_.sex_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -3279,9 +3293,33 @@ AddNewFriendRequest::AddNewFriendRequest(const AddNewFriendRequest& from)
     _this->_impl_.req_msg_.Set(from._internal_req_msg(), 
       _this->GetArenaForAllocation());
   }
+  _impl_.avator_path_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.avator_path_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_avator_path().empty()) {
+    _this->_impl_.avator_path_.Set(from._internal_avator_path(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.username_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.username_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_username().empty()) {
+    _this->_impl_.username_.Set(from._internal_username(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.description_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.description_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_description().empty()) {
+    _this->_impl_.description_.Set(from._internal_description(), 
+      _this->GetArenaForAllocation());
+  }
   ::memcpy(&_impl_.src_uuid_, &from._impl_.src_uuid_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.dst_uuid_) -
-    reinterpret_cast<char*>(&_impl_.src_uuid_)) + sizeof(_impl_.dst_uuid_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.sex_) -
+    reinterpret_cast<char*>(&_impl_.src_uuid_)) + sizeof(_impl_.sex_));
   // @@protoc_insertion_point(copy_constructor:message.AddNewFriendRequest)
 }
 
@@ -3292,8 +3330,12 @@ inline void AddNewFriendRequest::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.nick_name_){}
     , decltype(_impl_.req_msg_){}
+    , decltype(_impl_.avator_path_){}
+    , decltype(_impl_.username_){}
+    , decltype(_impl_.description_){}
     , decltype(_impl_.src_uuid_){0}
     , decltype(_impl_.dst_uuid_){0}
+    , decltype(_impl_.sex_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.nick_name_.InitDefault();
@@ -3303,6 +3345,18 @@ inline void AddNewFriendRequest::SharedCtor(
   _impl_.req_msg_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.req_msg_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.avator_path_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.avator_path_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.username_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.username_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.description_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.description_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -3319,6 +3373,9 @@ inline void AddNewFriendRequest::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.nick_name_.Destroy();
   _impl_.req_msg_.Destroy();
+  _impl_.avator_path_.Destroy();
+  _impl_.username_.Destroy();
+  _impl_.description_.Destroy();
 }
 
 void AddNewFriendRequest::SetCachedSize(int size) const {
@@ -3333,9 +3390,12 @@ void AddNewFriendRequest::Clear() {
 
   _impl_.nick_name_.ClearToEmpty();
   _impl_.req_msg_.ClearToEmpty();
+  _impl_.avator_path_.ClearToEmpty();
+  _impl_.username_.ClearToEmpty();
+  _impl_.description_.ClearToEmpty();
   ::memset(&_impl_.src_uuid_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.dst_uuid_) -
-      reinterpret_cast<char*>(&_impl_.src_uuid_)) + sizeof(_impl_.dst_uuid_));
+      reinterpret_cast<char*>(&_impl_.sex_) -
+      reinterpret_cast<char*>(&_impl_.src_uuid_)) + sizeof(_impl_.sex_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3378,6 +3438,44 @@ const char* AddNewFriendRequest::_InternalParse(const char* ptr, ::_pbi::ParseCo
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "message.AddNewFriendRequest.req_msg"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string avator_path = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+          auto str = _internal_mutable_avator_path();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "message.AddNewFriendRequest.avator_path"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string username = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+          auto str = _internal_mutable_username();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "message.AddNewFriendRequest.username"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string description = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
+          auto str = _internal_mutable_description();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "message.AddNewFriendRequest.description"));
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 sex = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 64)) {
+          _impl_.sex_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -3442,6 +3540,42 @@ uint8_t* AddNewFriendRequest::_InternalSerialize(
         4, this->_internal_req_msg(), target);
   }
 
+  // string avator_path = 5;
+  if (!this->_internal_avator_path().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_avator_path().data(), static_cast<int>(this->_internal_avator_path().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "message.AddNewFriendRequest.avator_path");
+    target = stream->WriteStringMaybeAliased(
+        5, this->_internal_avator_path(), target);
+  }
+
+  // string username = 6;
+  if (!this->_internal_username().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_username().data(), static_cast<int>(this->_internal_username().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "message.AddNewFriendRequest.username");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_username(), target);
+  }
+
+  // string description = 7;
+  if (!this->_internal_description().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_description().data(), static_cast<int>(this->_internal_description().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "message.AddNewFriendRequest.description");
+    target = stream->WriteStringMaybeAliased(
+        7, this->_internal_description(), target);
+  }
+
+  // int32 sex = 8;
+  if (this->_internal_sex() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(8, this->_internal_sex(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3472,6 +3606,27 @@ size_t AddNewFriendRequest::ByteSizeLong() const {
         this->_internal_req_msg());
   }
 
+  // string avator_path = 5;
+  if (!this->_internal_avator_path().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_avator_path());
+  }
+
+  // string username = 6;
+  if (!this->_internal_username().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_username());
+  }
+
+  // string description = 7;
+  if (!this->_internal_description().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_description());
+  }
+
   // int32 src_uuid = 1;
   if (this->_internal_src_uuid() != 0) {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_src_uuid());
@@ -3480,6 +3635,11 @@ size_t AddNewFriendRequest::ByteSizeLong() const {
   // int32 dst_uuid = 2;
   if (this->_internal_dst_uuid() != 0) {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_dst_uuid());
+  }
+
+  // int32 sex = 8;
+  if (this->_internal_sex() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_sex());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -3506,11 +3666,23 @@ void AddNewFriendRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, co
   if (!from._internal_req_msg().empty()) {
     _this->_internal_set_req_msg(from._internal_req_msg());
   }
+  if (!from._internal_avator_path().empty()) {
+    _this->_internal_set_avator_path(from._internal_avator_path());
+  }
+  if (!from._internal_username().empty()) {
+    _this->_internal_set_username(from._internal_username());
+  }
+  if (!from._internal_description().empty()) {
+    _this->_internal_set_description(from._internal_description());
+  }
   if (from._internal_src_uuid() != 0) {
     _this->_internal_set_src_uuid(from._internal_src_uuid());
   }
   if (from._internal_dst_uuid() != 0) {
     _this->_internal_set_dst_uuid(from._internal_dst_uuid());
+  }
+  if (from._internal_sex() != 0) {
+    _this->_internal_set_sex(from._internal_sex());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -3539,9 +3711,21 @@ void AddNewFriendRequest::InternalSwap(AddNewFriendRequest* other) {
       &_impl_.req_msg_, lhs_arena,
       &other->_impl_.req_msg_, rhs_arena
   );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.avator_path_, lhs_arena,
+      &other->_impl_.avator_path_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.username_, lhs_arena,
+      &other->_impl_.username_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.description_, lhs_arena,
+      &other->_impl_.description_, rhs_arena
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(AddNewFriendRequest, _impl_.dst_uuid_)
-      + sizeof(AddNewFriendRequest::_impl_.dst_uuid_)
+      PROTOBUF_FIELD_OFFSET(AddNewFriendRequest, _impl_.sex_)
+      + sizeof(AddNewFriendRequest::_impl_.sex_)
       - PROTOBUF_FIELD_OFFSET(AddNewFriendRequest, _impl_.src_uuid_)>(
           reinterpret_cast<char*>(&_impl_.src_uuid_),
           reinterpret_cast<char*>(&other->_impl_.src_uuid_));
