@@ -25,7 +25,8 @@ enum class ServiceType : uint8_t {
           // request
           SERVICE_FRIENDREQUESTCONFIRM, // the person who is going to confirm a friend
           // request
-          SERVICE_FRIENDREQUESTRESPONSE,
+          SERVICE_FRIENDSENDERRESPONSE,
+          SERVICE_FRIENDCONFIRMRESPONSE,
           SERVICE_UNKNOWN // unkown service
 };
 
