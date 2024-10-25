@@ -416,7 +416,6 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
                                              std::shared_ptr<Session> session,
                                              NodePtr recv) {
   Json::Value src_root;    /*store json from client*/
-  Json::Value dst_root;    /*send it to dst user*/
   Json::Value result_root; /*send processing result back to src user*/
   Json::Reader reader;
 
@@ -424,7 +423,7 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
   /*recv message error*/
   if (!body.has_value()) {
     generateErrorMessage("Failed to parse json data",
-                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceType::SERVICE_FRIENDSENDERRESPONSE,
                          ServiceStatus::JSONPARSE_ERROR, session);
     return;
   }
@@ -432,7 +431,7 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
   /*parse error*/
   if (!reader.parse(body.value(), src_root)) {
     generateErrorMessage("Failed to parse json data",
-                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceType::SERVICE_FRIENDSENDERRESPONSE,
                          ServiceStatus::JSONPARSE_ERROR, session);
     return;
   }
@@ -444,7 +443,7 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
 
   if (src_uuid == dst_uuid) {
     generateErrorMessage("Do Not Add yourself as a friend",
-                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceType::SERVICE_FRIENDSENDERRESPONSE,
                          ServiceStatus::FRIENDING_YOURSELF, session);
 
     spdlog::warn("[{}]: Receive UUID = {} Friending itself!",
@@ -470,7 +469,7 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
   if (!mysql->get()->createFriendRequest(src_uuid_op.value(),
                                          dst_uuid_op.value(), nickname, msg)) {
     generateErrorMessage(" Insert Friend Request Failed",
-                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceType::SERVICE_FRIENDSENDERRESPONSE,
                          ServiceStatus::FRIENDING_ERROR, session);
 
     spdlog::warn("[{} UUID = {}]:  Insert Friend Request Failed",
@@ -493,10 +492,21 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
   /*we cannot find it in Redis directly*/
   if (!server_op.has_value()) {
     generateErrorMessage("User Not Found In Any Server",
-                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceType::SERVICE_FRIENDSENDERRESPONSE,
                          ServiceStatus::FRIENDING_ERROR, session);
     return;
   }
+
+  /*We have to get current user info(src_uuid) on current server */
+  std::optional<std::shared_ptr<UserNameCard>> info_str = getUserBasicInfo(src_uuid);
+  if (!info_str.has_value()) {
+            generateErrorMessage("Current UserProfile Load Error!",
+                      ServiceType::SERVICE_FRIENDSENDERRESPONSE,
+                      ServiceStatus::FRIENDING_ERROR, session);
+            return;
+  }
+
+  std::shared_ptr<UserNameCard> src_namecard = info_str.value();
 
   /*Is target user(dst_uuid) and current user(src_uuid) on the same server*/
   if (server_op.value() == ServerConfig::get_instance()->GrpcServerName) {
@@ -504,16 +514,23 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
     auto session_op = UserManager::get_instance()->getSession(dst_uuid);
     if (!session_op.has_value()) {
       generateErrorMessage("Target User's Session Not Found",
-                           ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                           ServiceType::SERVICE_FRIENDSENDERRESPONSE,
                            ServiceStatus::FRIENDING_TARGET_USER_NOT_FOUND,
                            session);
       return;
     }
+    /*send it to dst user*/
+    Json::Value dst_root;    
+
+    dst_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
     dst_root["src_uuid"] = src_uuid;
     dst_root["dst_uuid"] = dst_uuid;
-    dst_root["nickname"] = nickname;
-    dst_root["message"] = msg;
-    dst_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
+    dst_root["src_nickname"] = nickname;
+    dst_root["src_message"] = msg;
+    dst_root["src_avator"] = src_namecard->m_avatorPath;
+    dst_root["src_username"] = src_namecard->m_username;
+    dst_root["src_desc"] = src_namecard->m_description;
+    dst_root["src_sex"] = static_cast<uint8_t>(src_namecard->m_sex);
 
     /*propagate the message to dst user*/
     session_op.value()->sendMessage(
@@ -523,26 +540,19 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
     result_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
   } else {
     /*
-     * ----------------------------------GRPC
-     * REQUEST------------------------------------ dst_uuid and src_uuid are not
-     * on the same server
-     * 1. We have to get current user info(src_uuid) on current server
-     * 2. Pass current user info to other chatting-server by using grpc protocol
+     * ----------------------------------GRPC REQUEST------------------------------------ 
+     * ---------------dst_uuid and src_uuid are not on the same server------------------
+     * Pass current user info to other chatting-server by using grpc protocol
      */
-    std::optional<std::shared_ptr<UserNameCard>> info_str =
-        getUserBasicInfo(src_uuid);
-    if (!info_str.has_value()) {
-      generateErrorMessage("Current UserProfile Load Error!",
-                           ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
-                           ServiceStatus::FRIENDING_ERROR, session);
-      return;
-    }
-
     message::AddNewFriendRequest grpc_request;
     grpc_request.set_src_uuid(src_uuid_op.value());
     grpc_request.set_dst_uuid(dst_uuid_op.value());
     grpc_request.set_nick_name(nickname);
     grpc_request.set_req_msg(msg);
+    grpc_request.set_avator_path(src_namecard->m_avatorPath);
+    grpc_request.set_username(src_namecard->m_username);
+    grpc_request.set_description(src_namecard->m_description);
+    grpc_request.set_sex(static_cast<uint8_t>(src_namecard->m_sex));
 
     auto response =
         gRPCDistributedChattingService::get_instance()->sendFriendRequest(
@@ -554,7 +564,7 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
                    ServerConfig::get_instance()->GrpcServerName, src_uuid,
                    server_op.value());
       generateErrorMessage("Internel Server Error",
-                           ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                           ServiceType::SERVICE_FRIENDSENDERRESPONSE,
                            ServiceStatus::FRIENDING_ERROR, session);
       return;
     }
@@ -565,7 +575,7 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
   /*send service result back to request sender*/
   result_root["src_uuid"] = src_uuid;
   result_root["dst_uuid"] = dst_uuid;
-  session->sendMessage(ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+  session->sendMessage(ServiceType::SERVICE_FRIENDSENDERRESPONSE,
                        result_root.toStyledString());
 }
 
@@ -581,7 +591,7 @@ void SyncLogic::handlingFriendRequestConfirm(ServiceType srv_type,
   /*recv message error*/
   if (!body.has_value()) {
     generateErrorMessage("Failed to parse json data",
-                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceType::SERVICE_FRIENDCONFIRMRESPONSE,
                          ServiceStatus::JSONPARSE_ERROR, session);
     return;
   }
@@ -589,7 +599,7 @@ void SyncLogic::handlingFriendRequestConfirm(ServiceType srv_type,
   /*parse error*/
   if (!reader.parse(body.value(), src_root)) {
     generateErrorMessage("Failed to parse json data",
-                         ServiceType::SERVICE_FRIENDREQUESTRESPONSE,
+                         ServiceType::SERVICE_FRIENDCONFIRMRESPONSE,
                          ServiceStatus::JSONPARSE_ERROR, session);
     return;
   }
