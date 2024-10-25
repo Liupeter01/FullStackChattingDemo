@@ -1,7 +1,7 @@
 #ifndef ADDUSERNAMECARDWIDGET_H
 #define ADDUSERNAMECARDWIDGET_H
 
-#include "UserNameCard.h"
+#include "UserFriendRequest.hpp"
 #include <QFrame>
 #include <memory>
 
@@ -18,7 +18,7 @@ public:
 
 public:
   // void setFriendAvator(const QPixmap &pic);
-  void setNameCardInfo(std::unique_ptr<UserNameCard> info);
+  void setNameCardInfo(std::shared_ptr<UserFriendRequest> info);
 
   static const QSize getImageSize();
   virtual QSize sizeHint() const;
@@ -43,7 +43,7 @@ private slots:
 
 private:
   Ui::AddUserNameCardWidget *ui;
-  std::unique_ptr<UserNameCard> m_info;
+  std::shared_ptr<UserFriendRequest> m_info;
 };
 
 #endif // ADDUSERNAMECARDWIDGET_H

@@ -1,6 +1,6 @@
 #include "addusernamecardwidget.h"
-#include "UserNameCard.h"
 #include "ui_addusernamecardwidget.h"
+#include "UserFriendRequest.hpp"
 
 AddUserNameCardWidget::AddUserNameCardWidget(QWidget *parent)
     : QFrame(parent), ui(new Ui::AddUserNameCardWidget) {
@@ -15,8 +15,7 @@ AddUserNameCardWidget::AddUserNameCardWidget(QWidget *parent)
 
 AddUserNameCardWidget::~AddUserNameCardWidget() { delete ui; }
 
-void AddUserNameCardWidget::setNameCardInfo(
-    std::unique_ptr<UserNameCard> info) {
+void AddUserNameCardWidget::setNameCardInfo(std::shared_ptr<UserFriendRequest> info) {
   /*move ownership*/
   m_info = std::move(info);
 
