@@ -94,24 +94,15 @@ bool mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
   return result.rows().size();
 }
 
-std::optional<std::size_t>
-mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request) {
+bool mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request) {
   /*check is there anyone who use this username before*/
-  if (checkAccountAvailability(request.m_username, request.m_email)) {
-    return std::nullopt;
+  if (!checkAccountAvailability(request.m_username, request.m_email)) {
+    [[maybe_unused]] auto res =
+        executeCommand(MySQLSelection::CREATE_NEW_USER, request.m_username,
+                       request.m_password, request.m_email);
+    return true;
   }
-  [[maybe_unused]] auto res =
-      executeCommand(MySQLSelection::CREATE_NEW_USER, request.m_username,
-                     request.m_password, request.m_email);
-
-  res = executeCommand(MySQLSelection::FIND_EXISTING_USER, request.m_username,
-                       request.m_email);
-  if (!res.has_value()) {
-    return std::nullopt;
-  }
-  boost::mysql::results result = res.value();
-  boost::mysql::row_view row = *result.rows().begin();
-  return row.at(0).as_int64();
+  return false;
 }
 
 bool mysql::MySQLConnection::alterUserPassword(MySQLRequestStruct &&request) {
@@ -135,7 +126,7 @@ bool mysql::MySQLConnection::checkTimeout(
   return true;
 }
 
-bool mysql::MySQLConnection::checkUUID(std::size_t &uuid) {
+bool mysql::MySQLConnection::checkUUID(std::size_t uuid) {
   auto res = executeCommand(MySQLSelection::USER_UUID_CHECK, uuid);
   if (!res.has_value()) {
     return false;
@@ -143,6 +134,25 @@ bool mysql::MySQLConnection::checkUUID(std::size_t &uuid) {
 
   boost::mysql::results result = res.value();
   return result.rows().size();
+}
+
+std::optional<std::size_t>
+mysql::MySQLConnection::getUUIDByUsername(std::string_view username) {
+  auto res = executeCommand(MySQLSelection::GET_USER_UUID, username);
+  if (!res.has_value()) {
+    return std::nullopt;
+  }
+
+  return (*res.value().rows().begin()).at(0).as_int64();
+}
+
+std::optional<std::string>
+mysql::MySQLConnection::getUsernameByUUID(std::size_t uuid) {
+  auto res = executeCommand(MySQLSelection::USER_UUID_CHECK, uuid);
+  if (!res.has_value()) {
+    return std::nullopt;
+  }
+  return (*res.value().rows().begin()).at(1).as_string();
 }
 
 bool mysql::MySQLConnection::sendHeartBeat() {

@@ -27,7 +27,9 @@ enum class MySQLSelection : uint8_t {
   UPDATE_USER_PASSWD, // update user password
   USER_LOGIN_CHECK,   // check login username & password
   USER_UUID_CHECK,    // check account uuid in DB
-  USER_PROFILE        // check account user profile
+  USER_PROFILE,       // check account user profile
+  GET_USER_UUID,      // get uuid by username
+  USER_FRIEND_REQUEST // User A send friend request to B
 };
 
 class MySQLConnection {
@@ -45,7 +47,7 @@ public:
 
 public:
   /*insert new user, call MySQLSelection::CREATE_NEW_USER*/
-  std::optional<std::size_t> registerNewUser(MySQLRequestStruct &&request);
+  bool registerNewUser(MySQLRequestStruct &&request);
   bool alterUserPassword(MySQLRequestStruct &&request);
 
   /*login username & password check*/
@@ -59,7 +61,10 @@ public:
   bool checkTimeout(const std::chrono::steady_clock::time_point &curr,
                     std::size_t timeout);
 
-  bool checkUUID(std::size_t &uuid);
+  bool checkUUID(std::size_t uuid);
+
+  std::optional<std::size_t> getUUIDByUsername(std::string_view username);
+  std::optional<std::string> getUsernameByUUID(std::size_t uuid);
 
 private:
   template <typename... Args>
