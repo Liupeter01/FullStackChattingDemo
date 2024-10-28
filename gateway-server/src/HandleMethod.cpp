@@ -131,11 +131,18 @@ void HandleMethod::registerPostCallBacks() {
                                    mysql::MySQLConnection>
             mysql;
 
-        auto uuid_op = mysql->get()->registerNewUser(std::move(request));
-        if (!uuid_op.has_value()) {
+        if (!mysql->get()->registerNewUser(std::move(request))) {
           generateErrorMessage("MYSQL user register error",
                                ServiceStatus::MYSQL_INTERNAL_ERROR, conn);
           return false;
+        }
+
+        /*get uuid by username*/
+        std::optional<std::size_t> res = mysql->get()->getUUIDByUsername(username);
+        if (!res.has_value()) {
+                  generateErrorMessage("No UUID related to Username",
+                            ServiceStatus::LOGIN_UNSUCCESSFUL, conn);
+                  return false;
         }
 
         send_root["error"] =
@@ -145,7 +152,7 @@ void HandleMethod::registerPostCallBacks() {
         send_root["email"] = email;
 
         /*get required uuid, and return it back to user!*/
-        send_root["uuid"] = std::to_string(uuid_op.value());
+        send_root["uuid"] = std::to_string(res.value());
 
         boost::beast::ostream(conn->http_response.body())
             << send_root.toStyledString();
@@ -301,12 +308,21 @@ void HandleMethod::registerPostCallBacks() {
                                    mysql::MySQLConnection>
             mysql;
 
-        std::optional<std::size_t> res =
+        /*check account credential*/
+        [[maybe_unused]] std::optional<std::size_t> res =
             mysql->get()->checkAccountLogin(username, password);
         if (!res.has_value()) {
           generateErrorMessage("Wrong username or password",
                                ServiceStatus::LOGIN_INFO_ERROR, conn);
           return false;
+        }
+
+        /*get uuid by username*/
+        res = mysql->get()->getUUIDByUsername(username);
+        if (!res.has_value()) {
+                  generateErrorMessage("No UUID related to Username",
+                            ServiceStatus::LOGIN_UNSUCCESSFUL, conn);
+                  return false;
         }
 
         std::size_t uuid = res.value();
