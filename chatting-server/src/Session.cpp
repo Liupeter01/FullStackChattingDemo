@@ -83,8 +83,8 @@ void Session::handle_write(std::shared_ptr<Session> session,
     if (ec) {
       session->s_gate->terminateConnection(session->s_session_id);
       spdlog::warn(
-          "Client [Session = {}] Body Error: Exit Anomaly, Error message {}",
-          session->s_session_id, ec.message());
+          "[Client UUID = {}]: Session {} Exit Anomaly, Error message {}",
+          session->s_uuid, session->s_session_id, ec.message());
       return;
     }
     std::lock_guard<std::mutex> _lckg(m_mtx);
