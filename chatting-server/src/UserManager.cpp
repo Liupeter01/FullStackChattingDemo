@@ -23,5 +23,8 @@ void UserManager::removeUsrSession(const std::string &uuid) {
 void UserManager::alterUserSession(const std::string &uuid,
                                    std::shared_ptr<Session> session) {
   std::lock_guard<std::mutex> _lckg(m_update_mtx);
-  m_uuid2Session[uuid] = session;
+  m_uuid2Session.insert(std::pair<std::string, std::shared_ptr<Session>>(
+            uuid,
+            session
+  ));
 }
