@@ -2,6 +2,7 @@
 #include "tcpnetworkconnection.h"
 #include "addusernamecardwidget.h"
 #include "ui_addnewuserstackwidget.h"
+#include <useraccountmanager.hpp>
 #include <QListWidgetItem>
 
 AddNewUserStackWidget::AddNewUserStackWidget(QWidget *parent)
@@ -43,8 +44,16 @@ void AddNewUserStackWidget::registerSignal()
 void AddNewUserStackWidget::slot_incoming_friend_request(std::optional<std::shared_ptr<UserFriendRequest>> info)
 {
     if(info.has_value()){
+        qDebug() << "Receive Friend Request From " << info.value()->m_uuid;
+        /*did the friend request sender send the request before?*/
+        if(UserAccountManager::get_instance()->alreadyExist(info.value()->m_uuid)){
+            return;
+        }
+        /*add it to the list*/
+        UserAccountManager::get_instance()->add2FriendRequestList(info.value());
+
+        /*add it to UI interface*/
         addNewWidgetItem(info.value());
-        return;
     }
 }
 
