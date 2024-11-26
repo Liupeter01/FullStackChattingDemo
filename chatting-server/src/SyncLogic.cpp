@@ -150,7 +150,7 @@ bool SyncLogic::tagCurrentUser(const std::string &uuid) {
   connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
       raii;
   return raii->get()->setValue(server_prefix + uuid,
-                               ServerConfig::get_instance()->GrpcServerHost);
+            ServerConfig::get_instance()->GrpcServerName);
 }
 
 bool SyncLogic::untagCurrentUser(const std::string &uuid) {
@@ -237,22 +237,20 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
     return;
   }
 
-  std::string uuid_str = src_root["uuid"].asString();
+  std::string uuid = src_root["uuid"].asString();
   std::string token = src_root["token"].asString();
   spdlog::info("[UUID = {}] Trying to login to ChattingServer with Token {}",
-               uuid_str, token);
+               uuid, token);
 
-  auto uuid_optional = tools::string_to_value<std::size_t>(uuid_str);
-  if (!uuid_optional.has_value()) {
+  auto uuid_value_op = tools::string_to_value<std::size_t>(uuid);
+  if (!uuid_value_op.has_value()) {
     generateErrorMessage("Failed to convert string to number",
                          ServiceType::SERVICE_LOGINRESPONSE,
                          ServiceStatus::LOGIN_UNSUCCESSFUL, session);
     return;
   }
 
-  std::size_t uuid = uuid_optional.value();
-
-  auto response = gRPCBalancerService::userLoginToServer(uuid, token);
+  auto response = gRPCBalancerService::userLoginToServer(uuid_value_op.value(), token);
   redis_root["error"] = response.error();
 
   if (response.error() !=
@@ -272,7 +270,7 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
    * 2. searching for user info inside mysql
    */
   std::optional<std::shared_ptr<UserNameCard>> info_str =
-      getUserBasicInfo(std::to_string(uuid));
+      getUserBasicInfo(uuid);
   if (!info_str.has_value()) {
     spdlog::error("[UUID = {}] Can not find a single user in MySQL and Redis",
                   uuid);
@@ -283,15 +281,15 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
 
   } else {
     /*bind uuid with a session*/
-    session->setUUID(uuid_str);
+    session->setUUID(uuid);
 
     /* add user uuid and session as a pair and store it inside usermanager */
-    UserManager::get_instance()->alterUserSession(uuid_str, session);
+    UserManager::get_instance()->alterUserSession(uuid, session);
 
     /*returning info to client*/
     std::shared_ptr<UserNameCard> info = info_str.value();
     redis_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
-    redis_root["uuid"] = std::to_string(uuid);
+    redis_root["uuid"] = uuid;
     redis_root["sex"] = static_cast<uint8_t>(info->m_sex);
     redis_root["avator"] = info->m_avatorPath;
     redis_root["username"] = info->m_username;
@@ -310,7 +308,7 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
     incrementConnection();
 
     /*store this user belonged server into redis*/
-    if (!tagCurrentUser(std::to_string(uuid))) {
+    if (!tagCurrentUser(uuid)) {
       spdlog::warn("[UUID = {}] Bind Current User To Current Server {}", uuid,
                    ServerConfig::get_instance()->GrpcServerName);
     }
@@ -455,10 +453,10 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
                ServerConfig::get_instance()->GrpcServerName, src_uuid,
                dst_uuid);
 
-  auto src_uuid_op = tools::string_to_value<std::size_t>(src_uuid);
-  auto dst_uuid_op = tools::string_to_value<std::size_t>(dst_uuid);
+  auto src_uuid_value_op = tools::string_to_value<std::size_t>(src_uuid);
+  auto dst_uuid_value_op = tools::string_to_value<std::size_t>(dst_uuid);
 
-  if (!src_uuid_op.has_value() || !dst_uuid_op.has_value()) {
+  if (!src_uuid_value_op.has_value() || !dst_uuid_value_op.has_value()) {
     spdlog::error("Casting string typed key to std::size_t!");
     return;
   }
@@ -466,8 +464,8 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
   /*insert friend request info into mysql db*/
   connection::ConnectionRAII<mysql::MySQLConnectionPool, mysql::MySQLConnection>
       mysql;
-  if (!mysql->get()->createFriendRequest(src_uuid_op.value(),
-                                         dst_uuid_op.value(), nickname, msg)) {
+  if (mysql->get()->createFriendRequest(src_uuid_value_op.value(),
+                                         dst_uuid_value_op.value(), nickname, msg)) {
     generateErrorMessage(" Insert Friend Request Failed",
                          ServiceType::SERVICE_FRIENDSENDERRESPONSE,
                          ServiceStatus::FRIENDING_ERROR, session);
@@ -545,8 +543,8 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
      * Pass current user info to other chatting-server by using grpc protocol
      */
     message::AddNewFriendRequest grpc_request;
-    grpc_request.set_src_uuid(src_uuid_op.value());
-    grpc_request.set_dst_uuid(dst_uuid_op.value());
+    grpc_request.set_src_uuid(src_uuid_value_op.value());
+    grpc_request.set_dst_uuid(dst_uuid_value_op.value());
     grpc_request.set_nick_name(nickname);
     grpc_request.set_req_msg(msg);
     grpc_request.set_avator_path(src_namecard->m_avatorPath);
