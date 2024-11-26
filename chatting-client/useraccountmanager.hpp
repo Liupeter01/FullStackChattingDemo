@@ -3,6 +3,8 @@
 
 #include "singleton.hpp"
 #include <QString>
+#include <vector>
+#include <UserFriendRequest.hpp>
 
 class UserAccountManager : public Singleton<UserAccountManager> {
   friend class Singleton<UserAccountManager>;
@@ -19,6 +21,11 @@ public:
   const QString &get_token() const { return m_info.token; }
   const QString get_uuid() const { return m_info.uuid; }
 
+public:
+  const std::vector<std::shared_ptr<UserFriendRequest>>& getFriendRequestList();
+    void add2FriendRequestList(std::shared_ptr<UserFriendRequest> item);
+    bool alreadyExist(const QString &uuid) const;
+
 private:
   UserAccountManager() : m_info() {}
 
@@ -29,6 +36,8 @@ private:
     QString port;
     QString token;
   } m_info;
+
+  std::vector<std::shared_ptr<UserFriendRequest>> m_friend_request_list;
 };
 
 #endif // USERACCOUNTMANAGER_H
