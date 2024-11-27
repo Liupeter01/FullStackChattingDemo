@@ -6,6 +6,8 @@
 #include <vector>
 #include <UserFriendRequest.hpp>
 
+class QJsonArray;
+
 class UserAccountManager : public Singleton<UserAccountManager> {
   friend class Singleton<UserAccountManager>;
 
@@ -22,9 +24,12 @@ public:
   const QString get_uuid() const { return m_info.uuid; }
 
 public:
+  void addItem2FriendRequestList(std::shared_ptr<UserFriendRequest> info);
+  void appendFriendRequestList(const QJsonArray& array);
   const std::vector<std::shared_ptr<UserFriendRequest>>& getFriendRequestList();
-    void add2FriendRequestList(std::shared_ptr<UserFriendRequest> item);
     bool alreadyExist(const QString &uuid) const;
+
+    void setUserInfo(std::shared_ptr<UserNameCard> info);
 
 private:
   UserAccountManager() : m_info() {}
@@ -37,7 +42,13 @@ private:
     QString token;
   } m_info;
 
+  /*store current user's info*/
+  std::shared_ptr<UserNameCard> m_userInfo;
+
+  /*store friending requests*/
   std::vector<std::shared_ptr<UserFriendRequest>> m_friend_request_list;
+
+  /*store exisiting friend list*/
 };
 
 #endif // USERACCOUNTMANAGER_H

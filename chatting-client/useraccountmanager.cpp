@@ -1,13 +1,29 @@
+#include <QJsonArray>
 #include<useraccountmanager.hpp>
+
+void UserAccountManager::appendFriendRequestList(const QJsonArray& array){
+    for(const  QJsonValue &obj : array){
+        addItem2FriendRequestList(
+            std::make_shared<UserFriendRequest>(
+                obj["src_uuid"].toString(),
+                obj["dst_uuid"].toString(),
+                obj["nickname"].toString(),
+                obj["message"].toString(),
+                obj["avator"].toString(),
+                obj["username"].toString(),
+                obj["description"].toString(),
+                static_cast<Sex>(obj["sex"].toInt())
+        ));
+    }
+}
+
+void UserAccountManager::addItem2FriendRequestList(std::shared_ptr<UserFriendRequest> info){
+    m_friend_request_list.push_back(info);
+}
 
 const std::vector<std::shared_ptr<UserFriendRequest>> &UserAccountManager::getFriendRequestList()
 {
     return m_friend_request_list;
-}
-
-void UserAccountManager::add2FriendRequestList(std::shared_ptr<UserFriendRequest> item)
-{
-    m_friend_request_list.push_back(item);
 }
 
 bool UserAccountManager::alreadyExist(const QString &uuid) const
@@ -18,4 +34,9 @@ bool UserAccountManager::alreadyExist(const QString &uuid) const
     });
 
     return it != m_friend_request_list.end();
+}
+
+void UserAccountManager::setUserInfo(std::shared_ptr<UserNameCard> info)
+{
+    m_userInfo = info;
 }
