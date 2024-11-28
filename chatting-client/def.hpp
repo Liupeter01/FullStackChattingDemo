@@ -19,14 +19,31 @@ enum class ServiceType : uint8_t {
     SERVICE_LOGOUTRESPONSE,         // logout server response
     SERVICE_SEARCHUSERNAME,         // client search another user's username
     SERVICE_SEARCHUSERNAMERESPONSE, //
-    SERVICE_FRIENDREQUESTSENDER, // the person who started to send friend request
-    // to other
-    SERVICE_FRIENDREINCOMINGREQUEST, // the person who is going to receive friend
-    // request
-    SERVICE_FRIENDREQUESTCONFIRM, // the person who is going to confirm a friend
-    // request
+
+    /*
+          * User A init a friending request to User B
+          * However this message will only be received by Server Directly
+          * If the forwarding successful, then send SERVICE_FRIENDSENDERRESPONSE to User A
+          */
+    SERVICE_FRIENDREQUESTSENDER,
     SERVICE_FRIENDSENDERRESPONSE,
+
+    /*The Server Produce this request only!
+          * The Server will Forward A's Friending Request to B's interface
+          */
+    SERVICE_FRIENDREINCOMINGREQUEST,
+
+    /*
+          * User B confirm A's friending request
+          * However this message will only be received by Server Directly
+          */
+    SERVICE_FRIENDREQUESTCONFIRM,
+
+    /*If the forwarding successful, then send SERVICE_FRIENDSENDERRESPONSE to User B*/
     SERVICE_FRIENDCONFIRMRESPONSE,
+
+    /*if the friending process success, then both src_uuid and dst_uuid could receive this*/
+    SERVICE_FRIENDING_ON_BIDDIRECTIONAL,
     SERVICE_UNKNOWN // unkown service
 };
 
