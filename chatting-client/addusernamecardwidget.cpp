@@ -46,7 +46,7 @@ void AddUserNameCardWidget::registerSignal() {
     ui->add_button->hide();
     ui->ignore_button->hide();
     ui->status_label->setText(QString("Added"));
-    emit signal_add_friend();
+    emit signal_add_friend(m_info);
   });
 
   connect(ui->ignore_button, &QPushButton::clicked, this, [this]() {

@@ -37,7 +37,7 @@ private:
   void loadDefaultSetting();
 
 signals:
-  void signal_add_friend();
+  void signal_add_friend(std::shared_ptr<UserFriendRequest>);
 
 private slots:
 
