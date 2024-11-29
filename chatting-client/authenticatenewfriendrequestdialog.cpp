@@ -289,25 +289,18 @@ void AuthenticateNewFriendRequestDialog::on_confirm_button_clicked()
 {
     qDebug() << "[AuthenticateNewFriendRequestDialog::on_confirm_button_clicked]: User Confirm "
                 "To Send Request\n";
-    closeDialog();
-}
 
-void AuthenticateNewFriendRequestDialog::on_cancel_button_clicked()
-{
-    qDebug() << "[AuthenticateNewFriendRequestDialog::on_cancel_button_clicked]: User Cancel "
-                "Request\n";
-
-    /*get friends nickname*/
-    auto nickname = ui->nick_name_edit->text();
-    if (nickname.isEmpty()) {
-        nickname = ui->nick_name_edit->placeholderText();
+    /*get friends alternativeName*/
+    auto alternativeName = ui->nick_name_edit->text();
+    if (alternativeName.isEmpty()) {
+        alternativeName = ui->nick_name_edit->placeholderText();
     }
 
     /*generate json*/
     QJsonObject obj;
-    obj["src_uuid"] = UserAccountManager::get_instance()->get_uuid(); // my uuid
-    obj["dst_uuid"] = m_info->m_uuid; // target uuid
-    obj["nickname"] = nickname;
+    obj["src_uuid"] = m_info->m_uuid; // the friend request sender
+    obj["dst_uuid"] = UserAccountManager::get_instance()->get_uuid(); // my uuid
+    obj["alternative_name"] = alternativeName;
 
     QJsonDocument doc(obj);
 
@@ -321,6 +314,14 @@ void AuthenticateNewFriendRequestDialog::on_cancel_button_clicked()
 
     /*after connection to server, send TCP request*/
     TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
+
+    closeDialog();
+}
+
+void AuthenticateNewFriendRequestDialog::on_cancel_button_clicked()
+{
+    qDebug() << "[AuthenticateNewFriendRequestDialog::on_cancel_button_clicked]: User Cancel "
+                "Request\n";
 
     closeDialog();
 }

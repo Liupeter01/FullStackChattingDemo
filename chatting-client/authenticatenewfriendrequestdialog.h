@@ -116,7 +116,7 @@ private:
     std::vector<QString> m_selected_key;
     std::map<QString, std::shared_ptr<UserTagWidget>> m_selected_label;
 
-    /*store user info, data comes from addusernamecard class*/
+    /*store user info, data comes from addusernamecardwidget class*/
     std::unique_ptr<UserNameCard> m_info;
 };
 
