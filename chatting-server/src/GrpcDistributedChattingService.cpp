@@ -76,7 +76,7 @@ gRPCDistributedChattingService::sendFriendRequest(const std::string& server_name
           grpc::Status status = stub_op.value().get()->SendFriendRequest(&context, req, &response);
 
           /*return this stub back*/
-          server_op.value()->release(std::move(stub_op.value()));
+          server_op.value()->release_stub(std::move(stub_op.value()));
 
           ///*error occured*/
           if (!status.ok()) {
@@ -102,9 +102,7 @@ gRPCDistributedChattingService::confirmFriendRequest(const std::string& server_n
           }
 
           /*get one connection stub from connection pool*/
-          auto pool = server_op.value();
-          auto instance = pool->get_instance();
-          auto stub_op = instance->acquire();
+          auto stub_op = server_op.value()->acquire_stub();
 
           //connection stub not found
           if (!stub_op.has_value()) {
@@ -116,7 +114,7 @@ gRPCDistributedChattingService::confirmFriendRequest(const std::string& server_n
           grpc::Status status = stub_op.value().get()->ConfirmFriendRequest(&context, req, &response);
 
           /*return this stub back*/
-          instance->release(std::move(stub_op.value()));
+          server_op.value()->release_stub(std::move(stub_op.value()));
 
           ///*error occured*/
           if (!status.ok()) {
