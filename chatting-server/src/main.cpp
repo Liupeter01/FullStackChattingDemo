@@ -55,7 +55,7 @@ int main() {
 
     if (response.error() !=
               static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
-              spdlog::error("[Chatting Service {}] Balance-Server Not Available! Try register Chatting Server Instance Failed!, "
+              spdlog::critical("[Chatting Service {}] Balance-Server Not Available! Try register Chatting Server Instance Failed!, "
                         "error code {}",
                         ServerConfig::get_instance()->GrpcServerName,
                         response.error());
