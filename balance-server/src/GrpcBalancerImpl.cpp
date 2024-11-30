@@ -49,7 +49,7 @@ grpc::GrpcBalancerImpl::serverLoadBalancer() {
     /*ignore current */
     if (server->first != min_server->first) {
       std::optional<std::string> counter =
-          raii->get()->getValueFromHash(redis_server_login, min_server->first);
+          raii->get()->getValueFromHash(redis_server_login, server->first);
 
       /*
        * if redis doesn't have this key&field in DB, then set the max
