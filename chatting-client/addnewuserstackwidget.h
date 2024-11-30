@@ -30,6 +30,9 @@ private:
 signals:
 
 private slots:
+    /*server be able to send friend request list to this client*/
+    void slot_init_friend_request_list();
+
     void slot_incoming_friend_request(std::optional<std::shared_ptr<UserFriendRequest>> info);
 
 private:
