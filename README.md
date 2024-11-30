@@ -248,17 +248,17 @@ All services are using HTTP short connections, users are going to create a POST 
        username VARCHAR(50) NOT NULL UNIQUE,
        password VARCHAR(255) NOT NULL,
        email VARCHAR(100) UNIQUE
-   );
+    );
    
-   -- Create UserProfile Table
-   CREATE TABLE chatting.UserProfile (
+    -- Create UserProfile Table
+    CREATE TABLE chatting.UserProfile (
        uuid INT PRIMARY KEY,
        avatar VARCHAR(255),
        nickname VARCHAR(50),
        description TEXT,
        sex BOOL,
        FOREIGN KEY (uuid) REFERENCES Authentication(uuid) ON DELETE CASCADE
-   );
+    );
    
    -- Create Friend Request Table
    CREATE TABLE chatting.FriendRequest(
@@ -271,13 +271,21 @@ All services are using HTTP short connections, users are going to create a POST 
        FOREIGN KEY (src_uuid) REFERENCES Authentication(uuid) ON DELETE CASCADE,
        FOREIGN KEY (dst_uuid) REFERENCES Authentication(uuid) ON DELETE CASCADE
    );
+   
+   -- Create Auth Friend Table
+   CREATE TABLE chatting.AuthFriend(
+       id INT AUTO_INCREMENT PRIMARY KEY,
+   	self_uuid INT NOT NULL,
+       friend_uuid INT NOT NULL,
+   	alternative_name VARCHAR(255),	--
+       FOREIGN KEY (self_uuid ) REFERENCES Authentication(uuid) ON DELETE CASCADE,
+       FOREIGN KEY ( friend_uuid ) REFERENCES Authentication(uuid) ON DELETE CASCADE
+   );
+   
+   CREATE UNIQUE INDEX idx_self_friend ON chatting.AuthFriend(self_uuid ASC, friend_uuid ASC) USING BTREE;
    ```
 
 
-
-
-
-​	
 
 ### Servers' Configurations
 
