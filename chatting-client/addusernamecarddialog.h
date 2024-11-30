@@ -11,11 +11,13 @@ class AddUserNameCardDialog;
 
 /* forward declartion */
 class AddUserRequestDialog;
+class AuthenticateNewFriendRequestDialog;
 
 class AddUserNameCardDialog : public QDialog {
   Q_OBJECT
 
   friend class AddUserRequestDialog;
+  friend class AuthenticateNewFriendRequestDialog;
 
 public:
   explicit AddUserNameCardDialog(QWidget *parent = nullptr);
