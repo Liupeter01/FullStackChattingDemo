@@ -76,31 +76,33 @@ struct gRPCBalancerService {
     return response;
   }
 
-  static message::GrpcChattingServerResponse registerChattingServerInstance(const std::string& name, const std::string& host,
-            const std::string& port) {
-            grpc::ClientContext context;
-            message::GrpcChattingServerRegRequest request;
-            message::GrpcChattingServerResponse response;
+  static message::GrpcChattingServerResponse
+  registerChattingServerInstance(const std::string &name,
+                                 const std::string &host,
+                                 const std::string &port) {
+    grpc::ClientContext context;
+    message::GrpcChattingServerRegRequest request;
+    message::GrpcChattingServerResponse response;
 
-            message::ServerInfo info;
-            info.set_name(name);
-            info.set_host(host);
-            info.set_port(port);
+    message::ServerInfo info;
+    info.set_name(name);
+    info.set_host(host);
+    info.set_port(port);
 
-            *request.mutable_info() = info;
+    *request.mutable_info() = info;
 
-            connection::ConnectionRAII<stubpool::BalancerServicePool,
-                      message::BalancerService::Stub>
-                      raii;
+    connection::ConnectionRAII<stubpool::BalancerServicePool,
+                               message::BalancerService::Stub>
+        raii;
 
-            grpc::Status status =
-                      raii->get()->RegisterChattingServerInstance(&context, request, &response);
+    grpc::Status status = raii->get()->RegisterChattingServerInstance(
+        &context, request, &response);
 
-            if (!status.ok()) {
-                      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
-            }
+    if (!status.ok()) {
+      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
+    }
 
-            return response;
+    return response;
   }
 
   static message::GrpcChattingServerResponse

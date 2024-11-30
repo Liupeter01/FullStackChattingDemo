@@ -150,7 +150,7 @@ bool SyncLogic::tagCurrentUser(const std::string &uuid) {
   connection::ConnectionRAII<redis::RedisConnectionPool, redis::RedisContext>
       raii;
   return raii->get()->setValue(server_prefix + uuid,
-            ServerConfig::get_instance()->GrpcServerName);
+                               ServerConfig::get_instance()->GrpcServerName);
 }
 
 bool SyncLogic::untagCurrentUser(const std::string &uuid) {
@@ -250,7 +250,8 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
     return;
   }
 
-  auto response = gRPCBalancerService::userLoginToServer(uuid_value_op.value(), token);
+  auto response =
+      gRPCBalancerService::userLoginToServer(uuid_value_op.value(), token);
   redis_root["error"] = response.error();
 
   if (response.error() !=
@@ -464,8 +465,9 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
   /*insert friend request info into mysql db*/
   connection::ConnectionRAII<mysql::MySQLConnectionPool, mysql::MySQLConnection>
       mysql;
-  if (mysql->get()->createFriendRequest(src_uuid_value_op.value(),
-                                         dst_uuid_value_op.value(), nickname, msg)) {
+  if (!mysql->get()->createFriendRequest(src_uuid_value_op.value(),
+                                         dst_uuid_value_op.value(), nickname,
+                                         msg)) {
     generateErrorMessage(" Insert Friend Request Failed",
                          ServiceType::SERVICE_FRIENDSENDERRESPONSE,
                          ServiceStatus::FRIENDING_ERROR, session);
@@ -496,12 +498,13 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
   }
 
   /*We have to get current user info(src_uuid) on current server */
-  std::optional<std::shared_ptr<UserNameCard>> info_str = getUserBasicInfo(src_uuid);
+  std::optional<std::shared_ptr<UserNameCard>> info_str =
+      getUserBasicInfo(src_uuid);
   if (!info_str.has_value()) {
-            generateErrorMessage("Current UserProfile Load Error!",
-                      ServiceType::SERVICE_FRIENDSENDERRESPONSE,
-                      ServiceStatus::FRIENDING_ERROR, session);
-            return;
+    generateErrorMessage("Current UserProfile Load Error!",
+                         ServiceType::SERVICE_FRIENDSENDERRESPONSE,
+                         ServiceStatus::FRIENDING_ERROR, session);
+    return;
   }
 
   std::shared_ptr<UserNameCard> src_namecard = info_str.value();
@@ -518,7 +521,7 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
       return;
     }
     /*send it to dst user*/
-    Json::Value dst_root;    
+    Json::Value dst_root;
 
     dst_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
     dst_root["src_uuid"] = src_uuid;
@@ -538,9 +541,11 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
     result_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
   } else {
     /*
-     * ----------------------------------GRPC REQUEST------------------------------------ 
-     * ---------------dst_uuid and src_uuid are not on the same server------------------
-     * Pass current user info to other chatting-server by using grpc protocol
+     * ----------------------------------GRPC
+     * REQUEST------------------------------------
+     * ---------------dst_uuid and src_uuid are not on the same
+     * server------------------ Pass current user info to other chatting-server
+     * by using grpc protocol
      */
     message::AddNewFriendRequest grpc_request;
     grpc_request.set_src_uuid(src_uuid_value_op.value());

@@ -60,13 +60,12 @@ public:
   virtual ~DistributedChattingServicePool() = default;
 
 public:
-          auto acquire_stub() {
-                    return this->acquire();
-          }
+  auto acquire_stub() { return this->acquire(); }
 
-          void release_stub(std::unique_ptr<message::DistributedChattingService::Stub> stub) {
-                    return this->release(std::move(stub));
-          }
+  void release_stub(
+      std::unique_ptr<message::DistributedChattingService::Stub> stub) {
+    return this->release(std::move(stub));
+  }
 
 private:
   grpc::string m_host;
