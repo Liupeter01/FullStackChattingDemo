@@ -15,14 +15,15 @@ class gRPCDistributedChattingService
 public:
   virtual ~gRPCDistributedChattingService() = default;
   message::AddNewFriendResponse sendFriendRequest(const  std::string& server_name, const message::AddNewFriendRequest& req);
+  message::AuthoriseResponse confirmFriendRequest(const std::string& server_name, const message::AuthoriseRequest& req);
 
 private:
-   std::optional<std::shared_ptr<stubpool::details::DistributedChattingServicePoolImpl>> getTargetChattingServer(const std::string& server_name);
+          std::optional<std::shared_ptr<stubpool::DistributedChattingServicePool>> getTargetChattingServer(const std::string& server_name);
 
 private:
   std::unordered_map<
       /*server_name*/ std::string,
-      /*DistributedChattingServicePool*/ std::unique_ptr<
+      /*DistributedChattingServicePool*/ std::shared_ptr<
           stubpool::DistributedChattingServicePool>>
       m_pools;
 };

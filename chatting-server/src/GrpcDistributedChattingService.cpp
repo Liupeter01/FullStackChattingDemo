@@ -5,7 +5,7 @@
 gRPCDistributedChattingService::gRPCDistributedChattingService() {
   /*pass current server name as a parameter to the balance server, and returns
    * all peers*/
-  auto response = gRPCBalancerService::getPeerChattingServerLists(
+  auto response = gRPCBalancerService::getPeerGrpcServerLists(
       ServerConfig::get_instance()->GrpcServerName);
 
   if (response.error() !=
@@ -24,18 +24,32 @@ gRPCDistributedChattingService::gRPCDistributedChattingService() {
   std::for_each(
       peer_servers.begin(), peer_servers.end(),
       [this](const message::ServerInfo &server) {
-        m_pools.insert(
-            std::pair<
-                std::string,
-                std::unique_ptr<stubpool::DistributedChattingServicePool>>(
-                /*peer server's name*/ server.name(),
-                /*create a pool*/ std::make_unique<
-                    stubpool::DistributedChattingServicePool>(server.host(),
-                                                              server.port())));
+                      m_pools[server.name()] = std::make_shared<
+                                stubpool::DistributedChattingServicePool>(server.host(),
+                                          server.port());
+
       });
 }
 
-message::AddNewFriendResponse gRPCDistributedChattingService::sendFriendRequest(const std::string& server_name, const message::AddNewFriendRequest& req){
+std::optional<std::shared_ptr<stubpool::DistributedChattingServicePool>>
+gRPCDistributedChattingService::getTargetChattingServer(const std::string& server_name) {
+          /*User input current server as remote grpc-server*/
+          if (ServerConfig::get_instance()->GrpcServerName == server_name) {
+                    return std::nullopt;
+          }
+
+          /*remote server name not exists*/
+          auto it = m_pools.find(server_name);
+          if (it == m_pools.end()) {
+                    return std::nullopt;
+          }
+          return it->second;
+}
+
+
+message::AddNewFriendResponse 
+gRPCDistributedChattingService::sendFriendRequest(const std::string& server_name, 
+          const message::AddNewFriendRequest& req){
           grpc::ClientContext context;
           message::AddNewFriendResponse response;
 
@@ -50,7 +64,7 @@ message::AddNewFriendResponse gRPCDistributedChattingService::sendFriendRequest(
           }
 
           /*get one connection stub from connection pool*/
-          auto stub_op = server_op.value().get()->acquire();
+          auto stub_op = server_op.value()->acquire_stub();
 
           //connection stub not found
           if (!stub_op.has_value()) {
@@ -71,16 +85,43 @@ message::AddNewFriendResponse gRPCDistributedChattingService::sendFriendRequest(
           return response;
 }
 
-std::optional<std::shared_ptr<stubpool::details::DistributedChattingServicePoolImpl>>  gRPCDistributedChattingService::getTargetChattingServer(const std::string& server_name){
-          /*User input current server as remote grpc-server*/
-          if (ServerConfig::get_instance()->GrpcServerName == server_name) {
-                    return std::nullopt;
+message::AuthoriseResponse 
+gRPCDistributedChattingService::confirmFriendRequest(const std::string& server_name, 
+          const message::AuthoriseRequest& req) {
+          grpc::ClientContext context;
+          message::AuthoriseResponse response;
+
+          /*get the connection pool of this server*/
+          auto server_op = getTargetChattingServer(server_name);
+
+          //server not found
+          if (!server_op.has_value()) {
+                    spdlog::warn("[GRPC {} Service]: GRPC {} Not Found", ServerConfig::get_instance()->GrpcServerName, server_name);
+                    response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
+                    return response;
           }
 
-          /*remote server name not exists*/
-          auto it = m_pools.find(server_name);
-          if (it == m_pools.end()) {
-                    return std::nullopt;
+          /*get one connection stub from connection pool*/
+          auto pool = server_op.value();
+          auto instance = pool->get_instance();
+          auto stub_op = instance->acquire();
+
+          //connection stub not found
+          if (!stub_op.has_value()) {
+                    spdlog::warn("[GRPC {} Service]: Connection Stub Parse Error!", ServerConfig::get_instance()->GrpcServerName);
+                    response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
+                    return response;
           }
-          return it->second->get_instance();
+
+          grpc::Status status = stub_op.value().get()->ConfirmFriendRequest(&context, req, &response);
+
+          /*return this stub back*/
+          instance->release(std::move(stub_op.value()));
+
+          ///*error occured*/
+          if (!status.ok()) {
+                    response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
+          }
+
+          return response;
 }
