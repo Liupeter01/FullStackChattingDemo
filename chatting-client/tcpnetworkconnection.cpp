@@ -5,6 +5,7 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QJsonDocument>
+#include <qjsonarray.h>
 
 TCPNetworkConnection::TCPNetworkConnection()
     : m_buffer([](auto x) { return qFromBigEndian(x); }) {
@@ -153,7 +154,40 @@ void TCPNetworkConnection::registerCallback() {
           return;
         }
 
+        /*store current user info inside account manager*/
+        UserAccountManager::get_instance()->setUserInfo(
+            std::make_shared<UserNameCard>(
+                json["uuid"].toString(),
+                json["avator"].toString(),
+                json["username"].toString(),
+                json["nickname"].toString(),
+                json["description"].toString(),
+                static_cast<Sex>(json["sex"].toInt())
+        ));
+
         emit signal_switch_chatting_dialog();
+
+        /*is there anyone send friending request to this person*/
+        if(json.contains("FriendRequestList")){
+            UserAccountManager::get_instance()->appendArrayToList(
+                TargetList::REQUESTLIST,
+                json["FriendRequestList"].toArray()
+            );
+
+            /*server be able to send friend request list to this client*/
+            emit signal_init_friend_request_list();
+        }
+
+        /*is there existing authenticated friend to this person*/
+        if(json.contains("AuthFriendList")){
+            UserAccountManager::get_instance()->appendArrayToList(
+                TargetList::FRIENDLIST,
+                json["AuthFriendList"].toArray()
+            );
+
+            /*server be able to send authenticate friend list to this client*/
+            emit signal_init_auth_friend_list();
+        }
       }));
 
   /*Client search username and server return result back*/
@@ -205,12 +239,12 @@ void TCPNetworkConnection::registerCallback() {
 
         } else if (json["error"].toInt() !=
                    static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
-          qDebug() << "Friend Request Send Failed! Because Of Error Code = " << json["error"].toInt() << '\n';
+          qDebug() << "Friend Request Sent Failed! Because Of Error Code = " << json["error"].toInt() << '\n';
            emit signal_sender_response(false);
           return;
         }
 
-        qDebug() << "Friend Request Send Successfully!";
+        qDebug() << "Friend Request Sent Successfully!";
         emit signal_sender_response(true);
       }));
 
@@ -225,12 +259,12 @@ void TCPNetworkConnection::registerCallback() {
 
           } else if (json["error"].toInt() !=
                      static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
-              qDebug() << "Friend Request Send Failed! Because Of Error Code = " << json["error"].toInt() << '\n';
+              qDebug() << "Friend Confirm Sent Failed! Because Of Error Code = " << json["error"].toInt() << '\n';
               emit signal_confirm_response(false);
               return;
           }
 
-          qDebug() << "Friend Request Send Successfully!";
+          qDebug() << "Friend Confirm Sent Successfully!";
           emit signal_confirm_response(true);
       }));
 
@@ -266,6 +300,43 @@ void TCPNetworkConnection::registerCallback() {
         );
 
         emit signal_incoming_friend_request(request);
+      }));
+
+  m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
+      ServiceType::SERVICE_FRIENDING_ON_BIDDIRECTIONAL, [this](QJsonObject &&json) {
+          /*error occured!*/
+          if (!json.contains("error")) {
+              qDebug() << "Json Parse Error!";
+              emit signal_add_authenticate_friend(std::nullopt);
+              return;
+
+          } else if (json["error"].toInt() !=
+                     static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
+              qDebug() << "Friending On biddirectional failed! Because Of Error Code = " << json["error"].toInt() << '\n';
+              emit signal_add_authenticate_friend(std::nullopt);
+              return;
+
+          } else {
+              auto uuid = json["friend_uuid"].toString();
+              auto username = json["friend_username"].toString();
+              auto nickname = json["friend_nickname"].toString();
+              auto avator = json["friend_avator"].toString();
+              auto description = json["friend_desc"].toString();
+              auto sex = static_cast<Sex>(json["friend_sex"].toInt());
+
+              qDebug() << "Retrieve Data From Server of uuid = " << uuid << ":"
+                       << "username = " << username << '\n'
+                       << "nickname = " << nickname << '\n'
+                       << "avator = " << avator << '\n'
+                       << "description = " << description << '\n';
+
+              auto card = std::make_shared<UserNameCard>(uuid, avator, username, nickname,
+                                                         description, sex);
+
+              /*add it to list in advance for user identity validation*/
+              UserAccountManager::get_instance()->addItem2List(card);
+              emit signal_add_authenticate_friend(card);
+          }
       }));
 }
 

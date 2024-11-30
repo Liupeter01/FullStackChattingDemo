@@ -71,6 +71,18 @@ signals:
   /*client who is going to confirm request will receive status from here*/
   void signal_confirm_response(bool status);
 
+  /*server be able to send friend request list to this client*/
+  void signal_init_friend_request_list();
+
+  /*server be able to send authenticate friend list to this client*/
+  void signal_init_auth_friend_list();
+
+  /*
+   * target user confirm to add this person as a friend
+   * Server will response a message to both user to add this friend
+   */
+  void signal_add_authenticate_friend(std::optional<std::shared_ptr<UserNameCard>>);
+
 private:
   /*establish tcp socket with server*/
   QTcpSocket m_socket;
