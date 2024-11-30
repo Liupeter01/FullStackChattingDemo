@@ -88,10 +88,10 @@ message GrpcChattingServerResponse { int32 error = 1; }
 service DistributedChattingService {
 
   // A send friend request message to another user B
-  rpc SendFriendRequest(AddNewFriendRequest) returns (AddNewFriendResponse) {}
+  rpc SendFriendRequest(FriendRequest) returns (FriendResponse) {}
 
   // User B agreed with user A's friend adding request
-  rpc ConfirmFriendRequest(AuthoriseRequest) returns (AuthoriseResponse) {}
+  rpc ConfirmFriendRequest(FriendRequest) returns (FriendResponse) {}
 
   // Verify that B is still A's friend:
   rpc FriendshipVerification(AuthoriseRequest) returns (AuthoriseResponse) {}
@@ -106,7 +106,7 @@ service DistributedChattingService {
  * A wait for Authorise message
  * we still need src/dst_uuid to verify sender's' and receiver's' identiy
  */
-message AddNewFriendRequest {
+message FriendRequest {
   int32 src_uuid = 1;   // request from who
   int32 dst_uuid = 2;   // target
   string nick_name = 3; // src nick name
@@ -116,7 +116,7 @@ message AddNewFriendRequest {
   string description = 7;     //src description
   int32 sex = 8;
 }
-message AddNewFriendResponse {
+message FriendResponse {
   int32 error = 1;
   int32 src_uuid = 2; // request from who
   int32 dst_uuid = 3; // target

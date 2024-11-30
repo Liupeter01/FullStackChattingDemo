@@ -45,18 +45,18 @@ struct TableStruct_message_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_message_2eproto;
 namespace message {
-class AddNewFriendRequest;
-struct AddNewFriendRequestDefaultTypeInternal;
-extern AddNewFriendRequestDefaultTypeInternal _AddNewFriendRequest_default_instance_;
-class AddNewFriendResponse;
-struct AddNewFriendResponseDefaultTypeInternal;
-extern AddNewFriendResponseDefaultTypeInternal _AddNewFriendResponse_default_instance_;
 class AuthoriseRequest;
 struct AuthoriseRequestDefaultTypeInternal;
 extern AuthoriseRequestDefaultTypeInternal _AuthoriseRequest_default_instance_;
 class AuthoriseResponse;
 struct AuthoriseResponseDefaultTypeInternal;
 extern AuthoriseResponseDefaultTypeInternal _AuthoriseResponse_default_instance_;
+class FriendRequest;
+struct FriendRequestDefaultTypeInternal;
+extern FriendRequestDefaultTypeInternal _FriendRequest_default_instance_;
+class FriendResponse;
+struct FriendResponseDefaultTypeInternal;
+extern FriendResponseDefaultTypeInternal _FriendResponse_default_instance_;
 class GetAllocatedChattingServer;
 struct GetAllocatedChattingServerDefaultTypeInternal;
 extern GetAllocatedChattingServerDefaultTypeInternal _GetAllocatedChattingServer_default_instance_;
@@ -101,10 +101,10 @@ struct ServerInfoDefaultTypeInternal;
 extern ServerInfoDefaultTypeInternal _ServerInfo_default_instance_;
 }  // namespace message
 PROTOBUF_NAMESPACE_OPEN
-template<> ::message::AddNewFriendRequest* Arena::CreateMaybeMessage<::message::AddNewFriendRequest>(Arena*);
-template<> ::message::AddNewFriendResponse* Arena::CreateMaybeMessage<::message::AddNewFriendResponse>(Arena*);
 template<> ::message::AuthoriseRequest* Arena::CreateMaybeMessage<::message::AuthoriseRequest>(Arena*);
 template<> ::message::AuthoriseResponse* Arena::CreateMaybeMessage<::message::AuthoriseResponse>(Arena*);
+template<> ::message::FriendRequest* Arena::CreateMaybeMessage<::message::FriendRequest>(Arena*);
+template<> ::message::FriendResponse* Arena::CreateMaybeMessage<::message::FriendResponse>(Arena*);
 template<> ::message::GetAllocatedChattingServer* Arena::CreateMaybeMessage<::message::GetAllocatedChattingServer>(Arena*);
 template<> ::message::GetVerificationRequest* Arena::CreateMaybeMessage<::message::GetVerificationRequest>(Arena*);
 template<> ::message::GetVerificationResponse* Arena::CreateMaybeMessage<::message::GetVerificationResponse>(Arena*);
@@ -2077,24 +2077,24 @@ class GrpcChattingServerResponse final :
 };
 // -------------------------------------------------------------------
 
-class AddNewFriendRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:message.AddNewFriendRequest) */ {
+class FriendRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:message.FriendRequest) */ {
  public:
-  inline AddNewFriendRequest() : AddNewFriendRequest(nullptr) {}
-  ~AddNewFriendRequest() override;
-  explicit PROTOBUF_CONSTEXPR AddNewFriendRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline FriendRequest() : FriendRequest(nullptr) {}
+  ~FriendRequest() override;
+  explicit PROTOBUF_CONSTEXPR FriendRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  AddNewFriendRequest(const AddNewFriendRequest& from);
-  AddNewFriendRequest(AddNewFriendRequest&& from) noexcept
-    : AddNewFriendRequest() {
+  FriendRequest(const FriendRequest& from);
+  FriendRequest(FriendRequest&& from) noexcept
+    : FriendRequest() {
     *this = ::std::move(from);
   }
 
-  inline AddNewFriendRequest& operator=(const AddNewFriendRequest& from) {
+  inline FriendRequest& operator=(const FriendRequest& from) {
     CopyFrom(from);
     return *this;
   }
-  inline AddNewFriendRequest& operator=(AddNewFriendRequest&& from) noexcept {
+  inline FriendRequest& operator=(FriendRequest&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -2117,20 +2117,20 @@ class AddNewFriendRequest final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const AddNewFriendRequest& default_instance() {
+  static const FriendRequest& default_instance() {
     return *internal_default_instance();
   }
-  static inline const AddNewFriendRequest* internal_default_instance() {
-    return reinterpret_cast<const AddNewFriendRequest*>(
-               &_AddNewFriendRequest_default_instance_);
+  static inline const FriendRequest* internal_default_instance() {
+    return reinterpret_cast<const FriendRequest*>(
+               &_FriendRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     12;
 
-  friend void swap(AddNewFriendRequest& a, AddNewFriendRequest& b) {
+  friend void swap(FriendRequest& a, FriendRequest& b) {
     a.Swap(&b);
   }
-  inline void Swap(AddNewFriendRequest* other) {
+  inline void Swap(FriendRequest* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -2143,7 +2143,7 @@ class AddNewFriendRequest final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(AddNewFriendRequest* other) {
+  void UnsafeArenaSwap(FriendRequest* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -2151,14 +2151,14 @@ class AddNewFriendRequest final :
 
   // implements Message ----------------------------------------------
 
-  AddNewFriendRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<AddNewFriendRequest>(arena);
+  FriendRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<FriendRequest>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const AddNewFriendRequest& from);
+  void CopyFrom(const FriendRequest& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const AddNewFriendRequest& from) {
-    AddNewFriendRequest::MergeImpl(*this, from);
+  void MergeFrom( const FriendRequest& from) {
+    FriendRequest::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -2176,15 +2176,15 @@ class AddNewFriendRequest final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(AddNewFriendRequest* other);
+  void InternalSwap(FriendRequest* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "message.AddNewFriendRequest";
+    return "message.FriendRequest";
   }
   protected:
-  explicit AddNewFriendRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit FriendRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -2304,7 +2304,7 @@ class AddNewFriendRequest final :
   void _internal_set_sex(int32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:message.AddNewFriendRequest)
+  // @@protoc_insertion_point(class_scope:message.FriendRequest)
  private:
   class _Internal;
 
@@ -2327,24 +2327,24 @@ class AddNewFriendRequest final :
 };
 // -------------------------------------------------------------------
 
-class AddNewFriendResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:message.AddNewFriendResponse) */ {
+class FriendResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:message.FriendResponse) */ {
  public:
-  inline AddNewFriendResponse() : AddNewFriendResponse(nullptr) {}
-  ~AddNewFriendResponse() override;
-  explicit PROTOBUF_CONSTEXPR AddNewFriendResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline FriendResponse() : FriendResponse(nullptr) {}
+  ~FriendResponse() override;
+  explicit PROTOBUF_CONSTEXPR FriendResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  AddNewFriendResponse(const AddNewFriendResponse& from);
-  AddNewFriendResponse(AddNewFriendResponse&& from) noexcept
-    : AddNewFriendResponse() {
+  FriendResponse(const FriendResponse& from);
+  FriendResponse(FriendResponse&& from) noexcept
+    : FriendResponse() {
     *this = ::std::move(from);
   }
 
-  inline AddNewFriendResponse& operator=(const AddNewFriendResponse& from) {
+  inline FriendResponse& operator=(const FriendResponse& from) {
     CopyFrom(from);
     return *this;
   }
-  inline AddNewFriendResponse& operator=(AddNewFriendResponse&& from) noexcept {
+  inline FriendResponse& operator=(FriendResponse&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -2367,20 +2367,20 @@ class AddNewFriendResponse final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const AddNewFriendResponse& default_instance() {
+  static const FriendResponse& default_instance() {
     return *internal_default_instance();
   }
-  static inline const AddNewFriendResponse* internal_default_instance() {
-    return reinterpret_cast<const AddNewFriendResponse*>(
-               &_AddNewFriendResponse_default_instance_);
+  static inline const FriendResponse* internal_default_instance() {
+    return reinterpret_cast<const FriendResponse*>(
+               &_FriendResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     13;
 
-  friend void swap(AddNewFriendResponse& a, AddNewFriendResponse& b) {
+  friend void swap(FriendResponse& a, FriendResponse& b) {
     a.Swap(&b);
   }
-  inline void Swap(AddNewFriendResponse* other) {
+  inline void Swap(FriendResponse* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -2393,7 +2393,7 @@ class AddNewFriendResponse final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(AddNewFriendResponse* other) {
+  void UnsafeArenaSwap(FriendResponse* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -2401,14 +2401,14 @@ class AddNewFriendResponse final :
 
   // implements Message ----------------------------------------------
 
-  AddNewFriendResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<AddNewFriendResponse>(arena);
+  FriendResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<FriendResponse>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const AddNewFriendResponse& from);
+  void CopyFrom(const FriendResponse& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const AddNewFriendResponse& from) {
-    AddNewFriendResponse::MergeImpl(*this, from);
+  void MergeFrom( const FriendResponse& from) {
+    FriendResponse::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -2426,15 +2426,15 @@ class AddNewFriendResponse final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(AddNewFriendResponse* other);
+  void InternalSwap(FriendResponse* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "message.AddNewFriendResponse";
+    return "message.FriendResponse";
   }
   protected:
-  explicit AddNewFriendResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit FriendResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -2479,7 +2479,7 @@ class AddNewFriendResponse final :
   void _internal_set_dst_uuid(int32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:message.AddNewFriendResponse)
+  // @@protoc_insertion_point(class_scope:message.FriendResponse)
  private:
   class _Internal;
 
@@ -4096,84 +4096,84 @@ inline void GrpcChattingServerResponse::set_error(int32_t value) {
 
 // -------------------------------------------------------------------
 
-// AddNewFriendRequest
+// FriendRequest
 
 // int32 src_uuid = 1;
-inline void AddNewFriendRequest::clear_src_uuid() {
+inline void FriendRequest::clear_src_uuid() {
   _impl_.src_uuid_ = 0;
 }
-inline int32_t AddNewFriendRequest::_internal_src_uuid() const {
+inline int32_t FriendRequest::_internal_src_uuid() const {
   return _impl_.src_uuid_;
 }
-inline int32_t AddNewFriendRequest::src_uuid() const {
-  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.src_uuid)
+inline int32_t FriendRequest::src_uuid() const {
+  // @@protoc_insertion_point(field_get:message.FriendRequest.src_uuid)
   return _internal_src_uuid();
 }
-inline void AddNewFriendRequest::_internal_set_src_uuid(int32_t value) {
+inline void FriendRequest::_internal_set_src_uuid(int32_t value) {
   
   _impl_.src_uuid_ = value;
 }
-inline void AddNewFriendRequest::set_src_uuid(int32_t value) {
+inline void FriendRequest::set_src_uuid(int32_t value) {
   _internal_set_src_uuid(value);
-  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.src_uuid)
+  // @@protoc_insertion_point(field_set:message.FriendRequest.src_uuid)
 }
 
 // int32 dst_uuid = 2;
-inline void AddNewFriendRequest::clear_dst_uuid() {
+inline void FriendRequest::clear_dst_uuid() {
   _impl_.dst_uuid_ = 0;
 }
-inline int32_t AddNewFriendRequest::_internal_dst_uuid() const {
+inline int32_t FriendRequest::_internal_dst_uuid() const {
   return _impl_.dst_uuid_;
 }
-inline int32_t AddNewFriendRequest::dst_uuid() const {
-  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.dst_uuid)
+inline int32_t FriendRequest::dst_uuid() const {
+  // @@protoc_insertion_point(field_get:message.FriendRequest.dst_uuid)
   return _internal_dst_uuid();
 }
-inline void AddNewFriendRequest::_internal_set_dst_uuid(int32_t value) {
+inline void FriendRequest::_internal_set_dst_uuid(int32_t value) {
   
   _impl_.dst_uuid_ = value;
 }
-inline void AddNewFriendRequest::set_dst_uuid(int32_t value) {
+inline void FriendRequest::set_dst_uuid(int32_t value) {
   _internal_set_dst_uuid(value);
-  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.dst_uuid)
+  // @@protoc_insertion_point(field_set:message.FriendRequest.dst_uuid)
 }
 
 // string nick_name = 3;
-inline void AddNewFriendRequest::clear_nick_name() {
+inline void FriendRequest::clear_nick_name() {
   _impl_.nick_name_.ClearToEmpty();
 }
-inline const std::string& AddNewFriendRequest::nick_name() const {
-  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.nick_name)
+inline const std::string& FriendRequest::nick_name() const {
+  // @@protoc_insertion_point(field_get:message.FriendRequest.nick_name)
   return _internal_nick_name();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void AddNewFriendRequest::set_nick_name(ArgT0&& arg0, ArgT... args) {
+void FriendRequest::set_nick_name(ArgT0&& arg0, ArgT... args) {
  
  _impl_.nick_name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.nick_name)
+  // @@protoc_insertion_point(field_set:message.FriendRequest.nick_name)
 }
-inline std::string* AddNewFriendRequest::mutable_nick_name() {
+inline std::string* FriendRequest::mutable_nick_name() {
   std::string* _s = _internal_mutable_nick_name();
-  // @@protoc_insertion_point(field_mutable:message.AddNewFriendRequest.nick_name)
+  // @@protoc_insertion_point(field_mutable:message.FriendRequest.nick_name)
   return _s;
 }
-inline const std::string& AddNewFriendRequest::_internal_nick_name() const {
+inline const std::string& FriendRequest::_internal_nick_name() const {
   return _impl_.nick_name_.Get();
 }
-inline void AddNewFriendRequest::_internal_set_nick_name(const std::string& value) {
+inline void FriendRequest::_internal_set_nick_name(const std::string& value) {
   
   _impl_.nick_name_.Set(value, GetArenaForAllocation());
 }
-inline std::string* AddNewFriendRequest::_internal_mutable_nick_name() {
+inline std::string* FriendRequest::_internal_mutable_nick_name() {
   
   return _impl_.nick_name_.Mutable(GetArenaForAllocation());
 }
-inline std::string* AddNewFriendRequest::release_nick_name() {
-  // @@protoc_insertion_point(field_release:message.AddNewFriendRequest.nick_name)
+inline std::string* FriendRequest::release_nick_name() {
+  // @@protoc_insertion_point(field_release:message.FriendRequest.nick_name)
   return _impl_.nick_name_.Release();
 }
-inline void AddNewFriendRequest::set_allocated_nick_name(std::string* nick_name) {
+inline void FriendRequest::set_allocated_nick_name(std::string* nick_name) {
   if (nick_name != nullptr) {
     
   } else {
@@ -4185,45 +4185,45 @@ inline void AddNewFriendRequest::set_allocated_nick_name(std::string* nick_name)
     _impl_.nick_name_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:message.AddNewFriendRequest.nick_name)
+  // @@protoc_insertion_point(field_set_allocated:message.FriendRequest.nick_name)
 }
 
 // string req_msg = 4;
-inline void AddNewFriendRequest::clear_req_msg() {
+inline void FriendRequest::clear_req_msg() {
   _impl_.req_msg_.ClearToEmpty();
 }
-inline const std::string& AddNewFriendRequest::req_msg() const {
-  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.req_msg)
+inline const std::string& FriendRequest::req_msg() const {
+  // @@protoc_insertion_point(field_get:message.FriendRequest.req_msg)
   return _internal_req_msg();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void AddNewFriendRequest::set_req_msg(ArgT0&& arg0, ArgT... args) {
+void FriendRequest::set_req_msg(ArgT0&& arg0, ArgT... args) {
  
  _impl_.req_msg_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.req_msg)
+  // @@protoc_insertion_point(field_set:message.FriendRequest.req_msg)
 }
-inline std::string* AddNewFriendRequest::mutable_req_msg() {
+inline std::string* FriendRequest::mutable_req_msg() {
   std::string* _s = _internal_mutable_req_msg();
-  // @@protoc_insertion_point(field_mutable:message.AddNewFriendRequest.req_msg)
+  // @@protoc_insertion_point(field_mutable:message.FriendRequest.req_msg)
   return _s;
 }
-inline const std::string& AddNewFriendRequest::_internal_req_msg() const {
+inline const std::string& FriendRequest::_internal_req_msg() const {
   return _impl_.req_msg_.Get();
 }
-inline void AddNewFriendRequest::_internal_set_req_msg(const std::string& value) {
+inline void FriendRequest::_internal_set_req_msg(const std::string& value) {
   
   _impl_.req_msg_.Set(value, GetArenaForAllocation());
 }
-inline std::string* AddNewFriendRequest::_internal_mutable_req_msg() {
+inline std::string* FriendRequest::_internal_mutable_req_msg() {
   
   return _impl_.req_msg_.Mutable(GetArenaForAllocation());
 }
-inline std::string* AddNewFriendRequest::release_req_msg() {
-  // @@protoc_insertion_point(field_release:message.AddNewFriendRequest.req_msg)
+inline std::string* FriendRequest::release_req_msg() {
+  // @@protoc_insertion_point(field_release:message.FriendRequest.req_msg)
   return _impl_.req_msg_.Release();
 }
-inline void AddNewFriendRequest::set_allocated_req_msg(std::string* req_msg) {
+inline void FriendRequest::set_allocated_req_msg(std::string* req_msg) {
   if (req_msg != nullptr) {
     
   } else {
@@ -4235,45 +4235,45 @@ inline void AddNewFriendRequest::set_allocated_req_msg(std::string* req_msg) {
     _impl_.req_msg_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:message.AddNewFriendRequest.req_msg)
+  // @@protoc_insertion_point(field_set_allocated:message.FriendRequest.req_msg)
 }
 
 // string avator_path = 5;
-inline void AddNewFriendRequest::clear_avator_path() {
+inline void FriendRequest::clear_avator_path() {
   _impl_.avator_path_.ClearToEmpty();
 }
-inline const std::string& AddNewFriendRequest::avator_path() const {
-  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.avator_path)
+inline const std::string& FriendRequest::avator_path() const {
+  // @@protoc_insertion_point(field_get:message.FriendRequest.avator_path)
   return _internal_avator_path();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void AddNewFriendRequest::set_avator_path(ArgT0&& arg0, ArgT... args) {
+void FriendRequest::set_avator_path(ArgT0&& arg0, ArgT... args) {
  
  _impl_.avator_path_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.avator_path)
+  // @@protoc_insertion_point(field_set:message.FriendRequest.avator_path)
 }
-inline std::string* AddNewFriendRequest::mutable_avator_path() {
+inline std::string* FriendRequest::mutable_avator_path() {
   std::string* _s = _internal_mutable_avator_path();
-  // @@protoc_insertion_point(field_mutable:message.AddNewFriendRequest.avator_path)
+  // @@protoc_insertion_point(field_mutable:message.FriendRequest.avator_path)
   return _s;
 }
-inline const std::string& AddNewFriendRequest::_internal_avator_path() const {
+inline const std::string& FriendRequest::_internal_avator_path() const {
   return _impl_.avator_path_.Get();
 }
-inline void AddNewFriendRequest::_internal_set_avator_path(const std::string& value) {
+inline void FriendRequest::_internal_set_avator_path(const std::string& value) {
   
   _impl_.avator_path_.Set(value, GetArenaForAllocation());
 }
-inline std::string* AddNewFriendRequest::_internal_mutable_avator_path() {
+inline std::string* FriendRequest::_internal_mutable_avator_path() {
   
   return _impl_.avator_path_.Mutable(GetArenaForAllocation());
 }
-inline std::string* AddNewFriendRequest::release_avator_path() {
-  // @@protoc_insertion_point(field_release:message.AddNewFriendRequest.avator_path)
+inline std::string* FriendRequest::release_avator_path() {
+  // @@protoc_insertion_point(field_release:message.FriendRequest.avator_path)
   return _impl_.avator_path_.Release();
 }
-inline void AddNewFriendRequest::set_allocated_avator_path(std::string* avator_path) {
+inline void FriendRequest::set_allocated_avator_path(std::string* avator_path) {
   if (avator_path != nullptr) {
     
   } else {
@@ -4285,45 +4285,45 @@ inline void AddNewFriendRequest::set_allocated_avator_path(std::string* avator_p
     _impl_.avator_path_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:message.AddNewFriendRequest.avator_path)
+  // @@protoc_insertion_point(field_set_allocated:message.FriendRequest.avator_path)
 }
 
 // string username = 6;
-inline void AddNewFriendRequest::clear_username() {
+inline void FriendRequest::clear_username() {
   _impl_.username_.ClearToEmpty();
 }
-inline const std::string& AddNewFriendRequest::username() const {
-  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.username)
+inline const std::string& FriendRequest::username() const {
+  // @@protoc_insertion_point(field_get:message.FriendRequest.username)
   return _internal_username();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void AddNewFriendRequest::set_username(ArgT0&& arg0, ArgT... args) {
+void FriendRequest::set_username(ArgT0&& arg0, ArgT... args) {
  
  _impl_.username_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.username)
+  // @@protoc_insertion_point(field_set:message.FriendRequest.username)
 }
-inline std::string* AddNewFriendRequest::mutable_username() {
+inline std::string* FriendRequest::mutable_username() {
   std::string* _s = _internal_mutable_username();
-  // @@protoc_insertion_point(field_mutable:message.AddNewFriendRequest.username)
+  // @@protoc_insertion_point(field_mutable:message.FriendRequest.username)
   return _s;
 }
-inline const std::string& AddNewFriendRequest::_internal_username() const {
+inline const std::string& FriendRequest::_internal_username() const {
   return _impl_.username_.Get();
 }
-inline void AddNewFriendRequest::_internal_set_username(const std::string& value) {
+inline void FriendRequest::_internal_set_username(const std::string& value) {
   
   _impl_.username_.Set(value, GetArenaForAllocation());
 }
-inline std::string* AddNewFriendRequest::_internal_mutable_username() {
+inline std::string* FriendRequest::_internal_mutable_username() {
   
   return _impl_.username_.Mutable(GetArenaForAllocation());
 }
-inline std::string* AddNewFriendRequest::release_username() {
-  // @@protoc_insertion_point(field_release:message.AddNewFriendRequest.username)
+inline std::string* FriendRequest::release_username() {
+  // @@protoc_insertion_point(field_release:message.FriendRequest.username)
   return _impl_.username_.Release();
 }
-inline void AddNewFriendRequest::set_allocated_username(std::string* username) {
+inline void FriendRequest::set_allocated_username(std::string* username) {
   if (username != nullptr) {
     
   } else {
@@ -4335,45 +4335,45 @@ inline void AddNewFriendRequest::set_allocated_username(std::string* username) {
     _impl_.username_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:message.AddNewFriendRequest.username)
+  // @@protoc_insertion_point(field_set_allocated:message.FriendRequest.username)
 }
 
 // string description = 7;
-inline void AddNewFriendRequest::clear_description() {
+inline void FriendRequest::clear_description() {
   _impl_.description_.ClearToEmpty();
 }
-inline const std::string& AddNewFriendRequest::description() const {
-  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.description)
+inline const std::string& FriendRequest::description() const {
+  // @@protoc_insertion_point(field_get:message.FriendRequest.description)
   return _internal_description();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void AddNewFriendRequest::set_description(ArgT0&& arg0, ArgT... args) {
+void FriendRequest::set_description(ArgT0&& arg0, ArgT... args) {
  
  _impl_.description_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.description)
+  // @@protoc_insertion_point(field_set:message.FriendRequest.description)
 }
-inline std::string* AddNewFriendRequest::mutable_description() {
+inline std::string* FriendRequest::mutable_description() {
   std::string* _s = _internal_mutable_description();
-  // @@protoc_insertion_point(field_mutable:message.AddNewFriendRequest.description)
+  // @@protoc_insertion_point(field_mutable:message.FriendRequest.description)
   return _s;
 }
-inline const std::string& AddNewFriendRequest::_internal_description() const {
+inline const std::string& FriendRequest::_internal_description() const {
   return _impl_.description_.Get();
 }
-inline void AddNewFriendRequest::_internal_set_description(const std::string& value) {
+inline void FriendRequest::_internal_set_description(const std::string& value) {
   
   _impl_.description_.Set(value, GetArenaForAllocation());
 }
-inline std::string* AddNewFriendRequest::_internal_mutable_description() {
+inline std::string* FriendRequest::_internal_mutable_description() {
   
   return _impl_.description_.Mutable(GetArenaForAllocation());
 }
-inline std::string* AddNewFriendRequest::release_description() {
-  // @@protoc_insertion_point(field_release:message.AddNewFriendRequest.description)
+inline std::string* FriendRequest::release_description() {
+  // @@protoc_insertion_point(field_release:message.FriendRequest.description)
   return _impl_.description_.Release();
 }
-inline void AddNewFriendRequest::set_allocated_description(std::string* description) {
+inline void FriendRequest::set_allocated_description(std::string* description) {
   if (description != nullptr) {
     
   } else {
@@ -4385,91 +4385,91 @@ inline void AddNewFriendRequest::set_allocated_description(std::string* descript
     _impl_.description_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:message.AddNewFriendRequest.description)
+  // @@protoc_insertion_point(field_set_allocated:message.FriendRequest.description)
 }
 
 // int32 sex = 8;
-inline void AddNewFriendRequest::clear_sex() {
+inline void FriendRequest::clear_sex() {
   _impl_.sex_ = 0;
 }
-inline int32_t AddNewFriendRequest::_internal_sex() const {
+inline int32_t FriendRequest::_internal_sex() const {
   return _impl_.sex_;
 }
-inline int32_t AddNewFriendRequest::sex() const {
-  // @@protoc_insertion_point(field_get:message.AddNewFriendRequest.sex)
+inline int32_t FriendRequest::sex() const {
+  // @@protoc_insertion_point(field_get:message.FriendRequest.sex)
   return _internal_sex();
 }
-inline void AddNewFriendRequest::_internal_set_sex(int32_t value) {
+inline void FriendRequest::_internal_set_sex(int32_t value) {
   
   _impl_.sex_ = value;
 }
-inline void AddNewFriendRequest::set_sex(int32_t value) {
+inline void FriendRequest::set_sex(int32_t value) {
   _internal_set_sex(value);
-  // @@protoc_insertion_point(field_set:message.AddNewFriendRequest.sex)
+  // @@protoc_insertion_point(field_set:message.FriendRequest.sex)
 }
 
 // -------------------------------------------------------------------
 
-// AddNewFriendResponse
+// FriendResponse
 
 // int32 error = 1;
-inline void AddNewFriendResponse::clear_error() {
+inline void FriendResponse::clear_error() {
   _impl_.error_ = 0;
 }
-inline int32_t AddNewFriendResponse::_internal_error() const {
+inline int32_t FriendResponse::_internal_error() const {
   return _impl_.error_;
 }
-inline int32_t AddNewFriendResponse::error() const {
-  // @@protoc_insertion_point(field_get:message.AddNewFriendResponse.error)
+inline int32_t FriendResponse::error() const {
+  // @@protoc_insertion_point(field_get:message.FriendResponse.error)
   return _internal_error();
 }
-inline void AddNewFriendResponse::_internal_set_error(int32_t value) {
+inline void FriendResponse::_internal_set_error(int32_t value) {
   
   _impl_.error_ = value;
 }
-inline void AddNewFriendResponse::set_error(int32_t value) {
+inline void FriendResponse::set_error(int32_t value) {
   _internal_set_error(value);
-  // @@protoc_insertion_point(field_set:message.AddNewFriendResponse.error)
+  // @@protoc_insertion_point(field_set:message.FriendResponse.error)
 }
 
 // int32 src_uuid = 2;
-inline void AddNewFriendResponse::clear_src_uuid() {
+inline void FriendResponse::clear_src_uuid() {
   _impl_.src_uuid_ = 0;
 }
-inline int32_t AddNewFriendResponse::_internal_src_uuid() const {
+inline int32_t FriendResponse::_internal_src_uuid() const {
   return _impl_.src_uuid_;
 }
-inline int32_t AddNewFriendResponse::src_uuid() const {
-  // @@protoc_insertion_point(field_get:message.AddNewFriendResponse.src_uuid)
+inline int32_t FriendResponse::src_uuid() const {
+  // @@protoc_insertion_point(field_get:message.FriendResponse.src_uuid)
   return _internal_src_uuid();
 }
-inline void AddNewFriendResponse::_internal_set_src_uuid(int32_t value) {
+inline void FriendResponse::_internal_set_src_uuid(int32_t value) {
   
   _impl_.src_uuid_ = value;
 }
-inline void AddNewFriendResponse::set_src_uuid(int32_t value) {
+inline void FriendResponse::set_src_uuid(int32_t value) {
   _internal_set_src_uuid(value);
-  // @@protoc_insertion_point(field_set:message.AddNewFriendResponse.src_uuid)
+  // @@protoc_insertion_point(field_set:message.FriendResponse.src_uuid)
 }
 
 // int32 dst_uuid = 3;
-inline void AddNewFriendResponse::clear_dst_uuid() {
+inline void FriendResponse::clear_dst_uuid() {
   _impl_.dst_uuid_ = 0;
 }
-inline int32_t AddNewFriendResponse::_internal_dst_uuid() const {
+inline int32_t FriendResponse::_internal_dst_uuid() const {
   return _impl_.dst_uuid_;
 }
-inline int32_t AddNewFriendResponse::dst_uuid() const {
-  // @@protoc_insertion_point(field_get:message.AddNewFriendResponse.dst_uuid)
+inline int32_t FriendResponse::dst_uuid() const {
+  // @@protoc_insertion_point(field_get:message.FriendResponse.dst_uuid)
   return _internal_dst_uuid();
 }
-inline void AddNewFriendResponse::_internal_set_dst_uuid(int32_t value) {
+inline void FriendResponse::_internal_set_dst_uuid(int32_t value) {
   
   _impl_.dst_uuid_ = value;
 }
-inline void AddNewFriendResponse::set_dst_uuid(int32_t value) {
+inline void FriendResponse::set_dst_uuid(int32_t value) {
   _internal_set_dst_uuid(value);
-  // @@protoc_insertion_point(field_set:message.AddNewFriendResponse.dst_uuid)
+  // @@protoc_insertion_point(field_set:message.FriendResponse.dst_uuid)
 }
 
 // -------------------------------------------------------------------

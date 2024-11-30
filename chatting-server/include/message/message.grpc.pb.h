@@ -1422,20 +1422,20 @@ class DistributedChattingService final {
    public:
     virtual ~StubInterface() {}
     // A send friend request message to another user B
-    virtual ::grpc::Status SendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::message::AddNewFriendResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::AddNewFriendResponse>> AsyncSendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::AddNewFriendResponse>>(AsyncSendFriendRequestRaw(context, request, cq));
+    virtual ::grpc::Status SendFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::message::FriendResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>> AsyncSendFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>>(AsyncSendFriendRequestRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::AddNewFriendResponse>> PrepareAsyncSendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::AddNewFriendResponse>>(PrepareAsyncSendFriendRequestRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>> PrepareAsyncSendFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>>(PrepareAsyncSendFriendRequestRaw(context, request, cq));
     }
     // User B agreed with user A's friend adding request
-    virtual ::grpc::Status ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::message::AuthoriseResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::AuthoriseResponse>> AsyncConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::AuthoriseResponse>>(AsyncConfirmFriendRequestRaw(context, request, cq));
+    virtual ::grpc::Status ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::message::FriendResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>> AsyncConfirmFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>>(AsyncConfirmFriendRequestRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::AuthoriseResponse>> PrepareAsyncConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::AuthoriseResponse>>(PrepareAsyncConfirmFriendRequestRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>> PrepareAsyncConfirmFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>>(PrepareAsyncConfirmFriendRequestRaw(context, request, cq));
     }
     // Verify that B is still A's friend:
     virtual ::grpc::Status FriendshipVerification(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::message::AuthoriseResponse* response) = 0;
@@ -1457,11 +1457,11 @@ class DistributedChattingService final {
      public:
       virtual ~async_interface() {}
       // A send friend request message to another user B
-      virtual void SendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest* request, ::message::AddNewFriendResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void SendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest* request, ::message::AddNewFriendResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void SendFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void SendFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // User B agreed with user A's friend adding request
-      virtual void ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // Verify that B is still A's friend:
       virtual void FriendshipVerification(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void FriendshipVerification(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
@@ -1473,10 +1473,10 @@ class DistributedChattingService final {
     virtual class async_interface* async() { return nullptr; }
     class async_interface* experimental_async() { return async(); }
    private:
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::AddNewFriendResponse>* AsyncSendFriendRequestRaw(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::AddNewFriendResponse>* PrepareAsyncSendFriendRequestRaw(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::AuthoriseResponse>* AsyncConfirmFriendRequestRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::AuthoriseResponse>* PrepareAsyncConfirmFriendRequestRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>* AsyncSendFriendRequestRaw(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>* PrepareAsyncSendFriendRequestRaw(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>* AsyncConfirmFriendRequestRaw(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::FriendResponse>* PrepareAsyncConfirmFriendRequestRaw(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::AuthoriseResponse>* AsyncFriendshipVerificationRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::AuthoriseResponse>* PrepareAsyncFriendshipVerificationRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::SendChattingMsgResponse>* AsyncNormalChattingMsgRaw(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest& request, ::grpc::CompletionQueue* cq) = 0;
@@ -1485,19 +1485,19 @@ class DistributedChattingService final {
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
-    ::grpc::Status SendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::message::AddNewFriendResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::AddNewFriendResponse>> AsyncSendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::AddNewFriendResponse>>(AsyncSendFriendRequestRaw(context, request, cq));
+    ::grpc::Status SendFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::message::FriendResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>> AsyncSendFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>>(AsyncSendFriendRequestRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::AddNewFriendResponse>> PrepareAsyncSendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::AddNewFriendResponse>>(PrepareAsyncSendFriendRequestRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>> PrepareAsyncSendFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>>(PrepareAsyncSendFriendRequestRaw(context, request, cq));
     }
-    ::grpc::Status ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::message::AuthoriseResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>> AsyncConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>>(AsyncConfirmFriendRequestRaw(context, request, cq));
+    ::grpc::Status ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::message::FriendResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>> AsyncConfirmFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>>(AsyncConfirmFriendRequestRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>> PrepareAsyncConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>>(PrepareAsyncConfirmFriendRequestRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>> PrepareAsyncConfirmFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>>(PrepareAsyncConfirmFriendRequestRaw(context, request, cq));
     }
     ::grpc::Status FriendshipVerification(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::message::AuthoriseResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>> AsyncFriendshipVerification(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) {
@@ -1516,10 +1516,10 @@ class DistributedChattingService final {
     class async final :
       public StubInterface::async_interface {
      public:
-      void SendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest* request, ::message::AddNewFriendResponse* response, std::function<void(::grpc::Status)>) override;
-      void SendFriendRequest(::grpc::ClientContext* context, const ::message::AddNewFriendRequest* request, ::message::AddNewFriendResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, std::function<void(::grpc::Status)>) override;
-      void ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void SendFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response, std::function<void(::grpc::Status)>) override;
+      void SendFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response, std::function<void(::grpc::Status)>) override;
+      void ConfirmFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void FriendshipVerification(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, std::function<void(::grpc::Status)>) override;
       void FriendshipVerification(::grpc::ClientContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void NormalChattingMsg(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest* request, ::message::SendChattingMsgResponse* response, std::function<void(::grpc::Status)>) override;
@@ -1535,10 +1535,10 @@ class DistributedChattingService final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class async async_stub_{this};
-    ::grpc::ClientAsyncResponseReader< ::message::AddNewFriendResponse>* AsyncSendFriendRequestRaw(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::message::AddNewFriendResponse>* PrepareAsyncSendFriendRequestRaw(::grpc::ClientContext* context, const ::message::AddNewFriendRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>* AsyncConfirmFriendRequestRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>* PrepareAsyncConfirmFriendRequestRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>* AsyncSendFriendRequestRaw(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>* PrepareAsyncSendFriendRequestRaw(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>* AsyncConfirmFriendRequestRaw(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::message::FriendResponse>* PrepareAsyncConfirmFriendRequestRaw(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>* AsyncFriendshipVerificationRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::message::AuthoriseResponse>* PrepareAsyncFriendshipVerificationRaw(::grpc::ClientContext* context, const ::message::AuthoriseRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::message::SendChattingMsgResponse>* AsyncNormalChattingMsgRaw(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest& request, ::grpc::CompletionQueue* cq) override;
@@ -1555,9 +1555,9 @@ class DistributedChattingService final {
     Service();
     virtual ~Service();
     // A send friend request message to another user B
-    virtual ::grpc::Status SendFriendRequest(::grpc::ServerContext* context, const ::message::AddNewFriendRequest* request, ::message::AddNewFriendResponse* response);
+    virtual ::grpc::Status SendFriendRequest(::grpc::ServerContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response);
     // User B agreed with user A's friend adding request
-    virtual ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response);
+    virtual ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response);
     // Verify that B is still A's friend:
     virtual ::grpc::Status FriendshipVerification(::grpc::ServerContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response);
     // transfer chatting message from user A to B
@@ -1575,11 +1575,11 @@ class DistributedChattingService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AddNewFriendRequest* /*request*/, ::message::AddNewFriendResponse* /*response*/) override {
+    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestSendFriendRequest(::grpc::ServerContext* context, ::message::AddNewFriendRequest* request, ::grpc::ServerAsyncResponseWriter< ::message::AddNewFriendResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestSendFriendRequest(::grpc::ServerContext* context, ::message::FriendRequest* request, ::grpc::ServerAsyncResponseWriter< ::message::FriendResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -1595,11 +1595,11 @@ class DistributedChattingService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AuthoriseRequest* /*request*/, ::message::AuthoriseResponse* /*response*/) override {
+    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestConfirmFriendRequest(::grpc::ServerContext* context, ::message::AuthoriseRequest* request, ::grpc::ServerAsyncResponseWriter< ::message::AuthoriseResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestConfirmFriendRequest(::grpc::ServerContext* context, ::message::FriendRequest* request, ::grpc::ServerAsyncResponseWriter< ::message::FriendResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -1651,25 +1651,25 @@ class DistributedChattingService final {
    public:
     WithCallbackMethod_SendFriendRequest() {
       ::grpc::Service::MarkMethodCallback(0,
-          new ::grpc::internal::CallbackUnaryHandler< ::message::AddNewFriendRequest, ::message::AddNewFriendResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::message::FriendRequest, ::message::FriendResponse>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::message::AddNewFriendRequest* request, ::message::AddNewFriendResponse* response) { return this->SendFriendRequest(context, request, response); }));}
+                   ::grpc::CallbackServerContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response) { return this->SendFriendRequest(context, request, response); }));}
     void SetMessageAllocatorFor_SendFriendRequest(
-        ::grpc::MessageAllocator< ::message::AddNewFriendRequest, ::message::AddNewFriendResponse>* allocator) {
+        ::grpc::MessageAllocator< ::message::FriendRequest, ::message::FriendResponse>* allocator) {
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::message::AddNewFriendRequest, ::message::AddNewFriendResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::message::FriendRequest, ::message::FriendResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~WithCallbackMethod_SendFriendRequest() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AddNewFriendRequest* /*request*/, ::message::AddNewFriendResponse* /*response*/) override {
+    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* SendFriendRequest(
-      ::grpc::CallbackServerContext* /*context*/, const ::message::AddNewFriendRequest* /*request*/, ::message::AddNewFriendResponse* /*response*/)  { return nullptr; }
+      ::grpc::CallbackServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
   class WithCallbackMethod_ConfirmFriendRequest : public BaseClass {
@@ -1678,25 +1678,25 @@ class DistributedChattingService final {
    public:
     WithCallbackMethod_ConfirmFriendRequest() {
       ::grpc::Service::MarkMethodCallback(1,
-          new ::grpc::internal::CallbackUnaryHandler< ::message::AuthoriseRequest, ::message::AuthoriseResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::message::FriendRequest, ::message::FriendResponse>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::message::AuthoriseRequest* request, ::message::AuthoriseResponse* response) { return this->ConfirmFriendRequest(context, request, response); }));}
+                   ::grpc::CallbackServerContext* context, const ::message::FriendRequest* request, ::message::FriendResponse* response) { return this->ConfirmFriendRequest(context, request, response); }));}
     void SetMessageAllocatorFor_ConfirmFriendRequest(
-        ::grpc::MessageAllocator< ::message::AuthoriseRequest, ::message::AuthoriseResponse>* allocator) {
+        ::grpc::MessageAllocator< ::message::FriendRequest, ::message::FriendResponse>* allocator) {
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::message::AuthoriseRequest, ::message::AuthoriseResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::message::FriendRequest, ::message::FriendResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~WithCallbackMethod_ConfirmFriendRequest() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AuthoriseRequest* /*request*/, ::message::AuthoriseResponse* /*response*/) override {
+    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* ConfirmFriendRequest(
-      ::grpc::CallbackServerContext* /*context*/, const ::message::AuthoriseRequest* /*request*/, ::message::AuthoriseResponse* /*response*/)  { return nullptr; }
+      ::grpc::CallbackServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
   class WithCallbackMethod_FriendshipVerification : public BaseClass {
@@ -1766,7 +1766,7 @@ class DistributedChattingService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AddNewFriendRequest* /*request*/, ::message::AddNewFriendResponse* /*response*/) override {
+    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1783,7 +1783,7 @@ class DistributedChattingService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AuthoriseRequest* /*request*/, ::message::AuthoriseResponse* /*response*/) override {
+    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1834,7 +1834,7 @@ class DistributedChattingService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AddNewFriendRequest* /*request*/, ::message::AddNewFriendResponse* /*response*/) override {
+    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1854,7 +1854,7 @@ class DistributedChattingService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AuthoriseRequest* /*request*/, ::message::AuthoriseResponse* /*response*/) override {
+    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1917,7 +1917,7 @@ class DistributedChattingService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AddNewFriendRequest* /*request*/, ::message::AddNewFriendResponse* /*response*/) override {
+    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1939,7 +1939,7 @@ class DistributedChattingService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AuthoriseRequest* /*request*/, ::message::AuthoriseResponse* /*response*/) override {
+    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1998,10 +1998,10 @@ class DistributedChattingService final {
     WithStreamedUnaryMethod_SendFriendRequest() {
       ::grpc::Service::MarkMethodStreamed(0,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::message::AddNewFriendRequest, ::message::AddNewFriendResponse>(
+          ::message::FriendRequest, ::message::FriendResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::message::AddNewFriendRequest, ::message::AddNewFriendResponse>* streamer) {
+                     ::message::FriendRequest, ::message::FriendResponse>* streamer) {
                        return this->StreamedSendFriendRequest(context,
                          streamer);
                   }));
@@ -2010,12 +2010,12 @@ class DistributedChattingService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AddNewFriendRequest* /*request*/, ::message::AddNewFriendResponse* /*response*/) override {
+    ::grpc::Status SendFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedSendFriendRequest(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::AddNewFriendRequest,::message::AddNewFriendResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedSendFriendRequest(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::FriendRequest,::message::FriendResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_ConfirmFriendRequest : public BaseClass {
@@ -2025,10 +2025,10 @@ class DistributedChattingService final {
     WithStreamedUnaryMethod_ConfirmFriendRequest() {
       ::grpc::Service::MarkMethodStreamed(1,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::message::AuthoriseRequest, ::message::AuthoriseResponse>(
+          ::message::FriendRequest, ::message::FriendResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::message::AuthoriseRequest, ::message::AuthoriseResponse>* streamer) {
+                     ::message::FriendRequest, ::message::FriendResponse>* streamer) {
                        return this->StreamedConfirmFriendRequest(context,
                          streamer);
                   }));
@@ -2037,12 +2037,12 @@ class DistributedChattingService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::AuthoriseRequest* /*request*/, ::message::AuthoriseResponse* /*response*/) override {
+    ::grpc::Status ConfirmFriendRequest(::grpc::ServerContext* /*context*/, const ::message::FriendRequest* /*request*/, ::message::FriendResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedConfirmFriendRequest(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::AuthoriseRequest,::message::AuthoriseResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedConfirmFriendRequest(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::FriendRequest,::message::FriendResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_FriendshipVerification : public BaseClass {
