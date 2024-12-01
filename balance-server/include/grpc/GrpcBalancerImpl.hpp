@@ -62,18 +62,23 @@ public:
 
   virtual ::grpc::Status RegisterChattingServerInstance(
       ::grpc::ServerContext *context,
-      const ::message::GrpcChattingServerRegRequest *request,
-      ::message::GrpcChattingServerResponse *response);
+      const ::message::GrpcRegisterRequest*request,
+      ::message::GrpcStatusResponse*response);
 
   virtual ::grpc::Status RegisterChattingGrpcServer(
       ::grpc::ServerContext *context,
-      const ::message::GrpcChattingServerRegRequest *request,
-      ::message::GrpcChattingServerResponse *response);
+      const ::message::GrpcRegisterRequest*request,
+      ::message::GrpcStatusResponse*response);
 
   virtual ::grpc::Status ChattingServerShutDown(
       ::grpc::ServerContext *context,
-      const ::message::GrpcChattingServerShutdownRequest *request,
-      ::message::GrpcChattingServerResponse *response);
+      const ::message::GrpcShutdownRequest*request,
+      ::message::GrpcStatusResponse*response);
+
+  virtual ::grpc::Status ChattingGrpcServerShutDown(
+            ::grpc::ServerContext* context,
+            const ::message::GrpcShutdownRequest* request,
+            ::message::GrpcStatusResponse* response);
 
   static std::string userTokenGenerator();
 
