@@ -26,16 +26,20 @@ service BalancerService {
   rpc UserLoginToServer(LoginChattingServer) returns (LoginChattingResponse) {}
 
         //register current chatting server to balance server
-      rpc RegisterChattingServerInstance(GrpcChattingServerRegRequest) returns (GrpcChattingServerResponse) {}
+      rpc RegisterChattingServerInstance(GrpcRegisterRequest) returns (GrpcStatusResponse) {}
 
   // register current grpc server which belongs to chattingserver to balance
   // server
-  rpc RegisterChattingGrpcServer(GrpcChattingServerRegRequest)
-      returns (GrpcChattingServerResponse) {}
+  rpc RegisterChattingGrpcServer(GrpcRegisterRequest )
+      returns (GrpcStatusResponse) {}
 
       // when chatting server shutdown delete its existance in balance server
-        rpc ChattingServerShutDown(GrpcChattingServerShutdownRequest)
-      returns (GrpcChattingServerResponse) {}
+        rpc ChattingServerShutDown(GrpcShutdownRequest)
+      returns (GrpcStatusResponse) {}
+
+            // when chatting grpc server shutdown delete its existance in balance server
+        rpc ChattingGrpcServerShutDown(GrpcShutdownRequest)
+      returns (GrpcStatusResponse) {}
 
   // chatting server acquires other servers info through this service
   rpc GetPeerChattingServerInfo(PeerListsRequest) returns (PeerResponse) {}
@@ -80,9 +84,9 @@ message PeerResponse {
   repeated ServerInfo lists = 2;
 }
 
-message GrpcChattingServerRegRequest { ServerInfo info = 1; }
-message GrpcChattingServerShutdownRequest { string cur_server = 1; }
-message GrpcChattingServerResponse { int32 error = 1; }
+message GrpcRegisterRequest { ServerInfo info = 1; }
+message GrpcShutdownRequest { string cur_server = 1; }
+message GrpcStatusResponse { int32 error = 1; }
 
 /*prepared for distributed chatting service*/
 service DistributedChattingService {
