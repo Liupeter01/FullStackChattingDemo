@@ -685,7 +685,7 @@ void SyncLogic::handlingFriendRequestConfirm(ServiceType srv_type,
           * Response SERVICE_SUCCESS to the authenticator
           * Current session should receive a successful response first
           */
-          result_root["error"] = static_cast<std::size_t>(ServiceStatus::SERVICE_SUCCESS);
+          result_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
           session->sendMessage(ServiceType::SERVICE_FRIENDCONFIRMRESPONSE,
                     result_root.toStyledString());
 
