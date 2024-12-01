@@ -7,11 +7,13 @@
 #include <QVector>
 #include <atomic>
 #include <memory>
+#include <unordered_map>
 
 class SideBarWidget;
 class QMouseEvent;
 class QListWidgetItem;
 class LoadingWaitDialog;
+class UserNameCard;
 
 namespace Ui {
 class ChattingDlgMainFrame;
@@ -64,6 +66,15 @@ private:
   /*wait for remote server data*/
   void waitForDataFromRemote(bool status);
 
+  /*
+   * add chatting contact
+   * and register current uuid to DS m_chatHisoryWidList
+   */
+  void addChattingContact(std::shared_ptr<UserNameCard> info);
+
+  /*is there any existing uuid related to this QListWidgetItem*/
+  bool alreadyExistInHistoryWidListList(const QString &uuid) const;
+
 private slots:
   /*
    * waiting for data from remote server
@@ -88,15 +99,33 @@ private slots:
    */
   void slot_list_item_clicked(QListWidgetItem *clicked_item);
 
+  /*server be able to send authenticate friend list to this client*/
+  void slot_init_auth_friend_list();
+
+  /*
+   * Create a signal<->slot for processing authenticate friend namecard info
+   * 1.recieve authenticate friend list from server, then create multiple chatting history widgets
+   * 1.recieve signal authenticate friend, then create a chatting history widget
+   * TCPNetworkConnection::signal_add_authenticate_friend
+   */
+  void slot_signal_add_authenticate_friend(std::optional<std::shared_ptr<UserNameCard>> info);
+
 private:
+  Ui::ChattingDlgMainFrame *ui;
+
   /*reserve for search line edit*/
   QAction *m_searchAction;
 
   /*reserve for cancel user searching*/
   QAction *m_cancelAction;
-  Ui::ChattingDlgMainFrame *ui;
 
   QVector<std::shared_ptr<SideBarWidget>> m_qlabelSet;
+
+  /*
+   * we use this to store chatting history widget
+   * all the chats made by this user will shown here
+   */
+  std::unordered_map<QString, QListWidgetItem *> m_chatHistoryWidList;
 
   /*cur qlabel*/
   SideBarWidget *m_curQLabel;
