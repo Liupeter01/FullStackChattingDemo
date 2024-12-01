@@ -1,6 +1,8 @@
 #ifndef CHATTINGHISTORYWIDGET_H
 #define CHATTINGHISTORYWIDGET_H
 
+#include <memory>
+#include <UserNameCard.h>
 #include "listitemwidgetbase.h"
 
 namespace Ui {
@@ -14,13 +16,13 @@ public:
   ChattingHistoryWidget(QWidget *parent = nullptr);
   virtual ~ChattingHistoryWidget();
 
-  void setItemDisplay(const QString &_username, const QString &_avator,
-                      const QString &_last_message);
+  void setUserInfo(std::shared_ptr<UserNameCard> info);
+  void setLastMsg(const QString& lastmsg);
+  void setItemDisplay();
 
 private:
   Ui::ChattingHistoryWidget *ui;
-  QString m_username;
-  QString m_avatorpath;
+  std::shared_ptr<UserNameCard> m_userinfo;
   QString m_lastmsg;
 };
 

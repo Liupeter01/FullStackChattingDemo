@@ -12,17 +12,19 @@ ChattingHistoryWidget::ChattingHistoryWidget(QWidget *parent)
 
 ChattingHistoryWidget::~ChattingHistoryWidget() { delete ui; }
 
-void ChattingHistoryWidget::setItemDisplay(const QString &_username,
-                                           const QString &_avator,
-                                           const QString &_last_message) {
-  m_username = _username;
-  m_avatorpath = _avator;
-  m_lastmsg = _last_message;
+void ChattingHistoryWidget::setUserInfo(std::shared_ptr<UserNameCard> info){
+    m_userinfo = info;
+}
 
+void ChattingHistoryWidget::setLastMsg(const QString &lastmsg){
+    m_lastmsg = lastmsg;
+}
+
+void ChattingHistoryWidget::setItemDisplay() {
   QSize size = ui->user_avator->size();
   auto image =
-      Tools::loadImages(m_avatorpath, size.width(), size.height()).value();
+      Tools::loadImages(m_userinfo->m_avatorPath, size.width(), size.height()).value();
   ui->user_avator->setPixmap(QPixmap::fromImage(image));
   ui->last_message->setText(m_lastmsg);
-  ui->user_name->setText(m_username);
+  ui->user_name->setText(m_userinfo->m_nickname);
 }
