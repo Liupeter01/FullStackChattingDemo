@@ -3,16 +3,13 @@
 
 #include "singleton.hpp"
 #include <QString>
-#include <vector>
-#include <unordered_map>
 #include <UserFriendRequest.hpp>
+#include <unordered_map>
+#include <vector>
 
 class QJsonArray;
 
-enum class TargetList{
-    FRIENDLIST,
-    REQUESTLIST
-};
+enum class TargetList { FRIENDLIST, REQUESTLIST };
 
 class UserAccountManager : public Singleton<UserAccountManager> {
   friend class Singleton<UserAccountManager>;
@@ -30,12 +27,12 @@ public:
   const QString get_uuid() const { return m_info.uuid; }
 
 public:
-  void appendArrayToList(TargetList target, const QJsonArray& array);
+  void appendArrayToList(TargetList target, const QJsonArray &array);
 
   void addItem2List(std::shared_ptr<UserFriendRequest> info);
   void addItem2List(std::shared_ptr<UserNameCard> info);
 
-  const std::vector<std::shared_ptr<UserFriendRequest>>& getFriendRequestList();
+  const std::vector<std::shared_ptr<UserFriendRequest>> &getFriendRequestList();
   std::vector<std::shared_ptr<UserNameCard>> getAuthFriendList();
 
   bool alreadyExistInAuthList(const QString &uuid) const;
@@ -44,8 +41,8 @@ public:
   void setUserInfo(std::shared_ptr<UserNameCard> info);
 
 protected:
-  void appendAuthFriendList(const QJsonArray& array);
-  void appendFriendRequestList(const QJsonArray& array);
+  void appendAuthFriendList(const QJsonArray &array);
+  void appendFriendRequestList(const QJsonArray &array);
 
 private:
   UserAccountManager() : m_info() {}

@@ -4,8 +4,8 @@
 #include <QListWidgetItem>
 #include <QRandomGenerator>
 #include <QScrollBar>
-#include <useraccountmanager.hpp>
 #include <tcpnetworkconnection.h>
+#include <useraccountmanager.hpp>
 
 ChattingContactList::ChattingContactList(QWidget *parent)
     : static_text("Add New Friend"), MainFrameShowLists(parent) {
@@ -30,20 +30,22 @@ ChattingContactList::ChattingContactList(QWidget *parent)
 ChattingContactList::~ChattingContactList() {}
 
 void ChattingContactList::registerSignal() {
-    /*user click one of the contact, connect signal<->slot*/
-    connect(this, &QListWidget::itemClicked, this,
-            &ChattingContactList::slot_itemClicked);
+  /*user click one of the contact, connect signal<->slot*/
+  connect(this, &QListWidget::itemClicked, this,
+          &ChattingContactList::slot_itemClicked);
 
-    /*
+  /*
    * Create a signal<->slot for processing authenticate friend namecard info
    * TCPNetworkConnection::signal_add_authenticate_friend
    */
-    connect(TCPNetworkConnection::get_instance().get(), &TCPNetworkConnection::signal_add_authenticate_friend,
-            this, &ChattingContactList::slot_signal_add_authenticate_friend);
+  connect(TCPNetworkConnection::get_instance().get(),
+          &TCPNetworkConnection::signal_add_authenticate_friend, this,
+          &ChattingContactList::slot_signal_add_authenticate_friend);
 
-    /*server be able to send authenticate friend list to this client*/
-    connect(TCPNetworkConnection::get_instance().get(), &TCPNetworkConnection::signal_init_auth_friend_list,
-            this, &ChattingContactList::slot_init_auth_friend_list);
+  /*server be able to send authenticate friend list to this client*/
+  connect(TCPNetworkConnection::get_instance().get(),
+          &TCPNetworkConnection::signal_init_auth_friend_list, this,
+          &ChattingContactList::slot_init_auth_friend_list);
 }
 
 void ChattingContactList::addAddUserWidget() {
@@ -63,7 +65,8 @@ void ChattingContactList::addAddUserWidget() {
   this->update();
 }
 
-void ChattingContactList::addChattingContact(std::shared_ptr<UserNameCard> info){
+void ChattingContactList::addChattingContact(
+    std::shared_ptr<UserNameCard> info) {
   ChattingContactItem *contact_widget(new ChattingContactItem);
 
   /*set chatting contact info*/
@@ -128,29 +131,32 @@ void ChattingContactList::slot_itemClicked(QListWidgetItem *item) {
   }
 }
 
-void ChattingContactList::slot_init_auth_friend_list(){
-    auto authFriend = UserAccountManager::get_instance()->getAuthFriendList();
-    for(const auto &item: authFriend){
-        addChattingContact(item);
-    }
+void ChattingContactList::slot_init_auth_friend_list() {
+  auto authFriend = UserAccountManager::get_instance()->getAuthFriendList();
+  for (const auto &item : authFriend) {
+    addChattingContact(item);
+  }
 }
 
-void ChattingContactList::slot_signal_add_authenticate_friend(std::optional<std::shared_ptr<UserNameCard>> info){
-    if(info.has_value()){
-        auto auth_user = info.value();
-        /*check is this uuid exist in auth friend list*/
-        if(!UserAccountManager::get_instance()->alreadyExistInAuthList(auth_user->m_uuid)){
-            qDebug() << auth_user->m_uuid << " already been added to the auth friend list";
-            return;
-        }
-
-        /*
-         * display it on UI with user's nickname
-         * store user's uuid inside the class
-         */
-        addChattingContact(auth_user);
-
-        /*add it to user account manager*/
-        UserAccountManager::get_instance()->addItem2List(auth_user);
+void ChattingContactList::slot_signal_add_authenticate_friend(
+    std::optional<std::shared_ptr<UserNameCard>> info) {
+  if (info.has_value()) {
+    auto auth_user = info.value();
+    /*check is this uuid exist in auth friend list*/
+    if (!UserAccountManager::get_instance()->alreadyExistInAuthList(
+            auth_user->m_uuid)) {
+      qDebug() << auth_user->m_uuid
+               << " already been added to the auth friend list";
+      return;
     }
+
+    /*
+     * display it on UI with user's nickname
+     * store user's uuid inside the class
+     */
+    addChattingContact(auth_user);
+
+    /*add it to user account manager*/
+    UserAccountManager::get_instance()->addItem2List(auth_user);
+  }
 }

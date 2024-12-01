@@ -309,8 +309,8 @@ void AddUserRequestDialog::on_confirm_button_clicked() {
   auto json_data = doc.toJson(QJsonDocument::Compact);
 
   SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
-      static_cast<uint16_t>(ServiceType::SERVICE_FRIENDREQUESTSENDER), json_data,
-      [](auto x) { return qToBigEndian(x); });
+      static_cast<uint16_t>(ServiceType::SERVICE_FRIENDREQUESTSENDER),
+      json_data, [](auto x) { return qToBigEndian(x); });
 
   /*after connection to server, send TCP request*/
   TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));

@@ -3,39 +3,39 @@
 #include <grpc/GrpcDistributedChattingService.hpp>
 
 gRPCDistributedChattingService::gRPCDistributedChattingService() {
-          updateGrpcPeerLists();
+  updateGrpcPeerLists();
 }
 
-void gRPCDistributedChattingService::updateGrpcPeerLists(){
-          /*clean it first*/
-          m_pools.erase(m_pools.begin(), m_pools.end());
-          m_pools.clear();
+void gRPCDistributedChattingService::updateGrpcPeerLists() {
+  /*clean it first*/
+  m_pools.erase(m_pools.begin(), m_pools.end());
+  m_pools.clear();
 
-          /*pass current server name as a parameter to the balance server, and returns
- * all peers*/
-          auto response = gRPCBalancerService::getPeerGrpcServerLists(
-                    ServerConfig::get_instance()->GrpcServerName);
+  /*pass current server name as a parameter to the balance server, and returns
+   * all peers*/
+  auto response = gRPCBalancerService::getPeerGrpcServerLists(
+      ServerConfig::get_instance()->GrpcServerName);
 
-          if (response.error() !=
-                    static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
-                    spdlog::error("[Balance Server] try retrieve peer servers' info failed!, "
-                              "error code {}",
-                              response.error());
-                    std::abort();
-          }
+  if (response.error() !=
+      static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
+    spdlog::error("[Balance Server] try retrieve peer servers' info failed!, "
+                  "error code {}",
+                  response.error());
+    std::abort();
+  }
 
-          /*get server lists*/
-          auto& peer_servers = response.lists();
+  /*get server lists*/
+  auto &peer_servers = response.lists();
 
-          /*traversal server lists and create multiple DistributedChattingServicePool
-           * according to host and port*/
-          std::for_each(
-                    peer_servers.begin(), peer_servers.end(),
-                    [this](const message::ServerInfo& server) {
-                              m_pools[server.name()] =
-                                        std::make_shared<stubpool::DistributedChattingServicePool>(
-                                                  server.host(), server.port());
-                    });
+  /*traversal server lists and create multiple DistributedChattingServicePool
+   * according to host and port*/
+  std::for_each(
+      peer_servers.begin(), peer_servers.end(),
+      [this](const message::ServerInfo &server) {
+        m_pools[server.name()] =
+            std::make_shared<stubpool::DistributedChattingServicePool>(
+                server.host(), server.port());
+      });
 }
 
 std::optional<std::shared_ptr<stubpool::DistributedChattingServicePool>>

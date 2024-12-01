@@ -104,11 +104,13 @@ private slots:
 
   /*
    * Create a signal<->slot for processing authenticate friend namecard info
-   * 1.recieve authenticate friend list from server, then create multiple chatting history widgets
-   * 1.recieve signal authenticate friend, then create a chatting history widget
+   * 1.recieve authenticate friend list from server, then create multiple
+   * chatting history widgets 1.recieve signal authenticate friend, then create
+   * a chatting history widget
    * TCPNetworkConnection::signal_add_authenticate_friend
    */
-  void slot_signal_add_authenticate_friend(std::optional<std::shared_ptr<UserNameCard>> info);
+  void slot_signal_add_authenticate_friend(
+      std::optional<std::shared_ptr<UserNameCard>> info);
 
 private:
   Ui::ChattingDlgMainFrame *ui;

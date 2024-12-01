@@ -63,7 +63,8 @@ signals:
                               ServiceStatus status);
 
   /* client who is going to receive new friend request*/
-  void signal_incoming_friend_request(std::optional<std::shared_ptr<UserFriendRequest>> info);
+  void signal_incoming_friend_request(
+      std::optional<std::shared_ptr<UserFriendRequest>> info);
 
   /*client who inited request will receive response from here*/
   void signal_sender_response(bool status);
@@ -81,7 +82,8 @@ signals:
    * target user confirm to add this person as a friend
    * Server will response a message to both user to add this friend
    */
-  void signal_add_authenticate_friend(std::optional<std::shared_ptr<UserNameCard>>);
+  void signal_add_authenticate_friend(
+      std::optional<std::shared_ptr<UserNameCard>>);
 
 private:
   /*establish tcp socket with server*/

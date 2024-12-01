@@ -45,7 +45,8 @@ void ChattingContactItem::setAddUserWidget() {
   m_size = ui->contact_zone->size();
 }
 
-void ChattingContactItem::setChattingContact(std::shared_ptr<UserNameCard> info) {
+void ChattingContactItem::setChattingContact(
+    std::shared_ptr<UserNameCard> info) {
   /*set list item type, ContactHistory*/
   setItemType(ListItemType::ContactHistory);
 

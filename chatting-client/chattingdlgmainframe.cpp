@@ -4,16 +4,16 @@
 #include "loadingwaitdialog.h"
 #include "tcpnetworkconnection.h"
 #include "tools.h"
-#include <QFile>
-#include <QPoint>
+#include "ui_chattingdlgmainframe.h"
 #include <QAction>
-#include <QtEndian>
+#include <QFile>
+#include <QJsonDocument>
 #include <QJsonObject>
 #include <QMouseEvent>
-#include <QJsonDocument>
+#include <QPoint>
 #include <QRandomGenerator>
+#include <QtEndian>
 #include <useraccountmanager.hpp>
-#include "ui_chattingdlgmainframe.h"
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
     : m_send_status(false) /*wait for data status is false*/
@@ -124,16 +124,19 @@ void ChattingDlgMainFrame::registerSignal() {
 
   /*
    * Create a signal<->slot for processing authenticate friend namecard info
-   * 1.recieve authenticate friend list from server, then create multiple chatting history widgets
-   * 1.recieve signal authenticate friend, then create a chatting history widget
+   * 1.recieve authenticate friend list from server, then create multiple
+   * chatting history widgets 1.recieve signal authenticate friend, then create
+   * a chatting history widget
    * TCPNetworkConnection::signal_add_authenticate_friend
    */
-  connect(TCPNetworkConnection::get_instance().get(), &TCPNetworkConnection::signal_add_authenticate_friend,
-          this, &ChattingDlgMainFrame::slot_signal_add_authenticate_friend);
+  connect(TCPNetworkConnection::get_instance().get(),
+          &TCPNetworkConnection::signal_add_authenticate_friend, this,
+          &ChattingDlgMainFrame::slot_signal_add_authenticate_friend);
 
   /*server be able to send authenticate friend list to this client*/
-  connect(TCPNetworkConnection::get_instance().get(), &TCPNetworkConnection::signal_init_auth_friend_list,
-          this, &ChattingDlgMainFrame::slot_init_auth_friend_list);
+  connect(TCPNetworkConnection::get_instance().get(),
+          &TCPNetworkConnection::signal_init_auth_friend_list, this,
+          &ChattingDlgMainFrame::slot_init_auth_friend_list);
 }
 
 void ChattingDlgMainFrame::registerSearchEditAction() {
@@ -417,31 +420,34 @@ void ChattingDlgMainFrame::slot_list_item_clicked(
   }
 }
 
-void ChattingDlgMainFrame::slot_init_auth_friend_list(){
-    auto authFriend = UserAccountManager::get_instance()->getAuthFriendList();
-    for(const auto &item: authFriend){
-        addChattingContact(item);
-    }
+void ChattingDlgMainFrame::slot_init_auth_friend_list() {
+  auto authFriend = UserAccountManager::get_instance()->getAuthFriendList();
+  for (const auto &item : authFriend) {
+    addChattingContact(item);
+  }
 }
 
-void ChattingDlgMainFrame::slot_signal_add_authenticate_friend(std::optional<std::shared_ptr<UserNameCard> > info){
-    if(info.has_value()){
-        auto auth_user = info.value();
-        qDebug() << "Receive Friend Chatting History From " << auth_user->m_uuid;
-        /*this user should be a valid user*/
-        if(!UserAccountManager::get_instance()->alreadyExistInAuthList(auth_user->m_uuid)){
-            return;
-        }
-
-        /**/
-        if(this->alreadyExistInHistoryWidListList(auth_user->m_uuid)){
-            qDebug() << auth_user->m_uuid << " Has Already Exist In Mapping structrue";
-            return;
-        }
-
-        /*add it to UI interface*/
-        addChattingContact(auth_user);
+void ChattingDlgMainFrame::slot_signal_add_authenticate_friend(
+    std::optional<std::shared_ptr<UserNameCard>> info) {
+  if (info.has_value()) {
+    auto auth_user = info.value();
+    qDebug() << "Receive Friend Chatting History From " << auth_user->m_uuid;
+    /*this user should be a valid user*/
+    if (!UserAccountManager::get_instance()->alreadyExistInAuthList(
+            auth_user->m_uuid)) {
+      return;
     }
+
+    /**/
+    if (this->alreadyExistInHistoryWidListList(auth_user->m_uuid)) {
+      qDebug() << auth_user->m_uuid
+               << " Has Already Exist In Mapping structrue";
+      return;
+    }
+
+    /*add it to UI interface*/
+    addChattingContact(auth_user);
+  }
 }
 
 ChattingDlgMainFrame::~ChattingDlgMainFrame() {
@@ -490,26 +496,28 @@ void ChattingDlgMainFrame::waitForDataFromRemote(bool status) {
   }
 }
 
-void ChattingDlgMainFrame::addChattingContact(std::shared_ptr<UserNameCard> info){
-    ChattingHistoryWidget *new_inserted(new ChattingHistoryWidget());
+void ChattingDlgMainFrame::addChattingContact(
+    std::shared_ptr<UserNameCard> info) {
+  ChattingHistoryWidget *new_inserted(new ChattingHistoryWidget());
 
-    new_inserted->setUserInfo(info);
-    new_inserted->setLastMsg("Just a test!");
-    new_inserted->setItemDisplay();
+  new_inserted->setUserInfo(info);
+  new_inserted->setLastMsg("Just a test!");
+  new_inserted->setItemDisplay();
 
-    QListWidgetItem *item(new QListWidgetItem);
-    item->setSizeHint(new_inserted->sizeHint());
+  QListWidgetItem *item(new QListWidgetItem);
+  item->setSizeHint(new_inserted->sizeHint());
 
-    /*add QListWidgetItem to unordermap mapping struct*/
-    this->m_chatHistoryWidList[info->m_uuid] = item;
+  /*add QListWidgetItem to unordermap mapping struct*/
+  this->m_chatHistoryWidList[info->m_uuid] = item;
 
-    ui->chat_list->addItem(item);
-    ui->chat_list->setItemWidget(item, new_inserted);
-    ui->chat_list->update();
+  ui->chat_list->addItem(item);
+  ui->chat_list->setItemWidget(item, new_inserted);
+  ui->chat_list->update();
 }
 
-bool ChattingDlgMainFrame::alreadyExistInHistoryWidListList(const QString &uuid) const{
-    return m_chatHistoryWidList.find(uuid) != m_chatHistoryWidList.end();
+bool ChattingDlgMainFrame::alreadyExistInHistoryWidListList(
+    const QString &uuid) const {
+  return m_chatHistoryWidList.find(uuid) != m_chatHistoryWidList.end();
 }
 
 void ChattingDlgMainFrame::slot_waiting_for_data(bool status) {
