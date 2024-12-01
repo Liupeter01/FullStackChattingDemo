@@ -101,8 +101,8 @@ private:
 * @param: startpos: get friend from the index[startpos]
 * @param: interval: how many friends re going to acquire [startpos, startpos + interval)
 */
-  std::optional<std::vector<std::unique_ptr<UserNameCard>>>
-            getAuthFriendInfo(const std::string& dst_uuid, const std::size_t start_pos = 0, const std::size_t interval = 10);
+  //std::optional<std::vector<std::unique_ptr<UserNameCard>>>
+  //          getAuthFriendInfo(const std::string& dst_uuid, const std::size_t start_pos = 0, const std::size_t interval = 10);
 
 public:
   /*redis*/
