@@ -28,7 +28,14 @@ void AddNewUserStackWidget::addNewWidgetItem(std::shared_ptr<UserFriendRequest> 
       qDebug() << "User agree to add this friend";
       AuthenticateNewFriendRequestDialog* auth = new AuthenticateNewFriendRequestDialog(this);
       auth->setModal(true);
-      //
+      auth->setUserInfo(std::make_unique<UserNameCard>(
+          info->m_uuid,
+          info->m_avatorPath,
+          info->m_username,
+          info->m_nickname,
+          info->m_description,
+          info->m_sex
+      ));
       auth->show();
   });
 
