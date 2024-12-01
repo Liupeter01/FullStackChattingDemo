@@ -34,7 +34,7 @@ mysql::MySQLConnection::MySQLConnection(
     // user-supplied values (e.g. the field value that caused the error) and is
     // encoded using to the connection's character set (UTF-8 by default). Treat
     // is as untrusted input.
-    spdlog::error("MySQL Connect Error: {0}\n Server diagnostics: {1}",
+    spdlog::critical("MySQL Connect Error: {0}\n Server diagnostics: {1}",
                   err.what(), err.get_diagnostics().server_message().data());
 
     std::abort();
