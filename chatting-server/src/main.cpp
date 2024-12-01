@@ -62,6 +62,8 @@ int main() {
               std::abort();
     }
 
+    spdlog::info("[Chatting Service {}] Register Chatting Server Instance Successful");
+
     /*register grpc server to balance-server lists*/
     response = gRPCBalancerService::registerGrpcServer(
         ServerConfig::get_instance()->GrpcServerName,
@@ -76,6 +78,8 @@ int main() {
                     response.error());
       std::abort();
     }
+
+    spdlog::info("[Chatting Service {}] Register Chatting Grpc Server Successful");
 
     /*setting up signal*/
     boost::asio::io_context ioc;
@@ -121,19 +125,37 @@ int main() {
 
     /*
      * Chatting Server Shutdown
-     * Delete current grpc server from balance-server grpc lists
+     * Delete current chatting server
      */
     response = gRPCBalancerService::chattingServerShutdown(
         ServerConfig::get_instance()->GrpcServerName);
 
     if (response.error() !=
         static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
-      spdlog::error("[{}] Try Remove Current GRPC Server From Lists Failed!, "
+      spdlog::error("[{}] Try Remove Current Chatting Server Instance From Lists Failed!, "
                     "error code {}",
                     ServerConfig::get_instance()->GrpcServerName,
                     response.error());
-      std::abort();
     }
+
+    spdlog::info("[Chatting Service {}] Unregister Chatting Server Instance Successful");
+
+    /*
+ * grpc Server Shutdown
+ * Delete current grpc server from balance-server grpc lists
+ */
+    response = gRPCBalancerService::grpcServerShutdown(
+              ServerConfig::get_instance()->GrpcServerName);
+
+    if (response.error() !=
+              static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
+              spdlog::error("[{}] Try Remove Current GRPC Server From Lists Failed!, "
+                        "error code {}",
+                        ServerConfig::get_instance()->GrpcServerName,
+                        response.error());
+    }
+
+    spdlog::info("[Chatting Service {}] Unregister Chatting Grpc Server Successful");
 
   } catch (const std::exception &e) {
     spdlog::error("{}", e.what());
