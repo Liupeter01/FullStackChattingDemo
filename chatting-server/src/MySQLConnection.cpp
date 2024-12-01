@@ -3,10 +3,10 @@
 #include <boost/mysql/results.hpp>
 #include <boost/mysql/row_view.hpp>
 #include <boost/mysql/statement.hpp>
+#include <server/UserFriendRequest.hpp>
 #include <service/IOServicePool.hpp>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
-#include <server/UserFriendRequest.hpp>
 #include <sql/MySQLConnectionPool.hpp>
 
 mysql::MySQLConnection::MySQLConnection(
@@ -83,8 +83,7 @@ mysql::MySQLConnection::checkAccountLogin(std::string_view username,
   return result.rows().size();
 }
 
-bool 
-mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
+bool mysql::MySQLConnection::checkAccountAvailability(std::string_view username,
                                                       std::string_view email) {
   auto res =
       executeCommand(MySQLSelection::FIND_EXISTING_USER, username, email);
@@ -123,94 +122,93 @@ bool mysql::MySQLConnection::createFriendRequest(const std::size_t src_uuid,
                                                  const std::size_t dst_uuid,
                                                  std::string_view nickname,
                                                  std::string_view message) {
-  if (src_uuid == dst_uuid) 
+  if (src_uuid == dst_uuid)
     return false;
 
   // check both uuid, are they all valid?
   if (checkUUID(src_uuid) && checkUUID(dst_uuid)) {
     [[maybe_unused]] auto res =
-              executeCommand(MySQLSelection::CREATE_FRIENDING_REQUEST, src_uuid,
-                        dst_uuid, nickname, message);
+        executeCommand(MySQLSelection::CREATE_FRIENDING_REQUEST, src_uuid,
+                       dst_uuid, nickname, message);
     return true;
   }
   return false;
 }
 
 /*update user friend request to confirmed status*/
-bool 
-mysql::MySQLConnection::updateFriendingStatus(const std::size_t src_uuid,
-          const std::size_t dst_uuid)
-{
-          if (src_uuid == dst_uuid) 
-                    return false;
+bool mysql::MySQLConnection::updateFriendingStatus(const std::size_t src_uuid,
+                                                   const std::size_t dst_uuid) {
+  if (src_uuid == dst_uuid)
+    return false;
 
-          // check both uuid, are they all valid?
-          if (checkUUID(src_uuid) && checkUUID(dst_uuid)) {
-                    [[maybe_unused]] auto res =
-                              executeCommand(MySQLSelection::UPDATE_FRIEND_REQUEST_STATUS, src_uuid, dst_uuid);
-                    return true;
-          }
-          return false;
+  // check both uuid, are they all valid?
+  if (checkUUID(src_uuid) && checkUUID(dst_uuid)) {
+    [[maybe_unused]] auto res = executeCommand(
+        MySQLSelection::UPDATE_FRIEND_REQUEST_STATUS, src_uuid, dst_uuid);
+    return true;
+  }
+  return false;
 }
 
+bool mysql::MySQLConnection::createAuthFriendsRelation(
+    const std::size_t src_uuid, const std::size_t dst_uuid,
+    const std::string &alternative) {
+  if (src_uuid == dst_uuid)
+    return false;
 
-bool 
-mysql::MySQLConnection::createAuthFriendsRelation(const std::size_t src_uuid, 
-          const std::size_t dst_uuid, 
-          const std::string& alternative) {
-          if (src_uuid == dst_uuid)
-                    return false;
+  // check both uuid, are they all valid?
+  if (checkUUID(src_uuid) && checkUUID(dst_uuid)) {
+    [[maybe_unused]] auto res =
+        executeCommand(MySQLSelection::CREATE_AUTH_FRIEND_ENTRY, src_uuid,
+                       dst_uuid, alternative);
 
-          // check both uuid, are they all valid?
-          if (checkUUID(src_uuid) && checkUUID(dst_uuid)) {
-                    [[maybe_unused]] auto res =
-                              executeCommand(MySQLSelection::CREATE_AUTH_FRIEND_ENTRY, src_uuid, dst_uuid, alternative);
-
-                    return true;
-          }
-          return false;
+    return true;
+  }
+  return false;
 }
 
 std::optional<std::vector<std::unique_ptr<UserFriendRequest>>>
-mysql::MySQLConnection::getFriendingRequestList(const std::size_t dst_uuid, const std::size_t start_pos, const std::size_t interval){
-          if (!checkUUID(dst_uuid)) {
-                    spdlog::warn("Invalid Dst UUID!");
-                    return std::nullopt;
-          }
+mysql::MySQLConnection::getFriendingRequestList(const std::size_t dst_uuid,
+                                                const std::size_t start_pos,
+                                                const std::size_t interval) {
+  if (!checkUUID(dst_uuid)) {
+    spdlog::warn("Invalid Dst UUID!");
+    return std::nullopt;
+  }
 
-          [[maybe_unused]] auto res = executeCommand(MySQLSelection::GET_FRIEND_REQUEST_LIST,
-                    dst_uuid, /*status=*/0, start_pos, interval);
+  [[maybe_unused]] auto res =
+      executeCommand(MySQLSelection::GET_FRIEND_REQUEST_LIST, dst_uuid,
+                     /*status=*/0, start_pos, interval);
 
-          /*after execute sql query => no value*/
-          if (!res.has_value()) {
-                    return std::nullopt;
-          }
+  /*after execute sql query => no value*/
+  if (!res.has_value()) {
+    return std::nullopt;
+  }
 
-          /*sql execute successfully, but no data retrieved!*/
-          boost::mysql::results result = res.value();
-          if (!result.rows().size()) {
-                    return std::nullopt;
-          }
+  /*sql execute successfully, but no data retrieved!*/
+  boost::mysql::results result = res.value();
+  if (!result.rows().size()) {
+    return std::nullopt;
+  }
 
-          std::vector<std::unique_ptr<UserFriendRequest>> list;
-          for (auto ib = result.rows().begin(); ib != result.rows().end(); ib++) {
-                    std::unique_ptr<UserFriendRequest> req(std::make_unique<UserFriendRequest>(
-                              std::to_string(ib->at(0).as_int64()),   /*src_uuid*/
-                              std::to_string(dst_uuid),                     /*dst_uuid*/
-                              ib->at(1).as_string(),                          /*nickname*/
-                              ib->at(2).as_string(),                          /*msg*/
-                              ib->at(3).as_string(),                          /*avator*/
-                              ib->at(4).as_string(),                          /*user name*/
-                              ib->at(5).as_string(),                           /*description*/
-                              ib->at(6).as_int64() ? Sex::Male : Sex::Female /*sex*/
-                    ));
-                    list.push_back(std::move(req));
-          }
-          return list;
+  std::vector<std::unique_ptr<UserFriendRequest>> list;
+  for (auto ib = result.rows().begin(); ib != result.rows().end(); ib++) {
+    std::unique_ptr<UserFriendRequest> req(std::make_unique<UserFriendRequest>(
+        std::to_string(ib->at(0).as_int64()),          /*src_uuid*/
+        std::to_string(dst_uuid),                      /*dst_uuid*/
+        ib->at(1).as_string(),                         /*nickname*/
+        ib->at(2).as_string(),                         /*msg*/
+        ib->at(3).as_string(),                         /*avator*/
+        ib->at(4).as_string(),                         /*user name*/
+        ib->at(5).as_string(),                         /*description*/
+        ib->at(6).as_int64() ? Sex::Male : Sex::Female /*sex*/
+        ));
+    list.push_back(std::move(req));
+  }
+  return list;
 }
 
-bool 
-mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request) {
+bool mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request) {
   /*check is there anyone who use this username before*/
   if (!checkAccountAvailability(request.m_username, request.m_email)) {
     [[maybe_unused]] auto res =
@@ -221,8 +219,7 @@ mysql::MySQLConnection::registerNewUser(MySQLRequestStruct &&request) {
   return false;
 }
 
-bool 
-mysql::MySQLConnection::alterUserPassword(MySQLRequestStruct &&request) {
+bool mysql::MySQLConnection::alterUserPassword(MySQLRequestStruct &&request) {
   if (!checkAccountAvailability(request.m_username, request.m_email)) {
     return false;
   }
@@ -233,8 +230,7 @@ mysql::MySQLConnection::alterUserPassword(MySQLRequestStruct &&request) {
   return true;
 }
 
-bool 
-mysql::MySQLConnection::checkTimeout(
+bool mysql::MySQLConnection::checkTimeout(
     const std::chrono::steady_clock::time_point &curr, std::size_t timeout) {
   if (std::chrono::duration_cast<std::chrono::seconds>(curr -
                                                        last_operation_time)
@@ -244,8 +240,7 @@ mysql::MySQLConnection::checkTimeout(
   return true;
 }
 
-bool 
-mysql::MySQLConnection::checkUUID(std::size_t uuid) {
+bool mysql::MySQLConnection::checkUUID(std::size_t uuid) {
   auto res = executeCommand(MySQLSelection::USER_UUID_CHECK, uuid);
   if (!res.has_value()) {
     return false;
@@ -274,12 +269,10 @@ mysql::MySQLConnection::getUsernameByUUID(std::size_t uuid) {
   return (*res.value().rows().begin()).at(1).as_string();
 }
 
-bool 
-mysql::MySQLConnection::sendHeartBeat() {
+bool mysql::MySQLConnection::sendHeartBeat() {
   return executeCommand(MySQLSelection::HEART_BEAT).has_value();
 }
 
-void 
-mysql::MySQLConnection::updateTimer() {
+void mysql::MySQLConnection::updateTimer() {
   last_operation_time = std::chrono::steady_clock::now();
 }

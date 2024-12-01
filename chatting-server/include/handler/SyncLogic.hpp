@@ -3,7 +3,6 @@
 #define _SYNCLOGIC_HPP_
 #include <atomic>
 #include <condition_variable>
-#include <vector>
 #include <memory>
 #include <mutex>
 #include <network/def.hpp>
@@ -13,6 +12,7 @@
 #include <singleton/singleton.hpp>
 #include <thread>
 #include <unordered_map>
+#include <vector>
 
 /*declaration*/
 struct UserNameCard;
@@ -36,18 +36,17 @@ public:
   void commit(pair recv_node);
 
 public:
-          static void generateErrorMessage(const std::string& log, ServiceType type,
-                    ServiceStatus status, SessionPtr conn);
+  static void generateErrorMessage(const std::string &log, ServiceType type,
+                                   ServiceStatus status, SessionPtr conn);
 
-          /*
-           * get user's basic info(name, age, sex, ...) from redis
-           * 1. we are going to search for info inside redis first, if nothing found,
-           * then goto 2
-           * 2. searching for user info inside mysql
-           */
-          static std::optional<std::unique_ptr<UserNameCard>>
-                    getUserBasicInfo(const std::string& key);
-
+  /*
+   * get user's basic info(name, age, sex, ...) from redis
+   * 1. we are going to search for info inside redis first, if nothing found,
+   * then goto 2
+   * 2. searching for user info inside mysql
+   */
+  static std::optional<std::unique_ptr<UserNameCard>>
+  getUserBasicInfo(const std::string &key);
 
 private:
   SyncLogic();
@@ -88,21 +87,26 @@ private:
                                     NodePtr recv);
 
   /*
-  * get friend request list from the database
-  * @param: startpos: get friend request from the index[startpos]
-  * @param: interval: how many requests are going to acquire [startpos, startpos + interval)
-  */
+   * get friend request list from the database
+   * @param: startpos: get friend request from the index[startpos]
+   * @param: interval: how many requests are going to acquire [startpos,
+   * startpos + interval)
+   */
   std::optional<std::vector<std::unique_ptr<UserFriendRequest>>>
-            getFriendRequestInfo(const std::string& dst_uuid, const std::size_t start_pos = 0, const std::size_t interval = 10);
+  getFriendRequestInfo(const std::string &dst_uuid,
+                       const std::size_t start_pos = 0,
+                       const std::size_t interval = 10);
 
   /*
-* acquire Friend List
-* get existing authenticated bid-directional friend from database
-* @param: startpos: get friend from the index[startpos]
-* @param: interval: how many friends re going to acquire [startpos, startpos + interval)
-*/
-  //std::optional<std::vector<std::unique_ptr<UserNameCard>>>
-  //          getAuthFriendInfo(const std::string& dst_uuid, const std::size_t start_pos = 0, const std::size_t interval = 10);
+   * acquire Friend List
+   * get existing authenticated bid-directional friend from database
+   * @param: startpos: get friend from the index[startpos]
+   * @param: interval: how many friends re going to acquire [startpos, startpos
+   * + interval)
+   */
+  // std::optional<std::vector<std::unique_ptr<UserNameCard>>>
+  //           getAuthFriendInfo(const std::string& dst_uuid, const std::size_t
+  //           start_pos = 0, const std::size_t interval = 10);
 
 public:
   /*redis*/

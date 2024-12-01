@@ -155,24 +155,24 @@ struct gRPCBalancerService {
   }
 
   static message::GrpcStatusResponse
-            grpcServerShutdown(const std::string& name) {
-            grpc::ClientContext context;
-            message::GrpcShutdownRequest request;
-            message::GrpcStatusResponse response;
+  grpcServerShutdown(const std::string &name) {
+    grpc::ClientContext context;
+    message::GrpcShutdownRequest request;
+    message::GrpcStatusResponse response;
 
-            request.set_cur_server(name);
+    request.set_cur_server(name);
 
-            connection::ConnectionRAII<stubpool::BalancerServicePool,
-                      message::BalancerService::Stub>
-                      raii;
+    connection::ConnectionRAII<stubpool::BalancerServicePool,
+                               message::BalancerService::Stub>
+        raii;
 
-            grpc::Status status =
-                      raii->get()->ChattingGrpcServerShutDown(&context, request, &response);
+    grpc::Status status =
+        raii->get()->ChattingGrpcServerShutDown(&context, request, &response);
 
-            if (!status.ok()) {
-                      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
-            }
-            return response;
+    if (!status.ok()) {
+      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
+    }
+    return response;
   }
 };
 

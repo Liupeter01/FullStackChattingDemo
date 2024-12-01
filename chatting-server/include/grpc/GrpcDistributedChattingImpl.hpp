@@ -27,8 +27,8 @@ public:
   // User B agreed with user A's friend adding request
   virtual ::grpc::Status
   ConfirmFriendRequest(::grpc::ServerContext *context,
-            const ::message::FriendRequest* request,
-            ::message::FriendResponse* response);
+                       const ::message::FriendRequest *request,
+                       ::message::FriendResponse *response);
 
   // Verify that B is still A's friend:
   virtual ::grpc::Status
