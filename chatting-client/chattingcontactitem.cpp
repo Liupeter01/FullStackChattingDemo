@@ -45,16 +45,18 @@ void ChattingContactItem::setAddUserWidget() {
   m_size = ui->contact_zone->size();
 }
 
-void ChattingContactItem::setChattingContact(const QString &target_picture,
-                                             const QString &text) {
+void ChattingContactItem::setChattingContact(std::shared_ptr<UserNameCard> info) {
   /*set list item type, ContactHistory*/
   setItemType(ListItemType::ContactHistory);
 
+  /*record user's info*/
+  m_userinfo = info;
+
   /*setup avator by static label*/
-  Tools::setQLableImage(ui->notification_label, target_picture, "/static/");
+  Tools::setQLableImage(ui->notification_label, info->m_avatorPath, "/static/");
 
   /*setup text by static text*/
-  ui->display_label->setText(text);
+  ui->display_label->setText(info->m_nickname);
 
   /*move notification_label to front*/
   ui->notification_label->raise();

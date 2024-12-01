@@ -4,6 +4,8 @@
 #include "listitemwidgetbase.h"
 #include <QString>
 #include <QWidget>
+#include <memory>
+#include <UserNameCard.h>
 
 namespace Ui {
 class ChattingContactItem;
@@ -26,7 +28,7 @@ public:
   void setAddUserWidget();
 
   /*set chatting contact info*/
-  void setChattingContact(const QString &target_picture, const QString &text);
+  void setChattingContact(std::shared_ptr<UserNameCard> info);
 
   /*set dialog with seperator*/
   void setGroupSeperator(const QString &text);
@@ -36,6 +38,7 @@ public:
   static constexpr std::size_t image_height = 40;
 
 private:
+  std::shared_ptr<UserNameCard> m_userinfo;  /*store this user's info*/
   QSize m_size;
   Ui::ChattingContactItem *ui;
   const QString static_text;
