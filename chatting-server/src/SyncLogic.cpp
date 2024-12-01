@@ -791,7 +791,7 @@ void SyncLogic::handlingFriendRequestConfirm(ServiceType srv_type,
     }
 
     Json::Value root;
-    std::shared_ptr<UserNameCard> dst_namecard = info_str.value();
+    std::shared_ptr<UserNameCard> dst_namecard = dst_info.value();
 
     root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
     root["friend_uuid"] = dst_uuid;
@@ -803,7 +803,7 @@ void SyncLogic::handlingFriendRequestConfirm(ServiceType srv_type,
 
     /*propagate the message to dst user*/
     session_op.value()->sendMessage(
-        ServiceType::SERVICE_FRIENDREINCOMINGREQUEST, root.toStyledString());
+        ServiceType::SERVICE_FRIENDING_ON_BIDDIRECTIONAL, root.toStyledString());
   } else {
     /*
      * GRPC REQUEST
