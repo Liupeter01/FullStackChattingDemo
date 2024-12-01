@@ -46,10 +46,10 @@ gRPCDistributedChattingService::getTargetChattingServer(
   return it->second;
 }
 
-message::AddNewFriendResponse gRPCDistributedChattingService::sendFriendRequest(
-    const std::string &server_name, const message::AddNewFriendRequest &req) {
+message::FriendResponse gRPCDistributedChattingService::sendFriendRequest(
+    const std::string &server_name, const message::FriendRequest &req) {
   grpc::ClientContext context;
-  message::AddNewFriendResponse response;
+  message::FriendResponse response;
 
   /*get the connection pool of this server*/
   auto server_op = getTargetChattingServer(server_name);
@@ -86,10 +86,10 @@ message::AddNewFriendResponse gRPCDistributedChattingService::sendFriendRequest(
   return response;
 }
 
-message::AuthoriseResponse gRPCDistributedChattingService::confirmFriendRequest(
-    const std::string &server_name, const message::AuthoriseRequest &req) {
+message::FriendResponse gRPCDistributedChattingService::confirmFriendRequest(
+    const std::string &server_name, const message::FriendRequest &req) {
   grpc::ClientContext context;
-  message::AuthoriseResponse response;
+  message::FriendResponse response;
 
   /*get the connection pool of this server*/
   auto server_op = getTargetChattingServer(server_name);
