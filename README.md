@@ -567,11 +567,17 @@ Those are submodules building tutorial links.
 
 <img src="./assets/client_interface_3.png" alt="client_interface_3" style="zoom:67%;" />
 
+### Server
 
+1. Server
 
-### Captcha-server
+   ![server_1](./assets/server_1.png)
 
-1. Sending verification code to the user
+   
+
+2. Captcha-server
+
+   Sending verification code to the user
 
 <img src="./assets/verification.png" style="zoom: 67%;" />
 
