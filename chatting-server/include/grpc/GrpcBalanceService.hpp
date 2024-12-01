@@ -76,13 +76,13 @@ struct gRPCBalancerService {
     return response;
   }
 
-  static message::GrpcChattingServerResponse
+  static message::GrpcStatusResponse
   registerChattingServerInstance(const std::string &name,
                                  const std::string &host,
                                  const std::string &port) {
     grpc::ClientContext context;
-    message::GrpcChattingServerRegRequest request;
-    message::GrpcChattingServerResponse response;
+    message::GrpcRegisterRequest request;
+    message::GrpcStatusResponse response;
 
     message::ServerInfo info;
     info.set_name(name);
@@ -105,12 +105,12 @@ struct gRPCBalancerService {
     return response;
   }
 
-  static message::GrpcChattingServerResponse
+  static message::GrpcStatusResponse
   registerGrpcServer(const std::string &name, const std::string &host,
                      const std::string &port) {
     grpc::ClientContext context;
-    message::GrpcChattingServerRegRequest request;
-    message::GrpcChattingServerResponse response;
+    message::GrpcRegisterRequest request;
+    message::GrpcStatusResponse response;
 
     message::ServerInfo info;
     info.set_name(name);
@@ -133,11 +133,11 @@ struct gRPCBalancerService {
     return response;
   }
 
-  static message::GrpcChattingServerResponse
+  static message::GrpcStatusResponse
   chattingServerShutdown(const std::string &name) {
     grpc::ClientContext context;
-    message::GrpcChattingServerShutdownRequest request;
-    message::GrpcChattingServerResponse response;
+    message::GrpcShutdownRequest request;
+    message::GrpcStatusResponse response;
 
     request.set_cur_server(name);
 
@@ -152,6 +152,27 @@ struct gRPCBalancerService {
       response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
     }
     return response;
+  }
+
+  static message::GrpcStatusResponse
+            grpcServerShutdown(const std::string& name) {
+            grpc::ClientContext context;
+            message::GrpcShutdownRequest request;
+            message::GrpcStatusResponse response;
+
+            request.set_cur_server(name);
+
+            connection::ConnectionRAII<stubpool::BalancerServicePool,
+                      message::BalancerService::Stub>
+                      raii;
+
+            grpc::Status status =
+                      raii->get()->ChattingGrpcServerShutDown(&context, request, &response);
+
+            if (!status.ok()) {
+                      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
+            }
+            return response;
   }
 };
 
