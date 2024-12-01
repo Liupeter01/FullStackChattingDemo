@@ -34,13 +34,6 @@ AuthenticateNewFriendRequestDialog::AuthenticateNewFriendRequestDialog(QWidget *
     /*test*/
     loadtestFunction();
 
-    /*
-   * transfer UserNameCard structure to current class
-   * We need to send request by using this stucture
-   */
-    this->m_info =
-        std::move(reinterpret_cast<AddUserNameCardDialog *>(parent)->m_info);
-
     /*load image for usertag widget*/
     Tools::loadImgResources({"unselect_tag.png"},
                             UserTagWidget::getImageSize().width(),
@@ -50,6 +43,15 @@ AuthenticateNewFriendRequestDialog::AuthenticateNewFriendRequestDialog(QWidget *
 AuthenticateNewFriendRequestDialog::~AuthenticateNewFriendRequestDialog()
 {
     delete ui;
+}
+
+/*
+   * transfer UserNameCard structure to current class
+   * We need to send request by using this stucture
+   */
+void AuthenticateNewFriendRequestDialog::setUserInfo(std::unique_ptr<UserNameCard> card)
+{
+    m_info = std::move(card);
 }
 
 void AuthenticateNewFriendRequestDialog::registerSignal()

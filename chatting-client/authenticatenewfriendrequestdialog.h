@@ -23,6 +23,13 @@ public:
     explicit AuthenticateNewFriendRequestDialog(QWidget *parent = nullptr);
     virtual ~AuthenticateNewFriendRequestDialog();
 
+public:
+    /*
+   * transfer UserNameCard structure to current class
+   * We need to send request by using this stucture
+   */
+    void setUserInfo(std::unique_ptr<UserNameCard> card);
+
 private:
     /*register signal<->slot*/
     void registerSignal();
