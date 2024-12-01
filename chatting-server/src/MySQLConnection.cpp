@@ -144,7 +144,7 @@ bool mysql::MySQLConnection::updateFriendingStatus(const std::size_t src_uuid,
   // check both uuid, are they all valid?
   if (checkUUID(src_uuid) && checkUUID(dst_uuid)) {
     [[maybe_unused]] auto res = executeCommand(
-        MySQLSelection::UPDATE_FRIEND_REQUEST_STATUS, src_uuid, dst_uuid);
+        MySQLSelection::UPDATE_FRIEND_REQUEST_STATUS, 1, src_uuid, dst_uuid);
     return true;
   }
   return false;
