@@ -3,40 +3,51 @@
 #include <grpc/GrpcDistributedChattingService.hpp>
 
 gRPCDistributedChattingService::gRPCDistributedChattingService() {
-  /*pass current server name as a parameter to the balance server, and returns
-   * all peers*/
-  auto response = gRPCBalancerService::getPeerGrpcServerLists(
-      ServerConfig::get_instance()->GrpcServerName);
+          updateGrpcPeerLists();
+}
 
-  if (response.error() !=
-      static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
-    spdlog::error("[Balance Server] try retrieve peer servers' info failed!, "
-                  "error code {}",
-                  response.error());
-    std::abort();
-  }
+void gRPCDistributedChattingService::updateGrpcPeerLists(){
+          /*clean it first*/
+          m_pools.erase(m_pools.begin(), m_pools.end());
+          m_pools.clear();
 
-  /*get server lists*/
-  auto &peer_servers = response.lists();
+          /*pass current server name as a parameter to the balance server, and returns
+ * all peers*/
+          auto response = gRPCBalancerService::getPeerGrpcServerLists(
+                    ServerConfig::get_instance()->GrpcServerName);
 
-  /*traversal server lists and create multiple DistributedChattingServicePool
-   * according to host and port*/
-  std::for_each(
-      peer_servers.begin(), peer_servers.end(),
-      [this](const message::ServerInfo &server) {
-        m_pools[server.name()] =
-            std::make_shared<stubpool::DistributedChattingServicePool>(
-                server.host(), server.port());
-      });
+          if (response.error() !=
+                    static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
+                    spdlog::error("[Balance Server] try retrieve peer servers' info failed!, "
+                              "error code {}",
+                              response.error());
+                    std::abort();
+          }
+
+          /*get server lists*/
+          auto& peer_servers = response.lists();
+
+          /*traversal server lists and create multiple DistributedChattingServicePool
+           * according to host and port*/
+          std::for_each(
+                    peer_servers.begin(), peer_servers.end(),
+                    [this](const message::ServerInfo& server) {
+                              m_pools[server.name()] =
+                                        std::make_shared<stubpool::DistributedChattingServicePool>(
+                                                  server.host(), server.port());
+                    });
 }
 
 std::optional<std::shared_ptr<stubpool::DistributedChattingServicePool>>
 gRPCDistributedChattingService::getTargetChattingServer(
     const std::string &server_name) {
-  /*User input current server as remote grpc-server*/
+  /*user should not input current server*/
   if (ServerConfig::get_instance()->GrpcServerName == server_name) {
     return std::nullopt;
   }
+
+  /*ask balance-server for new data*/
+  updateGrpcPeerLists();
 
   /*remote server name not exists*/
   auto it = m_pools.find(server_name);

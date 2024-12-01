@@ -19,6 +19,9 @@ public:
   message::FriendResponse
   confirmFriendRequest(const std::string &server_name,
                        const message::FriendRequest &req);
+  
+protected:
+          void updateGrpcPeerLists();
 
 private:
   std::optional<std::shared_ptr<stubpool::DistributedChattingServicePool>>
