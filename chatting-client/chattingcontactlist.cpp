@@ -4,17 +4,47 @@
 #include <QListWidgetItem>
 #include <QRandomGenerator>
 #include <QScrollBar>
+#include <useraccountmanager.hpp>
+#include <tcpnetworkconnection.h>
 
 ChattingContactList::ChattingContactList(QWidget *parent)
     : static_text("Add New Friend"), MainFrameShowLists(parent) {
   /*register signal*/
   registerSignal();
 
-  /*load contact test func*/
-  loadContactsTest();
+  /*add new friend button as a group*/
+  addGroupSeperator(static_text);
+  addAddUserWidget();
+
+  /*show contact as a group*/
+  addGroupSeperator(QString("My Contact"));
+
+  /*load test user avator image im "/static/" dir*/
+  Tools::loadImgResources({"0.png", "1.png", "2.png", "3.png", "4.png", "5.png",
+                           "6.png", "7.png", "8.png"},
+                          ChattingContactItem::getImageSize().width(),
+                          ChattingContactItem::getImageSize().height(),
+                          "/static/");
 }
 
 ChattingContactList::~ChattingContactList() {}
+
+void ChattingContactList::registerSignal() {
+    /*user click one of the contact, connect signal<->slot*/
+    connect(this, &QListWidget::itemClicked, this,
+            &ChattingContactList::slot_itemClicked);
+
+    /*
+   * Create a signal<->slot for processing authenticate friend namecard info
+   * TCPNetworkConnection::signal_add_authenticate_friend
+   */
+    connect(TCPNetworkConnection::get_instance().get(), &TCPNetworkConnection::signal_add_authenticate_friend,
+            this, &ChattingContactList::slot_signal_add_authenticate_friend);
+
+    /*server be able to send authenticate friend list to this client*/
+    connect(TCPNetworkConnection::get_instance().get(), &TCPNetworkConnection::signal_init_auth_friend_list,
+            this, &ChattingContactList::slot_init_auth_friend_list);
+}
 
 void ChattingContactList::addAddUserWidget() {
   ChattingContactItem *add_widget(new ChattingContactItem);
@@ -33,12 +63,11 @@ void ChattingContactList::addAddUserWidget() {
   this->update();
 }
 
-void ChattingContactList::addChattingContact(const QString &target_picture,
-                                             const QString &text) {
+void ChattingContactList::addChattingContact(std::shared_ptr<UserNameCard> info){
   ChattingContactItem *contact_widget(new ChattingContactItem);
 
   /*set chatting contact info*/
-  contact_widget->setChattingContact(target_picture, text);
+  contact_widget->setChattingContact(info);
 
   QListWidgetItem *item(new QListWidgetItem);
   item->setSizeHint(contact_widget->sizeHint());
@@ -99,32 +128,29 @@ void ChattingContactList::slot_itemClicked(QListWidgetItem *item) {
   }
 }
 
-void ChattingContactList::loadContactsTest() {
-  /*add new friend button as a group*/
-  addGroupSeperator(static_text);
-  addAddUserWidget();
-
-  /*show contact as a group*/
-  addGroupSeperator(QString("My Contact"));
-
-  /*load test user avator image im "/static/" dir*/
-  Tools::loadImgResources({"0.png", "1.png", "2.png", "3.png", "4.png", "5.png",
-                           "6.png", "7.png", "8.png"},
-                          ChattingContactItem::getImageSize().width(),
-                          ChattingContactItem::getImageSize().height(),
-                          "/static/");
-
-  for (std::size_t i = 0; i < 10; ++i) {
-    auto random1 = QRandomGenerator::global()->bounded(9);
-    auto random2 = QRandomGenerator::global()->bounded(9);
-    auto path = QString::number(random1) + ".png";
-    qDebug() << "static path = /static/" << path;
-    addChattingContact(path, QString::number(random2));
-  }
+void ChattingContactList::slot_init_auth_friend_list(){
+    auto authFriend = UserAccountManager::get_instance()->getAuthFriendList();
+    for(const auto &item: authFriend){
+        addChattingContact(item);
+    }
 }
 
-void ChattingContactList::registerSignal() {
-  /*user click one of the contact, connect signal<->slot*/
-  connect(this, &QListWidget::itemClicked, this,
-          &ChattingContactList::slot_itemClicked);
+void ChattingContactList::slot_signal_add_authenticate_friend(std::optional<std::shared_ptr<UserNameCard>> info){
+    if(info.has_value()){
+        auto auth_user = info.value();
+        /*check is this uuid exist in auth friend list*/
+        if(!UserAccountManager::get_instance()->alreadyExistInAuthList(auth_user->m_uuid)){
+            qDebug() << auth_user->m_uuid << " already been added to the auth friend list";
+            return;
+        }
+
+        /*
+         * display it on UI with user's nickname
+         * store user's uuid inside the class
+         */
+        addChattingContact(auth_user);
+
+        /*add it to user account manager*/
+        UserAccountManager::get_instance()->addItem2List(auth_user);
+    }
 }
