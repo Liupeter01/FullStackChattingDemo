@@ -580,11 +580,9 @@ void SyncLogic::handlingFriendRequestCreator(ServiceType srv_type,
     result_root["error"] = static_cast<uint8_t>(ServiceStatus::SERVICE_SUCCESS);
   } else {
     /*
-     * ----------------------------------GRPC
-     * REQUEST------------------------------------
-     * **********************NOT TESTED YET***********************
-     * ---------------dst_uuid and src_uuid are not on the same
-     * server------------------ Pass current user info to other chatting-server
+     * GRPC REQUEST
+     * dst_uuid and src_uuid are not on the same server-
+     * Pass current user info to other chatting-server
      * by using grpc protocol
      */
     message::FriendRequest grpc_request;
@@ -746,8 +744,8 @@ void SyncLogic::handlingFriendRequestConfirm(ServiceType srv_type,
   /*
    * update the database, and add biddirectional friend authentication messages
    * It should be a double way friend adding, so create friend relationship
-   * should be called twice THIS MESSAGE SHOULD BE SENT TO THE SESSION UNDER
-   * SRC_UUID 2 | B | A                         | <leave it to blank> |
+   * MESSAGE SHOULD BE SENT TO THE SESSION UNDER SRC_UUID 
+   * 2 | B | A                         | <leave it to blank> |
    */
   if (!mysql->get()->createAuthFriendsRelation(dst_uuid_op.value(),
                                                src_uuid_op.value(), "")) {
@@ -808,11 +806,9 @@ void SyncLogic::handlingFriendRequestConfirm(ServiceType srv_type,
         ServiceType::SERVICE_FRIENDREINCOMINGREQUEST, root.toStyledString());
   } else {
     /*
-     * ----------------------------------GRPC
-     * REQUEST------------------------------------
-     * **********************NOT TESTED YET***********************
-     * ---------------dst_uuid and src_uuid are not on the same
-     * server------------------ Pass current user info to other chatting-server
+     * GRPC REQUEST
+     * dst_uuid and src_uuid are not on the same server
+     * Pass current user info to other chatting-server
      * by using grpc protocol
      */
 
