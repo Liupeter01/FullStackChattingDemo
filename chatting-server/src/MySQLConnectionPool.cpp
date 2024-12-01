@@ -122,12 +122,12 @@ void mysql::MySQLConnectionPool::registerSQLStatement() {
                             std::string("Request.src_uuid"),
                             std::string("Request.dst_uuid"))));
 
-  m_sql.insert(
-      std::pair(MySQLSelection::CREATE_AUTH_FRIEND_ENTRY,
-                fmt::format("INSERT IGNORE INTO AuthFriend({}, {}, {})"
-                            "VALUES(?, ?, ?)",
-                            std::string("self_uuid"), std::string("friend_uuid"),
-                            std::string("alternative_name"))));
+  m_sql.insert(std::pair(MySQLSelection::CREATE_AUTH_FRIEND_ENTRY,
+                         fmt::format("INSERT IGNORE INTO AuthFriend({}, {}, {})"
+                                     "VALUES(?, ?, ?)",
+                                     std::string("self_uuid"),
+                                     std::string("friend_uuid"),
+                                     std::string("alternative_name"))));
 }
 
 void mysql::MySQLConnectionPool::roundRobinChecking() {

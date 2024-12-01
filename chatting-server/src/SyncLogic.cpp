@@ -744,7 +744,7 @@ void SyncLogic::handlingFriendRequestConfirm(ServiceType srv_type,
   /*
    * update the database, and add biddirectional friend authentication messages
    * It should be a double way friend adding, so create friend relationship
-   * MESSAGE SHOULD BE SENT TO THE SESSION UNDER SRC_UUID 
+   * MESSAGE SHOULD BE SENT TO THE SESSION UNDER SRC_UUID
    * 2 | B | A                         | <leave it to blank> |
    */
   if (!mysql->get()->createAuthFriendsRelation(dst_uuid_op.value(),
