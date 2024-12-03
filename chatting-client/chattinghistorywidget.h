@@ -20,6 +20,8 @@ public:
   void setLastMsg(const QString &lastmsg);
   void setItemDisplay();
 
+  std::shared_ptr<UserNameCard> getUserInfo();
+
 private:
   Ui::ChattingHistoryWidget *ui;
   std::shared_ptr<UserNameCard> m_userinfo;

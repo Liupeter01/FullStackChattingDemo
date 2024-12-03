@@ -29,3 +29,7 @@ void ChattingHistoryWidget::setItemDisplay() {
   ui->last_message->setText(m_lastmsg);
   ui->user_name->setText(m_userinfo->m_nickname);
 }
+
+std::shared_ptr<UserNameCard> ChattingHistoryWidget::getUserInfo(){
+    return m_userinfo;
+}
