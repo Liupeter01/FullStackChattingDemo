@@ -38,19 +38,64 @@ void UserAccountManager::addItem2List(std::shared_ptr<UserNameCard> info) {
 }
 
 const std::vector<std::shared_ptr<UserFriendRequest>> &
-UserAccountManager::getFriendRequestList() {
+UserAccountManager::getAllFriendRequestList() {
   return m_friend_request_list;
 }
 
 std::vector<std::shared_ptr<UserNameCard>>
-UserAccountManager::getAuthFriendList() {
+UserAccountManager::getAllAuthFriendList() {
   std::vector<std::shared_ptr<UserNameCard>> list;
-  list.reserve(m_auth_friend_list.size()); // reserve size
 
-  for (const auto &[key, value] : m_auth_friend_list) {
-    list.push_back(value);
-  }
+    std::transform(m_auth_friend_list.begin(), m_auth_friend_list.end(),std::back_inserter(list), [](const auto &T){
+        return T.second;
+    });
+
   return list;
+}
+
+std::vector<std::shared_ptr<UserFriendRequest>>
+UserAccountManager::getLimitedFriendRequestList(const std::size_t begin,
+                                                     const std::size_t interval){
+    if(begin < 0){
+        std::abort();
+    }
+
+    /* user requested number even larger then greatest amount */
+    if(interval >= m_friend_request_list.size() || begin + interval >= m_friend_request_list.size()){
+        return getAllFriendRequestList();
+    }
+
+    std::vector<std::shared_ptr<UserFriendRequest>> list;
+    auto it_begin = m_friend_request_list.begin();
+    auto it_end = it_begin;
+    std::advance(it_begin, begin);
+    std::advance(it_end, begin + interval);
+
+    std::copy(it_begin, it_end, std::back_inserter(list));
+    return list;
+}
+
+std::vector<std::shared_ptr<UserNameCard>>
+UserAccountManager::getLimitedAuthFriendList(const std::size_t begin,
+                                                  const std::size_t interval){
+    if(begin < 0){
+        std::abort();
+    }
+
+    /* user requested number even larger then greatest amount */
+    if(interval >= m_auth_friend_list.size() || begin + interval >= m_auth_friend_list.size()){
+        return getAllAuthFriendList();
+    }
+
+    std::vector<std::shared_ptr<UserNameCard>> list;
+    auto it_begin = m_friend_request_list.begin();
+    auto it_end = it_begin;
+    std::advance(it_begin, begin);
+    std::advance(it_end, begin + interval);
+
+    std::copy(it_begin, it_end, std::back_inserter(list));
+
+    return list;
 }
 
 bool UserAccountManager::alreadyExistInAuthList(const QString &uuid) const {

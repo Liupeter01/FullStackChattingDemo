@@ -32,8 +32,16 @@ public:
   void addItem2List(std::shared_ptr<UserFriendRequest> info);
   void addItem2List(std::shared_ptr<UserNameCard> info);
 
-  const std::vector<std::shared_ptr<UserFriendRequest>> &getFriendRequestList();
-  std::vector<std::shared_ptr<UserNameCard>> getAuthFriendList();
+  /*get all list(not recommended!)*/
+  const std::vector<std::shared_ptr<UserFriendRequest>> &getAllFriendRequestList();
+  std::vector<std::shared_ptr<UserNameCard>> getAllAuthFriendList();
+
+  /*get limited amount of list*/
+  std::vector<std::shared_ptr<UserFriendRequest>>
+  getLimitedFriendRequestList(const std::size_t begin, const std::size_t interval);
+
+  std::vector<std::shared_ptr<UserNameCard>>
+  getLimitedAuthFriendList(const std::size_t begin, const std::size_t interval);
 
   bool alreadyExistInAuthList(const QString &uuid) const;
   bool alreadyExistInRequestList(const QString &uuid) const;
