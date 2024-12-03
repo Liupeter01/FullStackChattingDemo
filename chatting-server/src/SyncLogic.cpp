@@ -319,19 +319,19 @@ void SyncLogic::handlingLogin(ServiceType srv_type,
     }
 
     /*acquire Friend List*/
-    // std::optional<std::vector<std::unique_ptr<UserNameCard>>> friendlist_op =
-    // getAuthFriendInfo(uuid); if (friendlist_op.has_value()) {
-    //           for (auto& req : friendlist_op.value()) {
-    //                     Json::Value obj;
-    //                     obj["src_uuid"] = req->m_uuid;
-    //                     obj["username"] = req->m_username;
-    //                     obj["avator"] = req->m_avatorPath;
-    //                     obj["nickname"] = req->m_nickname;
-    //                     obj["description"] = req->m_description;
-    //                     obj["sex"] = static_cast<uint8_t>(req->m_sex);
-    //                     redis_root["AuthFriendList"].append(obj);
-    //           }
-    // }
+     std::optional<std::vector<std::unique_ptr<UserNameCard>>> friendlist_op = getAuthFriendsInfo(uuid); 
+     if (friendlist_op.has_value()) {
+               for (auto& req : friendlist_op.value()) {
+                         Json::Value obj;
+                         obj["uuid"] = req->m_uuid;
+                         obj["username"] = req->m_username;
+                         obj["avator"] = req->m_avatorPath;
+                         obj["nickname"] = req->m_nickname;
+                         obj["description"] = req->m_description;
+                         obj["sex"] = static_cast<uint8_t>(req->m_sex);
+                         redis_root["AuthFriendList"].append(obj);
+               }
+     }
 
     /*send it back*/
     session->sendMessage(ServiceType::SERVICE_LOGINRESPONSE,
@@ -944,22 +944,23 @@ SyncLogic::getFriendRequestInfo(const std::string &dst_uuid,
  * @param: interval: how many friends re going to acquire [startpos, startpos +
  * interval)
  */
-// std::optional<std::vector<std::unique_ptr<UserNameCard>>>
-// SyncLogic::getAuthFriendInfo(const std::string& dst_uuid, const std::size_t
-// start_pos, const std::size_t interval) {
-//           auto uuid_op = tools::string_to_value<std::size_t>(dst_uuid);
-//           if (!uuid_op.has_value()) {
-//                     spdlog::warn("Casting string typed key to std::size_t!");
-//                     return std::nullopt;
-//           }
-//
-//           /*search it in mysql*/
-//           connection::ConnectionRAII<mysql::MySQLConnectionPool,
-//                     mysql::MySQLConnection>
-//                     mysql;
-//
-//           return std::nullopt;
-// }
+ std::optional<std::vector<std::unique_ptr<UserNameCard>>>
+ SyncLogic::getAuthFriendsInfo(const std::string& dst_uuid, const std::size_t
+ start_pos, const std::size_t interval) {
+           auto uuid_op = tools::string_to_value<std::size_t>(dst_uuid);
+           if (!uuid_op.has_value()) {
+                     spdlog::warn("Casting string typed key to std::size_t!");
+                     return std::nullopt;
+           }
+
+           /*search it in mysql*/
+           connection::ConnectionRAII<mysql::MySQLConnectionPool,
+                     mysql::MySQLConnection>
+                     mysql;
+
+           return mysql->get()->getAuthenticFriendsList(uuid_op.value(), start_pos,
+                     interval);
+ }
 
 void SyncLogic::shutdown() {
   m_stop = true;
