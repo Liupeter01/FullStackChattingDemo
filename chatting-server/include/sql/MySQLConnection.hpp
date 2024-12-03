@@ -68,8 +68,9 @@ public:
   bool updateFriendingStatus(const std::size_t src_uuid,
             const std::size_t dst_uuid);
 
-  bool createAuthFriendsRelation(const std::size_t src_uuid,
-            const std::size_t dst_uuid, const std::string& alternative);
+  bool createAuthFriendsRelation(const std::size_t self_uuid, 
+            const std::size_t friend_uuid, 
+            const std::string& alternative);
 
   /*
   * get specfic amount of friending request
@@ -78,6 +79,9 @@ public:
   */
   std::optional<std::vector<std::unique_ptr<UserFriendRequest>>>
             getFriendingRequestList(const std::size_t dst_uuid, const std::size_t start_pos, const std::size_t interval);
+
+  std::optional<std::vector<std::unique_ptr<UserNameCard>>>
+            getAuthenticFriendsList(const std::size_t self_uuid, const std::size_t start_pos, const std::size_t interval);
 
   /*insert new user, call MySQLSelection::CREATE_NEW_USER*/
   bool registerNewUser(MySQLRequestStruct &&request);
