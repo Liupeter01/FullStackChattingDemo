@@ -97,37 +97,54 @@ void mysql::MySQLConnectionPool::registerSQLStatement() {
                   std::string("dst_uuid"))));
 
   m_sql.insert(std::pair(
-      MySQLSelection::GET_FRIEND_REQUEST_LIST,
-      fmt::format("SELECT {}, {}, {}, {}, {}, {}, {}"
-                  " FROM FriendRequest AS FR "
-                  " JOIN Authentication AS AU ON {} = {} "
-                  " JOIN UserProfile AS UP ON {} = {} "
-                  " WHERE {} = ? AND {} = ? AND {} > ? ORDER BY {} ASC LIMIT ?",
-                  std::string("FR.src_uuid"), std::string("FR.nickname"),
-                  std::string("FR.message"), std::string("UP.avator"),
-                  std::string("AU.username"), std::string("UP.description"),
-                  std::string("UP.sex"), std::string("FR.src_uuid"),
-                  std::string("AU.uuid"), std::string("FR.src_uuid"),
-                  std::string("UP.uuid"), std::string("FR.dst_uuid"),
-                  std::string("FR.status"), std::string("FR.id"),
-                  std::string("FR.id"))));
+            MySQLSelection::GET_FRIEND_REQUEST_LIST,
+            fmt::format("SELECT {}, {}, {}, {}, {}, {}, {} "
+                      " FROM FriendRequest AS FR "
+                      " JOIN Authentication AS AU ON {} = {} AND {} = {} "
+                      " JOIN UserProfile AS UP ON {} = {} AND {} = {} "
+                      " WHERE {} = ? AND {} = ? AND {} > ? ORDER BY {} ASC LIMIT ? ",
+                      std::string("FriendRequest.src_uuid"), std::string("FriendRequest.nickname"), std::string("FriendRequest.message"), 
+                      std::string("UserProfile.avator"), std::string("Authentication.username"), std::string("UserProfile.description"), std::string("UserProfile.sex"),
+
+                      std::string("AU.uuid"), std::string("FR.dst_uuid"), std::string("AU.uuid"), std::string("FR.src_uuid"),
+                      std::string("UP.uuid"), std::string("FR.dst_uuid"), std::string("UP.uuid"), std::string("FR.src_uuid"),
+
+                      std::string("FR.status"), std::string("FR.dst_uuid"), std::string("FR.id"), std::string("FR.id")
+            )));
 
   m_sql.insert(
-      std::pair(MySQLSelection::GET_AUTH_FRIEND_LIST, fmt::format("SELECT")));
+            std::pair(MySQLSelection::GET_AUTH_FRIEND_LIST,
+                      fmt::format("SELECT {}, {}, {}, {}, {}, {}"
+                                " FROM AuthFriend AS AF "
+                                " JOIN FriendRequest AS FR ON  {} = {}"
+                                " JOIN Authentication AS AU ON {} = {} AND {} = {} "
+                                " JOIN UserProfile AS UP ON {} = {} AND {} = {} "
+                                " WHERE {} = ? AND {} = ? AND {} > ? ORDER BY {} ASC LIMIT ?", 
+                                std::string("AuthFriend.friend_uuid"), std::string("FriendRequest.nickname"), std::string("UserProfile.avator"),
+                                std::string("Authentication.username"), std::string("UserProfile.description"), std::string("UserProfile.sex"),
+
+                                std::string("AF.self_uuid"),  std::string("FR.dst_uuid"),
+                                std::string("AU.uuid"), std::string("AF.self_uuid"), std::string("AU.uuid"), std::string("AF.friend_uuid"),
+                                std::string("UP.uuid"), std::string("AF.self_uuid"), std::string("UP.uuid"), std::string("AF.friend_uuid"),
+
+                                std::string("FR.status"), std::string("AF.self_uuid"), std::string("AF.id"), std::string("AF.id")
+                      )));
 
   m_sql.insert(
-      std::pair(MySQLSelection::UPDATE_FRIEND_REQUEST_STATUS,
-                fmt::format("UPDATE Request SET {} = 1 WHERE {} = ? AND {} = ?",
-                            std::string("Request.status"),
-                            std::string("Request.src_uuid"),
-                            std::string("Request.dst_uuid"))));
+            std::pair(MySQLSelection::UPDATE_FRIEND_REQUEST_STATUS,
+                      fmt::format("UPDATE Request SET {} = 1 WHERE {} = ? AND {} = ?",
+                                std::string("Request.status"),
+                                std::string("Request.src_uuid"),
+                                std::string("Request.dst_uuid")
+                      )));
 
   m_sql.insert(std::pair(MySQLSelection::CREATE_AUTH_FRIEND_ENTRY,
-                         fmt::format("INSERT IGNORE INTO AuthFriend({}, {}, {})"
-                                     "VALUES(?, ?, ?)",
-                                     std::string("self_uuid"),
-                                     std::string("friend_uuid"),
-                                     std::string("alternative_name"))));
+            fmt::format("INSERT IGNORE INTO AuthFriend({}, {}, {})"
+                      "VALUES(?, ?, ?)",
+                      std::string("friend_uuid"),
+                      std::string("self_uuid"),
+                      std::string("alternative_name")
+            )));
 }
 
 void mysql::MySQLConnectionPool::roundRobinChecking() {
