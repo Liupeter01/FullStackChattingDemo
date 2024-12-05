@@ -15,7 +15,7 @@ class UserAccountManager : public Singleton<UserAccountManager> {
   friend class Singleton<UserAccountManager>;
 
 public:
-  ~UserAccountManager() {}
+  ~UserAccountManager();
   void set_host(const QString &_host) { m_info.host = _host; }
   void set_port(const QString &_port) { m_info.port = _port; }
   void set_token(const QString &_token) { m_info.token = _token; }
@@ -33,15 +33,17 @@ public:
   void addItem2List(std::shared_ptr<UserNameCard> info);
 
   /*get all list(not recommended!)*/
-  const std::vector<std::shared_ptr<UserFriendRequest>> &getAllFriendRequestList();
-  std::vector<std::shared_ptr<UserNameCard>> getAllAuthFriendList();
+  std::vector<std::shared_ptr<UserFriendRequest>> getFriendRequestList();
 
-  /*get limited amount of list*/
-  std::vector<std::shared_ptr<UserFriendRequest>>
-  getLimitedFriendRequestList(const std::size_t begin, const std::size_t interval);
+  /*get limited amount of friending request list*/
+  std::optional<std::vector<std::shared_ptr<UserFriendRequest>>>
+  getFriendRequestList(std::size_t& begin, const std::size_t interval);
 
-  std::vector<std::shared_ptr<UserNameCard>>
-  getLimitedAuthFriendList(const std::size_t begin, const std::size_t interval);
+  /*get all list(not recommended!)*/
+  std::vector<std::shared_ptr<UserNameCard>> getAuthFriendList();
+
+  std::optional<std::vector<std::shared_ptr<UserNameCard>>>
+  getAuthFriendList(std::size_t& begin, const std::size_t interval);
 
   bool alreadyExistInAuthList(const QString &uuid) const;
   bool alreadyExistInRequestList(const QString &uuid) const;
@@ -53,7 +55,7 @@ protected:
   void appendFriendRequestList(const QJsonArray &array);
 
 private:
-  UserAccountManager() : m_info() {}
+  UserAccountManager();
 
 private:
   struct ChattingServerInfo {
@@ -69,8 +71,11 @@ private:
   /*store friending requests*/
   std::vector<std::shared_ptr<UserFriendRequest>> m_friend_request_list;
 
-  /*store exisiting friend list*/
+  /*store authenticated friend*/
   std::unordered_map<QString, std::shared_ptr<UserNameCard>> m_auth_friend_list;
+
+  /*store chatting history*/
+  std::unordered_map<QString, std::shared_ptr<int>> m_user_chatting_histroy;
 };
 
 #endif // USERACCOUNTMANAGER_H
