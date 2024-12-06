@@ -99,33 +99,45 @@ void mysql::MySQLConnectionPool::registerSQLStatement() {
   m_sql.insert(std::pair(
             MySQLSelection::GET_FRIEND_REQUEST_LIST,
             fmt::format("SELECT {}, {}, {}, {}, {}, {}, {} "
-                      " FROM FriendRequest AS FR "
-                      " JOIN Authentication AS AU ON {} = {} AND {} = {} "
-                      " JOIN UserProfile AS UP ON {} = {} AND {} = {} "
+                      " FROM FriendRequest "
+                      " JOIN Authentication AS Auth1 ON {} = {} "
+                      " JOIN Authentication AS Auth2 ON {} = {} "
+                      " JOIN UserProfile AS UP1 ON {} = {} "
+                      " JOIN UserProfile AS UP2 ON {} = {} "
                       " WHERE {} = ? AND {} = ? AND {} > ? ORDER BY {} ASC LIMIT ? ",
                       std::string("FriendRequest.src_uuid"), std::string("FriendRequest.nickname"), std::string("FriendRequest.message"), 
-                      std::string("UserProfile.avator"), std::string("Authentication.username"), std::string("UserProfile.description"), std::string("UserProfile.sex"),
+                      std::string("UP1.avatar"), std::string("Auth1.username"), std::string("UP1.description"), std::string("UP1.sex"),
 
-                      std::string("AU.uuid"), std::string("FR.dst_uuid"), std::string("AU.uuid"), std::string("FR.src_uuid"),
-                      std::string("UP.uuid"), std::string("FR.dst_uuid"), std::string("UP.uuid"), std::string("FR.src_uuid"),
+                      std::string("Auth1.uuid"), std::string("FriendRequest.src_uuid"), 
+                      std::string("Auth2.uuid"), std::string("FriendRequest.dst_uuid"),
+                      std::string("UP1.uuid"), std::string("FriendRequest.src_uuid"), 
+                      std::string("UP2.uuid"), std::string("FriendRequest.dst_uuid"),
 
-                      std::string("FR.status"), std::string("FR.dst_uuid"), std::string("FR.id"), std::string("FR.id")
+                      std::string("FriendRequest.status"), std::string("FriendRequest.dst_uuid"), std::string("FriendRequest.id"), std::string("FriendRequest.id")
             )));
 
   m_sql.insert(
             std::pair(MySQLSelection::GET_AUTH_FRIEND_LIST,
                       fmt::format("SELECT {}, {}, {}, {}, {}, {}"
                                 " FROM AuthFriend AS AF "
-                                " JOIN FriendRequest AS FR ON  {} = {}"
-                                " JOIN Authentication AS AU ON {} = {} AND {} = {} "
-                                " JOIN UserProfile AS UP ON {} = {} AND {} = {} "
+                                " JOIN FriendRequest AS FR ON {} = {} "
+                                " JOIN Authentication AS Auth1 ON {} = {} " 
+                                " JOIN Authentication AS Auth2 ON {} = {}"
+                                " JOIN UserProfile AS UP1 ON {} = {} "
+                                " JOIN UserProfile AS UP2 ON {} = {} "
                                 " WHERE {} = ? AND {} = ? AND {} > ? ORDER BY {} ASC LIMIT ?", 
-                                std::string("AuthFriend.friend_uuid"), std::string("FriendRequest.nickname"), std::string("UserProfile.avator"),
-                                std::string("Authentication.username"), std::string("UserProfile.description"), std::string("UserProfile.sex"),
+                                std::string("AF.friend_uuid"), std::string("FR.nickname"), std::string("UP2.avatar"),
+                                std::string("Auth2.username"), std::string("UP2.description"), std::string("UP2.sex"),
 
                                 std::string("AF.self_uuid"),  std::string("FR.dst_uuid"),
-                                std::string("AU.uuid"), std::string("AF.self_uuid"), std::string("AU.uuid"), std::string("AF.friend_uuid"),
-                                std::string("UP.uuid"), std::string("AF.self_uuid"), std::string("UP.uuid"), std::string("AF.friend_uuid"),
+
+                                //verify both user's identity
+                                std::string("AF.self_uuid"), std::string("Auth1.uuid"),
+                                std::string("AF.friend_uuid"), std::string("Auth2.uuid"),
+
+                                //verify both user's identity
+                                std::string("AF.self_uuid"), std::string("UP1.uuid"),
+                                std::string("AF.friend_uuid"), std::string("UP2.uuid"),
 
                                 std::string("FR.status"), std::string("AF.self_uuid"), std::string("AF.id"), std::string("AF.id")
                       )));
