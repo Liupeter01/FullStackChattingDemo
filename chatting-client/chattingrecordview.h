@@ -22,6 +22,9 @@ public:
   /*insert randomly*/
   void randomInsertItem(int pos, QWidget *item);
 
+  /*remove all item*/
+  void removeAllItem();
+
   static constexpr std::size_t max_size = 16777215;
 
 protected:
