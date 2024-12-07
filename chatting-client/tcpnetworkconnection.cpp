@@ -134,6 +134,7 @@ void TCPNetworkConnection::registerErrorHandling() {
       QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::errorOccurred),
       [this]([[maybe_unused]] QTcpSocket::SocketError socketErr) {
         qDebug() << "Connection To Tcp error: " << m_socket.errorString();
+        emit signal_connection_status(false);
       });
 }
 
