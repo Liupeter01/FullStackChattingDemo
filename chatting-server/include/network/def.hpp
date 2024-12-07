@@ -47,6 +47,11 @@ enum class ServiceType : uint8_t {
   /*if the friending process success, then both src_uuid and dst_uuid could
      receive this*/
   SERVICE_FRIENDING_ON_BIDDIRECTIONAL,
+  
+  /*User send text chat msg request*/
+SERVICE_TEXTCHATMSGREQUEST,
+SERVICE_TEXTCHATMSGRESPONSE,
+
   SERVICE_UNKNOWN // unkown service
 };
 
