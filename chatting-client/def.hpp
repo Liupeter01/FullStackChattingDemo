@@ -52,6 +52,14 @@ enum class ServiceType : uint8_t {
     SERVICE_TEXTCHATMSGREQUEST,
     SERVICE_TEXTCHATMSGRESPONSE,
 
+    /*User send text chat msg request*/
+    SERVICE_VOICECHATMSGREQUEST,
+    SERVICE_VOICETCHATMSGRESPONSE,
+
+    /*User send text chat msg request*/
+    SERVICE_VIDEOCHATMSGREQUEST,
+    SERVICE_VIDEOCHATMSGRESPONSE,
+
     SERVICE_UNKNOWN // unkown service
 };
 
