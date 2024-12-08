@@ -7,8 +7,8 @@ ChattingContactItem::ChattingContactItem(QWidget *parent)
       ui(new Ui::ChattingContactItem) {
   ui->setupUi(this);
 
-  /*set list item type, default value = ContactHistory*/
-  setItemType(ListItemType::ContactHistory);
+  /*set list item type, default value = MyContact*/
+  setItemType(ListItemType::MyContact);
 
   /*load qimage for AddUserWidget*/
   Tools::loadImgResources({"add_friend_clicked.png"},
@@ -48,7 +48,7 @@ void ChattingContactItem::setAddUserWidget() {
 void ChattingContactItem::setChattingContact(
     std::shared_ptr<UserNameCard> info) {
   /*set list item type, ContactHistory*/
-  setItemType(ListItemType::ContactHistory);
+  setItemType(ListItemType::MyContact);
 
   /*record user's info*/
   m_userinfo = info;
@@ -68,6 +68,10 @@ void ChattingContactItem::setChattingContact(
 
   /*update contact zone's size*/
   m_size = ui->contact_zone->size();
+}
+
+std::shared_ptr<UserNameCard> ChattingContactItem::getChattingContact(){
+    return m_userinfo;
 }
 
 void ChattingContactItem::setGroupSeperator(const QString &text) {

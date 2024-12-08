@@ -30,6 +30,9 @@ public:
   /*set chatting contact info*/
   void setChattingContact(std::shared_ptr<UserNameCard> info);
 
+  /*get chatting contact info*/
+  std::shared_ptr<UserNameCard> getChattingContact();
+
   /*set dialog with seperator*/
   void setGroupSeperator(const QString &text);
 
