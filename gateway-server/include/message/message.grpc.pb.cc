@@ -441,7 +441,7 @@ static const char* DistributedChattingService_method_names[] = {
   "/message.DistributedChattingService/SendFriendRequest",
   "/message.DistributedChattingService/ConfirmFriendRequest",
   "/message.DistributedChattingService/FriendshipVerification",
-  "/message.DistributedChattingService/NormalChattingMsg",
+  "/message.DistributedChattingService/SendChattingTextMsg",
 };
 
 std::unique_ptr< DistributedChattingService::Stub> DistributedChattingService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -454,7 +454,7 @@ DistributedChattingService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInt
   : channel_(channel), rpcmethod_SendFriendRequest_(DistributedChattingService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_ConfirmFriendRequest_(DistributedChattingService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_FriendshipVerification_(DistributedChattingService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_NormalChattingMsg_(DistributedChattingService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SendChattingTextMsg_(DistributedChattingService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status DistributedChattingService::Stub::SendFriendRequest(::grpc::ClientContext* context, const ::message::FriendRequest& request, ::message::FriendResponse* response) {
@@ -526,25 +526,25 @@ void DistributedChattingService::Stub::async::FriendshipVerification(::grpc::Cli
   return result;
 }
 
-::grpc::Status DistributedChattingService::Stub::NormalChattingMsg(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest& request, ::message::SendChattingMsgResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::message::SendChattingMsgRequest, ::message::SendChattingMsgResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_NormalChattingMsg_, context, request, response);
+::grpc::Status DistributedChattingService::Stub::SendChattingTextMsg(::grpc::ClientContext* context, const ::message::ChattingTextMsgRequest& request, ::message::ChattingTextMsgResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::message::ChattingTextMsgRequest, ::message::ChattingTextMsgResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_SendChattingTextMsg_, context, request, response);
 }
 
-void DistributedChattingService::Stub::async::NormalChattingMsg(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest* request, ::message::SendChattingMsgResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::message::SendChattingMsgRequest, ::message::SendChattingMsgResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_NormalChattingMsg_, context, request, response, std::move(f));
+void DistributedChattingService::Stub::async::SendChattingTextMsg(::grpc::ClientContext* context, const ::message::ChattingTextMsgRequest* request, ::message::ChattingTextMsgResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::message::ChattingTextMsgRequest, ::message::ChattingTextMsgResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SendChattingTextMsg_, context, request, response, std::move(f));
 }
 
-void DistributedChattingService::Stub::async::NormalChattingMsg(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest* request, ::message::SendChattingMsgResponse* response, ::grpc::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_NormalChattingMsg_, context, request, response, reactor);
+void DistributedChattingService::Stub::async::SendChattingTextMsg(::grpc::ClientContext* context, const ::message::ChattingTextMsgRequest* request, ::message::ChattingTextMsgResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SendChattingTextMsg_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::message::SendChattingMsgResponse>* DistributedChattingService::Stub::PrepareAsyncNormalChattingMsgRaw(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::SendChattingMsgResponse, ::message::SendChattingMsgRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_NormalChattingMsg_, context, request);
+::grpc::ClientAsyncResponseReader< ::message::ChattingTextMsgResponse>* DistributedChattingService::Stub::PrepareAsyncSendChattingTextMsgRaw(::grpc::ClientContext* context, const ::message::ChattingTextMsgRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::ChattingTextMsgResponse, ::message::ChattingTextMsgRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_SendChattingTextMsg_, context, request);
 }
 
-::grpc::ClientAsyncResponseReader< ::message::SendChattingMsgResponse>* DistributedChattingService::Stub::AsyncNormalChattingMsgRaw(::grpc::ClientContext* context, const ::message::SendChattingMsgRequest& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::message::ChattingTextMsgResponse>* DistributedChattingService::Stub::AsyncSendChattingTextMsgRaw(::grpc::ClientContext* context, const ::message::ChattingTextMsgRequest& request, ::grpc::CompletionQueue* cq) {
   auto* result =
-    this->PrepareAsyncNormalChattingMsgRaw(context, request, cq);
+    this->PrepareAsyncSendChattingTextMsgRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -583,12 +583,12 @@ DistributedChattingService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       DistributedChattingService_method_names[3],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< DistributedChattingService::Service, ::message::SendChattingMsgRequest, ::message::SendChattingMsgResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+      new ::grpc::internal::RpcMethodHandler< DistributedChattingService::Service, ::message::ChattingTextMsgRequest, ::message::ChattingTextMsgResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](DistributedChattingService::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::message::SendChattingMsgRequest* req,
-             ::message::SendChattingMsgResponse* resp) {
-               return service->NormalChattingMsg(ctx, req, resp);
+             const ::message::ChattingTextMsgRequest* req,
+             ::message::ChattingTextMsgResponse* resp) {
+               return service->SendChattingTextMsg(ctx, req, resp);
              }, this)));
 }
 
@@ -616,7 +616,7 @@ DistributedChattingService::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status DistributedChattingService::Service::NormalChattingMsg(::grpc::ServerContext* context, const ::message::SendChattingMsgRequest* request, ::message::SendChattingMsgResponse* response) {
+::grpc::Status DistributedChattingService::Service::SendChattingTextMsg(::grpc::ServerContext* context, const ::message::ChattingTextMsgRequest* request, ::message::ChattingTextMsgResponse* response) {
   (void) context;
   (void) request;
   (void) response;
