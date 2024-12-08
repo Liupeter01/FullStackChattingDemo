@@ -9,9 +9,9 @@ enum class ServiceType : uint8_t {
           SERVICE_RESETPASSWD,   // password reset
 
           /*
-           * before login, user has to get the address of
-           * chatting server which is dispatched by balance-server
-           */
+         * before login, user has to get the address of
+         * chatting server which is dispatched by balance-server
+         */
           SERVICE_LOGINDISPATCH,
           SERVICE_LOGINSERVER,            // try to login into server
           SERVICE_LOGINRESPONSE,          // login server response
@@ -21,36 +21,41 @@ enum class ServiceType : uint8_t {
           SERVICE_SEARCHUSERNAMERESPONSE, //
 
           /*
-           * User A init a friending request to User B
-           * However this message will only be received by Server Directly
-           * If the forwarding successful, then send SERVICE_FRIENDSENDERRESPONSE to
-           * User A
-           */
+         * User A init a friending request to User B
+         * However this message will only be received by Server Directly
+         * If the forwarding successful, then send SERVICE_FRIENDSENDERRESPONSE to
+         * User A
+         */
           SERVICE_FRIENDREQUESTSENDER,
           SERVICE_FRIENDSENDERRESPONSE,
 
           /*The Server Produce this request only!
-           * The Server will Forward A's Friending Request to B's interface
-           */
+         * The Server will Forward A's Friending Request to B's interface
+         */
           SERVICE_FRIENDREINCOMINGREQUEST,
 
           /*
-           * User B confirm A's friending request
-           * However this message will only be received by Server Directly
-           */
+         * User B confirm A's friending request
+         * However this message will only be received by Server Directly
+         */
           SERVICE_FRIENDREQUESTCONFIRM,
 
           /*If the forwarding successful, then send SERVICE_FRIENDSENDERRESPONSE to User
-             B*/
+           B*/
           SERVICE_FRIENDCONFIRMRESPONSE,
 
           /*if the friending process success, then both src_uuid and dst_uuid could
-             receive this*/
+           receive this*/
           SERVICE_FRIENDING_ON_BIDDIRECTIONAL,
 
           /*User send text chat msg request*/
           SERVICE_TEXTCHATMSGREQUEST,
           SERVICE_TEXTCHATMSGRESPONSE,
+
+          /*The Server Produce this request only!
+       * The Server will Forward A's Text Msg to B
+       */
+          SERVICE_TEXTCHATMSGICOMINGREQUEST,
 
           /*User send text chat msg request*/
           SERVICE_VOICECHATMSGREQUEST,

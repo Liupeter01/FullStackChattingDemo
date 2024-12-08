@@ -52,6 +52,11 @@ enum class ServiceType : uint8_t {
     SERVICE_TEXTCHATMSGREQUEST,
     SERVICE_TEXTCHATMSGRESPONSE,
 
+    /*The Server Produce this request only!
+ * The Server will Forward A's Text Msg to B
+ */
+    SERVICE_TEXTCHATMSGICOMINGREQUEST,
+
     /*User send text chat msg request*/
     SERVICE_VOICECHATMSGREQUEST,
     SERVICE_VOICETCHATMSGRESPONSE,
