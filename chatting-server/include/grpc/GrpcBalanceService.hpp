@@ -12,168 +12,29 @@
 
 struct gRPCBalancerService {
 
-  static message::LoginChattingResponse
-  userLoginToServer(std::size_t uuid, const std::string &token) {
-    grpc::ClientContext context;
-    message::LoginChattingServer request;
-    message::LoginChattingResponse response;
-    request.set_uuid(uuid);
-    request.set_token(token);
+          static message::LoginChattingResponse 
+                    userLoginToServer(std::size_t uuid, const std::string& token);
 
-    connection::ConnectionRAII<stubpool::BalancerServicePool,
-                               message::BalancerService::Stub>
-        raii;
+          static message::PeerResponse
+                    getPeerChattingServerLists(const std::string& cur_name);
 
-    grpc::Status status =
-        raii->get()->UserLoginToServer(&context, request, &response);
+          static message::PeerResponse
+                    getPeerGrpcServerLists(const std::string& cur_name);
 
-    ///*error occured*/
-    if (!status.ok()) {
-      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
-    }
-    return response;
-  }
+          static message::GrpcStatusResponse
+                    registerChattingServerInstance(const std::string& name,
+                              const std::string& host,
+                              const std::string& port);
 
-  static message::PeerResponse
-  getPeerChattingServerLists(const std::string &cur_name) {
-    grpc::ClientContext context;
-    message::PeerListsRequest request;
-    message::PeerResponse response;
+          static message::GrpcStatusResponse
+                    registerGrpcServer(const std::string& name, const std::string& host,
+                              const std::string& port);
 
-    request.set_cur_server(cur_name);
+          static message::GrpcStatusResponse
+                    chattingServerShutdown(const std::string& name);
 
-    connection::ConnectionRAII<stubpool::BalancerServicePool,
-                               message::BalancerService::Stub>
-        raii;
-
-    grpc::Status status =
-        raii->get()->GetPeerChattingServerInfo(&context, request, &response);
-
-    if (!status.ok()) {
-      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
-    }
-    return response;
-  }
-
-  static message::PeerResponse
-  getPeerGrpcServerLists(const std::string &cur_name) {
-    grpc::ClientContext context;
-    message::PeerListsRequest request;
-    message::PeerResponse response;
-
-    request.set_cur_server(cur_name);
-
-    connection::ConnectionRAII<stubpool::BalancerServicePool,
-                               message::BalancerService::Stub>
-        raii;
-
-    grpc::Status status =
-        raii->get()->GetPeerGrpcServerInfo(&context, request, &response);
-
-    if (!status.ok()) {
-      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
-    }
-    return response;
-  }
-
-  static message::GrpcStatusResponse
-  registerChattingServerInstance(const std::string &name,
-                                 const std::string &host,
-                                 const std::string &port) {
-    grpc::ClientContext context;
-    message::GrpcRegisterRequest request;
-    message::GrpcStatusResponse response;
-
-    message::ServerInfo info;
-    info.set_name(name);
-    info.set_host(host);
-    info.set_port(port);
-
-    *request.mutable_info() = info;
-
-    connection::ConnectionRAII<stubpool::BalancerServicePool,
-                               message::BalancerService::Stub>
-        raii;
-
-    grpc::Status status = raii->get()->RegisterChattingServerInstance(
-        &context, request, &response);
-
-    if (!status.ok()) {
-      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
-    }
-
-    return response;
-  }
-
-  static message::GrpcStatusResponse
-  registerGrpcServer(const std::string &name, const std::string &host,
-                     const std::string &port) {
-    grpc::ClientContext context;
-    message::GrpcRegisterRequest request;
-    message::GrpcStatusResponse response;
-
-    message::ServerInfo info;
-    info.set_name(name);
-    info.set_host(host);
-    info.set_port(port);
-
-    *request.mutable_info() = info;
-
-    connection::ConnectionRAII<stubpool::BalancerServicePool,
-                               message::BalancerService::Stub>
-        raii;
-
-    grpc::Status status =
-        raii->get()->RegisterChattingGrpcServer(&context, request, &response);
-
-    if (!status.ok()) {
-      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
-    }
-
-    return response;
-  }
-
-  static message::GrpcStatusResponse
-  chattingServerShutdown(const std::string &name) {
-    grpc::ClientContext context;
-    message::GrpcShutdownRequest request;
-    message::GrpcStatusResponse response;
-
-    request.set_cur_server(name);
-
-    connection::ConnectionRAII<stubpool::BalancerServicePool,
-                               message::BalancerService::Stub>
-        raii;
-
-    grpc::Status status =
-        raii->get()->ChattingServerShutDown(&context, request, &response);
-
-    if (!status.ok()) {
-      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
-    }
-    return response;
-  }
-
-  static message::GrpcStatusResponse
-  grpcServerShutdown(const std::string &name) {
-    grpc::ClientContext context;
-    message::GrpcShutdownRequest request;
-    message::GrpcStatusResponse response;
-
-    request.set_cur_server(name);
-
-    connection::ConnectionRAII<stubpool::BalancerServicePool,
-                               message::BalancerService::Stub>
-        raii;
-
-    grpc::Status status =
-        raii->get()->ChattingGrpcServerShutDown(&context, request, &response);
-
-    if (!status.ok()) {
-      response.set_error(static_cast<int32_t>(ServiceStatus::GRPC_ERROR));
-    }
-    return response;
-  }
+          static message::GrpcStatusResponse
+                    grpcServerShutdown(const std::string& name);
 };
 
 #endif // GRPCBALANCESERVICE_HPP_
