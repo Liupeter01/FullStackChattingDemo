@@ -3,9 +3,35 @@
 
 FullStackChattingDemo is a real-time chat application built using C++17, Boost and gRPC, featuring a distributed TCP server architecture. 
 
-1. For Client development, we are using basic QT6 framework to build the end-user teminal. 
+1. **Frontend Development:**
 
-2. For Server development, we are using a mixed of C++ and Nodejs. We are mainly using boost-1.84(beast asio uuid mysql), grpc-1.50.2, hiredis, jsoncpp, ada(url parsing), spdlog, boringssl libraries.
+   - Developed a chat dialog using **Qt**, leveraging `QListWidget` for an efficient chat record list and combining `QGridLayout` and `QPainter` for customized chat bubble styling to enhance the user experience.
+   - Encapsulated **Qt Network** modules to support HTTP and CP service communication.
+   - Implemented core features such as adding friends, friend communication, and chat record display.
+
+   **Backend Architecture Design:**
+
+   - Designed a distributed service architecture with the following components:
+     - **`gateway-server` (Gateway Service):** Provides HTTP APIs to handle user login, registration, and authentication.
+     - **`chatting-server` (Chat Service):** Utilized ASIO to implement efficient TCP long connection communication.
+     - **`balance-server` (Load Balancing Service):** Allocates chat services dynamically to achieve load balancing.
+     - **`captcha-server` (Captcha Service):** Generates and validates captchas for enhanced security.
+   - Enabled inter-service communication using the **gRPC protocol**, ensuring high availability and support for reconnections.
+
+   **High-Performance Optimization:**
+
+   - Implemented multithreading with `io_context` pools in the `chatting-server` to boost concurrent performance.
+   - Developed a **MySQL connection pool** to manage user data, friend relationships, and chat records.
+   - Designed a **Redis connection pool** for caching optimization.
+   - Built a gRPC connection pool to enhance distributed service access efficiency.
+
+   **Technical Highlights:**
+
+   - Gateway service provides **stateful HTTP interfaces** and integrates load balancing functionality.
+   - Chat service supports **asynchronous message forwarding** with reliable TCP long connections.
+   - Achieved support for **8000+ concurrent connections** on a single server, with distributed deployment supporting **10K-20K active users**.
+
+   
 
    **we are going to use boringssl instead of openssl for gRPC framework**
 
