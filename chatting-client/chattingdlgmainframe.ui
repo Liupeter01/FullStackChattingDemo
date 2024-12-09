@@ -397,6 +397,7 @@
       <number>0</number>
      </property>
      <widget class="ChattingStackPage" name="chattingpage"/>
+     <widget class="ContactsProfile" name="userprofilepage"/>
      <widget class="AddNewUserStackWidget" name="newuserpage"/>
     </widget>
    </item>
@@ -444,6 +445,12 @@
    <class>AddNewUserStackWidget</class>
    <extends>QWidget</extends>
    <header location="global">addnewuserstackwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ContactsProfile</class>
+   <extends>QWidget</extends>
+   <header location="global">contactsprofile.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
