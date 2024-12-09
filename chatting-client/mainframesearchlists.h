@@ -25,6 +25,9 @@ signals:
    */
   void signal_waiting_for_data(bool status);
 
+  /*if target user has already became a auth friend with current user*/
+  void signal_switch_user_profile(std::shared_ptr<UserNameCard> info);
+
 private slots:
   void slot_search_username(std::optional<std::shared_ptr<UserNameCard>> info,
                             ServiceStatus status);
