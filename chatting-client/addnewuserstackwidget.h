@@ -18,7 +18,7 @@ class NameCardWidgetShowList;
 
 class AddNewUserStackWidget : public QWidget {
   Q_OBJECT
-    friend class ChattingDlgMainFrame;
+  friend class ChattingDlgMainFrame;
 
 public:
   explicit AddNewUserStackWidget(QWidget *parent = nullptr);
@@ -35,13 +35,14 @@ private:
   void registerSignal();
 
   /*expose ui interface for chattingdlgmainframe*/
-  NameCardWidgetShowList* getFriendListUI() const;
+  NameCardWidgetShowList *getFriendListUI() const;
 
 private slots:
   /*server send friend request list to this client when user just finish login*/
-    void slot_init_friend_request_list();
+  void slot_init_friend_request_list();
 
-    void slot_incoming_friend_request(std::optional<std::shared_ptr<UserFriendRequest>> info);
+  void slot_incoming_friend_request(
+      std::optional<std::shared_ptr<UserFriendRequest>> info);
 
 private:
   Ui::AddNewUserStackWidget *ui;

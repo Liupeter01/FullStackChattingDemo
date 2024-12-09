@@ -54,9 +54,7 @@ void ChattingRecordView::randomInsertItem(int pos, QWidget *item) {
   m_newdataarrived = true;
 }
 
-void ChattingRecordView::removeAllItem(){
-    this->clear();
-}
+void ChattingRecordView::removeAllItem() { this->clear(); }
 
 bool ChattingRecordView::eventFilter(QObject *object, QEvent *event) {
   if (object == this->viewport()) {

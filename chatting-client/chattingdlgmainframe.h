@@ -87,14 +87,15 @@ protected:
   void loadMoreChattingHistory();
 
   /*search in chatting history widget by using friends uuid*/
-  std::optional<QListWidgetItem*> findChattingHistoryWidget(const QString &friend_uuid);
+  std::optional<QListWidgetItem *>
+  findChattingHistoryWidget(const QString &friend_uuid);
 
 signals:
   void signal_log_out();
 
 private slots:
   /*when server offline or kick out of the server*/
-    void slot_connection_status(bool status);
+  void slot_connection_status(bool status);
 
   /*
    * waiting for data from remote server
@@ -134,23 +135,29 @@ private slots:
   /* switch to chatting page with friends info
    * But User Has to use special Data Structure to pass arguments
    */
-  void slot_switch_chattingdlg_page(std::shared_ptr<FriendChattingHistory> info);
+  void
+  slot_switch_chattingdlg_page(std::shared_ptr<FriendChattingHistory> info);
 
-    /*receive friend request from another user, this func is only for notifying and storing request instance*/
-  void slot_incoming_friend_request(std::optional<std::shared_ptr<UserFriendRequest>> info);
+  /*receive friend request from another user, this func is only for notifying
+   * and storing request instance*/
+  void slot_incoming_friend_request(
+      std::optional<std::shared_ptr<UserFriendRequest>> info);
 
   /*
    * expose chatting history data to main page
    * developers could update friend's request by using this signal
    */
-  void slot_sync_chat_msg_on_local(MsgType msg_type, std::shared_ptr<ChattingTextMsg> msg);
+  void slot_sync_chat_msg_on_local(MsgType msg_type,
+                                   std::shared_ptr<ChattingTextMsg> msg);
 
   /*
    * sender sends chat msg to receiver
    * sender could be a user who is not in the chathistorywidget list
    * so we have to create a new widget for him
    */
-  void slot_incoming_text_msg(MsgType msg_type, std::optional<std::shared_ptr<ChattingTextMsg>> msg);
+  void
+  slot_incoming_text_msg(MsgType msg_type,
+                         std::optional<std::shared_ptr<ChattingTextMsg>> msg);
 
 private:
   Ui::ChattingDlgMainFrame *ui;

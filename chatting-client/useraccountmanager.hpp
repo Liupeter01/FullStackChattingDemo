@@ -11,8 +11,8 @@ class QJsonArray;
 struct FriendChattingHistory;
 
 enum class TargetList {
-    FRIENDLIST,
-    REQUESTLIST,
+  FRIENDLIST,
+  REQUESTLIST,
 };
 
 class UserAccountManager : public Singleton<UserAccountManager> {
@@ -30,33 +30,35 @@ public:
   const QString &get_token() const { return m_info.token; }
   const QString get_uuid() const { return m_info.uuid; }
 
-  auto getCurUserInfo() {return m_userInfo;}
+  auto getCurUserInfo() { return m_userInfo; }
 
 public:
   void appendArrayToList(TargetList target, const QJsonArray &array);
 
   void addItem2List(std::shared_ptr<UserFriendRequest> info);
   void addItem2List(std::shared_ptr<UserNameCard> info);
-  void addItem2List(const QString& friend_uuid, std::shared_ptr<FriendChattingHistory> info);
+  void addItem2List(const QString &friend_uuid,
+                    std::shared_ptr<FriendChattingHistory> info);
 
   std::optional<std::shared_ptr<FriendChattingHistory>>
-  getChattingHistoryFromList(const QString& friend_uuid);
+  getChattingHistoryFromList(const QString &friend_uuid);
 
   /*get all list(not recommended!)*/
   std::vector<std::shared_ptr<UserFriendRequest>> getFriendRequestList();
 
   /*get limited amount of friending request list*/
   std::optional<std::vector<std::shared_ptr<UserFriendRequest>>>
-  getFriendRequestList(std::size_t& begin, const std::size_t interval);
+  getFriendRequestList(std::size_t &begin, const std::size_t interval);
 
   /*get all list(not recommended!)*/
   std::vector<std::shared_ptr<UserNameCard>> getAuthFriendList();
 
   std::optional<std::vector<std::shared_ptr<UserNameCard>>>
-  getAuthFriendList(std::size_t& begin, const std::size_t interval);
+  getAuthFriendList(std::size_t &begin, const std::size_t interval);
 
   /*get friend's userinfo*/
-  std::optional<std::shared_ptr<UserNameCard>> findAuthFriendsInfo(const QString &uuid);
+  std::optional<std::shared_ptr<UserNameCard>>
+  findAuthFriendsInfo(const QString &uuid);
 
   bool alreadyExistInAuthList(const QString &uuid) const;
   bool alreadyExistInRequestList(const QString &uuid) const;
@@ -89,7 +91,8 @@ private:
   std::unordered_map<QString, std::shared_ptr<UserNameCard>> m_auth_friend_list;
 
   /*store chatting history*/
-  std::unordered_map<QString, std::shared_ptr<FriendChattingHistory>> m_user_chatting_histroy;
+  std::unordered_map<QString, std::shared_ptr<FriendChattingHistory>>
+      m_user_chatting_histroy;
 };
 
 #endif // USERACCOUNTMANAGER_H

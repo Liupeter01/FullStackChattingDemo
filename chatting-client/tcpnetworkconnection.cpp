@@ -2,12 +2,12 @@
 #include "UserFriendRequest.hpp"
 #include "UserNameCard.h"
 #include "useraccountmanager.hpp"
+#include <ChattingHistory.hpp>
 #include <QDataStream>
 #include <QDebug>
 #include <QJsonDocument>
-#include <qjsonarray.h>
-#include <ChattingHistory.hpp>
 #include <msgtextedit.h>
+#include <qjsonarray.h>
 
 TCPNetworkConnection::TCPNetworkConnection()
     : m_buffer([](auto x) { return qFromBigEndian(x); }) {
@@ -336,57 +336,53 @@ void TCPNetworkConnection::registerCallback() {
       }));
 
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
-      ServiceType::SERVICE_TEXTCHATMSGRESPONSE,
-      [this](QJsonObject &&json) {
-          /*error occured!*/
-          if (!json.contains("error")) {
-              qDebug() << "Json Parse Error!";
-              return;
+      ServiceType::SERVICE_TEXTCHATMSGRESPONSE, [this](QJsonObject &&json) {
+        /*error occured!*/
+        if (!json.contains("error")) {
+          qDebug() << "Json Parse Error!";
+          return;
 
-          } else if (json["error"].toInt() !=
-                     static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
-              qDebug()
-              << "Send Text Chat Msg failed! Because Of Error Code = "
-              << json["error"].toInt() << '\n';
-              return;
-          }
+        } else if (json["error"].toInt() !=
+                   static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
+          qDebug() << "Send Text Chat Msg failed! Because Of Error Code = "
+                   << json["error"].toInt() << '\n';
+          return;
+        }
       }));
 
   m_callbacks.insert(std::pair<ServiceType, Callbackfunction>(
       ServiceType::SERVICE_TEXTCHATMSGICOMINGREQUEST,
       [this](QJsonObject &&json) {
-          /*error occured!*/
-          if (!json.contains("error")) {
-              qDebug() << "Json Parse Error!";
+        /*error occured!*/
+        if (!json.contains("error")) {
+          qDebug() << "Json Parse Error!";
 
-            emit signal_incoming_text_msg(MsgType::TEXT, std::nullopt);
-              return;
+          emit signal_incoming_text_msg(MsgType::TEXT, std::nullopt);
+          return;
 
-          } else if (json["error"].toInt() !=
-                     static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
-              qDebug()
-              << "Receive Incoming Text Chat Msg failed! Because Of Error Code = "
-              << json["error"].toInt() << '\n';
+        } else if (json["error"].toInt() !=
+                   static_cast<int>(ServiceStatus::SERVICE_SUCCESS)) {
+          qDebug() << "Receive Incoming Text Chat Msg failed! Because Of Error "
+                      "Code = "
+                   << json["error"].toInt() << '\n';
 
-              emit signal_incoming_text_msg(MsgType::TEXT, std::nullopt);
-              return;
+          emit signal_incoming_text_msg(MsgType::TEXT, std::nullopt);
+          return;
 
-          } else {
-              auto text_sender = json["text_sender"].toString();
-              auto text_receiver = json["text_receiver"].toString();
-              auto text_msg = json["text_msg"].toArray();
+        } else {
+          auto text_sender = json["text_sender"].toString();
+          auto text_receiver = json["text_receiver"].toString();
+          auto text_msg = json["text_msg"].toArray();
 
-              qDebug() << "Retrieve Text Msg Data From Server of: "
-                       << "src_uuid = " << text_sender << '\n'
-                       << "dst_uuid = " << text_receiver << '\n'
-                       << "text_msg = " << text_msg;
+          qDebug() << "Retrieve Text Msg Data From Server of: "
+                   << "src_uuid = " << text_sender << '\n'
+                   << "dst_uuid = " << text_receiver << '\n'
+                   << "text_msg = " << text_msg;
 
-              emit signal_incoming_text_msg(MsgType::TEXT, std::make_shared<ChattingTextMsg>(
-                    text_sender,
-                    text_receiver,
-                    text_msg
-              ));
-          }
+          emit signal_incoming_text_msg(
+              MsgType::TEXT, std::make_shared<ChattingTextMsg>(
+                                 text_sender, text_receiver, text_msg));
+        }
       }));
 }
 

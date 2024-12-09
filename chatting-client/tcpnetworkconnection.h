@@ -92,8 +92,8 @@ signals:
    * sender could be a user who is not in the chathistorywidget list
    * so we have to create a new widget for him
    */
-  void signal_incoming_text_msg(MsgType type,
-                                std::optional<std::shared_ptr<ChattingTextMsg>> chat);
+  void signal_incoming_text_msg(
+      MsgType type, std::optional<std::shared_ptr<ChattingTextMsg>> chat);
 
 private:
   /*establish tcp socket with server*/
