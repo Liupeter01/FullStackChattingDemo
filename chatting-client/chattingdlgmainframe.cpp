@@ -712,54 +712,70 @@ void ChattingDlgMainFrame::slot_incoming_text_msg(
  */
 void ChattingDlgMainFrame::slot_switch_chat_item(
     std::shared_ptr<UserNameCard> info) {
-  /*nothing inside chat list*/
-  if (ui->chat_list->count() <= 0) {
-    return;
-  }
 
-  QWidget *widget{nullptr};
-  QListWidgetItem *item{nullptr};
-  std::unordered_map<QString, QListWidgetItem *>::iterator it =
-      m_chatHistoryWidList.find(info->m_uuid);
+    QListWidgetItem *item{nullptr};
+    QWidget *widget{nullptr};
+    auto res_op = findChattingHistoryWidget(info->m_uuid);
+    /* this chatting widget named info->m_uuid already exist in the list*/
+    if(res_op.has_value()){
 
-  /*
-   * this chatting widget named info->m_uuid already exist in the list
-   * Or choosing the first user(row = 0) as default;
-   */
-  if (it == m_chatHistoryWidList.end()) {
-    qDebug() << "QListWidget Not Found, Switching to row 0 by default"
-             << info->m_uuid;
-    item = ui->chat_list->item(0);
-  } else {
-    qDebug() << "We found this Widget On QListWidget, uuid = " << info->m_uuid;
-    item = it->second;
-  }
+        qDebug() << "We found this Widget On QListWidget, uuid = " << info->m_uuid;
+    }
+    else{
+        /* this chatting widget named info->m_uuid not exist in the list*/
+        qDebug() << "QListWidget Of " << info->m_uuid
+                 << "Not Found! Creating A New One";
 
-  if (!item) {
-    return;
-  }
 
-  widget = ui->chat_list->itemWidget(item);
-  if (!widget) {
-    return;
-  }
+        auto history_op = UserAccountManager::get_instance()->getChattingHistoryFromList(info->m_uuid);
+        /*
+         * we can find this user's history info, but its not on the list
+         * So we just need to put it into the list
+         */
+        if(history_op.has_value()){
+            addChattingHistory(history_op.value());
+            return;
+        }
 
-  /*itemBase should not be a null and also type should equal to
-   * ChattingHistory*/
-  ListItemWidgetBase *itemBase = reinterpret_cast<ListItemWidgetBase *>(widget);
-  if (itemBase && itemBase->getItemType() == ListItemType::ChattingHistory) {
-    ChattingHistoryWidget *chatItem =
-        reinterpret_cast<ChattingHistoryWidget *>(itemBase);
-    if (!chatItem) {
-      return;
+        /*
+         * not exist in useraccountmanager and also history widget
+         * I'm the person who start this conversation, so i will start talking first
+         */
+        auto history = std::make_shared<FriendChattingHistory>(info, ChattingTextMsg{
+            UserAccountManager::get_instance()->getCurUserInfo()->m_uuid, //me
+            info->m_uuid
+        });
+
+        UserAccountManager::get_instance()->addItem2List(info->m_uuid, history);
+        addChattingHistory(history);
+
+        res_op = findChattingHistoryWidget(info->m_uuid);
+        /* this chatting widget named info->m_uuid already exist in the list*/
+        if(!res_op.has_value()){
+            return;
+        }
     }
 
-    ui->chat_list->scrollToItem(item);
-    ui->chat_list->setCurrentItem(item);
+    item = res_op.value();
+    widget = ui->chat_list->itemWidget(item);
+    if (!widget)
+        return;
 
-    /*switch to chatting dialog page*/
-    slot_switch_chattingdlg_page(chatItem->getChattingContext());
-  }
+    /*itemBase should not be a null and type=ChattingHistory*/
+    ListItemWidgetBase *itemBase = reinterpret_cast<ListItemWidgetBase *>(widget);
+    if (itemBase && itemBase->getItemType() == ListItemType::ChattingHistory) {
+        ChattingHistoryWidget *chatItem =
+            reinterpret_cast<ChattingHistoryWidget *>(itemBase);
+        if (!chatItem) {
+            return;
+        }
+
+        ui->chat_list->scrollToItem(item);
+        ui->chat_list->setCurrentItem(item);
+
+        /*switch to chatting dialog page*/
+        slot_switch_chattingdlg_page(chatItem->getChattingContext());
+    }
 }
 
 void ChattingDlgMainFrame::slot_switch_user_profile(
@@ -778,6 +794,9 @@ void ChattingDlgMainFrame::slot_switch_chattingdlg_page(
 
   /*switch to chatting page by using stackedWidget*/
   switchChattingPage();
+
+  /*switch to chat side bar*/
+  slot_display_chat_list();
 }
 
 /*
