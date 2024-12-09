@@ -2,6 +2,7 @@
 #include "chattingcontactlist.h"
 #include "chattinghistorywidget.h"
 #include "loadingwaitdialog.h"
+#include "msgtextedit.h"
 #include "tcpnetworkconnection.h"
 #include "tools.h"
 #include "ui_chattingdlgmainframe.h"
@@ -14,13 +15,20 @@
 #include <QRandomGenerator>
 #include <QtEndian>
 #include <useraccountmanager.hpp>
+#include <namecardwidgetshowlist.h>
+#include <ChattingHistory.hpp>
+#include <addnewuserstackwidget.h>
+
+/* define how many chat recoreds are going to show up on chat record list */
+std::size_t ChattingDlgMainFrame::CHATRECORED_PER_PAGE = 9;
 
 ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
     : m_send_status(false) /*wait for data status is false*/
-      ,
-      QDialog(parent), ui(new Ui::ChattingDlgMainFrame), m_curQLabel(nullptr),
-      m_dlgMode(
-          ChattingDlgMode::ChattingDlgChattingMode) /*chatting mode by default*/
+      , QDialog(parent)
+      , ui(new Ui::ChattingDlgMainFrame)
+      , m_curQLabel(nullptr)
+      , m_curr_chat_record_loaded(0)
+      , m_dlgMode(ChattingDlgMode::ChattingDlgChattingMode) /*chatting mode by default*/
 {
   ui->setupUi(this);
 
@@ -76,6 +84,23 @@ ChattingDlgMainFrame::ChattingDlgMainFrame(QWidget *parent)
   addLabel(ui->my_contact);
 }
 
+ChattingDlgMainFrame::~ChattingDlgMainFrame() {
+    delete m_searchAction;
+    delete m_cancelAction;
+    delete ui;
+}
+
+bool ChattingDlgMainFrame::eventFilter(QObject *object, QEvent *event) {
+    /*mouse button press event*/
+    if (event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouse(reinterpret_cast<QMouseEvent *>(event));
+
+        /*clear search_edit according to mouse position*/
+        clearSearchByMousePos(mouse);
+    }
+    return QDialog::eventFilter(object, event);
+}
+
 void ChattingDlgMainFrame::registerSignal() {
   /*when the text input changed inside search widget, then trigger slot and
    * switch list widget*/
@@ -108,9 +133,6 @@ void ChattingDlgMainFrame::registerSignal() {
   connect(ui->my_contact, &SideBarWidget::update_display, this,
           &ChattingDlgMainFrame::updateMyContact);
 
-  connect(ui->chat_list, &MainFrameShowLists::signal_load_more_record, this,
-          &ChattingDlgMainFrame::slot_load_more_record);
-
   connect(ui->contact_list, &ChattingContactList::signal_switch_addnewuser,
           this, &ChattingDlgMainFrame::switchNewUserPage);
 
@@ -118,25 +140,72 @@ void ChattingDlgMainFrame::registerSignal() {
   connect(ui->search_list, &QListWidget::itemClicked, this,
           &ChattingDlgMainFrame::slot_list_item_clicked);
 
+  /* when user press chatting record then trigger itemclicked*/
+  connect(ui->chat_list, &MainFrameShowLists::itemClicked, this,
+          &ChattingDlgMainFrame::slot_list_item_clicked);
+
   /*connect signal<->slot when slot_search_username was triggered*/
   connect(ui->search_list, &MainFrameSearchLists::signal_waiting_for_data, this,
           &ChattingDlgMainFrame::slot_waiting_for_data);
 
+  /* connect signal<->slot when signal_switch_user_profile() is emitted
+   * open a target friend's profile with msg/voice/video calls
+   */
+  connect(ui->search_list, &MainFrameSearchLists::signal_switch_user_profile, this,
+          &ChattingDlgMainFrame::slot_switch_user_profile);
+
+  connect(ui->contact_list, &ChattingContactList::signal_switch_user_profile, this,
+          &ChattingDlgMainFrame::slot_switch_user_profile);
+
+  /*when user open contact's profile page and click msg button*/
+  connect(ui->userprofilepage, &ContactsProfile::signal_switch_chat_item, this,
+          &ChattingDlgMainFrame::slot_switch_chat_item);
+
   /*
-   * Create a signal<->slot for processing authenticate friend namecard info
-   * 1.recieve authenticate friend list from server, then create multiple
-   * chatting history widgets 1.recieve signal authenticate friend, then create
-   * a chatting history widget
-   * TCPNetworkConnection::signal_add_authenticate_friend
+   * when other user send friend request
+   * This method is ONLY USED TO NOTIFY USER AND CHANGE UI
    */
   connect(TCPNetworkConnection::get_instance().get(),
-          &TCPNetworkConnection::signal_add_authenticate_friend, this,
-          &ChattingDlgMainFrame::slot_signal_add_authenticate_friend);
+          &TCPNetworkConnection::signal_incoming_friend_request, this,
+          &ChattingDlgMainFrame::slot_incoming_friend_request);
 
-  /*server be able to send authenticate friend list to this client*/
+  /*
+   * sender sends chat msg to receiver
+   * sender could be a user who is not in the chathistorywidget list
+   * so we have to create a new widget for him
+   */
   connect(TCPNetworkConnection::get_instance().get(),
-          &TCPNetworkConnection::signal_init_auth_friend_list, this,
-          &ChattingDlgMainFrame::slot_init_auth_friend_list);
+          &TCPNetworkConnection::signal_incoming_text_msg, this,
+          &ChattingDlgMainFrame::slot_incoming_text_msg);
+
+  /*
+   * load more contact list
+   * we need to use the waiting dialog inside chattingdlgmainframe scope
+   */
+  connect(ui->contact_list, &ChattingContactList::signal_load_more_record, this,
+          &ChattingDlgMainFrame::slot_load_more_contact_list);
+
+  /*
+   * load more chatting record
+   * we need to use the waiting dialog inside chattingdlgmainframe scope
+   */
+  connect(ui->chat_list, &MainFrameShowLists::signal_load_more_record, this,
+          &ChattingDlgMainFrame::slot_load_more_chatting_history);
+
+  /*
+   * load more chatting record
+   * we need to use the waiting dialog inside chattingdlgmainframe scope
+   */
+  connect(ui->newuserpage->getFriendListUI(), &NameCardWidgetShowList::signal_load_more_record, this,
+          &ChattingDlgMainFrame::slot_load_more_friending_requests);
+
+  /*
+   * Connecting signal<->slot between chattingstackpage and chattingdlgmainframe
+   * expose chatting history data to main page
+   * developers could update friend's request by using this signal
+   */
+  connect(ui->chattingpage, &ChattingStackPage::signal_sync_chat_msg_on_local, this,
+          &ChattingDlgMainFrame::slot_sync_chat_msg_on_local);
 }
 
 void ChattingDlgMainFrame::registerSearchEditAction() {
@@ -335,79 +404,75 @@ void ChattingDlgMainFrame::slot_search_text_changed() {
   switchRelevantListWidget();
 }
 
-void ChattingDlgMainFrame::slot_load_more_record() {
-  m_loading = std::shared_ptr<LoadingWaitDialog>(new LoadingWaitDialog(this),
-                                                 [](LoadingWaitDialog *) {});
-
-  /*do not block the execute flow*/
-  m_loading->setModal(true);
-  m_loading->show();
-
-  /*load more data to the list*/
-  qDebug() << "load more data to the list";
-
-  m_loading->hide();
-  m_loading->deleteLater();
-}
-
 void ChattingDlgMainFrame::slot_display_chat_list() {
-  qDebug() << "Chat Button Clicked!";
+    qDebug() << "Chat Button Clicked!";
 
-  /*switch status*/
-  m_dlgMode = ChattingDlgMode::ChattingDlgChattingMode;
+    /*switch status*/
+    m_dlgMode = ChattingDlgMode::ChattingDlgChattingMode;
 
-  /*after switch status, then switch window*/
-  switchRelevantListWidget();
+    /*after switch status, then switch window*/
+    switchRelevantListWidget();
 
-  /*switch to chatting page*/
-  switchChattingPage();
+    /*switch to chatting page*/
+    switchChattingPage();
 }
 
 void ChattingDlgMainFrame::slot_display_contact_list() {
-  qDebug() << "Contact Button Clicked!";
+    qDebug() << "Contact Button Clicked!";
 
-  /*switch status*/
-  m_dlgMode = ChattingDlgMode::chattingDlgContactMode;
+    /*switch status*/
+    m_dlgMode = ChattingDlgMode::chattingDlgContactMode;
 
-  /*after switch status, then switch window*/
-  switchRelevantListWidget();
+    /*after switch status, then switch window*/
+    switchRelevantListWidget();
 }
 
+/*
+   * user click the item shown in the ListWidget
+   * 1. ListItemType::Default
+   *    DO NOTHING
+   *
+   * 2. ListItemType::SearchUserId
+   *    When User Start To Searching User ID:
+   *
+   * 3. ListItemType::ChattingHistory
+   *    when user press chatting record
+   */
 void ChattingDlgMainFrame::slot_list_item_clicked(
     QListWidgetItem *clicked_item) {
-  qDebug() << "item clicked! ";
+    qDebug() << "item clicked! ";
 
-  /*get clicked customlized widget object*/
-  QWidget *widget = ui->search_list->itemWidget(clicked_item);
-  if (widget == nullptr) {
-    qDebug() << "invalid click item! ";
-    return;
-  }
-  auto item = reinterpret_cast<ListItemWidgetBase *>(widget);
-  if (item->getItemType() == ListItemType::Default) {
-    qDebug() << "[ListItemType::Default]:list item base class!";
-    return;
+    /*get clicked customlized widget object*/
+    QWidget *widget = ui->search_list->itemWidget(clicked_item);
+    if (widget == nullptr) {
+        qDebug() << "invalid click item! ";
+        return;
+    }
+    auto item = reinterpret_cast<ListItemWidgetBase *>(widget);
+    if (item->getItemType() == ListItemType::Default) {
+        qDebug() << "[ListItemType::Default]:list item base class!";
+        return;
 
-  } else if (item->getItemType() == ListItemType::SearchUserId) {
-    qDebug() << "[ListItemType::SearchUserId]:generate add new usr window!";
+    } else if (item->getItemType() == ListItemType::SearchUserId) {
+        qDebug() << "[ListItemType::SearchUserId]:generate add new usr window!";
 
-    /*get username info*/
-    QJsonObject json_obj;
-    json_obj["username"] = ui->search_user_edit->text();
-    QJsonDocument doc(json_obj);
+        /*get username info*/
+        QJsonObject json_obj;
+        json_obj["username"] = ui->search_user_edit->text();
+        QJsonDocument doc(json_obj);
 
-    /*it should be store as a temporary object, because send_buffer will modify
+        /*it should be store as a temporary object, because send_buffer will modify
      * it!*/
-    auto json_data = doc.toJson(QJsonDocument::Compact);
+        auto json_data = doc.toJson(QJsonDocument::Compact);
 
-    SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
-        static_cast<uint16_t>(ServiceType::SERVICE_SEARCHUSERNAME), json_data,
-        [](auto x) { return qToBigEndian(x); });
+        SendNode<QByteArray, std::function<uint16_t(uint16_t)>> send_buffer(
+            static_cast<uint16_t>(ServiceType::SERVICE_SEARCHUSERNAME), json_data,
+            [](auto x) { return qToBigEndian(x); });
 
-    /*after connection to server, send TCP request*/
-    TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
+        /*after connection to server, send TCP request*/
+        TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
 
-    /*
+        /*
      * waiting for server reaction
      * 1.Send username verification request to server: chattingdlgmainframe ->
      * chattingserver 2.Server responses to client's mainframesearchlist
@@ -415,56 +480,300 @@ void ChattingDlgMainFrame::slot_list_item_clicked(
      * cancel waiting signal to chattingdlgmaingframs: mainframesearchlist ->
      * chattingdlgmainframe 4.Cancel waiting: slot_waiting_for_data(false);
      */
-    qDebug() << "[ListItemType::SearchUserId]:Waiting For Server Response!";
-    waitForDataFromRemote(true);
-  }
+        qDebug() << "[ListItemType::SearchUserId]:Waiting For Server Response!";
+        waitForDataFromRemote(true);
+    }
+    else if(item->getItemType() == ListItemType::ChattingHistory){
+        qDebug() << "[ListItemType::ChattingHistory]:Switching To ChattingDlg Page With Friends Identity!";
+
+        slot_switch_chattingdlg_page(reinterpret_cast<ChattingHistoryWidget*>(widget)->getChattingContext());
+    }
 }
 
-void ChattingDlgMainFrame::slot_init_auth_friend_list() {
-  auto authFriend = UserAccountManager::get_instance()->getAuthFriendList();
-  for (const auto &item : authFriend) {
-    addChattingContact(item);
-  }
+void ChattingDlgMainFrame::slot_load_more_contact_list(){
+    /*load more data to the list*/
+    qDebug() << "slot_load_more_contact_list";
+    m_loading = std::shared_ptr<LoadingWaitDialog>(new LoadingWaitDialog(this),
+                                                   [](LoadingWaitDialog *) {});
+
+    /*do not block the execute flow*/
+    m_loading->setModal(true);
+    m_loading->show();
+
+    /*load more contact info*/
+    ui->contact_list->loadLimitedContactsList();
+
+    m_loading->hide();
+    m_loading->deleteLater();
 }
 
-void ChattingDlgMainFrame::slot_signal_add_authenticate_friend(
-    std::optional<std::shared_ptr<UserNameCard>> info) {
-  if (info.has_value()) {
-    auto auth_user = info.value();
-    qDebug() << "Receive Friend Chatting History From " << auth_user->m_uuid;
-    /*this user should be a valid user*/
-    if (!UserAccountManager::get_instance()->alreadyExistInAuthList(
-            auth_user->m_uuid)) {
-      return;
+void ChattingDlgMainFrame::slot_load_more_chatting_history(){
+    /*load more data to the list*/
+    qDebug() << "slot_load_more_chatting_history";
+    m_loading = std::shared_ptr<LoadingWaitDialog>(new LoadingWaitDialog(this),
+                                                   [](LoadingWaitDialog *) {});
+
+    /*do not block the execute flow*/
+    m_loading->setModal(true);
+    m_loading->show();
+
+    /* load more chat history record*/
+    loadMoreChattingHistory();
+
+    m_loading->hide();
+    m_loading->deleteLater();
+}
+
+void ChattingDlgMainFrame::slot_load_more_friending_requests(){
+    /*load more data to the list*/
+    qDebug() << "slot_load_more_friending_requests";
+    m_loading = std::shared_ptr<LoadingWaitDialog>(new LoadingWaitDialog(this),
+                                                   [](LoadingWaitDialog *) {});
+
+    /*do not block the execute flow*/
+    m_loading->setModal(true);
+    m_loading->show();
+
+    /* load more chat friending requests*/
+    ui->newuserpage->loadLimitedReqList();
+
+    m_loading->hide();
+    m_loading->deleteLater();
+}
+
+void ChattingDlgMainFrame::slot_incoming_friend_request(
+    std::optional<std::shared_ptr<UserFriendRequest>> info) {
+
+}
+
+/*
+   * expose chatting history data to main page
+   * developers could update friend's request by using this signal
+   */
+void ChattingDlgMainFrame::slot_sync_chat_msg_on_local(MsgType msg_type, std::shared_ptr<ChattingTextMsg> msg){
+
+    /*nothing inside chat list*/
+    if(ui->chat_list->count() <= 0){
+        return;
     }
 
+    QWidget* widget{nullptr};
+    QListWidgetItem* item{nullptr};
+    std::unordered_map<QString, QListWidgetItem *>::iterator it = m_chatHistoryWidList.find(msg->sender_uuid);
+
+    /*
+     * this chatting widget named msg->sender_uuid already exist in the list
+     * Or choosing the first user(row = 0) as default;
+     */
+    if(it == m_chatHistoryWidList.end()){
+        qDebug() << "QListWidget Not Found, Switching to row 0 by default";
+        item = ui->chat_list->item(0);
+    }
+    else{
+        qDebug() << "We found this Widget On QListWidget, uuid = " << msg->sender_uuid;
+        item = it->second;
+    }
+
+    if(!item){
+        return;
+    }
+
+    widget = ui->chat_list->itemWidget(item);
+    if(!widget){
+        qDebug() << "[ChattingDlgMainFrame::slot_sync_chat_msg_on_local]: QWidget is Nullptr!";
+        return;
+    }
+
+    /*itemBase should not be a null and also type should equal to ChattingHistory*/
+    ListItemWidgetBase* itemBase = reinterpret_cast<ListItemWidgetBase*>(widget);
+    if(itemBase && itemBase->getItemType() ==ListItemType::ChattingHistory){
+        ChattingHistoryWidget* chatItem = reinterpret_cast<ChattingHistoryWidget*>(itemBase);
+        if(!chatItem){
+            return;
+        }
+
+        if (msg_type == MsgType::TEXT) {
+
+            /*get chatting history historical data from the chattinghistorywidget*/
+            chatItem->getChattingContext()->updateChattingHistory<ChattingTextMsg>(
+                msg->m_data.begin(),
+                msg->m_data.end()
+            );
+
+            /*update the chattinghistory store inside useraccountmamanger*/
+            auto res = UserAccountManager::get_instance()
+                           ->getChattingHistoryFromList(msg->sender_uuid);
+
+            if(res.has_value()){
+                res.value()->updateChattingHistory<ChattingTextMsg>(
+                    msg->m_data.begin(),
+                    msg->m_data.end()
+                    );
+            }
+
+        } else if (msg_type == MsgType::IMAGE) {
+
+        } else if (msg_type == MsgType::FILE) {
+
+        }
+    }
+}
+
+/*
+   * sender sends chat msg to receiver
+   * sender could be a user who is not in the chathistorywidget list
+   * so we have to create a new widget for him
+   */
+void ChattingDlgMainFrame::slot_incoming_text_msg(MsgType msg_type,
+                                                  std::optional<std::shared_ptr<ChattingTextMsg>> msg)
+{
+    if(!msg.has_value()){
+        return;
+    }
+    auto text = msg.value();
+
+    QWidget* widget {nullptr};
+    QListWidgetItem* item {nullptr};
+    std::unordered_map<QString, QListWidgetItem *>::iterator it = m_chatHistoryWidList.find(text->sender_uuid);
+
+    /* this chatting widget named text->sender_uuid exist in the list*/
+    if(it != m_chatHistoryWidList.end()){
+        qDebug() << "We found this Widget On QListWidget, uuid = " << text->sender_uuid;
+        if(!(item = it->second))
+            return;
+
+        if(!(widget = ui->chat_list->itemWidget(item))){
+            qDebug() << "[ChattingDlgMainFrame::slot_sync_chat_msg_on_local]: QWidget is Nullptr!";
+            return;
+        }
+
+        /*itemBase should not be a null and also type should equal to ChattingHistory*/
+        ListItemWidgetBase* itemBase = reinterpret_cast<ListItemWidgetBase*>(widget);
+        if(itemBase && itemBase->getItemType() ==ListItemType::ChattingHistory){
+            ChattingHistoryWidget* chatItem = reinterpret_cast<ChattingHistoryWidget*>(itemBase);
+            if(!chatItem)
+                return;
+
+            if (msg_type == MsgType::TEXT) {
+
+                /*get chatting history historical data from the chattinghistorywidget*/
+                chatItem->getChattingContext()->updateChattingHistory<ChattingTextMsg>(
+                    text->m_data.begin(),
+                    text->m_data.end()
+                );
+
+                /*update the chattinghistory store inside useraccountmamanger*/
+                auto res = UserAccountManager::get_instance()
+                    ->getChattingHistoryFromList(text->sender_uuid);
+
+                if(res.has_value()){
+                    res.value()->updateChattingHistory<ChattingTextMsg>(
+                        text->m_data.begin(),
+                        text->m_data.end()
+                    );
+                }
+
+            } else if (msg_type == MsgType::IMAGE) {
+
+            } else if (msg_type == MsgType::FILE) {
+
+            }
+        }
+        return;
+    }
+
+    /* this chatting widget named text->receiver_uuid not exist in the list*/
+    qDebug() << "QListWidget Not Found, Creating it by default: " << text->receiver_uuid;
+
+    /*gather friend usernamecard info*/
+    auto auth_friend_op = UserAccountManager::get_instance()->findAuthFriendsInfo(text->sender_uuid);
+    if(!auth_friend_op.has_value())
+        return;
+
+    auto auth_friend = auth_friend_op.value();
+
+    auto friend_chat_history = std::make_shared<FriendChattingHistory>(
+        auth_friend->m_uuid,
+        auth_friend->m_avatorPath,
+        auth_friend->m_username,
+        auth_friend->m_nickname,
+        auth_friend->m_description,
+        auth_friend->m_sex,
+        *text
+    );
+
+
+    UserAccountManager::get_instance()
+        ->addItem2List(text->sender_uuid, friend_chat_history);
+
+    addChattingHistory(friend_chat_history);
+}
+
+/*if target user has already became a auth friend with current user
+ * then switch back to chatting dialog
+ */
+void ChattingDlgMainFrame::slot_switch_chat_item(std::shared_ptr<UserNameCard> info){
+    /*nothing inside chat list*/
+    if(ui->chat_list->count() <= 0){
+        return;
+    }
+
+    QWidget* widget{nullptr};
+    QListWidgetItem* item{nullptr};
+    std::unordered_map<QString, QListWidgetItem *>::iterator it = m_chatHistoryWidList.find(info->m_uuid);
+
+    /*
+     * this chatting widget named info->m_uuid already exist in the list
+     * Or choosing the first user(row = 0) as default;
+     */
+    if(it == m_chatHistoryWidList.end()){
+        qDebug() << "QListWidget Not Found, Switching to row 0 by default" << info->m_uuid;
+        item = ui->chat_list->item(0);
+    }
+    else{
+        qDebug() << "We found this Widget On QListWidget, uuid = " << info->m_uuid;
+        item = it->second;
+    }
+
+    if(!item){
+        return;
+    }
+
+    widget = ui->chat_list->itemWidget(item);
+    if(!widget){
+        return;
+    }
+
+    /*itemBase should not be a null and also type should equal to ChattingHistory*/
+    ListItemWidgetBase* itemBase = reinterpret_cast<ListItemWidgetBase*>(widget);
+    if(itemBase && itemBase->getItemType() ==ListItemType::ChattingHistory){
+        ChattingHistoryWidget* chatItem = reinterpret_cast<ChattingHistoryWidget*>(itemBase);
+        if(!chatItem){
+            return;
+        }
+
+        ui->chat_list->scrollToItem(item);
+        ui->chat_list->setCurrentItem(item);
+
+        /*switch to chatting dialog page*/
+        slot_switch_chattingdlg_page(chatItem->getChattingContext());
+    }
+}
+
+void ChattingDlgMainFrame::slot_switch_user_profile(std::shared_ptr<UserNameCard> info){
+    /*load data*/
+    ui->userprofilepage->setUserInfo(info);
+
+    /*switch to target page*/
+    switchUserProfilePage();
+}
+
+void ChattingDlgMainFrame::slot_switch_chattingdlg_page(std::shared_ptr<FriendChattingHistory> info){
     /**/
-    if (this->alreadyExistInHistoryWidListList(auth_user->m_uuid)) {
-      qDebug() << auth_user->m_uuid
-               << " Has Already Exist In Mapping structrue";
-      return;
-    }
+    ui->chattingpage->setFriendInfo(info);
 
-    /*add it to UI interface*/
-    addChattingContact(auth_user);
-  }
-}
-
-ChattingDlgMainFrame::~ChattingDlgMainFrame() {
-  delete m_searchAction;
-  delete m_cancelAction;
-  delete ui;
-}
-
-bool ChattingDlgMainFrame::eventFilter(QObject *object, QEvent *event) {
-  /*mouse button press event*/
-  if (event->type() == QEvent::MouseButtonPress) {
-    QMouseEvent *mouse(reinterpret_cast<QMouseEvent *>(event));
-
-    /*clear search_edit according to mouse position*/
-    clearSearchByMousePos(mouse);
-  }
-  return QDialog::eventFilter(object, event);
+    /*switch to chatting page by using stackedWidget*/
+    switchChattingPage();
 }
 
 /*
@@ -479,6 +788,13 @@ void ChattingDlgMainFrame::switchChattingPage() {
  */
 void ChattingDlgMainFrame::switchNewUserPage() {
   ui->stackedWidget->setCurrentWidget(ui->newuserpage);
+}
+
+/*
+ * switch to user profile page by using stackedWidget
+ */
+void ChattingDlgMainFrame::switchUserProfilePage() {
+    ui->stackedWidget->setCurrentWidget(ui->userprofilepage);
 }
 
 /*wait for remote server data*/
@@ -496,12 +812,10 @@ void ChattingDlgMainFrame::waitForDataFromRemote(bool status) {
   }
 }
 
-void ChattingDlgMainFrame::addChattingContact(
-    std::shared_ptr<UserNameCard> info) {
+void ChattingDlgMainFrame::addChattingHistory(std::shared_ptr<FriendChattingHistory> info) {
   ChattingHistoryWidget *new_inserted(new ChattingHistoryWidget());
 
   new_inserted->setUserInfo(info);
-  new_inserted->setLastMsg("Just a test!");
   new_inserted->setItemDisplay();
 
   QListWidgetItem *item(new QListWidgetItem);
@@ -515,9 +829,39 @@ void ChattingDlgMainFrame::addChattingContact(
   ui->chat_list->update();
 }
 
-bool ChattingDlgMainFrame::alreadyExistInHistoryWidListList(
-    const QString &uuid) const {
-  return m_chatHistoryWidList.find(uuid) != m_chatHistoryWidList.end();
+bool ChattingDlgMainFrame::alreadyExistInHistoryWidListList(const QString &uuid) const {
+    return m_chatHistoryWidList.find(uuid) != m_chatHistoryWidList.end();
+}
+
+/* load more chat history record*/
+void ChattingDlgMainFrame::loadMoreChattingHistory(){
+
+}
+
+std::optional<QListWidgetItem *>
+ChattingDlgMainFrame::findChattingHistoryWidget(const QString &friend_uuid){
+    /*nothing inside chat list*/
+    if(ui->chat_list->count() <= 0){
+        return std::nullopt;
+    }
+
+    std::unordered_map<QString, QListWidgetItem *>::iterator it = m_chatHistoryWidList.find(friend_uuid);
+
+    /*this chatting widget named friend_uuid not exist in the list*/
+    if(it == m_chatHistoryWidList.end()){
+        qDebug() << "QListWidget Not Found, Switching to row 0 by default" << friend_uuid;
+        return std::nullopt;
+    }
+    else{
+        qDebug() << "We found this Widget On QListWidget, uuid = " << friend_uuid;
+        return it->second;
+    }
+}
+
+void ChattingDlgMainFrame::slot_connection_status(bool status){
+    if(!status){
+        emit signal_log_out();
+    }
 }
 
 void ChattingDlgMainFrame::slot_waiting_for_data(bool status) {
