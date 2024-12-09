@@ -96,8 +96,6 @@ UserAccountManager::getFriendRequestList(std::size_t &begin,
     begin += interval;
   }
 
-  std::advance(it_end, begin + interval);
-
   std::copy(it_begin, it_end, std::back_inserter(list));
   return list;
 }
