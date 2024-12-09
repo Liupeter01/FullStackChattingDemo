@@ -1,4 +1,5 @@
 #include <QJsonArray>
+#include <ChattingHistory.hpp>
 #include <useraccountmanager.hpp>
 
 UserAccountManager::UserAccountManager()
@@ -41,6 +42,18 @@ void UserAccountManager::addItem2List(std::shared_ptr<UserFriendRequest> info) {
 
 void UserAccountManager::addItem2List(std::shared_ptr<UserNameCard> info) {
   m_auth_friend_list[info->m_uuid] = info;
+}
+
+void UserAccountManager::addItem2List(const QString& friend_uuid, std::shared_ptr<FriendChattingHistory> info){
+    m_user_chatting_histroy[friend_uuid] = info;
+}
+
+std::optional<std::shared_ptr<FriendChattingHistory>>
+UserAccountManager::getChattingHistoryFromList(const QString &friend_uuid){
+    if(alreadyExistInHistoryList(friend_uuid)){
+        return m_user_chatting_histroy[friend_uuid];
+    }
+    return std::nullopt;
 }
 
 std::vector<std::shared_ptr<UserFriendRequest>> UserAccountManager::getFriendRequestList(){
@@ -89,7 +102,8 @@ UserAccountManager::getFriendRequestList(std::size_t& begin,
     return list;
 }
 
-std::vector<std::shared_ptr<UserNameCard>> UserAccountManager::getAuthFriendList(){
+std::vector<std::shared_ptr<UserNameCard>>
+UserAccountManager::getAuthFriendList(){
     std::vector<std::shared_ptr<UserNameCard>> list;
     std::transform(m_auth_friend_list.begin(), m_auth_friend_list.end(),std::back_inserter(list), [](const auto &T){
         return T.second;
@@ -99,7 +113,7 @@ std::vector<std::shared_ptr<UserNameCard>> UserAccountManager::getAuthFriendList
 
 std::optional<std::vector<std::shared_ptr<UserNameCard>>>
 UserAccountManager::getAuthFriendList(std::size_t& begin,
-                                             const std::size_t interval){
+                                      const std::size_t interval){
 
     /* user requested number even larger then greatest amount */
     if(begin < 0 || begin >= m_auth_friend_list.size()){
@@ -140,6 +154,13 @@ UserAccountManager::getAuthFriendList(std::size_t& begin,
     return list;
 }
 
+std::optional<std::shared_ptr<UserNameCard> > UserAccountManager::findAuthFriendsInfo(const QString &uuid){
+    if(!alreadyExistInAuthList(uuid)){
+        return std::nullopt;
+    }
+    return m_auth_friend_list.find(uuid)->second;
+}
+
 bool UserAccountManager::alreadyExistInAuthList(const QString &uuid) const {
   return m_auth_friend_list.find(uuid) != m_auth_friend_list.end();
 }
@@ -157,6 +178,10 @@ bool UserAccountManager::alreadyExistInRequestList(const QString &uuid) const {
   return it != m_friend_request_list.end();
 }
 
+bool UserAccountManager::alreadyExistInHistoryList(const QString &friend_uuid) const{
+    return m_user_chatting_histroy.find(friend_uuid) != m_user_chatting_histroy.end();
+}
+
 void UserAccountManager::setUserInfo(std::shared_ptr<UserNameCard> info) {
-  m_userInfo = info;
+    m_userInfo = info;
 }
