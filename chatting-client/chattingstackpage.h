@@ -19,6 +19,12 @@ public:
   explicit ChattingStackPage(QWidget *parent = nullptr);
   virtual ~ChattingStackPage();
 
+public:
+  /*
+   * if this input uuid match to the friend we are chatting with
+   * then we have to update the chattingdialog when its changed or updated
+   */
+  bool isFriendCurrentlyChatting(const QString &target_uuid);
   void setFriendInfo(std::shared_ptr<FriendChattingHistory> info);
 
 protected:
