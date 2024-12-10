@@ -26,9 +26,9 @@ public:
    */
   bool isFriendCurrentlyChatting(const QString &target_uuid);
   void setFriendInfo(std::shared_ptr<FriendChattingHistory> info);
+  void setChattingDlgHistory(std::shared_ptr<FriendChattingHistory> history);
 
 protected:
-  void setChattingDlgHistory(std::shared_ptr<FriendChattingHistory> history);
 
   /*insert chatting history widget by push_back*/
   void insertToHistoryList(std::shared_ptr<ChattingHistoryData> data, MsgType type);
@@ -47,6 +47,8 @@ signals:
 
 private slots:
   void on_send_message_clicked();
+
+    void on_clear_message_clicked();
 
 private:
   Ui::ChattingStackPage *ui;
