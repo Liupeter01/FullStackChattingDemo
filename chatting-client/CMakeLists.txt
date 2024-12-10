@@ -30,7 +30,7 @@ if(NOT MSVC)
     endif()
 endif()
 
-project(ChattingClient VERSION 3.0.3 LANGUAGES CXX)
+project(ChattingClient VERSION 3.0.4 LANGUAGES CXX)
 
 file(GLOB source_file CONFIGURE_DEPENDS *.cpp *.h *.hpp)
 file(GLOB ui_file CONFIGURE_DEPENDS *.ui)
