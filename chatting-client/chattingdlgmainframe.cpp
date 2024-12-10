@@ -616,8 +616,10 @@ void ChattingDlgMainFrame::slot_sync_chat_msg_on_local(MsgType msg_type,
             return;
         }
 
-        /*update chatting history*/
-        addChattingHistory(chatItem->getChattingContext());
+        /*if current chatting page is still open*/
+        if(ui->chattingpage->isFriendCurrentlyChatting(info->sender_uuid)){
+            ui->chattingpage->setFriendInfo(chatItem->getChattingContext());
+        }
     }
 }
 
@@ -628,6 +630,9 @@ void ChattingDlgMainFrame::slot_sync_chat_msg_on_local(MsgType msg_type,
  */
 void ChattingDlgMainFrame::slot_incoming_text_msg(
     MsgType msg_type, std::optional<std::shared_ptr<ChattingTextMsg>> msg) {
+
+    /*is the chatting history being updated?*/
+    bool dirty{false};
 
     if (!msg.has_value())
         return;
@@ -693,15 +698,23 @@ void ChattingDlgMainFrame::slot_incoming_text_msg(
           UserAccountManager::get_instance()->addItem2List(info->sender_uuid, history);
       }
 
+      /*data is updated!*/
+      dirty = true;
+
       /*add new entry into chattinghistory widget list*/
        addChattingHistory(history);
 
-       //
        //emit message_notification
-      return;
+
+       res_op.reset();
+       res_op = findChattingHistoryWidget(info->sender_uuid);
   }
 
   qDebug() << "We found this Widget On QListWidget, uuid = " << info->sender_uuid;
+
+  if(!res_op.has_value()){
+      return;
+  }
 
   QListWidgetItem *item = res_op.value();
    QWidget *widget = ui->chat_list->itemWidget(item);
@@ -717,11 +730,16 @@ void ChattingDlgMainFrame::slot_incoming_text_msg(
           return;
       }
 
-      if (msg_type == MsgType::TEXT) {
+      if (!dirty && msg_type == MsgType::TEXT) {
           chatItem->getChattingContext()->updateChattingHistory<ChattingTextMsg>(
               info->m_data.begin(),
               info->m_data.end()
           );
+      }
+
+      /*if current chatting page is still open*/
+      if(ui->chattingpage->isFriendCurrentlyChatting(info->sender_uuid)){
+          ui->chattingpage->setFriendInfo(chatItem->getChattingContext());
       }
   }
 }
