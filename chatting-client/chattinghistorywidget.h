@@ -5,9 +5,9 @@
 #include "listitemwidgetbase.h"
 #include "ui_chattinghistorywidget.h"
 
-namespace Ui {
-class ChattingHistoryWidget;
-}
+//namespace Ui {
+//class ChattingHistoryWidget;
+//}
 
 enum class MsgType;
 
