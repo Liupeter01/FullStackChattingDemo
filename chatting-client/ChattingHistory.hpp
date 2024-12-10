@@ -4,8 +4,8 @@
 #include <QJsonObject>
 #include <QString>
 #include <UserNameCard.h>
-#include <vector>
 #include <useraccountmanager.hpp>
+#include <vector>
 
 struct ChattingHistoryData {
   ChattingHistoryData(const QString &sender, const QString &receiver,
@@ -18,7 +18,7 @@ struct ChattingHistoryData {
 };
 
 struct ChattingTextMsg {
-    ChattingTextMsg( const QString &sender, const QString &receiver);
+  ChattingTextMsg(const QString &sender, const QString &receiver);
   ChattingTextMsg(const QString &sender, const QString &receiver,
                   const QJsonArray &msg_data);
 
@@ -28,16 +28,16 @@ struct ChattingTextMsg {
 };
 
 struct ChattingVoice {
-    ChattingVoice(const QString &sender, const QString &receiver);
+  ChattingVoice(const QString &sender, const QString &receiver);
 
-    QString sender_uuid;
-    QString receiver_uuid;
+  QString sender_uuid;
+  QString receiver_uuid;
 };
 struct ChattingVideo {
-    ChattingVideo(const QString &sender, const QString &receiver);
+  ChattingVideo(const QString &sender, const QString &receiver);
 
-    QString sender_uuid;
-    QString receiver_uuid;
+  QString sender_uuid;
+  QString receiver_uuid;
 };
 
 template <typename _Type>
@@ -51,49 +51,52 @@ using check_datatype_v = typename std::enable_if<
 struct FriendChattingHistory : public UserNameCard {
   using ChatType = std::variant<ChattingTextMsg, ChattingVoice, ChattingVideo>;
 
-    template <typename _Type, check_datatype_v<_Type> = 0>
-    inline FriendChattingHistory(UserNameCard &&card) noexcept
-        : FriendChattingHistory(card, _Type{card.m_uuid,
-                UserAccountManager::get_instance()->getCurUserInfo()->m_uuid
-          })
-    {
-    }
+  template <typename _Type, check_datatype_v<_Type> = 0>
+  inline FriendChattingHistory(UserNameCard &&card) noexcept
+      : FriendChattingHistory(
+            card,
+            _Type{
+                card.m_uuid,
+                UserAccountManager::get_instance()->getCurUserInfo()->m_uuid}) {
+  }
 
-    template <typename _Type, check_datatype_v<_Type> = 0>
-    inline FriendChattingHistory(std::shared_ptr<UserNameCard>& card) noexcept
-        : FriendChattingHistory(card, _Type{card->m_uuid,
-            UserAccountManager::get_instance()->getCurUserInfo()->m_uuid
-        })
-    {
-    }
+  template <typename _Type, check_datatype_v<_Type> = 0>
+  inline FriendChattingHistory(std::shared_ptr<UserNameCard> &card) noexcept
+      : FriendChattingHistory(
+            card,
+            _Type{
+                card->m_uuid,
+                UserAccountManager::get_instance()->getCurUserInfo()->m_uuid}) {
+  }
 
+  template <typename _Type, check_datatype_v<_Type> = 0>
+  inline FriendChattingHistory(std::shared_ptr<UserNameCard> card) noexcept
+      : FriendChattingHistory(
+            card,
+            _Type{
+                card->m_uuid,
+                UserAccountManager::get_instance()->getCurUserInfo()->m_uuid}) {
+  }
 
-    template <typename _Type, check_datatype_v<_Type> = 0>
-    inline FriendChattingHistory(std::shared_ptr<UserNameCard> card) noexcept
-        : FriendChattingHistory(card, _Type{card->m_uuid,
-             UserAccountManager::get_instance()->getCurUserInfo()->m_uuid
-         })
-    {
-    }
+  template <typename _Type, check_datatype_v<_Type> = 0>
+  inline FriendChattingHistory(const UserNameCard &card) noexcept
+      : FriendChattingHistory(
+            card,
+            _Type{
+                card.m_uuid,
+                UserAccountManager::get_instance()->getCurUserInfo()->m_uuid}) {
+  }
 
-    template <typename _Type, check_datatype_v<_Type> = 0>
-    inline FriendChattingHistory(const UserNameCard &card) noexcept
-      : FriendChattingHistory(card, _Type{card.m_uuid,
-            UserAccountManager::get_instance()->getCurUserInfo()->m_uuid
-        })
-    {
-    }
+  FriendChattingHistory(std::shared_ptr<UserNameCard> card,
+                        const ChatType &type) noexcept;
 
-    FriendChattingHistory(std::shared_ptr<UserNameCard> card,
-                          const ChatType &type) noexcept;
-
-    FriendChattingHistory(const UserNameCard &card,
-                          const ChatType &type) noexcept;
+  FriendChattingHistory(const UserNameCard &card,
+                        const ChatType &type) noexcept;
 
   FriendChattingHistory(const QString &uuid, const QString &avator_path,
                         const QString &username, const QString &nickname,
                         const QString &desc, Sex sex,
-                          const ChatType &type) noexcept;
+                        const ChatType &type) noexcept;
 
   template <typename _Type, typename It, check_datatype_v<_Type> = 0>
   void updateChattingHistory(It begin, It end) {
