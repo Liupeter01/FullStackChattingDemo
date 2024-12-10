@@ -23,6 +23,10 @@ ChattingStackPage::ChattingStackPage(QWidget *parent)
 ChattingStackPage::~ChattingStackPage() { delete ui; }
 
 bool ChattingStackPage::isFriendCurrentlyChatting(const QString &target_uuid){
+    /*friendinfo doesn't load any friend info yet*/
+    if(!m_friendInfo){
+        return false;
+    }
     return m_friendInfo->m_uuid == target_uuid;
 }
 
@@ -229,3 +233,8 @@ void ChattingStackPage::on_send_message_clicked() {
   /*after connection to server, send TCP request*/
   TCPNetworkConnection::get_instance()->send_data(std::move(send_buffer));
 }
+
+void ChattingStackPage::on_clear_message_clicked(){
+    ui->user_input->clear();
+}
+
