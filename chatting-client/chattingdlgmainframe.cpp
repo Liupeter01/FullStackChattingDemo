@@ -617,7 +617,7 @@ void ChattingDlgMainFrame::slot_sync_chat_msg_on_local(MsgType msg_type,
         }
 
         /*if current chatting page is still open*/
-        if(ui->chattingpage->isFriendCurrentlyChatting(info->sender_uuid)){
+        if(ui->chattingpage->isFriendCurrentlyChatting(msg->receiver_uuid)){
             ui->chattingpage->setFriendInfo(chatItem->getChattingContext());
         }
     }
