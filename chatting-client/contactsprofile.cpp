@@ -25,6 +25,11 @@ ContactsProfile::ContactsProfile(QWidget *parent)
         "video_chat_hover.png",
         "video_chat_press.png"
     });
+
+    /*set default button image*/
+    Tools::setPushButtonIcon(ui->msg, "msg_chat_normal.png");
+    Tools::setPushButtonIcon(ui->voice, "voice_chat_normal.png");
+    Tools::setPushButtonIcon(ui->video, "ideo_chat_normal.png");
 }
 
 ContactsProfile::~ContactsProfile(){
