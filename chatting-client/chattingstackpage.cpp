@@ -212,7 +212,7 @@ void ChattingStackPage::on_send_message_clicked() {
   text_obj["text_sender"] = obj["msg_sender"];
   text_obj["text_receiver"] = obj["msg_receiver"];
   text_obj["text_msg"] = array;
-  QJsonDocument doc(obj);
+  QJsonDocument doc(text_obj);
   auto json = doc.toJson(QJsonDocument::Compact);
 
   /*clean all array value*/
