@@ -144,8 +144,9 @@ private slots:
       std::optional<std::shared_ptr<UserFriendRequest>> info);
 
   /*
-   * expose chatting history data to main page
-   * developers could update friend's request by using this signal
+   * although the messages which are sent will appear on the chattingstackpage
+   * the message will not be recorded by the in the chattinghistory which is
+   * stored by UserAccountManager
    */
   void slot_sync_chat_msg_on_local(MsgType msg_type,
                                    std::shared_ptr<ChattingTextMsg> msg);
