@@ -86,6 +86,21 @@ private:
                                     std::shared_ptr<Session> session,
                                     NodePtr recv);
 
+  /*Handling the user send chatting text msg to others*/
+  void handlingTextChatMsg(ServiceType srv_type,
+                                std::shared_ptr<Session> session,
+                                NodePtr recv);
+
+  /*Handling the user send chatting voice msg to others*/
+  void handlingVoiceChatMsg(ServiceType srv_type,
+            std::shared_ptr<Session> session,
+            NodePtr recv);
+
+  /*Handling the user send chatting video msg to others*/
+  void handlingVideoChatMsg(ServiceType srv_type,
+            std::shared_ptr<Session> session,
+            NodePtr recv);
+
   /*
    * get friend request list from the database
    * @param: startpos: get friend request from the index[startpos]
