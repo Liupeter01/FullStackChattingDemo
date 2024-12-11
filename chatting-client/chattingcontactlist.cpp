@@ -14,9 +14,8 @@
 std::size_t ChattingContactList::CONTACT_PER_PAGE = 8;
 
 ChattingContactList::ChattingContactList(QWidget *parent)
-    : static_text("Add New Friend")
-    , m_curr_contact_person_loaded(0)
-    , MainFrameShowLists(parent) {
+    : static_text("Add New Friend"), m_curr_contact_person_loaded(0),
+      MainFrameShowLists(parent) {
   /*register signal*/
   registerSignal();
 
@@ -57,7 +56,6 @@ void ChattingContactList::registerSignal() {
   connect(TCPNetworkConnection::get_instance().get(),
           &TCPNetworkConnection::signal_add_authenticate_friend, this,
           &ChattingContactList::slot_add_authenticate_friend);
-
 }
 
 void ChattingContactList::addAddUserWidget() {
@@ -133,32 +131,33 @@ void ChattingContactList::slot_itemClicked(QListWidgetItem *item) {
   /*click add user widget button*/
   else if (base->getItemType() == ListItemType::AddUserWidget) {
     qDebug() << "User Press Add New Friend Button On Contact List\n"
-            << "Emit Signal And Switch To Auth Friend Page In Stackwidget(AddNewUserStackWidget)";
+             << "Emit Signal And Switch To Auth Friend Page In "
+                "Stackwidget(AddNewUserStackWidget)";
 
     emit signal_switch_addnewuser();
   }
   /*click Contact widget item*/
   else if (base->getItemType() == ListItemType::MyContact) {
     qDebug() << "User Press One Of The Contact In Contact List\n"
-               << "Emit Signal And Switch To UserProfile Page In Stackwidget(ContactsProfile)";
+             << "Emit Signal And Switch To UserProfile Page In "
+                "Stackwidget(ContactsProfile)";
 
-    emit signal_switch_user_profile(reinterpret_cast<ChattingContactItem*>(base)->getChattingContact());
+    emit signal_switch_user_profile(
+        reinterpret_cast<ChattingContactItem *>(base)->getChattingContact());
   }
 }
 
-void ChattingContactList::loadLimitedContactsList(){
-    auto authFriend = UserAccountManager::get_instance()->getAuthFriendList(
-        m_curr_contact_person_loaded,
-        CONTACT_PER_PAGE
-    );
+void ChattingContactList::loadLimitedContactsList() {
+  auto authFriend = UserAccountManager::get_instance()->getAuthFriendList(
+      m_curr_contact_person_loaded, CONTACT_PER_PAGE);
 
-    if(!authFriend.has_value()){
-        return;
-    }
+  if (!authFriend.has_value()) {
+    return;
+  }
 
-    for (const auto &item : authFriend.value()) {
-        addChattingContact(item);
-    }
+  for (const auto &item : authFriend.value()) {
+    addChattingContact(item);
+  }
 }
 
 /*
@@ -167,7 +166,7 @@ void ChattingContactList::loadLimitedContactsList(){
  */
 void ChattingContactList::slot_init_auth_friend_list() {
 
-    loadLimitedContactsList();
+  loadLimitedContactsList();
 }
 
 /*
@@ -191,7 +190,7 @@ void ChattingContactList::slot_add_authenticate_friend(
   }
 
   /*if there is nothing loaded perviously!!*/
-  if(!m_curr_contact_person_loaded){
-      loadLimitedContactsList();
+  if (!m_curr_contact_person_loaded) {
+    loadLimitedContactsList();
   }
 }

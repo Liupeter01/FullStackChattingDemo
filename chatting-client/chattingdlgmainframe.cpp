@@ -551,62 +551,65 @@ void ChattingDlgMainFrame::slot_incoming_friend_request(
  * expose chatting history data to main page
  * developers could update friend's request by using this signal
  */
-void ChattingDlgMainFrame::slot_sync_chat_msg_on_local(MsgType msg_type,
-                                                       std::shared_ptr<ChattingTextMsg> msg) {
+void ChattingDlgMainFrame::slot_sync_chat_msg_on_local(
+    MsgType msg_type, std::shared_ptr<ChattingTextMsg> msg) {
 
-    /*find chattinghistory in useraccountmanager class*/
-    auto history_op = UserAccountManager::get_instance()->getChattingHistoryFromList(msg->receiver_uuid);
+  /*find chattinghistory in useraccountmanager class*/
+  auto history_op =
+      UserAccountManager::get_instance()->getChattingHistoryFromList(
+          msg->receiver_uuid);
 
-    if(!history_op.has_value()){
-        return;
-    }
+  if (!history_op.has_value()) {
+    return;
+  }
 
-    if (msg_type == MsgType::TEXT) {
+  if (msg_type == MsgType::TEXT) {
 
-        /*update historical data stored in useraccount manager*/
-        history_op.value()->updateChattingHistory<ChattingTextMsg>(
-            msg->m_data.begin(),
-            msg->m_data.end()
-            );
-    }
+    /*update historical data stored in useraccount manager*/
+    history_op.value()->updateChattingHistory<ChattingTextMsg>(
+        msg->m_data.begin(), msg->m_data.end());
+  }
 
-    /*if current chatting page is still open*/
-    if(ui->chattingpage->isFriendCurrentlyChatting(msg->receiver_uuid)){
+  /*if current chatting page is still open*/
+  if (ui->chattingpage->isFriendCurrentlyChatting(msg->receiver_uuid)) {
 
-        /*find target friend*/
-        auto res_op = findChattingHistoryWidget(msg->receiver_uuid);
+    /*find target friend*/
+    auto res_op = findChattingHistoryWidget(msg->receiver_uuid);
 
-        /*
+    /*
      * target friend history widget even not exist in the chatting list
      * Then we do not need to update it
      */
-        if(!res_op.has_value()){
-            qDebug() << "target friend history widget even not exist in the chatting list";
-            return;
-        }
-
-        qDebug() << "We found this Widget On QListWidget, uuid = " << msg->receiver_uuid;
-        auto item = res_op.value();
-        if(!item)
-            return;
-
-        auto widget = ui->chat_list->itemWidget(item);
-        if (!widget)
-            return;
-
-        /*itemBase should not be a null and type=ChattingHistory*/
-        ListItemWidgetBase *itemBase = reinterpret_cast<ListItemWidgetBase *>(widget);
-        if (itemBase && itemBase->getItemType() == ListItemType::ChattingHistory) {
-            ChattingHistoryWidget *chatItem =
-                reinterpret_cast<ChattingHistoryWidget *>(itemBase);
-            if (!chatItem) {
-                return;
-            }
-
-            ui->chattingpage->setChattingDlgHistory(history_op.value());
-        }
-        return;
+    if (!res_op.has_value()) {
+      qDebug()
+          << "target friend history widget even not exist in the chatting list";
+      return;
     }
+
+    qDebug() << "We found this Widget On QListWidget, uuid = "
+             << msg->receiver_uuid;
+    auto item = res_op.value();
+    if (!item)
+      return;
+
+    auto widget = ui->chat_list->itemWidget(item);
+    if (!widget)
+      return;
+
+    /*itemBase should not be a null and type=ChattingHistory*/
+    ListItemWidgetBase *itemBase =
+        reinterpret_cast<ListItemWidgetBase *>(widget);
+    if (itemBase && itemBase->getItemType() == ListItemType::ChattingHistory) {
+      ChattingHistoryWidget *chatItem =
+          reinterpret_cast<ChattingHistoryWidget *>(itemBase);
+      if (!chatItem) {
+        return;
+      }
+
+      ui->chattingpage->setChattingDlgHistory(history_op.value());
+    }
+    return;
+  }
 }
 
 /*
@@ -617,12 +620,11 @@ void ChattingDlgMainFrame::slot_sync_chat_msg_on_local(MsgType msg_type,
 void ChattingDlgMainFrame::slot_incoming_text_msg(
     MsgType msg_type, std::optional<std::shared_ptr<ChattingTextMsg>> msg) {
 
-    /*is the chatting history being updated?*/
-    bool dirty{false};
+  /*is the chatting history being updated?*/
+  bool dirty{false};
 
-    if (!msg.has_value())
-        return;
-
+  if (!msg.has_value())
+    return;
 
   auto info = msg.value();
 
@@ -637,101 +639,100 @@ void ChattingDlgMainFrame::slot_incoming_text_msg(
    * we have to search is it in UserAccountManager Memory Structure or not?
    * and add it to the chatting histroy widget list
    */
-  if(!res_op.has_value()){
-      qDebug() << "QListWidget Of " <<info->sender_uuid
-               << "Not Found! Creating A New One";
+  if (!res_op.has_value()) {
+    qDebug() << "QListWidget Of " << info->sender_uuid
+             << "Not Found! Creating A New One";
 
+    std::shared_ptr<FriendChattingHistory> history;
+    std::optional<std::shared_ptr<FriendChattingHistory>> history_op =
+        UserAccountManager::get_instance()->getChattingHistoryFromList(
+            info->sender_uuid);
 
-      std::shared_ptr<FriendChattingHistory> history;
-      std::optional<std::shared_ptr<FriendChattingHistory>> history_op = UserAccountManager::get_instance()->getChattingHistoryFromList(info->sender_uuid);
+    history.reset();
 
-      history.reset();
+    /*
+     * we can find this user's history info in UserAccountManager
+     * We just need to update the records
+     * So we have to create a new one and add it to the chatting histroy widget
+     * list
+     */
+    if (history_op.has_value()) {
+      history = history_op.value();
+
+      if (msg_type == MsgType::TEXT) {
+        history->updateChattingHistory<ChattingTextMsg>(info->m_data.begin(),
+                                                        info->m_data.end());
+      }
+    } else {
+      /*
+       * we can not find this history info in UserAccountManager
+       * So we have to create a new one and add it to the chatting histroy
+       * widget list
+       */
+      auto namecard = UserAccountManager::get_instance()->findAuthFriendsInfo(
+          info->sender_uuid);
+      if (!namecard.has_value()) {
+        qDebug() << "Creating New FriendChattingHistory Failed!"
+                    "Bacause Friend UUID = "
+                 << info->sender_uuid << " Not Found!";
+        return;
+      }
 
       /*
-         * we can find this user's history info in UserAccountManager
-         * We just need to update the records
-         * So we have to create a new one and add it to the chatting histroy widget list
-         */
-      if(history_op.has_value()){
-         history = history_op.value();
+       * not exist in useraccountmanager and also history widget
+       * The Person who start talking frist is the sender(friend)
+       * So record it in sys
+       */
+      history =
+          std::make_shared<FriendChattingHistory>(namecard.value(), *info);
 
-          if (msg_type == MsgType::TEXT) {
-              history->updateChattingHistory<ChattingTextMsg>(
-                  info->m_data.begin(),
-                   info->m_data.end()
-              );
-          }
-      }
-      else{
-          /*
-           * we can not find this history info in UserAccountManager
-           * So we have to create a new one and add it to the chatting histroy widget list
-           */
-          auto namecard = UserAccountManager::get_instance()->findAuthFriendsInfo(info->sender_uuid);
-          if(!namecard.has_value()){
-              qDebug() << "Creating New FriendChattingHistory Failed!"
-                          "Bacause Friend UUID = " <<info->sender_uuid
-                       << " Not Found!";
-              return;
-          }
+      UserAccountManager::get_instance()->addItem2List(info->sender_uuid,
+                                                       history);
+    }
 
-          /*
-           * not exist in useraccountmanager and also history widget
-           * The Person who start talking frist is the sender(friend)
-           * So record it in sys
-           */
-          history = std::make_shared<FriendChattingHistory>(
-              namecard.value(),
-              *info
-            );
+    /*data is updated!*/
+    dirty = true;
 
-          UserAccountManager::get_instance()->addItem2List(info->sender_uuid, history);
-      }
+    /*add new entry into chattinghistory widget list*/
+    addChattingHistory(history);
 
-      /*data is updated!*/
-      dirty = true;
+    // emit message_notification
 
-      /*add new entry into chattinghistory widget list*/
-       addChattingHistory(history);
-
-       //emit message_notification
-
-       res_op.reset();
-       res_op = findChattingHistoryWidget(info->sender_uuid);
+    res_op.reset();
+    res_op = findChattingHistoryWidget(info->sender_uuid);
   }
 
-  if(!res_op.has_value()){
-      return;
+  if (!res_op.has_value()) {
+    return;
   }
 
-  qDebug() << "We found this Widget On QListWidget, uuid = " << info->sender_uuid;
+  qDebug() << "We found this Widget On QListWidget, uuid = "
+           << info->sender_uuid;
 
   QListWidgetItem *item = res_op.value();
-   QWidget *widget = ui->chat_list->itemWidget(item);
+  QWidget *widget = ui->chat_list->itemWidget(item);
   if (!widget)
-      return;
+    return;
 
   /*itemBase should not be a null and type=ChattingHistory*/
   ListItemWidgetBase *itemBase = reinterpret_cast<ListItemWidgetBase *>(widget);
   if (itemBase && itemBase->getItemType() == ListItemType::ChattingHistory) {
-      ChattingHistoryWidget *chatItem =
-          reinterpret_cast<ChattingHistoryWidget *>(itemBase);
-      if (!chatItem) {
-          return;
-      }
+    ChattingHistoryWidget *chatItem =
+        reinterpret_cast<ChattingHistoryWidget *>(itemBase);
+    if (!chatItem) {
+      return;
+    }
 
-      /*if the widget exist, then it will update it's data here!*/
-      if (!dirty && msg_type == MsgType::TEXT) {
-          chatItem->getChattingContext()->updateChattingHistory<ChattingTextMsg>(
-              info->m_data.begin(),
-              info->m_data.end()
-          );
-      }
+    /*if the widget exist, then it will update it's data here!*/
+    if (!dirty && msg_type == MsgType::TEXT) {
+      chatItem->getChattingContext()->updateChattingHistory<ChattingTextMsg>(
+          info->m_data.begin(), info->m_data.end());
+    }
 
-      /*if current chatting page is still open*/
-      if(ui->chattingpage->isFriendCurrentlyChatting(info->sender_uuid)){
-          ui->chattingpage->setChattingDlgHistory(chatItem->getChattingContext());
-      }
+    /*if current chatting page is still open*/
+    if (ui->chattingpage->isFriendCurrentlyChatting(info->sender_uuid)) {
+      ui->chattingpage->setChattingDlgHistory(chatItem->getChattingContext());
+    }
   }
 }
 
@@ -741,78 +742,80 @@ void ChattingDlgMainFrame::slot_incoming_text_msg(
 void ChattingDlgMainFrame::slot_switch_chat_item(
     std::shared_ptr<UserNameCard> info) {
 
-    QListWidgetItem *item{nullptr};
-    QWidget *widget{nullptr};
-    auto res_op = findChattingHistoryWidget(info->m_uuid);
+  QListWidgetItem *item{nullptr};
+  QWidget *widget{nullptr};
+  auto res_op = findChattingHistoryWidget(info->m_uuid);
 
-    /* this chatting widget named info->m_uuid already exist in the list*/
-    if(!res_op.has_value()){
-        /* this chatting widget named info->m_uuid not exist in the list*/
-        qDebug() << "QListWidget Of " << info->m_uuid
-                 << " Not Found! Creating A New One";
+  /* this chatting widget named info->m_uuid already exist in the list*/
+  if (!res_op.has_value()) {
+    /* this chatting widget named info->m_uuid not exist in the list*/
+    qDebug() << "QListWidget Of " << info->m_uuid
+             << " Not Found! Creating A New One";
 
-        std::shared_ptr<FriendChattingHistory> history;
-        std::optional<std::shared_ptr<FriendChattingHistory>> history_op = UserAccountManager::get_instance()->getChattingHistoryFromList(info->m_uuid);
+    std::shared_ptr<FriendChattingHistory> history;
+    std::optional<std::shared_ptr<FriendChattingHistory>> history_op =
+        UserAccountManager::get_instance()->getChattingHistoryFromList(
+            info->m_uuid);
 
-        history.reset();
+    history.reset();
 
-        /*
-         * we can find this user's history info in UserAccountManager
-         * However, it didn't show up in the chattingstackpage
-         * So we just need to put it into the list
-         */
-        if(history_op.has_value()){
-            history = history_op.value();
-        }
-        else
-        {
-            /*
-             * not exist in useraccountmanager and also history widget
-             * I'm the person who start this conversation, so i will start talking first
-             */
-            history = std::make_shared<FriendChattingHistory>(info, ChattingTextMsg{
-                UserAccountManager::get_instance()->getCurUserInfo()->m_uuid, //me
-                info->m_uuid
-            });
+    /*
+     * we can find this user's history info in UserAccountManager
+     * However, it didn't show up in the chattingstackpage
+     * So we just need to put it into the list
+     */
+    if (history_op.has_value()) {
+      history = history_op.value();
+    } else {
+      /*
+       * not exist in useraccountmanager and also history widget
+       * I'm the person who start this conversation, so i will start talking
+       * first
+       */
+      history = std::make_shared<FriendChattingHistory>(
+          info, ChattingTextMsg{UserAccountManager::get_instance()
+                                    ->getCurUserInfo()
+                                    ->m_uuid, // me
+                                info->m_uuid});
 
-            UserAccountManager::get_instance()->addItem2List(info->m_uuid, history);
-        }
-
-        /*create a new chattinghistory widget on the list*/
-        addChattingHistory(history);
+      UserAccountManager::get_instance()->addItem2List(info->m_uuid, history);
     }
 
-    res_op.reset();
+    /*create a new chattinghistory widget on the list*/
+    addChattingHistory(history);
+  }
 
-    /* this chatting widget named info->m_uuid already exist in the list*/
-    res_op = findChattingHistoryWidget(info->m_uuid);
+  res_op.reset();
 
-    if(!res_op.has_value()){
-        return;
+  /* this chatting widget named info->m_uuid already exist in the list*/
+  res_op = findChattingHistoryWidget(info->m_uuid);
+
+  if (!res_op.has_value()) {
+    return;
+  }
+
+  qDebug() << "We found this Widget On QListWidget, uuid = " << info->m_uuid;
+
+  item = res_op.value();
+  widget = ui->chat_list->itemWidget(item);
+  if (!widget)
+    return;
+
+  /*itemBase should not be a null and type=ChattingHistory*/
+  ListItemWidgetBase *itemBase = reinterpret_cast<ListItemWidgetBase *>(widget);
+  if (itemBase && itemBase->getItemType() == ListItemType::ChattingHistory) {
+    ChattingHistoryWidget *chatItem =
+        reinterpret_cast<ChattingHistoryWidget *>(itemBase);
+    if (!chatItem) {
+      return;
     }
 
-    qDebug() << "We found this Widget On QListWidget, uuid = " << info->m_uuid;
+    ui->chat_list->scrollToItem(item);
+    ui->chat_list->setCurrentItem(item);
 
-    item = res_op.value();
-    widget = ui->chat_list->itemWidget(item);
-    if (!widget)
-        return;
-
-    /*itemBase should not be a null and type=ChattingHistory*/
-    ListItemWidgetBase *itemBase = reinterpret_cast<ListItemWidgetBase *>(widget);
-    if (itemBase && itemBase->getItemType() == ListItemType::ChattingHistory) {
-        ChattingHistoryWidget *chatItem =
-            reinterpret_cast<ChattingHistoryWidget *>(itemBase);
-        if (!chatItem) {
-            return;
-        }
-
-        ui->chat_list->scrollToItem(item);
-        ui->chat_list->setCurrentItem(item);
-
-        /*switch to chatting dialog page*/
-        slot_switch_chattingdlg_page(chatItem->getChattingContext());
-    }
+    /*switch to chatting dialog page*/
+    slot_switch_chattingdlg_page(chatItem->getChattingContext());
+  }
 }
 
 void ChattingDlgMainFrame::slot_switch_user_profile(
@@ -886,8 +889,9 @@ void ChattingDlgMainFrame::addChattingHistory(
   item->setSizeHint(new_inserted->sizeHint());
 
   /*add QListWidgetItem to unordermap mapping struct*/
-  if(this->m_chatHistoryWidList.find(info->m_uuid) == this->m_chatHistoryWidList.end()){
-      this->m_chatHistoryWidList[info->m_uuid] = item;
+  if (this->m_chatHistoryWidList.find(info->m_uuid) ==
+      this->m_chatHistoryWidList.end()) {
+    this->m_chatHistoryWidList[info->m_uuid] = item;
   }
 
   ui->chat_list->addItem(item);
