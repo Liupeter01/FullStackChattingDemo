@@ -1,7 +1,7 @@
-# Distributed-Chat-System-Development
+# Distributed-Instant-Messaging-System-Development
 ## 0x00 Description
 
-Distributed-Chat-System-Development is a real-time chat application built using C++17, Boost and gRPC, featuring a distributed TCP server architecture. 
+Distributed-Instant-Messaging-System-Development is a real-time chat application built using C++17, Boost and gRPC, featuring a distributed TCP server architecture. 
 
 1. **Frontend Development:**
 
