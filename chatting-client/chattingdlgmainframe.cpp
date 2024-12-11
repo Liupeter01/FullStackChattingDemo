@@ -624,6 +624,7 @@ void ChattingDlgMainFrame::slot_sync_chat_msg_on_local(
         return;
       }
 
+       chatItem->updateLastMsg();
       ui->chattingpage->setChattingDlgHistory(history_op.value());
     }
     return;
@@ -740,6 +741,8 @@ void ChattingDlgMainFrame::slot_incoming_text_msg(
     if (!chatItem) {
       return;
     }
+
+    chatItem->updateLastMsg();
 
     /*if the widget exist, then it will update it's data here!*/
     if (!dirty && msg_type == MsgType::TEXT) {
