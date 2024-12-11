@@ -7,11 +7,19 @@ struct ServerConfig : public Singleton<ServerConfig> {
   friend class Singleton<ServerConfig>;
 
 public:
+  std::string GrpcServerName;
+  std::string GrpcServerHost;
+  unsigned short GrpcServerPort;
+
   unsigned short ChattingServerPort;
   std::size_t ChattingServerQueueSize;
 
   std::string BalanceServiceAddress;
   std::string BalanceServicePort;
+
+  std::string Redis_ip_addr;
+  unsigned short Redis_port;
+  std::string Redis_passwd;
 
   std::string MySQL_host;
   std::string MySQL_port;
@@ -27,8 +35,22 @@ private:
     /*init config*/
     m_ini.load(CONFIG_HOME "config.ini");
     loadChattingServiceInfo();
+    loadGrpcServerInfo();
     loadBalanceServiceInfo();
     loadMySQLInfo();
+    loadRedisInfo();
+  }
+
+  void loadRedisInfo() {
+    Redis_port = m_ini["Redis"]["port"].as<unsigned short>();
+    Redis_ip_addr = m_ini["Redis"]["host"].as<std::string>();
+    Redis_passwd = m_ini["Redis"]["password"].as<std::string>();
+  }
+
+  void loadGrpcServerInfo() {
+    GrpcServerName = m_ini["gRPCServer"]["server_name"].as<std::string>();
+    GrpcServerHost = m_ini["gRPCServer"]["host"].as<std::string>();
+    GrpcServerPort = m_ini["gRPCServer"]["port"].as<unsigned short>();
   }
 
   void loadChattingServiceInfo() {

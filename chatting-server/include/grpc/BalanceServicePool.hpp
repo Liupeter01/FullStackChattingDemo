@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _CHATTINGERVICEPOOL_HPP_
-#define _CHATTINGSERVICEPOOL_HPP_
+#ifndef _BALANCESERVICEPOOL_HPP_
+#define _BALANCESERVICEPOOL_HPP_
 #include <config/ServerConfig.hpp>
 #include <grpcpp/grpcpp.h>
 #include <message/message.grpc.pb.h>
@@ -42,4 +42,4 @@ public:
 };
 } // namespace stubpool
 
-#endif // !_STUBPOOL_HPP_
+#endif // !_GRPCBALANCESERVICE_HPP_

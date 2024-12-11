@@ -26,7 +26,10 @@ enum class MySQLSelection : uint8_t {
   UPDATE_UID_COUNTER, // add up to uid accounter
   UPDATE_USER_PASSWD, // update user password
   USER_LOGIN_CHECK,   // check login username & password
-  USER_UUID_CHECK     // check account uuid in DB
+  USER_UUID_CHECK,    // check account uuid in DB
+  USER_PROFILE,       // check account user profile
+  GET_USER_UUID,      // get uuid by username
+  USER_FRIEND_REQUEST // User A send friend request to B
 };
 
 class MySQLConnection {
@@ -43,7 +46,8 @@ public:
   ~MySQLConnection();
 
 public:
-  bool registerNewUser(MySQLRequestStruct &&request, std::size_t &uuid);
+  /*insert new user, call MySQLSelection::CREATE_NEW_USER*/
+  bool registerNewUser(MySQLRequestStruct &&request);
   bool alterUserPassword(MySQLRequestStruct &&request);
 
   /*login username & password check*/
@@ -57,7 +61,10 @@ public:
   bool checkTimeout(const std::chrono::steady_clock::time_point &curr,
                     std::size_t timeout);
 
-  bool checkUUID(std::size_t &uuid);
+  bool checkUUID(std::size_t uuid);
+
+  std::optional<std::size_t> getUUIDByUsername(std::string_view username);
+  std::optional<std::string> getUsernameByUUID(std::size_t uuid);
 
 private:
   template <typename... Args>
@@ -68,12 +75,6 @@ private:
 
   /*send heart packet to mysql to prevent from disconnecting*/
   bool sendHeartBeat();
-
-  /*get new uid for user registeration*/
-  std::optional<std::size_t> allocateNewUid();
-
-  /*insert new user, call MySQLSelection::CREATE_NEW_USER*/
-  bool insertNewUser(MySQLRequestStruct &&request, std::size_t &uuid);
 
 private:
   std::shared_ptr<MySQLConnectionPool> m_delegator;

@@ -28,60 +28,71 @@ mysql::MySQLConnectionPool::MySQLConnectionPool(
         username, password, database, host, port, this)));
   }
 
-  // m_RRThread = std::thread([this]() {
-  //           while (!m_stop)
-  //           {
-  //                     roundRobinChecking(m_timeout);
+  m_RRThread = std::thread([this]() {
+    while (!m_stop) {
+      spdlog::info("[Chatting Server HeartBeat Check]: Timeout Setting {}s",
+                   m_timeout);
 
-  //                    /*suspend this thread by timeout setting*/
-  //                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-  //          }
-  // });
+      roundRobinChecking();
+
+      /*suspend this thread by timeout setting*/
+      std::this_thread::sleep_for(std::chrono::seconds(m_timeout));
+    }
+  });
+  m_RRThread.detach();
 }
 
-mysql::MySQLConnectionPool::~MySQLConnectionPool() {
-  /*terminate thread*/
-  // if (m_RRThread.joinable()) {
-  //           m_RRThread.join();
-  // }
-}
+mysql::MySQLConnectionPool::~MySQLConnectionPool() {}
 
 void mysql::MySQLConnectionPool::registerSQLStatement() {
   m_sql.insert(std::pair(MySQLSelection::HEART_BEAT, fmt::format("SELECT 1")));
-  m_sql.insert(
-      std::pair(MySQLSelection::FIND_EXISTING_USER,
-                fmt::format("SELECT * FROM user_info WHERE {} = ? AND {} = ?",
-                            std::string("username"), std::string("email"))));
+  m_sql.insert(std::pair(
+      MySQLSelection::FIND_EXISTING_USER,
+      fmt::format("SELECT * FROM Authentication WHERE {} = ? AND {} = ?",
+                  std::string("username"), std::string("email"))));
 
   m_sql.insert(std::pair(
       MySQLSelection::CREATE_NEW_USER,
-      fmt::format("INSERT INTO user_info ({},{},{},{}) VALUES (? ,? ,? ,?)",
+      fmt::format("INSERT INTO Authentication ({},{},{}) VALUES (? ,? ,? )",
                   std::string("username"), std::string("password"),
-                  std::string("uid"), std::string("email"))));
+                  std::string("email"))));
 
-  m_sql.insert(std::pair(MySQLSelection::ACQUIRE_NEW_UID,
-                         fmt::format("SELECT uid FROM chatting.uid_gen")));
-  m_sql.insert(std::pair(MySQLSelection::UPDATE_UID_COUNTER,
-                         fmt::format("UPDATE uid_gen SET uid = uid + 1")));
   m_sql.insert(std::pair(
       MySQLSelection::UPDATE_USER_PASSWD,
-      fmt::format("UPDATE user_info SET {} = ? WHERE {} = ? AND {} = ?",
+      fmt::format("UPDATE Authentication SET {} = ? WHERE {} = ? AND {} = ?",
                   std::string("password"), std::string("username"),
                   std::string("email"))));
+  m_sql.insert(std::pair(
+      MySQLSelection::USER_LOGIN_CHECK,
+      fmt::format("SELECT * FROM Authentication WHERE {} = ? AND {} = ?",
+                  std::string("username"), std::string("password"))));
+
   m_sql.insert(
-      std::pair(MySQLSelection::USER_LOGIN_CHECK,
-                fmt::format("SELECT uid FROM user_info WHERE {} = ? AND {} = ?",
-                            std::string("username"), std::string("password"))));
+      std::pair(MySQLSelection::USER_UUID_CHECK,
+                fmt::format("SELECT * FROM Authentication WHERE {} = ?",
+                            std::string("uuid"))));
+
+  m_sql.insert(std::pair(MySQLSelection::USER_PROFILE,
+                         fmt::format("SELECT * FROM UserProfile WHERE {} = ?",
+                                     std::string("uuid"))));
+
+  m_sql.insert(
+      std::pair(MySQLSelection::GET_USER_UUID,
+                fmt::format("SELECT uuid FROM Authentication WHERE {} = ?",
+                            std::string("username"))));
 
   m_sql.insert(std::pair(
-      MySQLSelection::USER_UUID_CHECK,
-      fmt::format("SELECT * FROM user_info WHERE {} = ?", std::string("uid"))));
+      MySQLSelection::USER_FRIEND_REQUEST,
+      fmt::format(
+          "INSERT INTO FriendRequest ({},{},{},{},{}) VALUES (?, ?, ?, ?, ?)"
+          " ON DUPLICATE KEY UPDATE src_uuid = src_uuid, dst_uuid = dst_uuid",
+          std::string("src_uuid"), std::string("dst_uuid"),
+          std::string("nickname"), std::string("message"),
+          std::string("status"))));
 }
 
-void mysql::MySQLConnectionPool::roundRobinChecking(std::size_t timeout) {
-  std::unique_lock<std::mutex> _lckg(m_mtx);
-  m_cv.wait(_lckg, [this]() { return !m_stub_queue.empty() || m_stop; });
-
+void mysql::MySQLConnectionPool::roundRobinChecking() {
+  std::lock_guard<std::mutex> _lckg(m_RRMutex);
   if (m_stop) {
     return;
   }

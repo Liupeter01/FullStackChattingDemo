@@ -16,18 +16,7 @@ HandleMethod::HandleMethod() {
   registerCallBacks();
 }
 
-void HandleMethod::registerGetCallBacks() {
-  this->get_method_callback.emplace(
-      "/get_test", [](std::shared_ptr<HTTPConnection> conn) {
-        std::size_t counter{0};
-        boost::beast::ostream(conn->http_response.body()) << "get_test";
-        for (const auto &param : conn->http_params) {
-          boost::beast::ostream(conn->http_response.body())
-              << "index = " << ++counter << ", key = " << param.first
-              << ", value = " << param.second << '\n';
-        }
-      });
-}
+void HandleMethod::registerGetCallBacks() {}
 
 void HandleMethod::registerPostCallBacks() {
   this->post_method_callback.emplace(
@@ -137,18 +126,23 @@ void HandleMethod::registerPostCallBacks() {
         request.m_password = password;
         request.m_email = email;
 
-        /*get required uuid, and return it back to user!*/
-        std::size_t uuid;
-
         /*MYSQL(start to create a new user)*/
         connection::ConnectionRAII<mysql::MySQLConnectionPool,
                                    mysql::MySQLConnection>
             mysql;
 
-        if (!mysql->get()->registerNewUser(std::move(request), uuid)) {
+        if (!mysql->get()->registerNewUser(std::move(request))) {
           generateErrorMessage("MYSQL user register error",
                                ServiceStatus::MYSQL_INTERNAL_ERROR, conn);
           return false;
+        }
+
+        /*get uuid by username*/
+        std::optional<std::size_t> res = mysql->get()->getUUIDByUsername(username);
+        if (!res.has_value()) {
+                  generateErrorMessage("No UUID related to Username",
+                            ServiceStatus::LOGIN_UNSUCCESSFUL, conn);
+                  return false;
         }
 
         send_root["error"] =
@@ -156,7 +150,9 @@ void HandleMethod::registerPostCallBacks() {
         send_root["username"] = username;
         send_root["password"] = password;
         send_root["email"] = email;
-        send_root["uuid"] = std::to_string(uuid);
+
+        /*get required uuid, and return it back to user!*/
+        send_root["uuid"] = std::to_string(res.value());
 
         boost::beast::ostream(conn->http_response.body())
             << send_root.toStyledString();
@@ -312,7 +308,8 @@ void HandleMethod::registerPostCallBacks() {
                                    mysql::MySQLConnection>
             mysql;
 
-        std::optional<std::size_t> res =
+        /*check account credential*/
+        [[maybe_unused]] std::optional<std::size_t> res =
             mysql->get()->checkAccountLogin(username, password);
         if (!res.has_value()) {
           generateErrorMessage("Wrong username or password",
@@ -320,7 +317,15 @@ void HandleMethod::registerPostCallBacks() {
           return false;
         }
 
-        std::size_t &uuid = res.value();
+        /*get uuid by username*/
+        res = mysql->get()->getUUIDByUsername(username);
+        if (!res.has_value()) {
+                  generateErrorMessage("No UUID related to Username",
+                            ServiceStatus::LOGIN_UNSUCCESSFUL, conn);
+                  return false;
+        }
+
+        std::size_t uuid = res.value();
 
         /*
          *pass user's uuid parameter to the server, and returns available server
@@ -330,20 +335,15 @@ void HandleMethod::registerPostCallBacks() {
 
         if (response.error() !=
             static_cast<int32_t>(ServiceStatus::SERVICE_SUCCESS)) {
-
-                  spdlog::error("[client {}] try login server failed!, error code {}",
-                            std::to_string(uuid), response.error());
+          spdlog::error("[client {}] try login server failed!, error code {}",
+                        std::to_string(uuid), response.error());
         }
 
         send_root["uuid"] = std::to_string(uuid);
         send_root["error"] = response.error();
-
-        /*user login to server for more than one time in a connection session*/
-        if (response.error() != static_cast<int32_t>(ServiceStatus::LOGIN_FOR_MULTIPLE_TIMES)) {
-                  send_root["host"] = response.host();
-                  send_root["port"] = response.port();
-                  send_root["token"] = response.token();
-        }
+        send_root["host"] = response.host();
+        send_root["port"] = response.port();
+        send_root["token"] = response.token();
 
         boost::beast::ostream(conn->http_response.body())
             << send_root.toStyledString();

@@ -1,278 +1,144 @@
 # FullStackChattingDemo
-## Description
+## 0x00 Description
 
-FullStackChattingDemo using C++17 standard
+FullStackChattingDemo is a real-time chat application built using C++17, Boost and gRPC, featuring a distributed TCP server architecture. 
 
-## Client
+1. **Frontend Development:**
 
-### Libraries
+   - Developed a chat dialog using **Qt**, leveraging `QListWidget` for an efficient chat record list and combining `QGridLayout` and `QPainter` for customized chat bubble styling to enhance the user experience.
+   - Encapsulated **Qt Network** modules to support HTTP and CP service communication.
+   - Implemented core features such as adding friends, friend communication, and chat record display.
 
-using QT6(Q::Widgets Qt::Network)
+   **Backend Architecture Design:**
 
-### Main page
+   - Designed a distributed service architecture with the following components:
+     - **`gateway-server` (Gateway Service):** Provides HTTP APIs to handle user login, registration, and authentication.
+     - **`chatting-server` (Chat Service):** Utilized ASIO to implement efficient TCP long connection communication.
+     - **`balance-server` (Load Balancing Service):** Allocates chat services dynamically to achieve load balancing.
+     - **`captcha-server` (Captcha Service):** Generates and validates captchas for enhanced security.
+   - Enabled inter-service communication using the **gRPC protocol**, ensuring high availability and support for reconnections.
 
-![](./assets/client_main.png)
+   **High-Performance Optimization:**
 
-### Register page
+   - Implemented multithreading with `io_context` pools in the `chatting-server` to boost concurrent performance.
+   - Developed a **MySQL connection pool** to manage user data, friend relationships, and chat records.
+   - Designed a **Redis connection pool** for caching optimization.
+   - Built a gRPC connection pool to enhance distributed service access efficiency.
 
-![](./assets/register_empty.png)
+   **Technical Highlights:**
 
-![](./assets/register_with_text.png)
-
-![](./assets/after_reg.png)
-
-### Chatting Main Dialog
-
-<img src="./assets/client_interface_1.png" alt="client_interface_1" style="zoom:100%;" />
-
-### Search and add new contact
-
-![image-20241008180452143](./assets/client_interface_4.png)
-
-![image-20241001102111981](./assets/client_interface_2.png)
-
-### Contact Page
-
-![client_interface_3](./assets/client_interface_3.png)
-
-
-
-## **Servers**
-
-### Libraries
-
-**The libraries we use**
-
-boost-1.84  (beast asio uuid mysql), grpc-1.50.2, hiredis, jsoncpp, ada(url parsing), spdlog
-
-**For Linux/MacOS users, it's strongly recommend to install boost-1.84 in your system!!**
-
-grpc-1.50.2 will be downloaded automatically, and we will use boringssl instead of openssl
-
-**For Windows users, fetch content will download all of those for you**
-
-
-
-### Server List
-
-1. gateway-server(accept user's registration & login & forgot password requests)
-
-   **/get_test(GET method)**: system functionality test.
-
-   <img src="./assets/server.png" style="zoom:67%;" />
-
-   **/get_verification(POST method)**
-
-   User sends get CPATCHA request to server. server using GRPC protocol to communicate with NodeJS server and generate and store uuid in Redis DB.
-
-   **/post_registration(POST method)**
-
-   User post registration request to server. server store info into DB.
-
-   **/check_accountexists(POST method)**
-
-   user post there account name and email request to server, server has to return the existance of the account
-
-   **/reset_password(POST method)**
-
-    after the procedure of check_accountexists, the user has to input new password and passing the password correctness checking. the request will be send to the server and store into DB.
-
-   **/trylogin_server(POST method)**
-
-   user pass username & password to server, and server validating those parameters in DB and allocate a chattingserver through balance-server
-
-   ~~**/getavator(POST method)**~~
-
-   ~~Currently not support~~
+   - Gateway service provides **stateful HTTP interfaces** and integrates load balancing functionality.
+   - Chat service supports **asynchronous message forwarding** with reliable TCP long connections.
+   - Achieved support for **8000+ concurrent connections** on a single server, with distributed deployment supporting **10K-20K active users**.
 
    
 
-2. balance-server(loading balance)
+   **we are going to use boringssl instead of openssl for gRPC framework**
 
-3. chatting-server
 
-4. captcha-server
 
-   **imported libraries**
 
-   import ioredis, grpc-js proto-loader, nodemailer, uuidv4 libraries to the project
+## 0x01 All Servers in this project
+
+### Captcha-server
+
+Captcha-server imported `ioredis`, `grpc-js`, `pproto-loader`, `nodemailer`, `uuidv4` libraries to the project. 
+
+### Balance-server
+
+### Chatting-server
+
+1. User Login`(SERVICE_LOGINSERVER)`
+
+2. ~~User Logout`SERVICE_LOGOUTSERVER`~~
+
+3. User Search For Peers`(SERVICE_SEARCHUSERNAME)`
+
+4. User Who Initiated Friend Request `(SERVICE_FRIENDREQUESTSENDER)`
+
+5. User Who Received Friend Request`(SERVICE_FRIENDREQUESTCONFIRM)`
 
    
 
-   **Sending verification code to server**
+### Gateway-server
+
+All services are using HTTP short connections, users are going to create a POST method to the gateway-server and gateway-server is going to respond to the client requests accordingly.
+
+1. `/get_verification`
+
+   User sends a email address to gateway-server and request to get a Email verification code(CPATCHA) request to server. server using **gRPC** protocol to communicate with NodeJS server(`captcha-server`) and create an unique **uuid** for the user. The **uuid** is going to store in a **Redis** memory database with a timeout setting, user should register the new account within the valid time or request for a new one instead.
 
    
 
-   <img src="./assets/verification.png" style="zoom: 50%;" />
+2. `/post_registration`
 
+   After request for a **valid CPATCHA**, user could trigger registration confirm button to post registration request to the server. Server will whether this user's identity is collision with any other user inside the system, if no collision found the info will be stored inside database. ~~however, SQL injection protection mechanism is still not available yet!~~
 
+   
 
-​									<img src="./assets/result.png" style="zoom:50%;" />
+3. `/check_accountexists`
 
+   After account registration, when user demands to change his/her password, we have to verifiy the account existance.
 
+   
 
-## Requirements
+4. `/reset_password`
 
-The project is self-contained almost all dependencies on both Windows and Linux/Unix-like systems.
+   After executing `/check_accountexists` process, then user could enter his/her new password info, and client terminal could send the new password info to the the server. server will do the similiar process in `/post_registration` and alter the existing data inside the database.
 
-### Main Server(C++)
+   
 
-main server using config.ini to store parameters
+5. `/trylogin_server`
 
-```ini
-[GateServer]
-port = 8080
-[VerificationServer]
-host=127.0.0.1
-port = 65500
-[MySQL]
-username=root
-password=123456
-database=chatting
-host=localhost
-port=3307
-timeout=60          #timeoutsetting seconds
-[Redis]
-host=127.0.0.1
-port=16379
-password=123456
-[BalanceService]
-host=127.0.0.1
-port=8000
-```
+   please be careful, `trylogin_server` **could not login into** the real server directly. **It's a server relay!**
 
-### Verification Server(Nodejs)
+   The identification is similiar to `/check_accountexists` authenication process. The `gateway-server` will communicate with `balance-server` for the address of `chatting-server` by using **gRPC**, and `chatting-server` will do load-balancing and return the lowest load server info back. However, The user connection status **will not** maintained and managed by `gateway-server` and `gateway-server` doesn't care about this either, client will receive the real address of `chatting-server` and connecting to it by itself. ~~however, SQL injection protection mechanism is still not available yet!~~
 
-verification server using verification-server/config.json to store parameters
+   
 
-```json
-{
-      "email": {
-                "host": "please set to your email host name",
-                "port": "please set to your email port",
-                "username": "please set to your email address",
-                "password": "please use your own authorized code"
-      },
-      "mysql": {
-                "host": "127.0.0.1",
-                "port": 3307,
-                "password": 123456
-      },
-      "redis": {
-                "host": "127.0.0.1",
-                "port": 16379,
-                "password": 123456
-      }
-}
-```
+## 0x02 Requirements
 
-### Redis Server
+### Basic Infrastructures
 
-1. Create a volume on host machine
+**It's strongly suggested to use docker to build up those services ^_^**
+
+**If you intended to pass a host directory, please use absolute path.**
+
+1. Redis Memory Database
+
+   Create a local volume on host machine and editing configration files. **Please don't forget to change your password.**
 
    ```bash
    #if you are using windows, please download WSL2
    mkdir -p /path/to/redis/{conf,data} 
-   ```
-
-2. Download Redis configuration file
-
-   ```bash
-   vim /path/to/redis/conf/redis.conf	#write config file(you could use other editing tools!)
-   ```
-
-3. Configuration file setting
-
-   ```ini
+   cat > /path/to/redis/conf/redis.conf <<EOF
    # bind 192.168.1.100 10.0.0.1     # listens on two specific IPv4 addresses
    # bind 127.0.0.1 ::1              # listens on loopback IPv4 and IPv6
    # bind * -::*                     # like the default, all available interfaces
    # bind 127.0.0.1 -::1
-   
-   # By default protected mode is enabled. You should disable it only if
-   # you are sure you want clients from other hosts to connect to Redis
-   # even if no authentication is configured.
    protected-mode no
-   
-   # Accept connections on the specified port, default is 6379 (IANA #815344).
-   # If port 0 is specified Redis will not listen on a TCP socket.
    port 6379
-   
-   # TCP listen() backlog.
    tcp-backlog 511
-   
-   # Close the connection after a client is idle for N seconds (0 to disable)
    timeout 0
-   
-   # TCP keepalive.
-   # If non-zero, use SO_KEEPALIVE to send TCP ACKs to clients in absence
-   # of communication. This is useful for two reasons:
-   # 1) Detect dead peers.
-   # 2) Force network equipment in the middle to consider the connection to be
-   #    alive.
    tcp-keepalive 300
-   
-   ################################# GENERAL #####################################
-   # By default Redis does not run as a daemon. Use 'yes' if you need it.
-   # Note that Redis will write a pid file in /var/run/redis.pid when daemonized.
-   # When Redis is supervised by upstart or systemd, this parameter has no impact.
    daemonize no
    pidfile /var/run/redis_6379.pid
    loglevel notice
    logfile ""
-   
-   # Set the number of databases. The default database is DB 0, you can select
-   # a different one on a per-connection basis using SELECT <dbid> where
-   # dbid is a number between 0 and 'databases'-1
    databases 16
-   
    always-show-logo no
    set-proc-title yes
-   
-   # When changing the process title, Redis uses the following template to construct
-   # the modified title.
-   # Template variables are specified in curly brackets. The following variables are
-   # supported:
-   # {title}           Name of process as executed if parent, or type of child process.
-   # {listen-addr}     Bind address or '*' followed by TCP or TLS port listening on, or
-   #                   Unix socket if only that's available.
-   # {server-mode}     Special mode, i.e. "[sentinel]" or "[cluster]".
-   # {port}            TCP port listening on, or 0.
-   # {tls-port}        TLS port listening on, or 0.
-   # {unixsocket}      Unix domain socket listening on, or "".
-   # {config-file}     Name of configuration file used.
    proc-title-template "{title} {listen-addr} {server-mode}"
    locale-collate ""
    stop-writes-on-bgsave-error yes
    rdbcompression yes
    rdbchecksum yes
-   
-   # The filename where to dump the DB
    dbfilename dump.rdb
    rdb-del-sync-files no
    dir ./
-   
-   ################################# REPLICATION #################################
-   # If the master is password protected (using the "requirepass" configuration
-   # directive below) it is possible to tell the replica to authenticate before
-   # starting the replication synchronization process, otherwise the master will
-   # refuse the replica request.
-   #
-   # masterauth <master-password>
-   #
-   # However this is not enough if you are using Redis ACLs (for Redis version
-   # 6 or greater), and the default user is not capable of running the PSYNC
-   # command and/or other commands needed for replication. In this case it's
-   # better to configure a special user to use with replication, and specify the
-   # masteruser configuration as such:
-   #
-   # masteruser <username>
-   #
-   # When masteruser is specified, the replica will authenticate against its
-   # master using the new AUTH form: AUTH <username> <password>.
+   #---------------------------password--------------------------------------------
    requirepass 123456
-   
-   
+   #---------------------------------------------------------------------------------
    replica-serve-stale-data yes
    replica-read-only yes
    repl-diskless-sync yes
@@ -294,33 +160,7 @@ verification server using verification-server/config.json to store parameters
    appendonly no
    appendfilename "appendonly.aof"
    appenddirname "appendonlydir"
-   
-   # The fsync() call tells the Operating System to actually write data on disk
-   # instead of waiting for more data in the output buffer. Some OS will really flush
-   # data on disk, some other OS will just try to do it ASAP.
-   #
-   # Redis supports three different modes:
-   #
-   # no: don't fsync, just let the OS flush the data when it wants. Faster.
-   # always: fsync after every write to the append only log. Slow, Safest.
-   # everysec: fsync only one time every second. Compromise.
-   #
-   # The default is "everysec", as that's usually the right compromise between
-   # speed and data safety. It's up to you to understand if you can relax this to
-   # "no" that will let the operating system flush the output buffer when
-   # it wants, for better performances (but if you can live with the idea of
-   # some data loss consider the default persistence mode that's snapshotting),
-   # or on the contrary, use "always" that's very slow but a bit safer than
-   # everysec.
-   #
-   # More details please check the following article:
-   # http://antirez.com/post/redis-persistence-demystified.html
-   #
-   # If unsure, use "everysec".
-   # appendfsync always
    appendfsync everysec
-   # appendfsync no
-   
    no-appendfsync-on-rewrite no
    auto-aof-rewrite-percentage 100
    auto-aof-rewrite-min-size 64mb
@@ -352,54 +192,39 @@ verification server using verification-server/config.json to store parameters
    aof-rewrite-incremental-fsync yes
    rdb-save-incremental-fsync yes
    jemalloc-bg-thread yes
-   
-4. Create Redis container
+   EOF
+   ```
+
+   Creating a `Redis` container and execute following commands.
 
    ```bash
-   #Pull the official docker image from Docker hub
-   	docker pull redis:7.2.4
-   	
-   #create container
+   docker pull redis:7.2.4		#Pull the official docker image from Docker hub
    docker run \
-   --restart always \
-   -p 16379:6379 --name redis \
-   --privileged=true \
-   -v /path/to/redis/conf/redis.conf:/etc/redis/redis.conf \
-   -v /path/to/redis/data:/data:rw \
-   -d redis:7.2.4 redis-server /etc/redis/redis.conf \
-   --appendonly yes
+       --restart always \
+       -p 16379:6379 --name redis \
+       --privileged=true \
+       -v /path/to/redis/conf/redis.conf:/etc/redis/redis.conf \
+       -v /path/to/redis/data:/data:rw \
+       -d redis:7.2.4 redis-server /etc/redis/redis.conf \
+       --appendonly yes
    ```
 
-5. Entering Redis container
+   Entering `Redis` container and access to command line `redis-cli`.
 
    ```bash
-   #entering redis
-   	docker exec -it redis bash
-   	
-   # login redis db
-   	redis-cli
+   docker exec -it redis bash	 #entering redis
+   redis-cli									 	 #login redis db
    ```
 
+2. MySQL Database
 
-### MySQL Server
-
-1. Create a volume on host machine
+   Create a local volume on host machine and editing configration files. **Please don't forget to change your password.**
 
    ```bash
    #if you are using windows, please download WSL2
    mkdir -p /path/to/mysql/{conf,data} 
-   ```
-
-2. Create a configuration file(my.cnf)
-
-   ```bash
    touch /path/to/mysql/conf/my.cnf	#create
-   vim /path/to/mysql/conf/my.cnf		#write config file(you could use other editing tools!)
-   ```
-
-3. Configuration file setting
-
-   ```ini
+   cat > /path/to/redis/conf/redis.conf <<EOF
    [mysqld]
    default-authentication-plugin=mysql_native_password
    skip-host-cache
@@ -416,61 +241,178 @@ verification server using verification-server/config.json to store parameters
    socket=/var/run/mysqld/mysqld.sock
    default-character-set=utf8
    !includedir /etc/mysql/conf.d/
+   EOF
    ```
-   
-4. Create MySQL container
 
-   **If you intended to pass a host directory, please use absolute path.**
+   Creating a `MySQL` container and execute following commands.
 
    ```bash
-   #Pull the official docker image from Docker hub
-   	docker pull mysql:8.0
-   	
-   #Start a mysql server instance
-   	 docker run --restart=on-failure:3 -d \
-   	-v /path/to/mysql/conf:/etc/mysql/conf.d \
+   docker pull mysql:8.0		#Pull the official docker image from Docker hub
+   docker run --restart=on-failure:3 -d \
+       -v /path/to/mysql/conf:/etc/mysql/conf.d \
        -v /path/to/mysql/data:/var/lib/mysql \
-   	-e MYSQL_ROOT_PASSWORD="your_password" \
-   	-p 3307:3306 --name "your_container_name" \
+       -e MYSQL_ROOT_PASSWORD="your_password" \
+       -p 3307:3306 --name "your_container_name" \
        mysql:8.0
    ```
 
-5. Entering mysql and login DB
+   Entering `MySQL` container and access to `mysql` command line.
 
    ```bash
-   #entering mysql
-   	docker exec -it "your_container_name" bash
-   	
-   # login mysql db ( -u: root by default, -p password)
-   	mysql -uroot -p"your_password" 
+   docker exec -it "your_container_name" bash		#entering mysql
+   mysql -uroot -p"your_password"                #login mysql db ( -u: root by default, -p password)
    ```
 
+   Initialise `MySQL` database with following `SQL` commands to create DB and table schemas.
 
-6. **DataBase Has to be created, before starting the main server!!!**
-
-   You could choose DataBase tools to create database and table
-   
    ```sql
-   #database's name should match config.ini database name!
    CREATE DATABASE chatting;
    
-   CREATE TABLE chatting.user_info(
-   	username varchar(255) not null,
-   	password varchar(255) not null,
-       uid integer not null,
-       email varchar(255) not null
+   -- Create Authentication Table
+   CREATE TABLE chatting.Authentication (
+       uuid INT AUTO_INCREMENT PRIMARY KEY,
+       username VARCHAR(50) NOT NULL UNIQUE,
+       password VARCHAR(255) NOT NULL,
+       email VARCHAR(100) UNIQUE
+    );
+   
+    -- Create UserProfile Table
+    CREATE TABLE chatting.UserProfile (
+       uuid INT PRIMARY KEY,
+       avatar VARCHAR(255),
+       nickname VARCHAR(50),
+       description TEXT,
+       sex BOOL,
+       FOREIGN KEY (uuid) REFERENCES Authentication(uuid) ON DELETE CASCADE
+    );
+   
+   -- Create Friend Request Table
+   CREATE TABLE chatting.FriendRequest(
+       id INT AUTO_INCREMENT PRIMARY KEY,
+   	src_uuid INT NOT NULL,
+       dst_uuid INT NOT NULL,
+       nickname VARCHAR(255),
+       message VARCHAR(255),
+       status BOOL,	-- request status
+       FOREIGN KEY (src_uuid) REFERENCES Authentication(uuid) ON DELETE CASCADE,
+       FOREIGN KEY (dst_uuid) REFERENCES Authentication(uuid) ON DELETE CASCADE
    );
    
-   CREATE TABLE chatting.uid_gen(
-       uid integer not null
+   -- Create Auth Friend Table
+   CREATE TABLE chatting.AuthFriend(
+       id INT AUTO_INCREMENT PRIMARY KEY,
+   	self_uuid INT NOT NULL,
+       friend_uuid INT NOT NULL,
+   	alternative_name VARCHAR(255),	--
+       FOREIGN KEY (self_uuid ) REFERENCES Authentication(uuid) ON DELETE CASCADE,
+       FOREIGN KEY ( friend_uuid ) REFERENCES Authentication(uuid) ON DELETE CASCADE
    );
    
-   INSERT INTO chatting.uid_gen(uid) VALUE(0);
+   CREATE UNIQUE INDEX idx_self_friend ON chatting.AuthFriend(self_uuid ASC, friend_uuid ASC) USING BTREE;
    ```
 
 
 
-## Developer Quick Start
+### Servers' Configurations
+
+Most of those basic configurations are using *.ini file, except `Captcha-server`.
+
+1. Captcha-server**(config.json)**
+
+   ```bash
+   {
+         "email": {
+                   "host": "please set to your email host name",
+                   "port": "please set to your email port",
+                   "username": "please set to your email address",
+                   "password": "please use your own authorized code"
+         },
+         "mysql": {
+                   "host": "127.0.0.1",
+                   "port": 3307,
+                   "password": 123456
+         },
+         "redis": {
+                   "host": "127.0.0.1",
+                   "port": 16379,
+                   "password": 123456
+         }
+   }
+   ```
+
+   
+
+2. Gateway-server**(config.ini)**
+
+   ```ini
+   [GateServer]
+   port = 8080
+   [VerificationServer]
+   host=127.0.0.1
+   port = 65500
+   [MySQL]
+   username=root
+   password=123456
+   database=chatting
+   host=localhost
+   port=3307
+   #timeoutsetting(s) for heart pulse
+   timeout=60 
+   [Redis]
+   host=127.0.0.1
+   port=16379
+   password=123456
+   [BalanceService]
+   host=127.0.0.1
+   port=59900
+   ```
+
+   
+
+3. Balance-server**(config.ini)**
+
+   ```ini
+   [BalanceService]
+   host=127.0.0.1
+   port=59900
+   [Redis]
+   host=127.0.0.1
+   port=16379
+   password=123456
+   ```
+
+   
+
+4. Chatting-server**(config.ini)**
+
+   ```ini
+   [BalanceService]
+   host=127.0.0.1
+   port=59900
+   [gRPCServer]
+   server_name=ChattingServer0
+   host=127.0.0.1
+   port=64400
+   [ChattingServer]
+   port=60000
+   send_queue_size=1000
+   [Redis]
+   host=127.0.0.1
+   port=16379
+   password=123456
+   [MySQL]
+   username=root
+   password=123456
+   database=chatting
+   host=localhost
+   port=3307
+   #timeoutsetting(s) for heart pulse
+   timeout=60
+   ```
+
+   
+
+## 0x03 Developer Quick Start
 
 ### Platform Support
 Windows, Linux, MacOS(Intel & Apple Silicon M)
@@ -479,50 +421,28 @@ Windows, Linux, MacOS(Intel & Apple Silicon M)
 
 ```bash
 git clone https://github.com/Liupeter01/FullStackChattingDemo
+git submodule update --init --recursive
 ```
 
-### Compile Client
+### Compile and build FullStackChattingDemo
 
-1. For Windows
+Those are submodules building tutorial links.
 
-   ```bash
-   #please import client dir to qt creator
-   ```
+[Gateway-server](https://github.com/Liupeter01/gateway-server/blob/main/README.md)
 
-2. For MacOS/Linux
+[Balance-server](https://github.com/Liupeter01/balance-server/blob/main/README.md)
 
-   ```bash
-   #It might take a long time to download dependency libraies!!!!
-   cd FullStackChattingDemo/client
-   cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
-   cmake --build build --parallel [x]
-   ```
+[Chatting-server](https://github.com/Liupeter01/chatting-server/blob/main/README.md)
 
-### Compile GatewayServer/BalanceServer/Chattingserver
+[Captcha-server](https://github.com/Liupeter01/captcha-server/blob/main/README.md)
 
-1. For Linux/Windows
-
-   ```bash
-   cd FullStackChattingDemo/server
-   git submodule update --init
-   cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
-   cmake --build build --parallel [x]
-   ```
-
-2. For MacOS
-
-   ```bash
-   cd FullStackChattingDemo/server
-   git submodule update --init
-   cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=/usr/local/include
-   cmake --build build --parallel [x]
-   ```
+[Chatting-client](https://github.com/Liupeter01/chatting-client/blob/main/README.md)
 
 
 
 ### How to Execute
 
-1. Activate Redis and MySQL service
+1. Activate Redis and MySQL service first
 
    **IMPORTANT: you have to start those services first!!**
 
@@ -530,29 +450,35 @@ git clone https://github.com/Liupeter01/FullStackChattingDemo
 
 2. Execute Servers' program
 
-   ```bash
-   ./balance-server/build/BalanceServer
-   ./gateway-server/build/GatewayServer
-   ./chatting-server/build/ChattingServer
-   ```
-
-3. Execute captcha-server(Nodejs)
+   **Gateway-server should be started after Captcha-server!**
 
    ```bash
    cd captcha-server
    npm install
-   node index.js  # you could use nodemon
+   # you could use nodemon
+   node index.js
    ```
 
-4. Execute Client
+   
+
+   Then start gateway-server
 
    ```bash
-   ./client/build/ChattingClient
+   ./gateway-server/build/GatewayServer
+   ```
+   
+   
+   
+   **Chatting-server should be started after Balance-server!**
+   
+   ```bash
+   ./balance-server/build/BalanceServer
+   ./chatting-server/build/ChattingServer
    ```
 
 
 
-### Error Handling
+## 0x04 Error handling
 
 1. SyntaxError: Unexpected token  in JSON at position 0
    ```bash
@@ -636,3 +562,55 @@ git clone https://github.com/Liupeter01/FullStackChattingDemo
    you have to start the main server first and then open nodejs service
 
    
+
+## 0x05 Showcases
+
+### Client
+
+1. Main page
+
+![](./assets/client_main.png)
+
+2. Register page
+
+![](./assets/register_empty.png)
+
+![](./assets/register_with_text.png)
+
+![](./assets/after_reg.png)
+
+3. Chatting Main Dialog
+
+<img src="./assets/client_interface_1.png" alt="client_interface_1" style="zoom: 67%;" />
+
+4. Search and add new contact
+
+<img src="./assets/client_interface_4.png" alt="image-20241008180452143" style="zoom:67%;" />
+
+<img src="./assets/client_interface_2.png" alt="image-20241001102111981" style="zoom:67%;" />
+
+5. Add New Friend Page
+
+<img src="./assets/client_interface_3.png" alt="client_interface_3" style="zoom:67%;" />
+
+6. Contact's Profile Page
+
+   ![image-20241211180726323](./assets/contactsprofile.png)
+
+![image-20241211180919045](./assets/sendmsgthroughinternet.png)
+
+### Server
+
+1. Server
+
+   ![server_1](./assets/server_1.png)
+
+   
+
+2. Captcha-server
+
+   Sending verification code to the user
+
+<img src="./assets/verification.png" style="zoom: 67%;" />
+
+<img src="./assets/result.png" style="zoom:67%;" />

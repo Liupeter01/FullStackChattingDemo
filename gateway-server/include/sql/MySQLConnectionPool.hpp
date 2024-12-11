@@ -25,7 +25,7 @@ private:
       const std::string &port = boost::mysql::default_port_string) noexcept;
 
   void registerSQLStatement();
-  void roundRobinChecking(std::size_t timeout);
+  void roundRobinChecking();
 
 private:
   std::string m_username;
@@ -35,8 +35,10 @@ private:
   std::string m_port;
 
   /*round-robin timeout check(second)*/
+  std::mutex m_RRMutex;
   std::size_t m_timeout;
 
+  /*round robin thread*/
   std::thread m_RRThread;
 
   /*sql operation command*/
