@@ -19,8 +19,12 @@ public:
   virtual ~ChattingHistoryWidget();
 
   void setUserInfo(std::shared_ptr<FriendChattingHistory> info);
+  void updateLastMsg();
+  void setItemDisplay();
 
+  std::shared_ptr<FriendChattingHistory> getChattingContext();
 
+private:
   template <typename _Type, check_datatype_v<_Type> = 0>
   void setLastMessage() {
       auto &target = std::get<_Type>(*m_userinfo->getChattingHistory());
@@ -39,10 +43,6 @@ public:
       else if constexpr(std::is_same_v<ChattingVideo, std::decay_t<_Type>>){
       }
   }
-
-  void setItemDisplay();
-
-  std::shared_ptr<FriendChattingHistory> getChattingContext();
 
 private:
   Ui::ChattingHistoryWidget *ui;

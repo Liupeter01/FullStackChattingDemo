@@ -16,7 +16,11 @@ void ChattingHistoryWidget::setUserInfo(
     /*store the friendchattinghistory obj*/
   m_userinfo = info;
 
-    setLastMessage<ChattingTextMsg>();
+    updateLastMsg();
+}
+
+void ChattingHistoryWidget::updateLastMsg(){
+     setLastMessage<ChattingTextMsg>();
 }
 
 void ChattingHistoryWidget::setItemDisplay() {
