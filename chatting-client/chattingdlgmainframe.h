@@ -117,12 +117,18 @@ private slots:
   void slot_display_contact_list();
 
   /*
-   * user click the item shown in the ListWidget
+   * user click the item shown in the search list
    * 1. ListItemType::Default: DO NOTHING
    * 2. ListItemType::SearchUserId: When User Start To Searching User ID
-   * 3. ListItemType::ChattingHistory: when user press chatting record
    */
-  void slot_list_item_clicked(QListWidgetItem *clicked_item);
+  void slot_search_list_item_clicked(QListWidgetItem *clicked_item);
+
+  /*
+   * user click the item shown in the chat list
+   * 1. ListItemType::Default: DO NOTHING
+   * 2. ListItemType::ChattingHistory: when user press chatting record
+   */
+  void slot_chat_list_item_clicked(QListWidgetItem *clicked_item);
 
   /*if target user has already became a auth friend with current user
    * then switch back to chatting dialog

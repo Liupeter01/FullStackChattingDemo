@@ -138,11 +138,11 @@ void ChattingDlgMainFrame::registerSignal() {
 
   /*connect signal<->slot when item was clicked in the QListWidget*/
   connect(ui->search_list, &QListWidget::itemClicked, this,
-          &ChattingDlgMainFrame::slot_list_item_clicked);
+          &ChattingDlgMainFrame::slot_search_list_item_clicked);
 
   /* when user press chatting record then trigger itemclicked*/
   connect(ui->chat_list, &MainFrameShowLists::itemClicked, this,
-          &ChattingDlgMainFrame::slot_list_item_clicked);
+          &ChattingDlgMainFrame::slot_chat_list_item_clicked);
 
   /*connect signal<->slot when slot_search_username was triggered*/
   connect(ui->search_list, &MainFrameSearchLists::signal_waiting_for_data, this,
@@ -439,9 +439,9 @@ void ChattingDlgMainFrame::slot_display_contact_list() {
  * 3. ListItemType::ChattingHistory
  *    when user press chatting record
  */
-void ChattingDlgMainFrame::slot_list_item_clicked(
+void ChattingDlgMainFrame::slot_search_list_item_clicked(
     QListWidgetItem *clicked_item) {
-  qDebug() << "item clicked! ";
+  qDebug() << "search list item clicked! ";
 
   /*get clicked customlized widget object*/
   QWidget *widget = ui->search_list->itemWidget(clicked_item);
@@ -483,14 +483,32 @@ void ChattingDlgMainFrame::slot_list_item_clicked(
      */
     qDebug() << "[ListItemType::SearchUserId]:Waiting For Server Response!";
     waitForDataFromRemote(true);
-  } else if (item->getItemType() == ListItemType::ChattingHistory) {
-    qDebug() << "[ListItemType::ChattingHistory]:Switching To ChattingDlg Page "
-                "With Friends Identity!";
-
-    slot_switch_chattingdlg_page(
-        reinterpret_cast<ChattingHistoryWidget *>(widget)
-            ->getChattingContext());
   }
+}
+
+void ChattingDlgMainFrame::slot_chat_list_item_clicked(QListWidgetItem *clicked_item){
+      qDebug() << "chat list item clicked! ";
+
+    /*get clicked customlized widget object*/
+    QWidget *widget = ui->chat_list->itemWidget(clicked_item);
+    if (widget == nullptr) {
+        qDebug() << "invalid click item! ";
+        return;
+    }
+    auto item = reinterpret_cast<ListItemWidgetBase *>(widget);
+
+    if (item->getItemType() == ListItemType::Default) {
+        qDebug() << "[ListItemType::Default]:list item base class!";
+        return;
+    }
+    else if (item->getItemType() == ListItemType::ChattingHistory) {
+        qDebug() << "[ListItemType::ChattingHistory]:Switching To ChattingDlg Page "
+                    "With Friends Identity!";
+
+        slot_switch_chattingdlg_page(
+            reinterpret_cast<ChattingHistoryWidget *>(widget)
+                ->getChattingContext());
+    }
 }
 
 void ChattingDlgMainFrame::slot_load_more_contact_list() {
