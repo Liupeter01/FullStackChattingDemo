@@ -589,9 +589,15 @@ Those are submodules building tutorial links.
 
 <img src="./assets/client_interface_2.png" alt="image-20241001102111981" style="zoom:67%;" />
 
-5. Contact Page
+5. Add New Friend Page
 
 <img src="./assets/client_interface_3.png" alt="client_interface_3" style="zoom:67%;" />
+
+6. Contact's Profile Page
+
+   ![image-20241211180726323](./assets/contactsprofile.png)
+
+![image-20241211180919045](./assets/sendmsgthroughinternet.png)
 
 ### Server
 
