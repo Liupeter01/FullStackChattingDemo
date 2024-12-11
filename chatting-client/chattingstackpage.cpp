@@ -132,22 +132,22 @@ void ChattingStackPage::on_send_message_clicked() {
 
   for (std::size_t index = 0; index < list.size(); ++index) {
     /*currently, we are the msssage sender*/
-      QWidget *bubble_send{nullptr};
+      //QWidget *bubble_send{nullptr};
 
     /*create this for send*/
-      ChattingMsgItem *item_sender = new ChattingMsgItem(ChattingRole::Sender);
+    //ChattingMsgItem *item_sender = new ChattingMsgItem(ChattingRole::Sender);
 
     MsgInfo info = list[index];
 
-    item_sender->setupUserName(send_name);
-    item_sender->setupIconPixmap(QPixmap(send_icon));
+    //item_sender->setupUserName(send_name);
+    //item_sender->setupIconPixmap(QPixmap(send_icon));
 
     /*msg sender and msg receiver identity*/
     obj["msg_sender"] = UserAccountManager::get_instance()->getCurUserInfo()->m_uuid;
     obj["msg_receiver"] = m_friendInfo->m_uuid;
 
     if (info.type == MsgType::TEXT) {
-        bubble_send = new TextMsgBubble(ChattingRole::Sender, info.content);
+        //bubble_send = new TextMsgBubble(ChattingRole::Sender, info.content);
 
         /*text msg buffer counter*/
         QJsonObject text_obj;
@@ -200,15 +200,15 @@ void ChattingStackPage::on_send_message_clicked() {
         ));
 
     } else if (info.type == MsgType::IMAGE) {
-        bubble_send = new PictureMsgBubble(ChattingRole::Sender, info.pixmap);
+        //bubble_send = new PictureMsgBubble(ChattingRole::Sender, info.pixmap);
 
     } else if (info.type == MsgType::FILE) {
     }
 
-    if (bubble_send != nullptr) {
-      item_sender->setupBubbleWidget(bubble_send);
-      ui->chatting_record->pushBackItem(item_sender);
-    }
+    //if (bubble_send != nullptr) {
+    //  item_sender->setupBubbleWidget(bubble_send);
+    //  ui->chatting_record->pushBackItem(item_sender);
+    //}
   }
 
   /*if there is less data to send*/
