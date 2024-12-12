@@ -223,11 +223,7 @@ void SyncLogic::processing() {
 void SyncLogic::execute(pair &&node) {
   std::shared_ptr<Session> session = node.first;
 
-  if (!node.second->get_id().has_value()) {
-     spdlog::warn("Service Id Error!");
-  }
-
-  ServiceType type = static_cast<ServiceType>(node.second->get_id().value());
+  ServiceType type = static_cast<ServiceType>(node.second->_id);
   try {
     /*executing callback on specific type*/
     auto it = m_callbacks.find(type);
