@@ -218,12 +218,14 @@ protected:
     return get_header_base() + sizeof(uint16_t);
   }
 
+public:
+          uint16_t _id;
+
 protected:
   /* ---------------------------------------------
    * name |  _id  |  _length  |     _buffer      |
    * size |   2B  |   2B(4B)  | _length - 4B(6B) |
    * --------------------------------------------*/
-  uint16_t _id;
   uint16_t _length; /*total length*/
   uint16_t _cur_length;
   Container _buffer;
