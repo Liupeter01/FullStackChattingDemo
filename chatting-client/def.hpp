@@ -65,6 +65,10 @@ enum class ServiceType : uint8_t {
   SERVICE_VIDEOCHATMSGREQUEST,
   SERVICE_VIDEOCHATMSGRESPONSE,
 
+  /*User send file upload request*/
+  SERVICE_FILEUPLOADREQUEST,
+  SERVICE_FILEUPLOADRESPONSE,
+
   SERVICE_UNKNOWN // unkown service
 };
 
