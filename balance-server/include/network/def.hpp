@@ -95,7 +95,12 @@ enum class ServiceStatus : uint8_t {
           // found
           FRIENDING_YOURSELF,             // user should not friending itself
           FRIENDING_ERROR,                // friending error
-          FRIENDING_TARGET_USER_NOT_FOUND // target user not found
+          FRIENDING_TARGET_USER_NOT_FOUND, // target user not found
+
+          FILE_UPLOAD_ERROR,  //file upload error
+          FILE_CREATE_ERROR,
+          FILE_OPEN_ERROR,
+          FILE_WRITE_ERROR
 };
 
 #define _DEF_HPP_
