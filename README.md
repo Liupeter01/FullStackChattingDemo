@@ -16,23 +16,24 @@ Distributed-Instant-Messaging-System-Development is a real-time chat application
      - **`chatting-server` (Chat Service):** Utilized ASIO to implement efficient TCP long connection communication.
      - **`balance-server` (Load Balancing Service):** Allocates chat services dynamically to achieve load balancing.
      - **`captcha-server` (Captcha Service):** Generates and validates captchas for enhanced security.
+     - **`resources-server` (Resources Service):** Storing User Uploaded Files & Photos
    - Enabled inter-service communication using the **gRPC protocol**, ensuring high availability and support for reconnections.
-
+   
    **High-Performance Optimization:**
-
+   
    - Implemented multithreading with `io_context` pools in the `chatting-server` to boost concurrent performance.
    - Developed a **MySQL connection pool** to manage user data, friend relationships, and chat records.
    - Designed a **Redis connection pool** for caching optimization.
    - Built a gRPC connection pool to enhance distributed service access efficiency.
-
+   
    **Technical Highlights:**
-
+   
    - Gateway service provides **stateful HTTP interfaces** and integrates load balancing functionality.
    - Chat service supports **asynchronous message forwarding** with reliable TCP long connections.
    - Achieved support for **8000+ concurrent connections** on a single server, with distributed deployment supporting **10K-20K active users**.
-
    
-
+   
+   
    **we are going to use boringssl instead of openssl for gRPC framework**
 
 
@@ -45,6 +46,8 @@ Distributed-Instant-Messaging-System-Development is a real-time chat application
 Captcha-server imported `ioredis`, `grpc-js`, `pproto-loader`, `nodemailer`, `uuidv4` libraries to the project. 
 
 ### Balance-server
+
+### Resources-server
 
 ### Chatting-server
 
